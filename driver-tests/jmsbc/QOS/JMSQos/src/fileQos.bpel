@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="fileQos"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FileQos/fileQos"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FileQos/fileQos"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2" xmlns:sxnmp="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/NMProperty">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" location="fileQos.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" partnerLinkType="tns:fileQos" myRole="FileInboundPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="PollIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" messageType="tns:PollInputMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="poll" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" portType="tns:FileInboundPortType" variable="PollIn"/>
+        <assign name="Assign1">
+            <sxt:trace>
+                <sxt:log level="info" location="onStart">
+                    <from variable="PollIn" part="part1"/>
+                </sxt:log>
+            </sxt:trace>
+            <copy>
+                <from>'xxx'</from>
+                <to variable="PollIn" sxnmp:nmProperty="org.glassfish.openesb.jms.replytodestination"/>
+            </copy>
+        </assign>
+    </sequence>
+</process>
+
+

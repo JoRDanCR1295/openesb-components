@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="com.sun.syndication.feed.synd.SyndFeedImpl" table="SYNDFEED">
+        <id name="link" column="FEEDURL"/>
+        <property name="title" column="FEEDTITLE"/>
+        <property name="description" column="FEEDDESC"/>
+        <property name="feedType" column="FEEDTYPE"/>
+
+        <list name="entries">
+            <key column="FEED"/>
+            <index column="LISTINDEX"/>
+            <one-to-many
+                    class="com.gestalt.jbi.rss.component.rss.persistence.SyndEntryPersistenceImpl"/>
+        </list>
+    </class>
+    <class name="com.gestalt.jbi.rss.component.rss.persistence.SyndEntryPersistenceImpl"
+           table="SYNDENTRIES">
+        <composite-id>
+            <key-property name="link" column="ENTRYLINK"/>
+            <key-property name="publishedDate" column="PUBLISHEDDATE"/>
+        </composite-id>
+        <property name="title" column="ENTRYTITLE"/>
+        <component name="description"
+                   class="com.sun.syndication.feed.synd.SyndContentImpl">
+            <property name="value" column="DESCVAL"/>
+            <property name="type" column="DESCTYPE"/>
+        </component>
+        <component name="geoRSSModule"
+                   class="com.sun.syndication.feed.module.georss.W3CGeoModuleImpl">
+            <component name="position"
+                       class="com.sun.syndication.feed.module.georss.geometries.Position">
+                <property name="latitude" column="LATITUDE"/>
+                <property name="longitude" column="LONGITUDE"/>
+            </component>
+        </component>
+    </class>
+</hibernate-mapping>
+
+
+

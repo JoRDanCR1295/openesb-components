@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrInvOnMsg_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrInvOnMsg_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrInvOnMsg_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CorrInvOnMsgChildTargetNamespace"
+         xmlns:ns1="corrInvOnMsgParent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:CorrInvOnMsgChildTargetNamespace"
+            location="corrInvOnMsg_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="corrInvOnMsgParent"
+            location="corrInvOnMsg_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:CorrInvOnMsgChildServiceLinkType"
+                     partnerRole="CorrInvOnMsgChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:corrInvOnMsgParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:corrInvOnMsgParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="corrInvOnMsgParentOperation_Output"
+                  messageType="ns1:corrInvOnMsgParentMessage"></variable>
+        <variable name="corrInvOnMsgParentOperation_Input"
+                  messageType="ns1:corrInvOnMsgParentMessage"></variable>
+        <variable name="childContainer"
+                  messageType="ns0:CorrInvOnMsgChildMessage"></variable>
+        <variable name="corrInvOnMsgParentOperation1_Output"
+                  messageType="ns1:corrInvOnMsgParentMessage1"></variable>
+        <variable name="corrInvOnMsgParentOperation1_Output1"
+                  messageType="ns1:corrInvOnMsgParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corset1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="corrInvOnMsgParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:corrInvOnMsgParentPortType"
+                 operation="corrInvOnMsgParentOperation"
+                 variable="corrInvOnMsgParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$corrInvOnMsgParentOperation_Output.corrInvOnMsgParentPart/string</from>
+                <to>$childContainer.CorrInvOnMsgChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="plink_child"
+                portType="ns0:CorrInvOnMsgChildPortType"
+                operation="CorrInvOnMsgChildOperation"
+                inputVariable="childContainer"
+                outputVariable="childContainer">
+            <correlations>
+                <correlation set="corset1"
+                             initiate="yes"
+                             pattern="response"/>
+            </correlations>
+        </invoke>
+        <pick>
+            <onMessage partnerLink="plink_parent1"
+                       portType="ns1:corrInvOnMsgParentPortType1"
+                       operation="corrInvOnMsgParentOperation1"
+                       variable="corrInvOnMsgParentOperation1_Output">
+                <correlations>
+                    <correlation set="corset1"/>
+                </correlations>
+                <assign>
+                    <copy>
+                        <from>concat($corrInvOnMsgParentOperation_Output.corrInvOnMsgParentPart/string, $childContainer.CorrInvOnMsgChildPart/string)</from>
+                        <to>$corrInvOnMsgParentOperation_Input.corrInvOnMsgParentPart/string</to>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <reply partnerLink="plink_parent"
+               portType="ns1:corrInvOnMsgParentPortType"
+               operation="corrInvOnMsgParentOperation"
+               variable="corrInvOnMsgParentOperation_Input"></reply>
+    </sequence>
+</process>

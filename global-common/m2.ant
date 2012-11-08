@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-common" default="report">
+
+    <target name="clean_top">
+        <echo message="TOP CLEAN - removing local open-jbi-components repository..."  />
+        <delete dir="${maven.repo.local}/open-jbi-components" />
+
+        <!-- clean contrib-gestalt artifacts: -->
+        <delete dir="${maven.repo.local}/com/gestalt" />
+
+        <!-- clean contrib-imola artifacts: -->
+        <delete dir="${maven.repo.local}/it/imolinfo" />
+
+        <!-- clean contrib-bostech artifacts: -->
+        <delete dir="${maven.repo.local}/com/bostechcorp" />
+
+        <!-- clean contrib-stort artifacts: -->
+        <delete dir="${maven.repo.local}/com/stort" />
+
+        <!-- clean contrib-zaz artifacts: -->
+        <delete dir="${maven.repo.local}/com/zaz" />
+
+        <!-- clean sun.com.scriptse artifacts, installed from ojc-core/vendor-libs: -->
+        <delete dir="${maven.repo.local}/com/sun/scriptse" />
+
+        <!-- clean known artifacts from java-legacy repos, because 
+         !   maven 2.x does not update legacy SNAPSHOTS correctly.  RT 9/27/08
+        -->
+        <!-- clean std.com  artifacts: -->
+        <delete dir="${maven.repo.local}/com/stc" />
+        <!-- clean dev.java.net artifacts: -->
+        <delete dir="${maven.repo.local}/net" />
+
+        <!--
+         ! clean up open-esb jars installed from glassfish bundle.
+         ! See IN=108335.  RT 5/25/06
+        -->
+        <delete dir="${maven.repo.local}/open-esb" />
+        <delete dir="${maven.repo.local}/jbicompsplatform" />
+
+        <!-- this is defensive - this directory is no longer necessary.  RT 10/30/06 -->
+        <delete dir="${maven.repo.local}/jbiplatform" />
+
+        <!-- this directory was mistakenly added by etl-se project.  RT 3/20/08 -->
+        <delete dir="${maven.repo.local}/build-common" />
+
+        <!-- this directory is used as a temporary directory on all platforms -->
+        <mkdir dir="/tmp" />
+    </target>
+
+    <target name="junit_init" >
+        <property environment="env"/>
+        <condition property="skip_junit_tests">
+            <or>
+                <istrue value="${maven.test.skip}"/>
+                <not>
+                    <available type="dir" file="${project.build.testSourceDirectory}" />
+                </not>
+            </or>
+        </condition>
+        <!-- set work.dir to bld if not defined by caller: -->
+        <property name="work.dir" value="${project.build.directory}" />
+        <!-- Increase to 512m to pass CM JUnit tests: HL7 encoder running out of memory.
+             11/19/09: Ed W.
+          -->
+        <property name="junit.maxmemory" value="512m" />
+        <property name="junit.gfbase" value="${env.JV_GFBASE}" />
+        <property name="junit.srcroot" value="${project.build.testSourceDirectory}" />
+
+        <!-- default ant-junit version if caller does not supply: -->
+        <available file="${maven.repo.local}/ant/ant-junit/1.6.5/ant-junit-1.6.5.jar"
+            property="ant-junit-version" value="1.6.5" />
+
+        <fail unless="ant-junit-version">
+            PLEASE SUPPLY ant-junit-version
+        </fail>
+
+        <!-- default junit version if caller does not supply: -->
+        <available file="${maven.repo.local}/junit/junit/3.8.2/junit-3.8.2.jar"
+            property="junit-version" value="3.8.2" />
+
+        <fail unless="junit-version">
+            PLEASE SUPPLY junit-version
+        </fail>
+
+
+        <!--
+         ! TO ATTACH DEBUGGER:
+         ! 1.  export MAVEN_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=10004"
+         ! 2.  smvntest -DjunitForkMode=no (it waits for debugger to attach)
+         ! [note from Mei W.]  RT 8/23/07
+        -->
+        <property name="junitForkMode" value="yes" />
+        <echo message="junitForkMode=${junitForkMode}"  />
+    </target>
+
+    <target name="junit_def" unless="skip_junit_tests" >
+        <taskdef name="junit"
+            classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" >
+            <classpath>
+                <pathelement
+                    location="${maven.repo.local}/ant/ant-junit/${ant-junit-version}/ant-junit-${ant-junit-version}.jar" />
+                <pathelement
+                    location="${maven.repo.local}/junit/junit/${junit-version}/junit-${junit-version}.jar" />
+            </classpath>
+        </taskdef>
+    </target>
+
+    <target name="run_junit" unless="skip_junit_tests" depends="junit_init,junit_def" >
+        <echo message="Running ${project.artifactId} junit tests in ${work.dir} ..." />
+
+        <delete dir="${project.build.directory}/test-reports" />
+        <mkdir dir="${project.build.directory}/test-reports" />
+
+        <junit fork="${junitForkMode}" haltonfailure="no" printsummary="yes" dir="${work.dir}"
+            maxmemory="${junit.maxmemory}" >
+            <batchtest fork="${junitForkMode}" todir="${project.build.directory}/test-reports">
+                <fileset dir="${project.build.testSourceDirectory}" >
+                    <patternset refid="jbicomps.junit.test.patternset"/>
+                </fileset>
+            </batchtest>
+
+            <formatter type="xml"/>
+            <formatter type="plain"/>
+            <classpath refid="maven.test.classpath"/>
+            <syspropertyset refid="jbicomps.junit.sysproperties"/>
+        </junit>
+    </target>
+
+    <target name="show_junit_props" unless="skip_junit_tests" >
+        <property name="echo.maven.test.classpath" refid="maven.test.classpath" />
+        <property name="echo.jbicomps.junit.sysproperties" refid="jbicomps.junit.sysproperties" />
+        <echo>
+            work.dir=${work.dir}
+            junit.gfbase=${junit.gfbase}
+            junit.maxmemory=${junit.maxmemory}
+            junit.srcroot=${junit.srcroot}
+            jbicomps.junit.sysproperties=${echo.jbicomps.junit.sysproperties}
+            derbydb=${derbydb}
+            derbylibs=${derbylibs}
+            noDerby=${noDerby}
+        </echo>
+        <echo>
+            maven.test.classpath=${echo.maven.test.classpath}
+        </echo>
+    </target>
+
+    <target name="run_junit_and_derby" unless="skip_junit_tests" depends="junit_init,junit_def,show_junit_props" >
+        <antcall target="start_derby" />
+
+        <delete dir="${project.build.directory}/test-reports" />
+        <mkdir dir="${project.build.directory}/test-reports" />
+
+        <junit fork="${junitForkMode}" haltonfailure="no" printsummary="yes" dir="${work.dir}"
+            maxmemory="${junit.maxmemory}" >
+            <batchtest fork="${junitForkMode}" todir="${project.build.directory}/test-reports">
+                <fileset dir="${project.build.testSourceDirectory}" >
+                    <patternset refid="jbicomps.junit.test.patternset"/>
+                </fileset>
+            </batchtest>
+
+            <formatter type="xml"/>
+            <formatter type="plain"/>
+            <classpath refid="maven.test.classpath"/>
+            <syspropertyset refid="jbicomps.junit.sysproperties"/>
+        </junit>
+
+        <antcall target="stop_derby" />
+    </target>
+
+    <target name="start_derby" unless="noDerby" >
+        <echo message="Starting derby for ${project.artifactId} junit tests in ${work.dir} ..." />
+
+        <delete dir="${derbydb}" verbose="false" />
+        <mkdir dir="${derbydb}" />
+
+        <!-- start up the database -->
+        <java classname="org.apache.derby.drda.NetworkServerControl"
+              fork="true" spawn="true">
+            <sysproperty key="derby.system.home" value="${derbydb}" />
+            <arg line="start -h localhost -p 1527" />
+            <classpath>
+                <pathelement location="${derbylibs}/derby.jar" />
+                <pathelement location="${derbylibs}/derbytools.jar" />
+                <pathelement location="${derbylibs}/derbynet.jar" />
+            </classpath>
+        </java>
+    </target>
+
+    <target name="stop_derby" unless="noDerby" >
+        <echo message="Shutting down derby for ${project.artifactId} junit tests in ${work.dir} ..." />
+
+        <!-- shut down the database -->
+        <java classname="org.apache.derby.drda.NetworkServerControl"
+              fork="true">
+            <arg line="shutdown -h localhost -p 1527" />
+            <classpath>
+                <pathelement location="${derbylibs}/derby.jar" />
+                <pathelement location="${derbylibs}/derbytools.jar" />
+                <pathelement location="${derbylibs}/derbynet.jar" />
+            </classpath>
+        </java>
+    </target>
+
+    <!-- we expect to be run in $SRCROOT with SRCROOT and TOOLROOT properties passed in.  -->
+
+    <target name="junit_report" depends="check-if-skipping-tests" unless="skipping-tests" >
+        <antcall target="junit_report2" />
+    </target>
+
+    <target name="junit_report2"
+        depends="collect_reports,junit_aggregate,jregress_taskdef,junit_summary" >
+    </target>
+
+    <target name="report" depends="junit_report" >
+    </target>
+
+    <target name="check-if-skipping-tests">
+        <condition property="skipping-tests">
+            <equals arg1="${maven.test.skip}" arg2="true" />
+        </condition>
+    </target>
+
+    <target name="collect_reports" >
+        <delete dir="${SRCROOT}/bld/junit/html" quiet="true" />
+        <mkdir  dir="${SRCROOT}/bld/junit/html" />
+
+        <!-- staging the result files allows this report to run in seconds instead of minutes.
+         !   On ashland, 22 seconds vs. about 6 minutes.  RT 8/10/06
+         -->
+
+        <patternset id="all-junit-tests">
+            <include name="ojc-core/**/bld/test-reports/TEST-*.xml" />
+            <include name="contrib-gestalt/**/target/surefire-reports/TEST-*.xml" />
+            <include name="contrib-imola/**/target/surefire-reports/TEST-*.xml" />
+        </patternset>
+
+        <delete dir="${SRCROOT}/bld/all-test-results" quiet="true" />
+        <mkdir  dir="${SRCROOT}/bld/all-test-results" />
+        <copy todir="${SRCROOT}/bld/all-test-results" >
+            <fileset dir="${SRCROOT}"><patternset refid="all-junit-tests"/></fileset>
+        </copy>
+    </target>
+
+    <target name="junit_aggregate" >
+        <echo message="Running junit report, SRCROOT is ${SRCROOT} ..." />
+        <taskdef name="junitreport" classname="org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator">
+            <classpath>
+                <pathelement location="${maven.repo.local}/ant/ant-junit/1.6.5/ant-junit-1.6.5.jar" />
+            </classpath>
+        </taskdef>
+
+        <junitreport todir="${SRCROOT}/bld/junit">
+            <fileset dir="${SRCROOT}/bld/all-test-results">
+                <patternset refid="all-junit-tests"/>
+            </fileset>
+            <report format="frames" todir="${SRCROOT}/bld/junit/html"/>
+        </junitreport>
+        <echo message="Report is in ${SRCROOT}/bld/junit/html" />
+    </target>
+
+    <target name="check_jregress_plugin" >
+        <property name="jregress_jar" value="${TOOLROOT}/java/maven/plugins/jregress-1.0.jar" />
+        <available file="${jregress_jar}" property="have_jregress_plugin"/>
+    </target>
+
+    <target name="jregress_taskdef" depends="check_jregress_plugin" if="have_jregress_plugin" >
+        <taskdef name="junitreport2" classname="com.sun.jbi.internal.ant.tools.JunitReportTask">
+            <classpath>
+                <pathelement location="${jregress_jar}" />
+            </classpath>
+        </taskdef>
+    </target>
+
+    <target name="junit_summary" depends="jregress_taskdef" if="have_jregress_plugin" >
+        <junitreport2 junitfailureproperty="junit.failed"
+            counttestsproperty="junit.test.count"
+            counterrorsproperty="junit.error.count" 
+            listerrorsproperty="junit.error.list" 
+            countfailuresproperty="junit.failure.count" 
+            listfailuresproperty="junit.failure.list" >
+
+            <junitreportfileset dir="${SRCROOT}/bld/all-test-results" casesensitive="yes">
+                <patternset refid="all-junit-tests"/>
+            </junitreportfileset>
+        </junitreport2>
+
+        <property name="junit.failed" value="false" /><!-- if not set above -->
+        <property name="junit.test.count" value="0" /><!-- if not set above -->
+        <property name="junit.error.count" value="0" /><!-- if not set above -->
+        <property name="junit.error.list" value="" /><!-- if not set above -->
+        <property name="junit.failure.count" value="0" /><!-- if not set above -->
+        <property name="junit.failure.list" value="" /><!-- if not set above -->
+
+        <echo message="junit.failed=${junit.failed}" />
+        <echo message="junit.test.count=${junit.test.count}" />
+        <echo message="junit.error.count=${junit.error.count}" />
+        <echo message="junit.error.list=${junit.error.list}" />
+        <echo message="junit.failure.count=${junit.failure.count}" />
+        <echo message="junit.failure.list=${junit.failure.list}" />
+    </target>
+
+    <target name="jregress_report">
+        <concat destfile="${SRCROOT}/bld/regress.summary" force="yes" >
+            <fileset dir="${SRCROOT}" casesensitive="yes" followsymlinks="false" >
+                <include name="packaging/release-package/bld/**/regress.log" />
+            </fileset>
+        </concat>
+        <exec executable="sh" dir="${SRCROOT}/bld" >
+            <arg line="-c '(grep FAILED regress.summary ; echo `grep -c FAILED regress.summary` tests failed. ) || echo no tests failed.'" />
+        </exec>
+        <exec executable="sh" dir="${SRCROOT}/bld" >
+            <arg line="-c 'echo `grep -c Passed regress.summary`/`grep -c \\ Started regress.summary` tests passed.'" />
+        </exec>
+        <exec executable="sh" dir="${SRCROOT}/bld" >
+            <arg line="-c '(grep TIMED.OUT regress.summary ; echo `grep -c TIMED.OUT regress.summary` tests timed out. ) || echo no tests timed out.'" />
+        </exec>
+    </target>
+</project>

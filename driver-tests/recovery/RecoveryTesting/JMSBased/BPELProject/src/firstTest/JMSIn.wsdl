@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BPELProject/JMSIn"
+             name="JMSIn"
+             xmlns:tns="http://localhost/BPELProject/JMSIn"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <plink:partnerLinkType name="JMSInLinkType">
+        <plink:role name="Server"
+                    portType="tns:portType_JMSIn"></plink:role>
+    </plink:partnerLinkType>
+    <message name="message_JMSIn">
+        <part name="part_JMSIn"
+              type="xsd:string"></part>
+        <part name="IdProperty" type="xsd:long"/>              
+    </message>
+    <portType name="portType_JMSIn">
+        <operation name="operation_JMSIn">
+            <input name="input"
+                   message="tns:message_JMSIn"></input>
+        </operation>
+    </portType>
+    <binding name="binding_JMSIn"
+             type="tns:portType_JMSIn">
+        <jms:binding></jms:binding>
+        <operation name="operation_JMSIn">
+            <jms:operation destinationType="Queue"
+            		   maxConcurrentConsumers="1"
+                           destination="jms_bpelSE_ext_client_will_publish"
+                           transaction="XATransaction">
+            </jms:operation>
+            <input name="input">
+                <jms:message textPart="part_JMSIn"
+                             messageType="TextMessage">
+                <jms:properties>
+                        <jms:property part="IdProperty" type="long" name="counter"></jms:property>
+                </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="service_JMSIn">
+        <port name="port_JMSIn"
+              binding="tns:binding_JMSIn">
+            <jms:address password="admin"
+                         username="admin"
+                         connectionURL="mq://localhost:20000" />
+        </port>
+    </service>
+</definitions>

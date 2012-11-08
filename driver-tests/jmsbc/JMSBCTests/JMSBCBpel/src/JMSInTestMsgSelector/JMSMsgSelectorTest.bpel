@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSMsgSelectorTest"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSMsgSelectorTest"
+         sbynpxp:end_YLoc="214.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="789.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSMsgSelectorTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/bpel/JMSMsgSelectorTest"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/bpel/JMSMsgSelectorTest"
+            location="JMSMsgSelectorTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSMsgSelectorTestHttpReqReplyPartner"
+                     partnerLinkType="ns0:JMSMsgSelectorTestRequestReplyLnkType"
+                     myRole="roleJMSMsgSelectorTestTrigger"/>
+        <partnerLink name="JMSMsgSelectorTestSendPartner"
+                     partnerLinkType="ns0:JMSMsgSelectorTestOutLnkType"
+                     partnerRole="roleJMSMsgSelectorTestSender"/>
+        <partnerLink name="JMSMsgSelectorTestReceivePartner"
+                     partnerLinkType="ns0:JMSMsgSelectorTestInLnkType"
+                     myRole="roleJMSMsgSelectorTestReceiver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationOneWayOut_Input"
+                  messageType="ns0:messageOneWayOut"></variable>
+        <variable name="operationOneWayIn_Output"
+                  messageType="ns0:messageOneWayIn"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSetMsgSelector"
+                        properties="ns0:propJMSMsgSelectorName1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMSMsgSelectorTestHttpReqReplyPartner"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="123.0"
+                 sbynpxp:YLoc="229.0">
+            <correlations>
+                <correlation set="cSetMsgSelector"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="245.0"
+                sbynpxp:YLoc="130.0">
+            <copy>
+                <from>&apos;Testing Message Selector&apos;</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partMsgBody"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/JMSCorrelationID</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partCorrelationId"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/StockSymbol</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partStockSymbol"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/StockPrice</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partStockPrice"/>
+            </copy>
+        </assign>
+        <invoke name="operationOneWayOut"
+                partnerLink="JMSMsgSelectorTestSendPartner"
+                portType="ns0:portTypeOneWayOut"
+                operation="operationOneWayOut"
+                inputVariable="operationOneWayOut_Input"
+                sbynpxp:XLoc="330.0"
+                sbynpxp:YLoc="218.0"></invoke>
+        <receive name="operationOneWayIn"
+                 partnerLink="JMSMsgSelectorTestReceivePartner"
+                 portType="ns0:portTypeOneWayIn"
+                 operation="operationOneWayIn"
+                 variable="operationOneWayIn_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="428.0"
+                 sbynpxp:YLoc="128.0">
+            <correlations>
+                <correlation set="cSetMsgSelector"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2"
+                sbynpxp:XLoc="541.0"
+                sbynpxp:YLoc="229.0">
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partCorrelationId"/>
+                <to>$operationRequestReply_Input.partReqReply/JMSCorrelationID</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partStockSymbol"/>
+                <to>$operationRequestReply_Input.partReqReply/StockSymbol</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partStockPrice"/>
+                <to>$operationRequestReply_Input.partReqReply/StockPrice</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMSMsgSelectorTestHttpReqReplyPartner"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"
+               sbynpxp:XLoc="646.0"
+               sbynpxp:YLoc="134.0"></reply>
+    </sequence>
+</process>

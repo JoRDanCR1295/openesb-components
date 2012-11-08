@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.openesb.demo.xacml</groupId>
+    <artifactId>sun-xacml-engine</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1</version>
+    <name>JBI Service Engine[xacml-service-engine]</name>
+    <description>Maven project for JBI Service Engine sun-xacml-engine that contains the 
+        maven, ant build setup and sample source amd test code from a Service Engine.</description>
+    <url>http://open-esb.org</url>
+    <build>
+        <directory>build</directory>
+        <sourceDirectory>src/java</sourceDirectory>
+        <testSourceDirectory>test/java</testSourceDirectory>        
+        <outputDirectory>build/classes</outputDirectory>
+        <testOutputDirectory>build/test/classes</testOutputDirectory>
+        <defaultGoal>package</defaultGoal>        
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <!-- DISABLE COMPILER PLUGIN AS ANT RUN WOUDL COMPILE THE CODE -->
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.1.3</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <skip>true</skip>
+                    <!-- DISABLE the test code run as a junit test as this 
+                    test is integration test code.-->
+                    <excludes>
+                        <exclude>**/enginetest/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>                        
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>                    
+                    <execution>
+                        <id>jbicomp-build-compile</id>
+                        <phase>compile</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>      
+                                <ant antfile="build.xml" inheritAll="true" target="compile" />
+                            </tasks>
+                        </configuration>                        
+                    </execution>                    
+                    <execution>
+                        <id>jbicomp-build-compile-test</id>
+                        <phase>test-compile</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="build.xml" inheritAll="true" target="compile-test" />                            </tasks>
+                        </configuration>                        
+                    </execution>                                        
+                    <execution>
+                        <id>jbicomp-build-package</id>
+                        <phase>package</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="build.xml" inheritAll="true" target="jar"/>
+                                <copy overwrite="true" file="dist/${jbi.component.name}.zip" 
+                                toFile="${project.build.directory}/${project.artifactId}-${project.version}.jar" />                                
+                            </tasks>
+                        </configuration>                        
+                    </execution>
+<!--      
+                    <execution>
+                        <id>jbicomp-build-unit-test</id>
+                        <phase>test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="build.xml" inheritAll="true" >
+                                    <property name="test.unit.skip" value="${maven.test.skip}"/>
+                                    <target name="test" />
+                                </ant>
+                            </tasks>
+                        </configuration>                        
+                    </execution>                                     
+                    <execution>
+                        <id>jbicomp-build-int-test</id>
+                        <phase>integration-test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="build.xml" inheritAll="true" >
+                                    <property name="test.integration.skip" value="${maven.test.integration.skip}"/>
+                                    <target name="integration-test" />
+                                </ant>
+                            </tasks>
+                        </configuration>                        
+                    </execution>   
+-->
+                    <execution>
+                        <id>jbicomp-build-clean</id>
+                        <phase>clean</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="build.xml" inheritAll="true" >
+                                    <property name="jbi.fail.on.uninstall.error" value="false" />
+                                    <target name="clean" />
+                                    <target name="uninstall" />
+                                </ant>                                
+                            </tasks>
+                        </configuration>                        
+                    </execution> 
+                </executions>
+            </plugin>
+        </plugins>
+    </build>    
+    <properties>
+        <!--
+         ! Note - the order of these declarations is unimportant.
+        -->
+        <glassfish.home>${env.JV_GFBASE}</glassfish.home>
+        <jbi.host>localhost</jbi.host>
+        <jbi.port>4848</jbi.port>
+        <jbi.username>admin</jbi.username>
+        <jbi.password>adminpwd</jbi.password>
+        <jbi.component.name>XACMLSE</jbi.component.name>
+        <junit.ant.task.classpath>${maven.repo.local}/ant/ant-junit/1.6.5/ant-junit-1.6.5.jar</junit.ant.task.classpath>
+        <junit.runtime.classpath>${maven.repo.local}/junit/junit/3.8.1/junit-3.8.1.jar</junit.runtime.classpath>
+        <libs.junit.classpath>${junit.runtime.classpath}:${junit.ant.task.classpath}</libs.junit.classpath>
+        <testFailureIgnore>true</testFailureIgnore>
+        <maven.test.failure.ignore>${testFailureIgnore}</maven.test.failure.ignore>
+        <localRepository>${maven.repo.local}</localRepository>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <version>1.6.5</version>
+        </dependency>        
+    </dependencies>  
+</project>

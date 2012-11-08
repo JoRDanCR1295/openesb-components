@@ -1,0 +1,199 @@
+											---
+											Supported Cobol data types
+											---
+											Amedeo Cannone
+											---
+											26/04/2007
+																			---
+																			User Guide
+																			---
+																			Raffaele Spazzoli
+																			---
+																			04/09/2006
+																			
+User Guide
+
+
+* Introduction
+
+	The jbi4cics component maps a CICS ECI service as an internal JBI endpoint. 
+	This is simply done by deploying into a JBI ESB a service unit containing the CICS ECI service's copy cobol.
+
+	When the component is configured properly you can use it inside the ESB to
+	integrate others services.
+	For example, you can use an HTTP component to expose your cics service for
+	using it with other technologies.
+
+
+* Supported cobol data types
+
+       
+       Jbi4Cics supports the String, Binary, Packed Decimal, Zoned Decimal cobol data types, see {{{supportedCobolDataTypes.html}details}}.
+       
+    
+         
+
+* Deployment
+
+    There are two ways to deploy the component: using {{{userGuide.html#How to deploy the component using XBEAN}xbean}} or using {{{userGuide.html#How to deploy the component using WSDL}wsdl}}.
+
+    Xbean mode is the preferred way when you manually craft the service unit.
+    The WSDL way is better when using a development environment that requires the WSDL at develop time, like for example Netbeans with the SOA enterprise pack.
+
+
+* {How to deploy the component using XBEAN}
+
+
+	A service unit is configured as a spring xbean. Here is an example:
+	
++-----------------------------------------------------------+
+
+<?xml version="1.0"?>
+<beans>
+  <bean class="it.imolinfo.jbi4cics.jbi.Jbi4cicsEndpoint">
+  	<property name="copyCobolFileName" value="<COPY_COBOL>"/>
+ 	<property name="codePage" value="<CODE_PAGE>"/>
+    <property name="serviceDescriptor">    
+      <bean class="it.imolinfo.jbi4cics.webservices.descriptor.ServiceDescriptor">
+      	<property name="serviceName" value="<SERVICE_NAME>"/>
+      	<property name="operationName" value="<OPERATION_NAME>"/>
+      	<property name="serviceInterfacePackageName" value="<SERVICE_PACKAGE_NAME>"/>
+     	  <property name="serviceInterfaceName" value="<INTERFACE_NAME>"/>
+     	  <property name="inputBeanClassName" value="<INPUT_BEAN_NAME>"/>
+     	  <property name="outputBeanClassName" value="<OUPUT_BEAN_NAME>"/>     	
+     	  <property name="account">
+      		<bean class="it.imolinfo.jbi4cics.security.J2CAccount">
+      			<property name="username" value="<USERNAME>"/>
+      		  <property name="password" value="<PASSWORD>"/>      		  
+      		</bean>
+      	</property>	
+     	<property name="serviceLocation">
+      		<bean class="it.imolinfo.jbi4cics.locator.SimpleLocation">
+      			<property name="connectionTypeName" value="<CONNECTION_TYPE>"/>
+      		  <property name="locationName" value="<JNDI_CONNECTION_NAME>"/>
+      		</bean>
+      	</property> 
+      	<property name="interactionDescription">
+      		<bean class="it.imolinfo.jbi4cics.connection.jca.cics.CICSInteractionDescription">
+      			<property name="programName" value="<PROGRAM_NAME>"/>
+      		  <property name="transactionName" value="<TRANSACTION_NAME>"/>
+      		  <property name="tpn" value="<TPN>"/>      		  
+      		</bean>
+      	</property>     	
+      </bean>
+    </property>
+  </bean>
+</beans>
+
++-----------------------------------------------------------+	
+
+
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| <Name>                | <Optional>    | <Default>    | <Description>                                                      | 
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| COPY_COBOL            |      no       |              | It's name of the file containing the copy cobol.                   |
+|                       |               |              | The name is relative to the service unit root.                     |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| CODE_PAGE             | no            |              | It's the codepage used by the host. This is important for correct string representation.|
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| SERVICE_NAME          | no            |              | It's the name of the service this endpoint represents. It must be a valid java class name.|
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| OPERATION_NAME        |     yes       | execute      | It's the name of unic operation this service have. It must be a valid java method name. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| SERVICE_PACKAGE_NAME  |     no        |              | It's the name of the package of the dynamically generated classes for this service.   |
+|                       |               |              | It must be a valid java package name.                                                 |
+|                       |               |              | It will also be used (reversed) to generate the webservice namespace.                 |
+|                       |               |              | So if the package is aaa.bbb.ccc the webservice namespace will be http://ccc.bbb.aaa. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| INTERFACE_NAME        | yes | $\{SERVICE_NAME\}Interface | It's the name of the dynamically generated interface for this service. It must be a valida java class name.|
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| INPUT_BEAN_NAME       | yes | $\{SERVICE_NAME\}InputBean | It's the name of the dynamically generated java bean that will be used as unic input parameter for the operation represented by this service. |
+|                       |     |                           | It must be a valid java class name.                                                                                                           |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| OUPUT_BEAN_NAME       | yes | $\{SERVICE_NAME\}OutputBean | It's the name of the dynamically generated java bean that will be used as return parameter for the operation represented by this service.    |
+|                       |     |                            | It must be a valid java class name.                                                                                                          |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| USERNAME              |   no          |              | It's the username used for the connection to the CICS Transaction Gateway. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| PASSWORD              |   no          |              | It's the password used for the connection to the CICS Transaction Gateway. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| CONNECTION_TYPE       |   no          |              | The connection type. CICS and DUMMY are the possible values.                                                                                                                      |
+|                       |               |              | With DUMMY an echo service is created. The service doesn't connect to host and ca be useful for testing purposes or for have a look at how a copy cobol would be rendered as wsdl.| 
+|                       |               |              | With DUMMY the following parameters became optional: JNDI_CONNECTION_NAME, PROGRAM_NAME, TRANSACTION_NAME, TPN, USERNAME, PASSWORD.                                               |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| JNDI_CONNECTION_NAME  |   no          |              | It's the JNDI name for the JCA resource to use with this service.  |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| PROGRAM_NAME          |   no          |              | It's the cobol program name to be called.                          |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| TRANSACTION_NAME      |   no          |              | It's the transaction associated to the cobol program in the CICS server. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+| TPN                   |   yes         | false        | whether the transaction name or tpn name in the JCA CICS ECI interface must be setted, see the IBM JCA CICS ECI manual for more information on this parameter. |
+*-----------------------+---------------+--------------+--------------------------------------------------------------------+
+
+* {How to deploy the component using WSDL}
+
+        In this scenario we create a standard WSDL that represents our service
+        with our types and operations as usual, but before use it inside the bus
+        we must add some extra informations using the extensibility element
+        in the WSDL.
+
+        The first step is adding the namespace of the extensibility element in
+        the wsdl description
+
++------------------------------------------+
+        <wsdl:definitions ...
+
+            xmlns:imolacics="uri://schemas.imola.it/jbi/wsdl-extensions/cics/"
++------------------------------------------+
+
+        The second step involves the binding section of the wsdl where we
+        indicate some informations previously descripted in xbean file.
+
++------------------------------------------+
+  <wsdl:binding name="StatusServiceCicsBinding" type="tns:StatusServiceInterface">
+
+                <imolacics:binding servicePackageName="<SERVICE_PACKAGE_NAME>" codePage="<CODE_PAGE>">
+
+                    <imolacics:copyCobol>
+                        <CPY_FILE>
+                    </imolacics:copyCobol>
+
+                </imolacics:binding>
+                
+  </wsdl:binding>                
++------------------------------------------+
+
+        In the code above we have indicated the name of the package of the dynamically generated classes for the cics service
+        and the codepage used by the host.
+
+        The component needs the CPY file to map the CICS ECI Service.
+        This file, in the xbean way, is located inside the service unit but in
+        the wsdl way is specified inside the wsdl within the 'imolacics:copyCobol' element.
+
+        For example
+
++------------------------------------------+
+            <imolacics:copyCobol>02 inputString       PIC X(30)       DISPLAY.
+02 strlen            PIC 9(10)       DISPLAY.
+            </imolacics:copyCobol>
++------------------------------------------+
+
+        The last step is adding, in the wsdl:port, the element that configures
+        the connection to a CICS Transaction Gateway. For example:
+                
++------------------------------------------+
+  <wsdl:service name="StatusService">
+    <wsdl:port name="StatusServiceCicsPort" binding="tns:StatusServiceCicsBinding">
+
+        <imolacics:address username="<USERNAME>" password="<PASSWORD>" connectionType="<CONNECTION_TYPE>" 
+                           JNDIConnectionName="<JNDI_CONNECTION_NAME>" programName="<PROGRAM_NAME>" 
+                           transactionName="<TRANSACTION_NAME>" tpn="<TPN>" />
+
+    </wsdl:port>
+  </wsdl:service>
++------------------------------------------+        
+
+        The connection type's possible values are CICS and DUMMY.
+        With DUMMY the service doesn't connect to host and the other parameters
+        (JNDI_CONNECTION_NAME, PROGRAM_NAME, TRANSACTION_NAME, TPN, USERNAME, PASSWOR) became optional.
+        This can be useful for testing purposes or for have a look at how a copy cobol would be rendered as wsdl. 

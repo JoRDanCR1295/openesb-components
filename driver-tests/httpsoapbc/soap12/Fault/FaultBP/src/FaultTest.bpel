@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="FaultTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FaultBP/FaultTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FaultBP/FaultTest" xmlns:ns0="http://faulttest.webservice.namespace">
+    <import namespace="http://faulttest.webservice.namespace" location="FaultTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:y="http://faulttest.webservice.namespace" partnerLinkType="y:FaultTestIFServiceLink" myRole="MultiOpSameMsgElemElemIFRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="RoutingFaultVar" messageType="ns0:RoutingException_Fault"/>
+        <variable name="Operation1Out" xmlns:y="http://faulttest.webservice.namespace" messageType="y:message1Result"/>
+        <variable name="Operation1In" xmlns:y="http://faulttest.webservice.namespace" messageType="y:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation1" xmlns:y="http://faulttest.webservice.namespace" portType="y:MultiOpSameMsgElemElemIF" variable="Operation1In"/>
+        <if name="If1">
+            <condition>true()</condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                        <from>$Operation1In.body/ns0:Field1_1</from>
+                        <to variable="RoutingFaultVar" part="RoutingException"/>
+                    </copy>
+                </assign>
+                <throw name="Throw1" faultName="ns0:RoutingFault" faultVariable="RoutingFaultVar"/>
+            </sequence>
+            <else>
+                <assign name="Assign1">
+                    <copy>
+                        <from>$Operation1Out.result/ns0:Field1_1</from>
+                        <to>$Operation1Out.result/ns0:Field1_1</to>
+                    </copy>
+                    <copy>
+                        <from>$Operation1Out.result/ns0:Field1_2</from>
+                        <to>$Operation1Out.result/ns0:Field1_2</to>
+                    </copy>
+                    <copy>
+                        <from>'this is the changed value'</from>
+                        <to>$Operation1Out.result/ns0:Field1_3</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" xmlns:y="http://faulttest.webservice.namespace" portType="y:MultiOpSameMsgElemElemIF" variable="Operation1Out"/>
+    </sequence>
+</process>

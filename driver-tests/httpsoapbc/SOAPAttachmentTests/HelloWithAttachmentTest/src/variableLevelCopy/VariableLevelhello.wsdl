@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="VariableLevelHelloworldWithAttachment"
+    xmlns:types="http://example.org/mime/data/VariableLevelCopy"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="http://example.org/mime/VariableLevelCopy"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    targetNamespace="http://example.org/mime/VariableLevelCopy">
+
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+			targetNamespace="http://example.org/mime/data/VariableLevelCopy">
+        
+        <element name="body" type="string"/>
+		</schema>
+
+	</wsdl:types>
+
+    <wsdl:message name="echoData">
+        <wsdl:part name="body" element="types:body"/>
+        <wsdl:part name="picture" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+	<wsdl:portType name="VariableLevelHello">
+        <!-- wsdl mime test with enableMTOMContent disabled(default) -->
+        <wsdl:operation name="echoData">
+			<wsdl:input message="tns:echoData"/>
+			<wsdl:output message="tns:echoData"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="VariableLevelHelloBinding" type="tns:VariableLevelHello">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="echoData">
+			<soap:operation soapAction=""/>
+	    <wsdl:input>
+          <mime:multipartRelated>
+                    <mime:part> 
+                      <soap:body parts="body" use="literal"/>
+                  </mime:part>
+                    <mime:part>
+                      <mime:content part="picture" type="image/jpeg"/>
+                    </mime:part>
+                </mime:multipartRelated> 
+			</wsdl:input>
+			<wsdl:output>
+                <mime:multipartRelated>
+                    <mime:part> 
+                      <soap:body parts="body" use="literal"/>
+                  </mime:part>
+                  <mime:part>
+                      <mime:content part="picture" type="image/jpeg"/>
+                    </mime:part>
+                </mime:multipartRelated> 
+			</wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="VariableLevelHelloService">
+  		<wsdl:port name="VariableLevelHelloPort" binding="tns:VariableLevelHelloBinding">
+    			<soap:address location="http://localhost:${HttpDefaultPort}/VariableLevelHellowithAttachment"/>
+  		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>	

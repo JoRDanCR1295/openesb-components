@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="wlmseSample1PurchaseOrder" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/wlmseSample1PurchaseOrder"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/wlmseSample1PurchaseOrder" xmlns:ns1="ApprovePurchase_BPEL" xmlns:ns2="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL"
+    xmlns:ns0="http://wlmse.sample/po" xmlns:ns4="http://jbi.com.sun/wfse/xsd/workflow_po_3/task"
+    xmlns:cur="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">
+    <import location="ApprovePurchase_TM_BPEL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL"/>
+    <import location="ApprovePurchase.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="ApprovePurchase_BPEL"/>
+    <partnerLinks>
+        <partnerLink name="approveOrder" partnerLinkType="ns2:ApprovePurchaseLT" partnerRole="ApprovePurchase_Server"/>
+        <partnerLink name="purchasing" partnerLinkType="ns1:purchasingLT" myRole="purchaseOrderService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ApprovePurchaseOutput" messageType="ns2:TaskOutput"/>
+        <variable name="ApprovePurchaseInput" messageType="ns2:TaskInput"/>
+        <variable name="purchaseOrderOutput" messageType="ns1:OrderOutput"/>
+        <variable name="purchaseOrderInput" messageType="ns1:OrderInput"/>
+    </variables>
+    <sequence>
+        <receive name="ReceivePO" createInstance="yes" partnerLink="purchasing" operation="receivePurchaseOrder" portType="ns1:purcharseOrderPT" variable="purchaseOrderInput"/>
+        <if name="If1">
+            <condition> ( $purchaseOrderInput.OrderInfo/ns0:amount &gt; 200 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign1">
+            <copy>
+                <from variable="purchaseOrderInput" part="OrderInfo"/>
+                <to variable="ApprovePurchaseInput" part="part1"/>
+            </copy>
+        </assign>
+                <invoke name="InvokeApproveOrder" partnerLink="approveOrder" operation="ApprovePurchase" portType="ns2:ApprovePurchasePT"  inputVariable="ApprovePurchaseInput" outputVariable="ApprovePurchaseOutput"></invoke>
+                <if name="If2">
+                    <condition> ( $ApprovePurchaseOutput.part1/ns0:approveResult = 'Approved' ) </condition>
+                    <assign name="AssignToReply">
+            <copy>
+                <from variable="ApprovePurchaseOutput" part="part1"/>
+                <to variable="purchaseOrderOutput" part="ApprovalInfo"/>
+            </copy>
+        </assign>
+                    <else>
+                        <assign name="Assign3">
+                            <copy>
+                                <from variable="ApprovePurchaseOutput" part="part1"/>
+                                <to variable="purchaseOrderOutput" part="ApprovalInfo"/>
+                            </copy>
+                        </assign>
+                    </else>
+                </if>
+            </sequence>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$purchaseOrderInput.OrderInfo/ns0:orderId</from>
+                        <to>$purchaseOrderOutput.ApprovalInfo/ns0:orderId</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>Approved</literal>
+                        </from>
+                        <to>$purchaseOrderOutput.ApprovalInfo/ns0:approveResult</to>
+                    </copy>
+                    <copy>
+                        <from>cur:current-date()</from>
+                        <to>$purchaseOrderOutput.ApprovalInfo/ns0:replyDate</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>you order is aproved by automated process</literal>
+                        </from>
+                        <to>$purchaseOrderOutput.ApprovalInfo/ns0:description</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="ReplyPo" partnerLink="purchasing" operation="receivePurchaseOrder" portType="ns1:purcharseOrderPT" variable="purchaseOrderOutput"/>
+    </sequence>
+   
+</process>

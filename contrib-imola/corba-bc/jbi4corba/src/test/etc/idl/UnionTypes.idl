@@ -1,0 +1,60 @@
+module it{
+module imolinfo{
+module jbi4corba{
+module test{
+	
+	union TempUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+	
+	union FirstUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		case 3: TempUnion uni1;
+		case 4: sequence <TempUnion> uni2;
+		default: any two_format;
+	};
+
+	union SecondUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+
+	union ThirdUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: sequence <FirstUnion> third;
+		default: boolean altro; 
+	}; 
+	
+	union ForthUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: FirstUnion third;
+		default: boolean altro; 
+	}; 
+	
+	struct ComplexStruct1 {
+		boolean          fieldBoolean;
+		char               fieldChar;
+	        SecondUnion    fieldWChar;
+	};
+	
+	typedef ComplexStruct1 ArrayComplexStruct1[2][3];
+	
+	interface Echo {
+		string echo1(in ThirdUnion msg);
+		ThirdUnion echo2(in SecondUnion msg);
+		ComplexStruct1 echo3(in string msg);
+		string echo4(in ComplexStruct1 msg);
+		string echo5(in ArrayComplexStruct1 msg);
+		ArrayComplexStruct1 echo6(in string msg);
+		};
+		
+	interface Echo1 {
+		ForthUnion echo1(in ThirdUnion msg);
+	};		
+};};};}; 

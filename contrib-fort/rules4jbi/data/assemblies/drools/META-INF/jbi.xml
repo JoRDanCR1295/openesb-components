@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi version="1.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://java.sun.com/xml/ns/jbi"
+     xmlns:ns1="http://www.example.org/soap/drools/definitions"
+     xmlns:ns2="http://www.example.org/rules/drools/definitions">
+    
+    <service-assembly>
+        <identification>
+            <name>drools-jsr94-tck-sa</name>
+            <description>Service assembly for Drools</description>
+        </identification>
+                
+        <service-unit>
+            <identification>
+                <name>drools-soap-endpoint</name>
+                <description>Service unit with SOAP inbound endpoint for Drools</description>
+            </identification>
+            <target>
+                <artifacts-zip>http-su.zip</artifacts-zip>
+                <component-name>sun-http-binding</component-name>
+            </target>
+        </service-unit>
+        <service-unit>
+            <identification>
+                <name>drools-jsr94-tck-rules</name>
+                <description>Service unit containing JSR 94 TCK rules for Drools</description>
+            </identification>
+            <target>
+                <artifacts-zip>rule-su.zip</artifacts-zip>
+                <component-name>fort-rules-engine</component-name>
+            </target>
+        </service-unit>
+        <connections>
+            <connection>
+                <consumer service-name="ns1:DroolsService" endpoint-name="DroolsPort"/>
+                <provider service-name="ns2:DroolsServiceType" endpoint-name="DroolsServiceProvider"/>
+            </connection>        
+        </connections>
+    </service-assembly>        
+</jbi>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="subBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/correlationBPEL2/subBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/correlationBPEL2/subBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/subWS" xmlns:ns2="http://j2ee.netbeans.org/wsdl/parentWS" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+   <import namespace="http://j2ee.netbeans.org/wsdl/subWS" location="subWS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/parentWS" location="parentWS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink4" partnerLinkType="ns1:subWS14" myRole="endSubBPRole"/>
+      <partnerLink name="PartnerLink3" partnerLinkType="ns1:subWS13" myRole="callWrongInstanceRole"/>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns1:subWS12" myRole="associateCorrelationWithInstance2Role"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:subWS1" myRole="createInstanceRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="CallBackToParentIn" messageType="ns2:parentWSOperationRequest1"/>
+      <variable name="EndSubBPIn" messageType="ns1:subWSOperationRequest"/>
+      <variable name="CallWrongInstanceOut" messageType="ns1:callWrongInstanceReply"/>
+      <variable name="CallWrongInstanceIn" messageType="ns1:callWrongInstanceRequest"/>
+      <variable name="AssociateCorrelationWithInstance2In" messageType="ns1:associateCorrelationWithInstance2"/>
+      <variable name="CreateInstanceIn" messageType="ns1:createInstanceRequest"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="JoinCorrelationSet2" properties="ns1:property2"/>
+      <correlationSet name="JoinCorrelationSet1" properties="ns1:property2"/>
+      <correlationSet name="CreateInstanceCorrelaion" properties="ns1:createInstanceProperty"/>
+   </correlationSets>
+   <sequence>
+      <receive name="Receive2" createInstance="yes" partnerLink="PartnerLink1" operation="createInstance" portType="ns1:createInstance" variable="CreateInstanceIn">
+         <correlations>
+            <correlation set="CreateInstanceCorrelaion" initiate="yes"/>
+         </correlations>
+      </receive>
+      <if name="If1">
+         <condition>   ( $CreateInstanceIn.part1 = 'Create Instance 2' )   </condition>
+         <sequence name="Sequence1">
+            <receive name="initiateCorrForInstance2" createInstance="no" partnerLink="PartnerLink2" operation="associateCorrelationWithInstance2" portType="ns1:associateCorrelationWithInstance2" variable="AssociateCorrelationWithInstance2In">
+               <correlations>
+                  <correlation set="CreateInstanceCorrelaion" initiate="no"/>
+                  <correlation set="JoinCorrelationSet1" initiate="yes"/>
+                  <correlation set="JoinCorrelationSet2" initiate="yes"/>
+               </correlations>
+            </receive>
+            <receive name="waitForMesgToCompleteInstance2" createInstance="no" partnerLink="PartnerLink4" operation="endSubBP" portType="ns1:endSubBP" variable="EndSubBPIn">
+               <correlations>
+                  <correlation set="CreateInstanceCorrelaion" initiate="no"/>
+               </correlations>
+            </receive>
+         </sequence>
+         <else>
+            <sequence name="Sequence3">
+               <scope name="Scope1">
+                  <faultHandlers>
+                     <catchAll>
+                        <sequence name="Sequence6">
+                           <assign name="Assign2">
+                              <copy>
+                                    <from>
+                                          <literal>Correct behavior - correlationViolation because values for JoinCorrelationSet1 and JoinCorrelationSet2 are already bound to another instance</literal>
+                                       </from>
+                                       <to part="part1" variable="CallWrongInstanceOut"/>
+                                 </copy>
+                           </assign>
+                        </sequence>
+                     </catchAll>
+                  </faultHandlers>
+                  <sequence name="Sequence7">
+                     <receive name="Receive3" createInstance="no" partnerLink="PartnerLink3" operation="callWrongInstance" portType="ns1:callWrongInstance" variable="CallWrongInstanceIn">
+                        <correlations>
+                              <correlation set="CreateInstanceCorrelaion" initiate="no"/>
+                                 <correlation set="JoinCorrelationSet2" initiate="join"/>
+                                 <correlation set="JoinCorrelationSet1" initiate="join"/>
+                           </correlations>
+                     </receive>
+                     <assign name="Assign3">
+                        <copy>
+                              <from>
+                                 <literal>SHOULD NEVER BE HERE</literal>
+                              </from>
+                                 <to part="part1" variable="CallBackToParentIn"/>
+                           </copy>
+                     </assign>
+                  </sequence>
+               </scope>
+               <reply name="Reply2" partnerLink="PartnerLink3" operation="callWrongInstance" portType="ns1:callWrongInstance" variable="CallWrongInstanceOut"/>
+            </sequence>
+         </else>
+      </if>
+   </sequence>
+</process>

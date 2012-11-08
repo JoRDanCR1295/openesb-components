@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FILE_IN"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FILE_IN" name="FILE_IN" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types/>
+    <wsdl:message name="FILE_INOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="FILE_INOperationReply">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FILE_INPortType">
+        <wsdl:operation name="FILE_INOperation">
+            <wsdl:input name="input1" message="tns:FILE_INOperationRequest"/>
+            <wsdl:output name="output1" message="tns:FILE_INOperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="FILE_INBinding" type="tns:FILE_INPortType">
+        <file:binding/>
+        <wsdl:operation name="FILE_INOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="input%d.txt" pollingInterval="1000" fileNameIsPattern="true"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <file:message use="literal" fileName="status%d.out" fileNameIsPattern="true"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FILE_INService">
+        <wsdl:port name="FILE_INPort" binding="tns:FILE_INBinding">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/DownloaderUsingTransferCompApp/test/DownloaderUsingTransferTest/in_out"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="FILE_INPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FILE_INPortTypeRole" portType="tns:FILE_INPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

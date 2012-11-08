@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SampleXACMLAccess" targetNamespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://xml.sun.com/gte/schema/XACMLRequest">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess">
+            <xsd:import schemaLocation="XACMLRequestData.xsd" namespace="http://xml.sun.com/gte/schema/XACMLRequest"/>
+            <xsd:import namespace="http://xml.sun.com/gte/schema/XACMLRequest" schemaLocation="XACMLRequestData.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="authorizeRequest">
+        <part name="part1" element="ns0:Request"/>
+    </message>
+    <message name="authorizeReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="interface">
+        <operation name="authorize">
+            <input name="input1" message="tns:authorizeRequest"/>
+            <output name="output1" message="tns:authorizeReply"/>
+        </operation>
+    </portType>
+    <binding name="binding" type="tns:interface">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="authorize">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="XACMLService">
+        <port name="endpoint" binding="tns:binding">
+            <soap:address location="http://localhost:18181/XACMLService/endpoint"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="XACMLAccess">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="interfaceRole" portType="tns:interface"/>
+    </plnk:partnerLinkType>
+</definitions>

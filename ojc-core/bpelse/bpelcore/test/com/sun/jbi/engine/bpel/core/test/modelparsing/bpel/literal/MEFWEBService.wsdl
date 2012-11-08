@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<wsdl:definitions targetNamespace="http://www.truebaseline.com/MEF" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:s1="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.truebaseline.com/MEF" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://www.truebaseline.com/MEF" xmlns:ns0="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd">
+    <s:import schemaLocation="WorkflowInformation.xsd" namespace="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd"/>
+</s:schema>
+  </wsdl:types>
+<wsdl:message name="SignalEventSoapIn">
+  <wsdl:part name="parameters" element="s1:WorkflowInformation" /> 
+  </wsdl:message>
+<wsdl:message name="SignalEventSoapOut">
+  <wsdl:part name="parameters" element="s1:WorkflowInformation" /> 
+  </wsdl:message>
+    <wsdl:portType name="MEFWEBServiceSoap">
+<wsdl:operation name="SignalEvent">
+  <wsdl:input message="tns:SignalEventSoapIn" /> 
+  <wsdl:output message="tns:SignalEventSoapOut" /> 
+  </wsdl:operation>
+  </wsdl:portType>
+<wsdl:binding name="MEFWEBServiceSoap" type="tns:MEFWEBServiceSoap">
+  <soap:binding transport="http://schemas.xmlsoap.org/soap/http" /> 
+<wsdl:operation name="SignalEvent">
+  <soap:operation soapAction="http://www.truebaseline.com/MEF/SignalEvent" style="document" /> 
+<wsdl:input>
+  <soap:body use="literal" /> 
+  </wsdl:input>
+<wsdl:output>
+  <soap:body use="literal" /> 
+  </wsdl:output>
+  </wsdl:operation>
+  </wsdl:binding>
+    <vprop:property name="CorrelationId" type="s:string"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationId" messageType="tns:SignalEventSoapIn" part="parameters">
+        <vprop:query>/s1:WorkflowInformation/s1:EventMessage/s1:CorrelationId</vprop:query>
+    </vprop:propertyAlias>
+</wsdl:definitions>

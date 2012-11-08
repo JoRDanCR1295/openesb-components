@@ -1,0 +1,129 @@
+																			---
+																			Configuring SU as consumer
+																			---
+																			Mirco Casoni, Giancarlo Valeri, Marco Piraccini
+																			---
+																			23/02/2009
+
+Role: Consumer
+
+
+* Introduction
+
+	The jbi4corba component may act as a <<consumer>>.
+
+	Two scenarios are supported:
+	
+	* IDL-first
+	
+	* WSDL-first
+	
+	[]
+	
+	In the <IDL-first> scenario, a CORBA servant is created from the IDL. 
+	
+	In the <WSDL-first> scenario the component get the WSDL from the 'target endpoint' and
+	creates the CORBA servant that <<consumes>> the operations exposed by that endpoint.
+
+	In both cases, you can create a CORBA client to communicate to the target endpoint
+	via Jbi4Corba (in the <WSDL-first> case the SU generates the IDL files
+	during the dynamic construction of the servant).
+
+	Otherwise, you can create another SU that uses this component inside the ESB using CORBA
+	(e.g.: the Jbi4Corba component in provider mode).
+
+
+* Notes
+
+    [[1]] <<service name>>
+
+          The service unit must register the CORBA servant in the CORBA name service,
+          so you should active it before starting the SU.
+
+
+    [[2]] <<start order>>
+
+          First of all you should start the Name Service.
+          If you have a CORBA Client you should active it after the CORBA servant
+          has registered itself in the Name Service to avoid problems caused by different IOR used
+          from the client and the servant.
+          
+    [[3]] <<supported WSDL types and constructs>>
+       
+       In the <WSDL-first> case, Jbi4Corba supports the main WSDL types
+       , see {{{../consumer/consumer.html}details}} for the list of supported types.
+       
+       In the <IDL-first> case, Jbi4Corba supports the main IDL types
+       , see {{{../provider/supportedIDLDataTypes.html}details}} for the list of supported types.             
+       
+    []          
+
+
+* {How to deploy the component}
+
+        In this scenario we create a standard WSDL that represents our service
+        with our types and operations as usual, but before use it inside the bus
+        we must add some extra information using the extensibility element
+        in the WSDL.
+
+        The first step is adding the namespace of the extensibility element in
+        the WSDL description
+
++------------------------------------------+
+  <wsdl:definitions ...
+
+    xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/"
++------------------------------------------+
+
+        The second step involves the binding section of the WSDL where we
+        indicate the 'imolacorba:idl' element. We have two cases:
+        
+        * In the <IDL-first> the IDL is the one used to generate the WSDL (for example
+        	(using the Netbeans plugin).
+        	
+        * In the <WSDL-first> case, the component don't needs the IDL file,
+        	so this element is empty, for example:
+        	
+        	[]      
+
++------------------------------------------+
+  <binding name="EchoServiceWSDLJBIBinding" type="tns:EchoServiceWSDLPortType">
+    <imolacorba:binding>
+      <imolacorba:idl/>
+    </imolacorba:binding>
+    [...]
+  </binding>
++------------------------------------------+
+
+        The last step to prepare the WSDL is adding, in the wsdl:port,
+        the element that instructs the component about the name of the CORBA servant
+        and the name of the CORBA service name. For example:
+
++------------------------------------------+
+  <service name="EchoServiceWSDL">
+    <port binding="tns:EchoServiceWSDLJBIBinding" name="EchoServiceWSDLJBIPort">
+      <imolacorba:address name="<CORBA_SERVANT>" localizationType="NameService">
+        <imolacorba:orb>
+          <imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+          <imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+        </imolacorba:orb>
+      </imolacorba:address>
+    </port>
+  </service>
++------------------------------------------+
+
+        The localizationType is the way used to make available the servant, the only supported mode at moment is via the Name Service so NameService is the only allowed value.
+         
+        The name of the CORBA servant is defined by the user, the CORBA client must use the same name when looking up the CORBA servant in the Name Service.
+
+        In the XML code above we can find an example of some properties required by the jdk orb for the correct service unit initialization:
+
+        * org.omg.CORBA.ORBInitialPort
+
+            This is the <<port>> where the CORBA name service is listening.
+
+        * org.omg.CORBA.ORBInitialHost
+
+            This is the <<host>> where the CORBA name service is listening
+        
+        []

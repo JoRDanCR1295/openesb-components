@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileScopeWithinWhile" 
+    targetNamespace="http://www.mycomp.org/ScopeWithinWhile/ScopeWithinWhile"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/ScopeWithinWhile/ScopeWithinWhile" xmlns:ns1="http://www.mycomp.org/ScopeWithinWhile/ScopeWithinWhileTest">
+    <import namespace="http://www.mycomp.org/ScopeWithinWhile/ScopeWithinWhileTest" location="WhileScopeWithinWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:ScopeWithinWhileTestPartnerLinkType" myRole="ScopeWithinWhileTestProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Count" messageType="ns1:CountMsg"/>
+        <variable name="scope_in" messageType="ns1:RequestMsg"/>
+        <variable name="scope_out" messageType="ns1:ResponseMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ScopeOperation" portType="ns1:ScopePort" variable="scope_in"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="Count" variable="Count"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $Count.Count &lt;= 3 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                    <from variable="scope_in" part="Req"/><to variable="scope_out" part="Res"/>
+                    </copy>
+                    <copy>
+                    <from>concat($scope_out.Res, 'while')</from><to part="Req" variable="scope_in"/>
+                    </copy>
+                </assign>
+                <scope name="Scope1">
+                    <sequence name="Sequence2">
+                        <assign name="Assign4">
+                            <copy>
+                            <from>concat($scope_in.Req, 'Scope')</from><to part="Req" variable="scope_in"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <assign name="Assign3">
+                    <copy>
+                    <from> ( $Count.Count + 1 ) </from><to part="Count" variable="Count"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign5">
+            <copy>
+            <from variable="scope_in" part="Req"/><to variable="scope_out" part="Res"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="ScopeOperation" portType="ns1:ScopePort" variable="scope_out"/>
+    </sequence>
+   
+</process>

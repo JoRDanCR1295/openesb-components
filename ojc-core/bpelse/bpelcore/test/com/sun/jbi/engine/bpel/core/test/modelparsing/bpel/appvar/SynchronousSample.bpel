@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process 
+    name="SynchronousSample" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1" 
+    xmlns:ns1="http://localhost/SynchronousSample/SynchronousSample" 
+    xmlns:ns0="http://xml.netbeans.org/schema/SynchronousSample"
+    xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import location="SynchronousSample.xsd" importType="http://www.w3.org/2001/XMLSchema" namespace="http://xml.netbeans.org/schema/SynchronousSample"/>
+    <import namespace="http://localhost/SynchronousSample/SynchronousSample" location="SynchronousSample.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="SynchronousSample" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    <sequence>
+        <receive name="start" partnerLink="SynchronousSample" operation="operation1" portType="ns1:portType1" variable="inputVar" createInstance="yes"/>
+        <if name="If1">
+            <condition>starts-with($inputVar.inputType/ns0:paramA, 'CDATA')</condition>
+            <assign name="Assign3">
+                <copy>
+                    <from>
+                        <literal><![CDATA[<syn:typeA xmlns:syn="http://xml.netbeans.org/schema/SynchronousSample"><syn:paramA>CDATA: ${welcomeMessage}</syn:paramA></syn:typeA>]]></literal>
+                    </from>
+                    <to variable="outputVar" part="resultType"/>
+                </copy>
+            </assign>
+            <elseif>
+                <condition>starts-with($inputVar.inputType/ns0:paramA, 'EII')</condition>
+                <assign name="Assign2">
+                    <copy>
+                        <from>
+                            <literal><syn:typeA xmlns:syn="http://xml.netbeans.org/schema/SynchronousSample"><syn:paramA>EII: ${welcomeMessage}</syn:paramA></syn:typeA></literal>
+                        </from>
+                        <to variable="outputVar" part="resultType"/>
+                    </copy>
+                </assign>
+            </elseif>
+            <else>
+                <assign name="Assign1">
+                    <copy>
+                        <from>
+                            <literal>${welcomeMessage}</literal>
+                        </from>
+                        <to>$outputVar.resultType/ns0:paramA</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+
+        <wait name="Wait1">
+            <for>'P0Y0M0DT0H${minutes2wait}M0.0S'</for>
+        </wait>
+
+        <wait name="Wait2">
+            <until>'${dateUntilWait}'</until>
+        </wait>
+
+        <reply name="end" partnerLink="SynchronousSample" operation="operation1" portType="ns1:portType1" variable="outputVar"/>
+    </sequence>
+</process>
+
+
+
+

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RepeatUntil"
+    targetNamespace="http://enterprise.netbeans.org/bpel/IterativeScopes/RepeatUntil"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/IterativeScopes/RepeatUntil"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/interfaceRepUntil">
+    <import namespace="http://j2ee.netbeans.org/wsdl/interfaceRepUntil" location="interfaceRepUntil.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="repUntilPartner" partnerLinkType="ns3:RepUntilPLT" myRole="RepUntilPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InitReplyVar" messageType="ns3:ReplyMsg"/>
+        <variable name="InitRecVar" messageType="ns3:InMsg"/>
+        <variable name="OutVar" type="xsd:string"/>
+    </variables>
+    <sequence>
+        <receive name="InitRec" createInstance="yes" partnerLink="repUntilPartner" operation="RepUntilOper" portType="ns3:RepUntilPT" variable="InitRecVar"/>
+        <assign name="InitAssign">
+            <copy>
+                <from>$InitRecVar.InPart/input</from>
+                <to variable="OutVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <variables>
+                <variable name="whileCounter" type="xsd:int"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="ns2:uninitializedVariable">
+                    <sequence name="FaultHandlerSeq">
+                        <assign name="AssignInFault">
+                            <copy>
+                                <from>concat($OutVar, ' In S1 Fault:')</from>
+                                <to variable="OutVar"/>
+                            </copy>
+                        </assign>
+                        <if name="Count1CompensateAll">
+                            <condition> ( number($InitRecVar.InPart/iterCount) = 1 ) </condition>
+                            <compensate/>
+                        </if>
+                        <if name="Count2CompensateScope2">
+                            <condition> ( number($InitRecVar.InPart/iterCount) = 2 ) </condition>
+                            <compensateScope target="Scope2" name="CompensateScope2"/>
+                        </if>
+                        <if name="Count3CompensateScope3">
+                            <condition> ( number($InitRecVar.InPart/iterCount) = 3 ) </condition>
+                            <compensateScope target="Scope3" name="CompensateScope3"/>
+                        </if>
+                    </sequence>
+                </catch>
+            </faultHandlers>          
+            <sequence name="S1Seq">
+                <assign name="initalizeCounter">
+                    <copy>
+                        <from>0</from>
+                        <to variable="whileCounter"/>
+                    </copy>
+                    <copy>
+                        <from>concat($OutVar, ' In Main:')</from>
+                        <to variable="OutVar"/>
+                    </copy>
+                </assign>
+                <repeatUntil name="RepeatUntil1">
+                    <sequence name="RU1Seq">
+                        <assign name="incrementCounter">
+                            <copy>
+                                <from>     ( $whileCounter + 1 )     </from>
+                                <to variable="whileCounter"/>
+                            </copy>
+                        </assign>
+                        <scope name="Scope2">
+                            <variables>
+                                <variable name="Scope2Var" type="xsd:string"/>
+                            </variables>
+                            <compensationHandler>
+                                <sequence name="S2CHSeq">
+                                    <assign name="S2CHAssign">
+                                        <copy>
+                                            <from>concat($OutVar, ' S2 CH with State:', $Scope2Var)</from>
+                                            <to variable="OutVar"/>
+                                        </copy>
+                                    </assign>
+                                    <compensate/>
+                                </sequence>
+                            </compensationHandler>
+                            <sequence name="S2Seq">
+                                <assign name="S2Start">
+                                    <copy>
+                                        <from>concat(' In S2 iter:', $whileCounter)</from>
+                                        <to variable="Scope2Var"/>
+                                    </copy>
+                                </assign>
+                                <assign name="S2End">
+                                    <copy>
+                                        <from>concat($OutVar, $Scope2Var)</from>
+                                        <to variable="OutVar"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </scope>
+                        <scope name="Scope3">
+                            <variables>
+                                <variable name="Scope3Var" type="xsd:string"/>
+                            </variables>
+                            <compensationHandler>
+                                <sequence name="S3CHSeq">
+                                    <assign name="S3CHAssign">
+                                        <copy>
+                                            <from>concat($OutVar, ' S3 CH with State: ', $Scope3Var)</from>
+                                            <to variable="OutVar"/>
+                                        </copy>
+                                    </assign>
+                                    <compensate/>
+                                </sequence>
+                            </compensationHandler>
+                            <sequence name="S3Seq">
+                                <assign name="S3Start">
+                                    <copy>
+                                        <from>concat(' In S3 iter:', $whileCounter)</from>
+                                        <to variable="Scope3Var"/>
+                                    </copy>
+                                </assign>
+                                <assign name="S3End">
+                                    <copy>
+                                        <from>concat($OutVar, $Scope3Var)</from>
+                                        <to variable="OutVar"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </scope>
+                    </sequence>
+                    <condition> ( $whileCounter &gt;= 2 ) </condition>
+                </repeatUntil>
+                <assign name="S1BeforeThrow">
+                    <copy>
+                        <from>concat($OutVar, ' S1 before fault: ')</from>
+                        <to variable="OutVar"/>
+                    </copy>
+                </assign>
+                <ns2:throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+        <assign name="AssignReply">
+            <copy>
+                <from variable="OutVar"/>
+                <to>$InitReplyVar.ReplyPart/OutVar</to>
+            </copy>
+        </assign>
+        <reply name="InitReply" partnerLink="repUntilPartner" operation="RepUntilOper" portType="ns3:RepUntilPT" variable="InitReplyVar"/>
+    </sequence>
+</process>

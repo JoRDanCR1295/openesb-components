@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMS" targetNamespace="http://j2ee.netbeans.org/wsdl/JMS"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMS" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types/>
+     <message name="SolicitedReadInputMessage">
+    </message>
+    <message name="JMSOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="JMSPortType">
+        <operation name="JMSOperation">
+            <input name="input1" message="tns:JMSOperationRequest"/>
+        </operation>
+        <operation name="JMSRead">
+            <input name="input1" message="tns:SolicitedReadInputMessage"/>
+            <output name="output1" message="tns:JMSOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="JMSBinding" type="tns:JMSPortType">
+        <jms:binding/>
+        <operation name="JMSOperation">
+            <jms:operation destination="SyncReadQueueLookup" destinationType="Queue"/>
+            <input name="input1">
+                <jms:message  messageType="TextMessage" textPart="part1"/>
+            </input>
+        </operation>
+        <operation name="JMSRead">
+            <jms:operation verb="read" destination="SyncReadQueueLookup" destinationType="Queue"/>
+            <input name="input1">
+                <jms:message/>
+            </input>
+            <output name="output1">
+                <jms:message  messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="JMSService">
+        <port name="JMSPort" binding="tns:JMSBinding">
+	          <jms:address connectionURL="lookup://jms/tx/default"/>  
+	          <!--
+            <jms:address connectionURL="jndi://">
+                <jms:jmsjcaOptions>
+                    <![CDATA[
+                        java.naming.factory.initial=com.sun.appserv.naming.S1ASCtxFactory
+                        java.naming.provider.url=iiop://localhost:3700
+                        java.naming.security.principal=admin
+                        java.naming.security.credentials=adminadmin
+                        JMSJCA.QueueCF=test/mq/qcf
+                    ]]>
+                </jms:jmsjcaOptions>
+            </jms:address>
+            -->
+
+        </port>
+    </service>
+</definitions>

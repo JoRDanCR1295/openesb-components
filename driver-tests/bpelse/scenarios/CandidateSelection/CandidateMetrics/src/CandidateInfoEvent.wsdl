@@ -1,0 +1,109 @@
+<definitions targetNamespace="CandidateInfoEvent_iep"
+             xmlns:tns="CandidateInfoEvent_iep"
+             xmlns:typens="CandidateInfoEvent_iep"
+             xmlns:defns="CandidateInfoEvent_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="CandidateInfoEvent_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="CandidateEvent_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ssn" type="xsd:int"/>
+                    <xsd:element name="dob" type="xsd:date"/>
+                    <xsd:element name="gender" type="xsd:string"/>
+                    <xsd:element name="state" type="xsd:string"/>
+                    <xsd:element name="degree" type="xsd:string"/>
+                    <xsd:element name="experience" type="xsd:double"/>
+                    <xsd:element name="tech1_name" type="xsd:string"/>
+                    <xsd:element name="tech1_years" type="xsd:double"/>
+                    <xsd:element name="tech2_name" type="xsd:string"/>
+                    <xsd:element name="tech2_years" type="xsd:double"/>
+                    <xsd:element name="tech3_name" type="xsd:string"/>
+                    <xsd:element name="tech3_years" type="xsd:double"/>
+                    <xsd:element name="tech4_name" type="xsd:string"/>
+                    <xsd:element name="tech4_years" type="xsd:double"/>
+                    <xsd:element name="tech5_name" type="xsd:string"/>
+                    <xsd:element name="tech5_years" type="xsd:double"/>
+                    <xsd:element name="applydate" type="xsd:date"/>
+                    <xsd:element name="selected" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="CandidateEventBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="CandidateEvent_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="ssn" type="xsd:int"/>
+                                <xsd:element name="dob" type="xsd:date"/>
+                                <xsd:element name="gender" type="xsd:string"/>
+                                <xsd:element name="state" type="xsd:string"/>
+                                <xsd:element name="degree" type="xsd:string"/>
+                                <xsd:element name="experience" type="xsd:double"/>
+                                <xsd:element name="tech1_name" type="xsd:string"/>
+                                <xsd:element name="tech1_years" type="xsd:double"/>
+                                <xsd:element name="tech2_name" type="xsd:string"/>
+                                <xsd:element name="tech2_years" type="xsd:double"/>
+                                <xsd:element name="tech3_name" type="xsd:string"/>
+                                <xsd:element name="tech3_years" type="xsd:double"/>
+                                <xsd:element name="tech4_name" type="xsd:string"/>
+                                <xsd:element name="tech4_years" type="xsd:double"/>
+                                <xsd:element name="tech5_name" type="xsd:string"/>
+                                <xsd:element name="tech5_years" type="xsd:double"/>
+                                <xsd:element name="applydate" type="xsd:date"/>
+                                <xsd:element name="selected" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="CandidateEvent_Msg">
+    <part name="input" element="typens:CandidateEvent_MsgObj"/>
+</message>
+<message name="CandidateEventBatch_Msg">
+    <part name="input" element="typens:CandidateEventBatch_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="CandidateEvent">
+        <input message="tns:CandidateEvent_Msg"/>
+    </operation>
+    <operation name="CandidateEventBatch">
+        <input message="tns:CandidateEventBatch_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="CandidateEvent">
+        <soap:operation soapAction="CandidateEvent"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="CandidateEventBatch">
+        <soap:operation soapAction="CandidateEventBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/CandidateInfoEvent_iep"/>
+    </port>
+</service>
+</definitions>

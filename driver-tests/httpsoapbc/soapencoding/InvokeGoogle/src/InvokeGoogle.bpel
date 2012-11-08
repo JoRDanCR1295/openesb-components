@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="InvokeGoogle" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeGoogle"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InvokeGoogle" xmlns:ns1="http://stc.com/echo" xmlns:ns2="urn:GoogleSearch" xmlns:ns0="http://schemas.xmlsoap.org/soap/encoding/">
+    <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:GoogleSearch" location="GoogleSearch.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="GoogleSearch" partnerLinkType="ns2:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+        <partnerLink name="echo" partnerLinkType="ns1:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" type="ns2:ResultElement"/>
+        <variable name="EchoOut1" messageType="ns1:echoResponse"/>
+        <variable name="DoGoogleSearchOut1" messageType="ns2:doGoogleSearchResponse"/>
+        <variable name="DoGoogleSearchIn1" messageType="ns2:doGoogleSearch"/>
+        <variable name="EchoIn1" messageType="ns1:echo"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="echo" operation="echo" portType="ns1:echo" variable="EchoIn1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$EchoIn1.part/ns1:key</from>
+                <to variable="DoGoogleSearchIn1" part="key"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:queryString</from>
+                <to variable="DoGoogleSearchIn1" part="q"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:startIndex</from>
+                <to variable="DoGoogleSearchIn1" part="start"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:maxResults</from>
+                <to variable="DoGoogleSearchIn1" part="maxResults"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:filter</from>
+                <to variable="DoGoogleSearchIn1" part="filter"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:restricts</from>
+                <to variable="DoGoogleSearchIn1" part="restrict"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:safesearch</from>
+                <to variable="DoGoogleSearchIn1" part="safeSearch"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:languageRestriction</from>
+                <to variable="DoGoogleSearchIn1" part="lr"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:ie</from>
+                <to variable="DoGoogleSearchIn1" part="ie"/>
+            </copy>
+            <copy>
+                <from>$EchoIn1.part/ns1:oe</from>
+                <to variable="DoGoogleSearchIn1" part="oe"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="GoogleSearch" operation="doGoogleSearch" portType="ns2:GoogleSearchPort" inputVariable="DoGoogleSearchIn1" outputVariable="DoGoogleSearchOut1"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$DoGoogleSearchOut1.return/resultElements/*[1]/snippet</from>
+                <to>$EchoOut1.part/ns1:snippet</to>
+            </copy>
+            <copy>
+                <from>$DoGoogleSearchOut1.return/resultElements/*[1]/URL</from>
+                <to>$EchoOut1.part/ns1:URL</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="echo" operation="echo" portType="ns1:echo" variable="EchoOut1"/>
+   </sequence>
+   
+</process>

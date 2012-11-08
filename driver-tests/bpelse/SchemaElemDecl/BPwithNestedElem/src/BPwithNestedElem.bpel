@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BPwithNestedElem"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BPwithNestedElem"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/BPwithNestedElem" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BPwithNestedElem">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/BPwithNestedElem" location="BPwithNestedElem.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="ExtPartLink" partnerLinkType="ns1:BPwithNestedElemPartner" myRole="ExtPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="ExtPTOperOut" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="ExtPTOperIn" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ExtPartLink" operation="ExtPTOper" portType="ns1:ExtPT" variable="ExtPTOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$ExtPTOperIn.part1/Name</bpws:from>
+                <bpws:to>$ExtPTOperOut.part1/Name</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$ExtPTOperIn.part1/msg/msgId</bpws:from>
+                <bpws:to>$ExtPTOperOut.part1/msg/msgId</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($ExtPTOperIn.part1/msg/msgStr, ' Added in the BPEL BPWithNestedElem UNQualified')</bpws:from>
+                <bpws:to>$ExtPTOperOut.part1/msg/msgStr</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ExtPartLink" operation="ExtPTOper" portType="ns1:ExtPT" variable="ExtPTOperOut"/>
+    </sequence>
+</process>

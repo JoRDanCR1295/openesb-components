@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="AttrQService" targetNamespace="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:ns0="http://j2ee.netbeans.org/xsd/AttrQTest/AttrQSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/xsd/AttrQTest/AttrQSchema" 
+            xmlns:tns="http://j2ee.netbeans.org/xsd/AttrQTest/AttrQSchema" 
+            attributeFormDefault="qualified" elementFormDefault="qualified" 
+            xmlns:ns1="http://xml.netbeans.org/schema/AttrSchema">
+            <xsd:import schemaLocation="AttrSchema.xsd" namespace="http://xml.netbeans.org/schema/AttrSchema"/>
+            <xsd:complexType name="SubType">
+                <xsd:sequence>
+                    <xsd:element name="info" type="xsd:int"></xsd:element>
+                </xsd:sequence>
+                <xsd:attribute ref="ns1:intAttr"/>
+            </xsd:complexType>
+            <xsd:complexType name="MainType">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"></xsd:element>
+                    <xsd:element name="child" type="tns:SubType"></xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="idAttr" type="xsd:int"/>
+            </xsd:complexType>
+            <xsd:element name="ReqElem" type="xsd:string"></xsd:element>
+            <xsd:element name="RespElem" type="tns:MainType"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="AttrQReq">
+        <part name="ReqPart" element="ns0:ReqElem"/>
+    </message>
+    <message name="AttrQRes">
+        <part name="RespPart" element="ns0:RespElem"/>
+    </message>
+    <portType name="AttrQPT">
+        <operation name="AttrQOper">
+            <input name="input1" message="tns:AttrQReq"/>
+            <output name="output1" message="tns:AttrQRes"/>
+            <fault name="fault1" message="tns:AttrQRes"/>
+        </operation>
+    </portType>
+    <binding name="AttrQPTBinding" type="tns:AttrQPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AttrQOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="ReqPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="RespPart"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="AttrQService">
+        <port name="AttrQPTBindingPort" binding="tns:AttrQPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/servc/AttrQServc"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="AttrQPLT">
+        <plnk:role name="AttrQPTRole" portType="tns:AttrQPT"/>
+    </plnk:partnerLinkType>
+</definitions>

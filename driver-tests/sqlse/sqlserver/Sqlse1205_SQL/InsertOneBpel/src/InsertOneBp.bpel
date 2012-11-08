@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InsertOneBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InsertOneBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InsertOneBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/InsertOneBpel" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="InsertOneSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InsertOneBpel" location="InsertOneBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:InsertOneBpelPartner" partnerRole="InsertOneBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:InsertOneSql_sqlsePartnerLinkType" myRole="InsertOneSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="InsertOneOut" messageType="ns1:InsertOneResponse"/>
+      <bpws:variable name="InsertOneBpelOperationOut" messageType="ns2:InsertOneBpelOperationReply"/>
+      <bpws:variable name="InsertOneBpelOperationIn" messageType="ns2:InsertOneBpelOperationRequest"/>
+      <bpws:variable name="InsertOneIn" messageType="ns1:InsertOneRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InsertOne" portType="ns1:InsertOneSql_sqlsePortType" variable="InsertOneIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="InsertOneIn" part="InsertOneRequestPart"/>
+            <bpws:to>$InsertOneBpelOperationIn.part1/ns0:empid</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="InsertOneBpelOperation" portType="ns2:InsertOneBpelPortType" inputVariable="InsertOneBpelOperationIn" outputVariable="InsertOneBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="InsertOneBpelOperationOut" part="part1"/>
+            <bpws:to variable="InsertOneOut" part="InsertOneResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="InsertOne" portType="ns1:InsertOneSql_sqlsePortType" variable="InsertOneOut"/>
+   </sequence>
+</process>

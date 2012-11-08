@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/SubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/SubBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/IOWSDL" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL2">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL2" location="IOWSDL2.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="MainBPOneWayPlink" partnerLinkType="ns3:MainBPOneWayPLink" partnerRole="MainBPOneWayWSDLPortTypeRole"/>
+        <partnerLink name="SubBPPlink" partnerLinkType="ns3:SubBPPLink" myRole="SubBPWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MainBPOneWayWSDLOperationIn" messageType="ns3:MainBPOneWayRequest"/>
+        <variable name="SubBPWSDLOperationIn" messageType="ns3:SubBPWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="SubBPPlink" operation="SubBPWSDLOperation" portType="ns3:SubBPWSDLPortType" variable="SubBPWSDLOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="SubBPWSDLOperationIn" part="InputPart"/>
+                <to variable="MainBPOneWayWSDLOperationIn" part="InputPart"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="MainBPOneWayPlink" operation="MainBPOneWayWSDLOperation" portType="ns3:MainBPOneWayWSDLPortType" inputVariable="MainBPOneWayWSDLOperationIn"/>
+    </sequence>
+</process>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+  =========================================================
+                                                COORDINATES
+  =========================================================
+  -->
+  <groupId>it.imolinfo.jbi4corba</groupId>
+  <artifactId>corba-bc</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <description>corba binding component (jbi4corba aggregator)</description>
+
+  <!--
+  =========================================================
+                                                DESCRIPTION
+  =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <!--
+  =========================================================
+                                                  PACKAGING
+  =========================================================
+  -->
+  <packaging>pom</packaging>
+
+  <!--
+  =========================================================
+                                               ORGANIZATION
+  =========================================================
+  -->
+  <organization>
+    <name>Imola Informatica</name>
+    <url>http://www.imolinfo.it</url>
+  </organization>
+
+  <!--
+  =========================================================
+                                                        SCM
+  =========================================================
+  -->
+  <scm>
+    <connection>scm:cvs:pserver:anonymous@cvs.dev.java.net:/cvs:open-jbi-components/contrib-imola/corba-bc</connection>
+    <developerConnection>scm:cvs:pserver:darkav@cvs.dev.java.net:/cvs:open-jbi-components/contrib-imola/corba-bc</developerConnection>
+  </scm>
+
+  <!--
+  =========================================================
+                                        PLUGIN REPOSITORIES
+  =========================================================
+  -->
+  <pluginRepositories>
+    <!-- Apache SnapShot 2 -->
+    <pluginRepository>
+        <id>maven-snapshots</id>
+        <name>Maven Snapshots</name>
+        <url>http://people.apache.org/maven-snapshot-repository</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+    </pluginRepository>
+
+    <!-- Apache snapshot -->
+    <pluginRepository>
+        <id>apache-snapshots</id>
+        <name>Apache Snapshot repository</name>
+        <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+
+    <!-- Apache releases -->
+    <pluginRepository>
+        <id>apache-releases</id>
+        <name>Apache Releases repository</name>
+        <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </pluginRepository>
+    <!-- Dependencies not on central repo -->
+<!--
+    <pluginRepository>
+      <id>servicemix-m2-repo</id>
+      <name>Servicemix Maven2 Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+      <releases> <enabled>true</enabled> </releases>
+      <snapshots> <enabled>false</enabled> </snapshots>
+    </pluginRepository>
+-->
+  </pluginRepositories>
+
+  <!--
+  =========================================================
+                                                    MODULES
+  =========================================================
+  -->
+  <modules>
+    <module>jbi4corba</module>
+    
+    <module>integration-test</module>
+    
+    <module>imolinfo-skin-corba</module>
+    <module>jacorb-library</module>
+  </modules>
+
+  <!--
+  =========================================================
+                                                      BUILD
+  =========================================================
+  -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0-beta-7</version>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.servicemix.tooling</groupId>
+          <artifactId>jbi-maven-plugin</artifactId>
+          <!--  <version>3.1.1-incubating</version> -->
+          <version>4.0</version>
+          <extensions>true</extensions>
+      </plugin>      
+    </plugins>
+  </build>
+<profiles>
+
+
+<profile>
+<id>ServiceMix</id>
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>org.apache.servicemix.tooling</groupId>
+          <artifactId>jbi-maven-plugin</artifactId>
+          <!--  <version>3.1.1-incubating</version> -->
+          <version>4.0</version>
+          <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!--<activation>
+    <activeByDefault>true</activeByDefault>
+  </activation>-->
+    
+</profile>
+
+<profile>
+<id>OpenESB</id>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>m2-snapshot-repository</id>
+      <name>Servicemix Maven2 Repository with snapshot releases</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <!-- <version>3.2.1</version>-->
+        <version>4.0</version>
+        <extensions>true</extensions>
+      </plugin>     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>  
+ 
+</profile>
+
+</profiles>
+</project>

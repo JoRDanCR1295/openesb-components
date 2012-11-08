@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="parentBP"
+         targetNamespace="http://www.seebeyond.com/eInsight/parentBP"
+         sbynpxp:end_YLoc="327.0"
+         sbynpxp:start_YLoc="327.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="18.0"
+         sbynpxp:end_XLoc="1620.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/parentBP"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/MultiDepBpel/benchMark"
+         xmlns:ns1="http://www.w3.org/2001/XMLSchema"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/MultiDepBpel/benchMark"
+            location="benchMark.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="benchMark"
+                     partnerLinkType="ns0:benchMarkLinkType"
+                     myRole="Server"/>
+        <partnerLink name="benchMarkSubBP"
+                     partnerLinkType="ns0:benchMarkSubBPLinkType"
+                     partnerRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  messageType="ns0:benchMarkMessage"></variable>
+        <variable name="var2"
+                  messageType="ns0:benchMarkMessage"></variable>
+        <variable name="varIntOnFlowBranches" type="ns1:int"/>
+        <variable name="varIntInWhile" type="ns1:int"/>
+        <variable name="varIntInForEach" type="ns1:int"/>
+        <variable name="varIntInRepeatUntil" type="ns1:int"/>
+    </variables>
+     <faultHandlers sbynpxp:XLoc="344.0"
+                   sbynpxp:YLoc="249.0">
+        <catchAll sbynpxp:XLoc="498.0"
+                  sbynpxp:YLoc="330.0"
+                  sbynpxp:isExpanded="true">
+            <sequence>
+                <reply name="reply2"
+                 partnerLink="benchMark"
+                 portType="ns0:benchMarkPortType"
+                 operation="benchMarkOperation1"
+                 variable="var1"
+                       sbynpxp:XLoc="558.0"
+                       sbynpxp:YLoc="360.0"></reply>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+
+    <sequence>
+        <receive name="receive"
+                 partnerLink="benchMark"
+                 portType="ns0:benchMarkPortType"
+                 operation="benchMarkOperation1"
+                 variable="var1"
+                 createInstance="yes"
+                 sbynpxp:XLoc="82.0"
+                 sbynpxp:YLoc="17.0"></receive>
+        <assign name="assign1"
+                sbynpxp:XLoc="156.0"
+                sbynpxp:YLoc="39.0">
+            <copy>
+                <from>$var1.benchMarkPart/ns0:string</from>
+                <to>$var2.benchMarkPart/ns0:string</to>
+            </copy>
+            <copy>
+                <from>$var1.benchMarkPart/ns0:waitTime</from>
+                <to>$var2.benchMarkPart/ns0:waitTime</to>
+            </copy>            
+            <bpws:copy>
+                <bpws:from>$var1.benchMarkPart/ns0:payLoad</bpws:from>
+                <bpws:to>$var2.benchMarkPart/ns0:payLoad</bpws:to>
+            </bpws:copy>
+            <copy>
+                <from>0</from>
+                <to variable="varIntInWhile"/>
+           </copy>
+            <copy>
+                <from>0</from><to variable="varIntInForEach"/>
+            </copy>
+            <copy>
+                <from>0</from><to variable="varIntInRepeatUntil"/>
+            </copy>
+        </assign>
+        <scope name="scope1"
+               sbynpxp:XLoc="225.0"
+               sbynpxp:YLoc="17.0"
+               sbynpxp:isExpanded="true">
+            <sequence>
+                <flow name="flow"
+                      sbynpxp:XLoc="285.0"
+                      sbynpxp:YLoc="53.0"
+                      sbynpxp:YLoc_MergeNode="140.0"
+                      sbynpxp:XLoc_MergeNode="785.0">
+                    <sequence>
+                        <assign name="assign"
+                                sbynpxp:XLoc="385.0"
+                                sbynpxp:YLoc="53.0">
+                            <copy>
+                                <from>2</from>
+                                <to variable="varIntOnFlowBranches"/>
+                            </copy>
+                        </assign>
+                        <wait name="wait"> <for>$var2.benchMarkPart/ns0:waitTime</for></wait>
+
+                    </sequence>
+                    <sequence>
+                        <invoke name="activity"
+                                partnerLink="benchMarkSubBP"
+                                portType="ns0:benchMarkSubBPPortType"
+                                operation="benchMarkSubBPOperation1"
+                                inputVariable="var1"
+                                outputVariable="var1"
+                                sbynpxp:XLoc="485.0"
+                                sbynpxp:YLoc="203.0"></invoke>
+                    </sequence>
+                </flow>
+            </sequence>
+        </scope>
+        <while name="while"
+               sbynpxp:XLoc="895.0"
+               sbynpxp:YLoc="17.0"
+               sbynpxp:isExpanded="false">
+            <condition>$varIntInWhile &lt; 10</condition>
+            <sequence>
+                <assign name="assign5"
+                        sbynpxp:XLoc="955.0"
+                        sbynpxp:YLoc="47.0">
+                    <copy>
+                        <from>$varIntInWhile + 1</from>
+                        <to variable="varIntInWhile"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="assign6"
+                sbynpxp:XLoc="963.0"
+                sbynpxp:YLoc="17.0">
+            <copy>
+                <from>concat('Invoke2', $var2.benchMarkPart/ns0:string)</from>
+                <to>$var2.benchMarkPart/ns0:string</to>
+            </copy>
+        </assign>
+        <scope name="scope"
+               sbynpxp:XLoc="1034.0"
+               sbynpxp:YLoc="17.0"
+               sbynpxp:isExpanded="true">
+            <sequence>
+                <invoke name="activity"
+                        partnerLink="benchMarkSubBP"
+                        portType="ns0:benchMarkSubBPPortType"
+                        operation="benchMarkSubBPOperation1"
+                        inputVariable="var2"
+                        outputVariable="var2"
+                        sbynpxp:XLoc="1094.0"
+                        sbynpxp:YLoc="47.0"></invoke>
+                <assign name="assign"
+                         sbynpxp:XLoc="1307.0"
+                         sbynpxp:YLoc="441.0">
+                         <copy>
+                             <from>concat(concat(concat($var1.benchMarkPart/ns0:string, "|"), $var2.benchMarkPart/ns0:string), '|Fault Handler')</from>
+                             <to>$var2.benchMarkPart/ns0:string</to>
+                         </copy>
+                </assign>                        
+            </sequence>
+        </scope>
+        <forEach name="forEach1" counterName="forEachCounter1" parallel="no">
+        	<startCounterValue>$varIntInForEach</startCounterValue>
+        	<finalCounterValue>8</finalCounterValue>
+        	<scope>
+        		<assign name="Assign9"
+                	sbynpxp:XLoc="250.0"
+                	sbynpxp:YLoc="83.0">
+            		<copy>
+                		<from>$varIntInForEach + 1</from>
+                                <to variable="varIntInForEach" />
+            		</copy>
+        		</assign>
+        	</scope>
+        </forEach>
+        <repeatUntil name="RepeatUntil1">
+            <sequence>
+                 <assign name="Assign4">
+            		<copy>
+                		<from>$varIntInRepeatUntil + 1</from>
+                                <to variable="varIntInRepeatUntil"/>
+            		</copy>
+                 </assign>
+            </sequence>
+            <condition> ( $varIntInRepeatUntil >= 20 ) </condition>
+        </repeatUntil>
+        <assign name="assign"
+                sbynpxp:XLoc="1444.0"
+                sbynpxp:YLoc="17.0">
+            <bpws:copy>
+                <bpws:from>concat(concat(concat(concat(concat($var2.benchMarkPart/ns0:string, '|'), $varIntOnFlowBranches), '|'), $varIntInWhile), '|', $varIntInForEach, '|', $varIntInRepeatUntil)</bpws:from>
+                <bpws:to>$var2.benchMarkPart/ns0:string</bpws:to>
+            </bpws:copy>
+        </assign>
+        <if name="If1">
+            <condition> ( $varIntInForEach = 6 ) </condition>
+            <assign name="Assign10">
+                <copy>
+                <from>concat($var2.benchMarkPart/ns0:string, '|ConditionThen')</from><to>$var2.benchMarkPart/ns0:string</to>
+                </copy>
+            </assign>
+            <elseif>
+                <condition> ( $varIntInForEach = 9 ) </condition>
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat($var2.benchMarkPart/ns0:string, '|ConditionElseif')</from><to>$var2.benchMarkPart/ns0:string</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <else>
+                <assign name="Assign11">
+                    <copy>
+                    <from>concat($var2.benchMarkPart/ns0:string, '|ConditionElse')</from><to>$var2.benchMarkPart/ns0:string</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="reply"
+               partnerLink="benchMark"
+               portType="ns0:benchMarkPortType"
+               operation="benchMarkOperation1"
+               variable="var2"
+               sbynpxp:XLoc="1516.0"
+               sbynpxp:YLoc="17.0"></reply>
+    </sequence>
+</process>

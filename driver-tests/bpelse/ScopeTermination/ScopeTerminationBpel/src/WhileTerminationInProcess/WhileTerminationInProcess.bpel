@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="WhileTerminationInProcess" 
+         targetNamespace="http://localhost/bpel/WhileTerminationInProcess"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="http://localhost/bpel/WhileTerminationInProcess"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns1="http://localhost/wsdl/WhileTerminationInProcess">
+    
+    <import namespace="http://localhost/wsdl/WhileTerminationInProcess" 
+            location="WhileTerminationInProcess.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+    <partnerLinks>
+        <partnerLink name="WhileTerminationInProcess" 
+                     partnerLinkType="ns1:partnerlinktype1" 
+                     myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence3">
+                <wait name="Wait3">
+                    <for>'P0Y0M0DT0H0M2S'</for>
+                </wait>
+                <reply name="replyFromFH" 
+                       partnerLink="WhileTerminationInProcess" 
+                       operation="operation1" 
+                       portType="ns1:portType1" 
+                       variable="outputVar"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    
+    
+    <sequence>
+        <receive name="start" 
+                 partnerLink="WhileTerminationInProcess" 
+                 operation="operation1" 
+                 portType="ns1:portType1" 
+                 variable="inputVar" 
+                 createInstance="yes">
+        </receive>
+        <flow name="Flow1">
+            <sequence name="Sequence4">
+                <assign name="Assign3">
+                    <copy>
+                        <from>
+                            <literal>InitialAssign</literal>
+                        </from>
+                        <to>$outputVar.resultType/ns1:paramA</to>
+                    </copy>
+                </assign>
+                <while name="While1">
+                    <condition> ( $outputVar.resultType/ns1:paramA != 'InitialAssign-AssignInLoop-AssignInLoop' ) </condition>
+                    <sequence name="Sequence1">
+                            <wait name="Wait1">
+                                    <for>'P0Y0M0DT0H0M2S'</for>
+                                </wait>
+                                <assign name="Assign1">
+                                    <copy>
+                                        <from>concat($outputVar.resultType/ns1:paramA, '-AssignInLoop')</from>
+                                        <to>$outputVar.resultType/ns1:paramA</to>
+                                    </copy>
+                                </assign>
+                        </sequence>
+                </while>
+                <reply name="replyFromBranch" 
+                       partnerLink="WhileTerminationInProcess" 
+                       operation="operation1" 
+                       portType="ns1:portType1" 
+                       variable="outputVar"/>
+            </sequence>
+            <sequence name="Sequence2">
+                <wait name="Wait2">
+                    <for>'P0Y0M0DT0H0M3S'</for>
+                </wait>
+                <throw name="Throw1" faultName="tns:SomeFault"/>
+            </sequence>
+        </flow>
+    </sequence>
+</process>

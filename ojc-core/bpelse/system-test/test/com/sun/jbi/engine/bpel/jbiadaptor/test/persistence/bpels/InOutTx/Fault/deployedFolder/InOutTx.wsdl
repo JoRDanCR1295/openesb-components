@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InOutTx" targetNamespace="http://j2ee.netbeans.org/wsdl/InOutTx"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTx" xmlns:ns0="http://xml.netbeans.org/schema/InOutTxSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/InOutTxSchema" xmlns:tns1="http://xml.netbeans.org/schema/InOutTxSchema">
+            <xsd:complexType name="SimpleType">
+                <xsd:sequence>
+                    <xsd:element name="elem" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="simpleMsg">
+        <wsdl:part name="simplePart" type="ns0:SimpleType"/>
+    </message>
+    <portType name="InOutTxPT">
+        <wsdl:operation name="InOutTxOper">
+            <wsdl:input name="input1" message="tns:simpleMsg"/>
+            <wsdl:output name="output1" message="tns:simpleMsg"/>
+            <wsdl:fault name="InOutTxOperFault" message="tns:simpleMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="TestInboundPT">
+        <wsdl:operation name="TestInboundOper">
+            <wsdl:input name="input1" message="tns:simpleMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="TestOutboundPT">
+        <wsdl:operation name="TestOutboundOper">
+            <wsdl:input name="input1" message="tns:simpleMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="InOutTxBinding" type="tns:InOutTxPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="InOutTxOper">
+            <wsdl:input name="input1">
+                <soap:body parts="simplePart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="simplePart" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="InOutTxOperFault">
+                <soap:fault name="InOutTxOperFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </binding>
+    <binding name="InboundBinding" type="tns:TestInboundPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="TestInboundOper">
+            <wsdl:input name="input1">
+                <soap:body parts="simplePart" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="OutboundBinding" type="tns:TestOutboundPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="TestOutboundOper">
+            <wsdl:input name="input1">
+                <soap:body parts="simplePart" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="InOutTxServ">
+        <wsdl:port name="InOutTxServPort" binding="tns:InOutTxBinding">
+            <soap:address location="http://localhost:18181/InOutTxBpel/InOutTx/InOutTxServPort"/>
+        </wsdl:port>
+    </service>
+    <service name="InboundServ">
+        <wsdl:port name="InboundServPort" binding="tns:InboundBinding">
+            <soap:address location="http://localhost:18181/InOutTxBpel/InOutTx/InboundServPort"/>
+        </wsdl:port>
+    </service>
+    <service name="OutboundServ">
+        <wsdl:port name="OutboundServPort" binding="tns:OutboundBinding">
+            <soap:address location="http://localhost:18181/InOutTxBpel/InOutTx/OutboundServPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="InOutTxPLT">
+        <plnk:role name="InOutTxPTRole" portType="tns:InOutTxPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="InboundPLT">
+        <plnk:role name="TestInboundPTRole" portType="tns:TestInboundPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="OutboundPLT">
+        <plnk:role name="TestOutboundPTRole" portType="tns:TestOutboundPT"/>
+    </plnk:partnerLinkType>
+</definitions>

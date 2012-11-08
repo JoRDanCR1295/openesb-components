@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://manufacturing.org/wsdl/purchase/bp3" xmlns:ns2="http://www.seebeyond.com/eInsight/POService" xmlns:ns3="http://manufacturing.org/wsdl/inventory/bp3" xmlns:ns4="http://www.seebeyond.com/eInsight/newuntitled" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+<service-assembly>
+<identification>
+<name>BluePrint3Application</name>
+<description>Represents the Service Assembly of BluePrint3Application</description>
+</identification>
+<service-unit>
+<identification>
+<name>BluePrint3Application-bpelSE</name>
+<description>This represents the Application Service Unit for BPELSE</description>
+</identification>
+<target>
+<artifacts-zip>bpelSE.jar</artifacts-zip>
+<component-name>sun-bpel-engine</component-name>
+</target>
+</service-unit>
+<service-unit>
+<identification>
+<name>BluePrint3Application-httpBC</name>
+<description>This represents the Application Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>httpBC.jar</artifacts-zip>
+<component-name>sun-http-binding</component-name>
+</target>
+</service-unit>
+<connections>
+<connection>
+<consumer endpoint-name="purchaseOrderPort" service-name="ns1:purchaseOrderService"/>
+<provider endpoint-name="purchaseService_myRole" service-name="ns2:POServicePLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="inventoryServicePort" service-name="ns3:inventoryService"/>
+<provider endpoint-name="inventoryService_myRole" service-name="ns4:inventorySevicePLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="inventoryService_partnerRole" service-name="ns2:requestInventoryPLink"/>
+<provider endpoint-name="inventoryService_myRole" service-name="ns4:inventorySevicePLink"/>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

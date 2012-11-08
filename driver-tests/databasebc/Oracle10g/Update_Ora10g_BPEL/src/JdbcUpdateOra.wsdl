@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="jdbcwsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:tns="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" xmlns:ns="http://j2ee.netbeans.org/xsd/tableSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://j2ee.netbeans.org/wsdl/jdbcbc">
+            
+	<xsd:import namespace="http://j2ee.netbeans.org/xsd/tableSchema" schemaLocation="TestTable.xsd"/></xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="inputMsg">
+    <part element="ns:TestTable" name="part"/>
+  </wsdl:message>
+  <wsdl:message name="insertRetMsg">
+    <wsdl:part name="part" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="outputMsg">
+    <part element="ns:TestTable" name="part"/>
+  </wsdl:message>
+  <wsdl:portType name="jdbcPortType">
+    <wsdl:operation name="insert">
+      <wsdl:input name="inputInsert" message="tns:inputMsg"/>
+      <wsdl:output name="outputInsert" message="tns:insertRetMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input name="inputUpdate" message="tns:inputMsg"/>
+      <wsdl:output name="outputUpdate" message="tns:insertRetMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <wsdl:input name="inputDelete" message="tns:inputMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+      <wsdl:input name="inputFind" message="tns:inputMsg"/>
+      <wsdl:output name="outputFind" message="tns:outputMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="pollrecords">
+      <wsdl:input name="inputPoll" message="tns:inputMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="binding" type="tns:jdbcPortType">
+    <jdbc:binding xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+    <wsdl:operation name="insert">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputInsert">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="TestID" PollMilliSeconds="5000" TableName="TestTable" Transaction="NOTransaction" numberOfRecords="" operationType="insert" paramOrder="TestSal,TestID,TestFlag,TestName" sql="insert into TestTable (TestSal,TestID,TestFlag,TestName) values (?,?,?,?)"/>
+      </wsdl:input>
+      <wsdl:output name="outputInsert">
+    <jdbc:output xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" returnPartName="part"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputUpdate">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="TestID" PollMilliSeconds="5000" TableName="TestTable" Transaction="NOTransaction" numberOfRecords="" operationType="update" paramOrder="TestSal,TestFlag,TestName,TestID" sql="update TestTable set TestSal  = ?,TestFlag  = ?,TestName  = ? where TestID = ?"/>
+      </wsdl:input>
+       <wsdl:output name="outputUpdate">
+    <jdbc:output xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" returnPartName="part"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputDelete">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="TestID" PollMilliSeconds="5000" TableName="TestTable" Transaction="NOTransaction" numberOfRecords="" operationType="delete" paramOrder="" sql="delete from TestTable"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputFind">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="TestID" PollMilliSeconds="5000" TableName="TestTable" Transaction="NOTransaction" numberOfRecords="" operationType="find" paramOrder="" sql="select TestSal,TestID,TestFlag,TestName from TestTable"/>
+      </wsdl:input>
+      <wsdl:output name="outputFind">
+    <jdbc:output xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" returnPartName="part"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="pollrecords">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputPoll">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="TestID" PollMilliSeconds="5000" PollingPostProcessing="Delete" TableName="TestTable" Transaction="NOTransaction" numberOfRecords="" operationType="poll" paramOrder="" sql="select TestSal,TestID,TestFlag,TestName from TestTable"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OraUpdateservice">
+    <wsdl:port name="OraUpdateport" binding="tns:binding">
+    <jdbc:address xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" jndiName="${dbJndiName}"/>
+    </wsdl:port>
+  </wsdl:service>
+    <plink:partnerLinkType xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="jdbcpartner">
+        <plink:role name="jdbcPortTypeRole" portType="tns:jdbcPortType"/>
+    </plink:partnerLinkType>
+</wsdl:definitions>

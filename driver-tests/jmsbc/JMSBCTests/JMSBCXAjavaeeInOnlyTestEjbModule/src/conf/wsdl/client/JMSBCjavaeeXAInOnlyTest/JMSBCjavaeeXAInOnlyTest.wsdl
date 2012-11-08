@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/jmsBCjavaeeSE/JMSBCjavaeeXAInOnlyTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsBCjavaeeSE/JMSBCjavaeeXAInOnlyTest" name="JMSBCjavaeeXAInOnlyTest" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:ns0="http://xml.netbeans.org/schema/JMSBCjavaeeXAInOnlyTest">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/jmsBCjavaeeSE/JMSBCjavaeeXAInOnlyTest">
+            <xsd:import schemaLocation="JMSBCjavaeeXAInOnlyTest.xsd" namespace="http://xml.netbeans.org/schema/JMSBCjavaeeXAInOnlyTest"/>
+        </xsd:schema>
+    </types>
+    <message name="jmsBCjavaeeXAInOnlyTestMsg">
+        <part name="part1" element="ns0:message"/>
+    </message>
+    <portType name="JMSBCjavaeeXAInOnlyTestPortTypeIn">
+        <wsdl:operation name="jmsBCjavaeeXAInOnlyTestOperationRecv">
+            <wsdl:input name="input1" message="tns:jmsBCjavaeeXAInOnlyTestMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCjavaeeXAInOnlyTestPortTypeOut">
+        <wsdl:operation name="jmsBCjavaeeXAInOnlyTestOperationSend">
+            <wsdl:input name="input1" message="tns:jmsBCjavaeeXAInOnlyTestMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSBCjavaeeXAInOnlyTestBindingIn" type="tns:JMSBCjavaeeXAInOnlyTestPortTypeIn">
+        <jms:binding/>
+        <wsdl:operation name="jmsBCjavaeeXAInOnlyTestOperationRecv">
+            <jms:operation destination="JMSBCXAjavaeeInOnlyTestInQ" destinationType="Queue" transaction="XATransaction" redeliveryHandling="1:move(queue:JMSBCXAjavaeeInOnlyTestDLQ)"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCjavaeeXAInOnlyTestBindingOut" type="tns:JMSBCjavaeeXAInOnlyTestPortTypeOut">
+        <jms:binding/>
+        <wsdl:operation name="jmsBCjavaeeXAInOnlyTestOperationSend">
+            <jms:operation destination="JMSBCXAjavaeeInOnlyTestOutQ" destinationType="Queue" transaction="XATransaction"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSBCjavaeeXAInOnlyTestService">
+        <wsdl:port name="JMSBCjavaeeXAInOnlyTestPortIn" binding="tns:JMSBCjavaeeXAInOnlyTestBindingIn">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCjavaeeXAInOnlyTestPortOut" binding="tns:JMSBCjavaeeXAInOnlyTestBindingOut">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="JMSBCjavaeeXAInOnlyTest1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCjavaeeXAInOnlyTestPortTypeInRole" portType="tns:JMSBCjavaeeXAInOnlyTestPortTypeIn"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCjavaeeXAInOnlyTest12">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCjavaeeXAInOnlyTestPortTypeOutRole" portType="tns:JMSBCjavaeeXAInOnlyTestPortTypeOut"/>
+    </plnk:partnerLinkType>
+</definitions>

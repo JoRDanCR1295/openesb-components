@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="insertoneparamSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="insertoneparamRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:int"/><xsd:element name="param2" type="xsd:string"/><xsd:element name="param3" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="insertoneparamResponse">
+    <part name="insertoneparamResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="insertoneparamRequest">
+    <part name="insertoneparamRequestPart" element="tns:insertoneparamRequest"/>
+  </message>
+  <portType name="insertoneparamSQL_sqlsePortType">
+    <operation name="insertoneparam">
+      <input name="insertoneparamRequest" message="tns:insertoneparamRequest"/>
+      <output name="insertoneparamResponse" message="tns:insertoneparamResponse"/>
+    </operation>
+  </portType>
+  <binding name="insertoneparamSQLBinding" type="tns:insertoneparamSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="insertoneparam">
+      <soap:operation style="document"/>
+      <input name="insertoneparamRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="insertoneparamResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="insertoneparamSQL_sqlseService">
+    <port name="insertoneparamSQL_sqlsePort" binding="tns:insertoneparamSQLBinding">
+      <soap:address location="http://localhost:18181/insertoneparamSQL/insertoneparamSQL/insertoneparamSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="insertoneparamSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="insertoneparamSQL_myrole" portType="tns:insertoneparamSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

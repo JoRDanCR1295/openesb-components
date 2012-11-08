@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="CorrelationQuery" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/CorrelationQuery"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/CorrelationQuery" xmlns:ns0="urn:CorrQuerryTNS">
+    <import namespace="http://enterprise.netbeans.org/wsdl/CorrelationQuery" 
+            location="CorrelationQuery.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:CorrQueryInvokePLT" 
+                     partnerRole="CorrQueryInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:CorrQueryPartnerLinkType1" 
+                     myRole="CorrQueryPLinkTypeRole1"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:CorrQueryPartnerLinkType2" 
+                     myRole="CorrQueryPLinkTypeRole2"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CorrQueryInMessage1" messageType="wsdlNS:CorrQueryInputMsg1"/>
+        <variable name="CorrQueryOutMessage" messageType="wsdlNS:CorrQueryInvokeMsg"/>
+        <variable name="CorrQueryInMessage2" messageType="wsdlNS:CorrQueryInputMsg2"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet1" properties="wsdlNS:complexProperty"/>
+        <correlationSet name="cSet2" properties="wsdlNS:simpleProperty1"/>
+    </correlationSets> 
+
+   	<sequence>
+   		<pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink1" operation="CorrQueryOperation1" 
+            		   portType="wsdlNS:CorrQueryPortType1" variable="CorrQueryInMessage1">
+            	<correlations>
+            		<correlation set="cSet1" initiate="yes"/>
+            	</correlations>
+            	<sequence>
+            		<assign name="Assign1">
+						<copy>
+							<from>5</from>
+							<to part="count" variable="CorrQueryOutMessage"/>
+						</copy>
+                                                
+            		  <copy>
+            		    <from>$CorrQueryInMessage1.complexData/ns0:foo/ns0:bar/ns0:baz</from>
+            		    <to variable="CorrQueryOutMessage" part="data"/>
+            		  </copy>
+            		</assign>
+	                <invoke name="Invoke1" partnerLink="InvokePLT" 
+	                					   operation="CorrQueryInvokeOp" 
+	                					   portType="wsdlNS:InvokePortType" 
+	                					   inputVariable="CorrQueryOutMessage">
+						<correlations>
+							<correlation set="cSet2" initiate="yes" />
+						</correlations>
+					</invoke>
+	                <pick name="Pick2" createInstance="no">
+		            	<onMessage partnerLink="PartnerLink2" operation="CorrQueryOperation2" 
+		            		   portType="wsdlNS:CorrQueryPortType2" variable="CorrQueryInMessage2">
+							<correlations>
+                                                                <correlation set="cSet1" initiate="no"/>
+                                                                <correlation set="cSet2" initiate="no"/>
+							</correlations>
+		            		<empty/>
+	                	</onMessage>
+	                </pick>
+               </sequence> 
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

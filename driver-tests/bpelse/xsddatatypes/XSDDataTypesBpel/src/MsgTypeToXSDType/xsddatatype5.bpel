@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="xsddatatype5"
+         targetNamespace="http://www.seebeyond.com/eInsight/xsddatatype5"
+         xmlns:tns="http://www.seebeyond.com/eInsight/xsddatatype5"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/xsddatatype5"
+         xmlns:ns1="urn:SampleXSD2"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/xsddatatype5"
+            location="xsddatatype5.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD2"
+            location="SampleXSD2.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+                  messageType="ns0:xsddatatype5"></variable>
+        <variable name="messageType_Input"
+                  messageType="ns0:xsddatatype5"></variable>
+        <variable name="xsdDataType_Element5"
+                  type="ns1:USAddressType"></variable>
+                                    
+    </variables>
+    <sequence>
+        <receive name="xsddatatype5"
+                 partnerLink="Client2BP"
+                 portType="ns0:xsddatatype5"
+                 operation="xsddatatype5"
+                 variable="messageType_Output"
+                 createInstance="yes"></receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$messageType_Output.part</from>
+                <to>$xsdDataType_Element5</to>
+            </copy>
+        </assign>                 
+        <assign name="Assign2">
+            <copy>
+                <from>$xsdDataType_Element5</from>
+                <to>$messageType_Input.part</to>
+            </copy>
+        </assign>
+        <reply name="xsddatatype5.Reply"
+               partnerLink="Client2BP"
+               portType="ns0:xsddatatype5"
+               operation="xsddatatype5"
+               variable="messageType_Input"></reply>
+    </sequence>
+</process>

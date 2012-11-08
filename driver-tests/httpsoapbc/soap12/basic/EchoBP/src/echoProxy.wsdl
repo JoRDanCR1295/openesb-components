@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="echoProxy" targetNamespace="http://j2ee.netbeans.org/wsdl/echoProxy"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+    <types/>
+    <message name="echoProxyOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="echoProxyOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="echoProxyOperationFault">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="echoProxyPortType">
+        <operation name="echoProxyOperation">
+            <input name="input1" message="tns:echoProxyOperationRequest"/>
+            <output name="output1" message="tns:echoProxyOperationResponse"/>
+            <fault name="fault1" message="tns:echoProxyOperationFault"/>
+        </operation>
+    </portType>
+    <binding name="echoProxyBinding" type="tns:echoProxyPortType">
+        <soap12:binding style="rpc" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <operation name="echoProxyOperation">
+            <soap12:operation/>
+            <input name="input1">
+                <soap12:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/echoProxy"/>
+            </input>
+            <output name="output1">
+                <soap12:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/echoProxy"/>
+            </output>
+            <fault name="fault1">
+                <soap12:fault use="literal" name="fault1" namespace="http://j2ee.netbeans.org/wsdl/echoProxy"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="echoProxyService">
+        <port name="echoProxyPort" binding="tns:echoProxyBinding">
+            <soap12:address location="http://localhost:${HttpDefaultPort}/echoProxyService/echoProxyPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="echoProxy">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="echoProxyPortTypeRole" portType="tns:echoProxyPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

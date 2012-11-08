@@ -1,0 +1,1 @@
+ALTER TABLE drivertest_location ALTER COLUMN address SET DATA TYPE VARCHAR(50)

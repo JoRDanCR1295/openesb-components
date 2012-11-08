@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="WhileFaulthandler"
+             targetNamespace="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandler"
+             xmlns:tns="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandler"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:message name="FaultMsg">
+        <wsdl:part name="FaultTest" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="Count">
+        <wsdl:part name="counter" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:portType name="MyPortType">
+        <wsdl:operation name="FaultOperation">
+            <wsdl:input name="FaultIn" message="tns:FaultMsg"/>
+            <wsdl:output name="FaultOut" message="tns:FaultMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+        <binding name="FaultBinding" type="tns:MyPortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                <operation name="FaultOperation">
+                        <soap:operation style="document"/>
+                        <input name="FaultIn">
+                                <soap:body use="literal"/>
+                        </input><output name="FaultOut">
+    <soap:body use="literal"/>
+</output>
+                </operation>
+        </binding>
+
+   
+         <wsdl:service name="WhileFaulthandlerService">
+		<wsdl:port name="WhileFaulthandlerPort" binding="tns:FaultBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/WhileFaulthandlerTest"/>
+		</wsdl:port>
+        </wsdl:service>
+
+	<plnk:partnerLinkType name="WhileFaulthandlerPartnerLinkType">
+		<plnk:role name="WhileFaulthandlerProvider" portType="tns:MyPortType"/>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

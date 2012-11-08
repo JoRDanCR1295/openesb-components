@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DollarInAttribute"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BpelModule1/DollarInAttribute"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/BpelModule1/DollarInAttribute" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/DollarInAttribute" location="DollarInAttribute.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/DollarInAttribute" partnerLinkType="tns:DollarInAttribute" myRole="DollarInAttributePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="DollarInAttributeOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/DollarInAttribute" messageType="tns:DollarInAttributeOperationResponse"/>
+        <variable name="DollarInAttributeOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/DollarInAttribute" messageType="tns:DollarInAttributeOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DollarInAttributeOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/DollarInAttribute" portType="tns:DollarInAttributePortType" variable="DollarInAttributeOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>'firstNode'</from>
+                <to>$DollarInAttributeOperationOut.part1/ns0:string/@newAttribute</to>
+            </copy>
+            <copy>
+                <from>$DollarInAttributeOperationIn.part1/ns0:recursive/ns0:string[2]</from>
+                <to>$DollarInAttributeOperationOut.part1/ns0:string[2]</to>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>'someVal'</from>
+                <to>$DollarInAttributeOperationOut.part1/ns0:string[@newAttribute = '$Attribute']</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="DollarInAttributeOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/DollarInAttribute" portType="tns:DollarInAttributePortType" variable="DollarInAttributeOperationOut"/>
+    </sequence>
+</process>

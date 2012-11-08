@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="EchoInOnly" targetNamespace="urn:jbi4corba/test-consumer-inonly"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="urn:jbi4corba/test-consumer-inonly">
+    <types/>
+    <message name="EchoInOnlyRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="EchoInOnlyPortType">
+        <wsdl:operation name="echoInOnlyOperation">
+            <wsdl:input name="input1" message="tns:EchoInOnlyRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="EchoInOnlyBinding" type="tns:EchoInOnlyPortType">
+        
+        <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="echoInOnlyOperation">
+            
+            <wsdlsoap:operation/>
+            <wsdl:input name="input1">
+                <wsdlsoap:body use="literal" namespace="urn:jbi4corba/test-consumer-inonly"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="EchoInOnly">
+        
+        <wsdl:port name="EchoInOnlyPort" binding="tns:EchoInOnlyBinding">
+            <wsdlsoap:address location="http://localhost/services/EchoInOnly"/>
+        </wsdl:port>
+    </service>
+    <!--
+    <plnk:partnerLinkType name="EchoConsInOnly1">-->
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <!--<plnk:role name="EchoConsInOnlyPortTypeRole" portType="tns:EchoInOnlyPortType"/>
+    </plnk:partnerLinkType>-->
+</definitions>

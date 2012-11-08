@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/smtpWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/triggerWSDL" xmlns:ns3="http://enterprise.netbeans.org/bpel/clientProcess" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="smtpWSDLPort" interface-name="ns1:smtpWSDLPortType" name="endpoint1" service-name="ns1:smtpWSDLService"/>
+<endpoint endpoint-name="triggerWSDLPort" interface-name="ns2:triggerWSDLPortType" name="endpoint2" service-name="ns2:triggerWSDLService"/>
+<endpoint endpoint-name="triggerWSDLPortTypeRole_myRole" interface-name="ns2:triggerWSDLPortType" name="endpoint3" service-name="ns3:PartnerLink2"/>
+<endpoint endpoint-name="smtpWSDLPortTypeRole_partnerRole" interface-name="ns1:smtpWSDLPortType" name="endpoint4" service-name="ns3:PartnerLink1"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="ccBccmailBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="ccBccmailJbi-ccBccmailBpel" unit-name="ccBccmailBpel" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-smtp-binding.jar" component-name="sun-smtp-binding" description="Represents this Service Unit" name="ccBccmailJbi-sun-smtp-binding" unit-name="sun-smtp-binding">
+<ports>
+<port x="0" y="150">
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/smtpWSDL.wsdl#xpointer(/definitions/service[@name='smtpWSDLService']/port[@name='smtpWSDLPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="ccBccmailJbi-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="60">
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/triggerWSDL.wsdl#xpointer(/definitions/service[@name='triggerWSDLService']/port[@name='triggerWSDLPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/smtpWSDL.wsdl#xpointer(/definitions/portType[@name='smtpWSDLPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/triggerWSDL.wsdl#xpointer(/definitions/portType[@name='triggerWSDLPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/smtpWSDL.wsdl#xpointer(/definitions/binding[@name='smtpWSDLBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/triggerWSDL.wsdl#xpointer(/definitions/binding[@name='triggerWSDLBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/smtpWSDL.wsdl#xpointer(/definitions/service[@name='smtpWSDLService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ccBccmailBpel/triggerWSDL.wsdl#xpointer(/definitions/service[@name='triggerWSDLService'])" xlink:type="simple"/>
+</services>
+<regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

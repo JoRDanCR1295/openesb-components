@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="carReservation"
+         targetNamespace="http://www.seebeyond.com/eInsight/carReservation"
+         xmlns:tns="http://www.seebeyond.com/eInsight/carReservation"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BluePrint5/CarReservation"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://localhost/BluePrint5/CarReservation"
+            location="CarReservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="reservationPLink"
+                     partnerLinkType="ns0:CarReservationPLinkType"
+                     myRole="reservingRole"/>
+        <partnerLink name="reservationStatusPLink"
+                     partnerLinkType="ns0:CarReservStatusPLinkType"
+                     partnerRole="statusReceivingRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="reserveCar"
+                  messageType="ns0:CarReservation"></variable>
+        <variable name="sendCarStatus"
+                  messageType="ns0:CarReservationStatus"></variable>
+    </variables>
+    <sequence>
+        <receive name="reserveCar"
+                 partnerLink="reservationPLink"
+                 portType="ns0:CarReservationPortType"
+                 operation="reserveCar"
+                 variable="reserveCar"
+                 createInstance="yes"></receive>
+        <assign name="Assign">
+            <copy>
+                <from>$reserveCar.reserveCarPart/reservationID</from>
+                <to>$sendCarStatus.status/reservationID</to>
+            </copy>
+            <copy>
+                <from>contains($reserveCar.reserveCarPart/description, 'book_car')</from>
+                <to>$sendCarStatus.status/reservationStatus</to>
+            </copy>
+        </assign>
+        <invoke name="sendCarStatus"
+                partnerLink="reservationStatusPLink"
+                portType="ns0:CarStatusPortType"
+                operation="sendCarStatus"
+                inputVariable="sendCarStatus"></invoke>
+    </sequence>
+</process>

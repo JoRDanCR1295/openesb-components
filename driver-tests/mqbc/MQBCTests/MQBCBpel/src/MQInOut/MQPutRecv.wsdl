@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MQPutRecv" targetNamespace="http://j2ee.netbeans.org/wsdl/MQPutRecv"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/MQPutRecv" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/" xmlns:ns="http://xml.netbeans.org/schema/ExternalOrder" xmlns:ns1="http://xml.netbeans.org/schema/InterOrderXMLSchema">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/MQPutRecv">
+            <xsd:import schemaLocation="../MQInOut/InterOrder.xsd" namespace="http://xml.netbeans.org/schema/InterOrderXMLSchema"/>
+            <xsd:import schemaLocation="../MQInOut/ExternalOrder.xsd" namespace="http://xml.netbeans.org/schema/ExternalOrder"/>
+        </xsd:schema>
+    </types>
+    <message name="messageMQMsg">
+        <part name="mqMessageTextBody" type="xsd:string"/>
+        <part name="report" type="xsd:int"/>
+        <part name="encoding" type="xsd:int"/>
+        <part name="characterSet" type="xsd:int"/>
+        <part name="correlationid" type="xsd:hexBinary"/>
+         <part name="groupid" type="xsd:int"/>
+        <part name="priority" type="xsd:int"/>
+        <part name="messageSequenceNum" type="xsd:string"/>
+        <part name="applicationIdData" type="xsd:string"/>
+        <part name="replyToQueueName" type="xsd:string"/>
+        <part name="replyToQueueMgrName" type="xsd:string"/>
+    </message>
+    <wsdl:message name="message1IntOrder">
+        <wsdl:part name="part1IntOrder" element="ns1:InterOrderElem"/>
+        <wsdl:part name="part1CorlId" type="xsd:string"/>
+        <wsdl:part name="part1MsgId" type="xsd:string"/>
+    </wsdl:message>
+    <portType name="MQPutPortType">
+        <operation name="MQPutOperation">
+            <input name="input1" message="tns:message1IntOrder"/>
+        </operation>
+    </portType>
+    <portType name="MQRecvPortType">
+        <operation name="MQRecvOperation">
+            <input name="input1" message="tns:message1IntOrder"/>
+        </operation>
+    </portType>
+    <binding name="bindingMQPut" type="tns:MQPutPortType">
+        <mq:binding/>
+        <operation name="MQPutOperation">
+            <mq:operation queueName="queue2"  queueOpenOptions="49" transaction="NoTransaction"/>
+            <input name="input1">
+                <mq:body MessageBody="part1IntOrder" MessageType="TextMessage" SyncPoint="false" use="literal"/>
+                <mq:header>
+                    <mq:correlationId parts="part1CorlId"/>
+                    <mq:messageId parts="part1MsgId"/>
+                </mq:header>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingMQRecv" type="tns:MQRecvPortType">
+        <mq:binding/>
+        <operation name="MQRecvOperation">
+            <mq:operation queueName="queue2" queueOpenOptions="17" transaction="NoTransaction" pollingInterval="5000"/>
+            <input name="input1">
+                <mq:body MessageBody="part1IntOrder" MessageType="TextMessage" SyncPoint="false" use="literal"/>
+                <mq:header>
+                    <mq:correlationId parts="part1CorlId"/>
+                    <mq:messageId parts="part1MsgId"/>
+                </mq:header>
+            </input>
+        </operation>
+    </binding>
+    <service name="service1MqPut">
+        <port name="port1MQPut" binding="tns:bindingMQPut">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </port>
+    </service>
+    <service name="service1MqRecv">
+        <port name="port1MQRecv" binding="tns:bindingMQRecv">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktype1MqPut">
+        <plink:role name="partnerlinktyperole1MqPut" portType="tns:MQPutPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="partnerlinktype1MqRecv">
+        <plink:role name="partnerlinktyperole1MqRecv" portType="tns:MQRecvPortType"/>
+    </plink:partnerLinkType>
+</definitions>

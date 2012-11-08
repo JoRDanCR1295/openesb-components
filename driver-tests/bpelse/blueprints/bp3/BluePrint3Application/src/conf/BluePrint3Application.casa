@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://www.seebeyond.com/eInsight/newuntitled" xmlns:ns2="http://manufacturing.org/wsdl/inventory/bp3" xmlns:ns3="http://www.seebeyond.com/eInsight/POService" xmlns:ns4="http://manufacturing.org/wsdl/purchase/bp3" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="inventoryService_myRole" interface-name="ns2:inventoryPortType" name="endpoint1" service-name="ns1:inventorySevicePLink"/>
+        <endpoint endpoint-name="purchaseService_myRole" interface-name="ns4:purchaseOrderPT" name="endpoint2" service-name="ns3:POServicePLink"/>
+        <endpoint endpoint-name="inventoryService_partnerRole" interface-name="ns2:inventoryPortType" name="endpoint3" service-name="ns3:requestInventoryPLink"/>
+        <endpoint endpoint-name="inventoryServicePort" interface-name="ns2:inventoryPortType" name="endpoint4" service-name="ns2:inventoryService"/>
+        <endpoint endpoint-name="purchaseOrderPort" interface-name="ns4:purchaseOrderPT" name="endpoint5" service-name="ns4:purchaseOrderService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="BluePrint3.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="BluePrint3Application-BluePrint3" unit-name="BluePrint3" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint1"/>
+            <provides endpoint="endpoint2"/>
+            <consumes endpoint="endpoint3"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BluePrint3Application-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/BluePrint3/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService']/port[@name='inventoryServicePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/BluePrint3/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint2" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/InventoryService.wsdl#xpointer(/definitions/portType[@name='inventoryPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/POService.wsdl#xpointer(/definitions/portType[@name='purchaseOrderPT'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/InventoryService.wsdl#xpointer(/definitions/binding[@name='inventoryBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/POService.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint3/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

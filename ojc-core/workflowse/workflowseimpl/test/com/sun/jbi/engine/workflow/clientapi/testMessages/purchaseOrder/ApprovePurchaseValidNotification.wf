@@ -1,0 +1,34 @@
+<task name="ApprovePurchase" portType="wsdl:ApprovePurchasePT" operation="ApprovePurchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase"
+xmlns="http://jbi.com.sun/wfse" xmlns:wsdl="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_BPEL" xmlns:tns="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase" xmlns:nh="http://j2ee.netbeans.org/wsdl/EmailNotificationHandler">
+	<import namespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_BPEL" location="ApprovePurchase_TM_BPEL.wsdl"/>
+	<import namespace="http://j2ee.netbeans.org/wsdl/EmailNotificationHandler" location="EmailNotificationHandler.wsdl"/>
+	  <title expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">'This is a Task for ApprovePurchase'</title>
+  	  <priority expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">'5'</priority>
+	<assignment>
+            <user>'rwaldorf'</user>
+            <user>'radval'</user>
+        </assignment>
+
+        
+        
+	 <notification  name="notifyManager">
+         <email portType="nh:NotificationHandlerPortType"  operation="NotificationHandlerOperation"> 
+            <address>'mailto:ritesh.adval@sun.com'</address>
+            <address>'xmpp:imaddress'</address>
+            <address>'sip:smsaddress'</address>
+        </email>
+        
+        <message>
+ 		<subject>'The task status'</subject>
+             
+        <body>
+           ' The task can be found at &lt;a href="localhost"&gt;'
+        </body>
+        </message>
+               
+        </notification>
+		
+		<action type="Completed">
+			<localNotification reference="notifyManager" />
+		</action>
+	</task>

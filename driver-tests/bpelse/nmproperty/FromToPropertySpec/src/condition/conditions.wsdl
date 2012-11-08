@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="conditions" targetNamespace="http://j2ee.netbeans.org/wsdl/conditions"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/conditionsSchema" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/schema/conditionsSchema" xmlns:tns="http://j2ee.netbeans.org/schema/conditionsSchema">
+            <xsd:complexType name="msgType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                    <xsd:element name="boolElem" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="msgElem" type="tns:msgType"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="message">
+        <part name="mesgPart" element="ns0:msgElem"/>
+    </message>
+    <portType name="conditionsPortType">
+        <operation name="conditionsOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <binding name="conditionsPortTypeBinding" type="tns:conditionsPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="conditionsOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="testService">
+        <port name="conditionsPortTypeBindingPort" binding="tns:conditionsPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/testService/conditionsPortTypeBindingPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="testPLT">
+        <plnk:role name="conditionsPortTypeRole" portType="tns:conditionsPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="booleanProp" type="xsd:boolean"/>
+    <vprop:propertyAlias propertyName="tns:booleanProp" nmProperty="org.glassfish.openesb.bpelse.test.BOOL">
+    </vprop:propertyAlias>
+</definitions>

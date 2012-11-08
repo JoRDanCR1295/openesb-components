@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoProxy"
+    targetNamespace="http://enterprise.netbeans.org/bpel/EchoBP/echoProxy"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/EchoBP/echoProxy">
+    <import namespace="http://j2ee.netbeans.org/wsdl/echoProxy" location="echoProxy.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/echo" partnerLinkType="tns:echo" partnerRole="echoPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" partnerLinkType="tns:echoProxy" myRole="echoProxyPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/echo" messageType="tns:echoOperationResponse"/>
+        <variable name="EchoOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/echo" messageType="tns:echoOperationRequest"/>
+        <variable name="EchoProxyOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" messageType="tns:echoProxyOperationResponse"/>
+        <variable name="EchoProxyOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" messageType="tns:echoProxyOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="echoProxyOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" portType="tns:echoProxyPortType" variable="EchoProxyOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="EchoProxyOperationIn" part="part1"/>
+                <to variable="EchoOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="echoOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/echo" portType="tns:echoPortType" inputVariable="EchoOperationIn" outputVariable="EchoOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="EchoOperationOut" part="part1"/>
+                <to variable="EchoProxyOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="echoProxyOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/echoProxy" portType="tns:echoProxyPortType" variable="EchoProxyOperationOut"/>
+    </sequence>
+</process>

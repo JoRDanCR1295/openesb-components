@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="xsddatatype14"
+         targetNamespace="http://www.seebeyond.com/eInsight/xsddatatype14"
+         xmlns:tns="http://www.seebeyond.com/eInsight/xsddatatype14"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/xsddatatype14"
+         xmlns:ns1="urn:SampleXSD2"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/xsddatatype14"
+            location="xsddatatype14.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD2"
+            location="SampleXSD2.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+                  messageType="ns0:xsddatatype14"></variable>
+        <variable name="messageType_Input"
+                  messageType="ns0:xsddatatype14"></variable>
+        <variable name="xsdDataType_Element14"
+                  type="ns1:USAddressType"></variable>
+                                    
+    </variables>
+    <sequence>
+        <receive name="xsddatatype14"
+                 partnerLink="Client2BP"
+                 portType="ns0:xsddatatype14"
+                 operation="xsddatatype14"
+                 variable="messageType_Output"
+                 createInstance="yes"></receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$messageType_Output.part/ns1:name</bpws:from>
+                <bpws:to>$xsdDataType_Element14/ns1:name</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$xsdDataType_Element14/ns1:name</bpws:from>
+                <bpws:to>$messageType_Input.part/ns1:name</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Output.part/ns1:street</bpws:from>
+                <bpws:to>$messageType_Input.part/ns1:street</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Output.part/ns1:city</bpws:from>
+                <bpws:to>$messageType_Input.part/ns1:city</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Output.part/ns1:state</bpws:from>
+                <bpws:to>$messageType_Input.part/ns1:state</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Output.part/ns1:zip</bpws:from>
+                <bpws:to>$messageType_Input.part/ns1:zip</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <reply name="xsddatatype14.Reply"
+               partnerLink="Client2BP"
+               portType="ns0:xsddatatype14"
+               operation="xsddatatype14"
+               variable="messageType_Input"></reply>
+    </sequence>
+</process>

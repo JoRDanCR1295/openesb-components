@@ -1,0 +1,130 @@
+											---
+											Supported IDL data types
+											---
+											Mirco Casoni, Giancarlo Valeri
+											---
+											25/06/2007
+
+Provider Role - Localization Type
+
+  A corba service can be localized using some different mechanisms:
+  NameService, IOR, corbaname and corbaloc.
+
+  The JBI4CORBA component supports all of these methods when it is configured
+  as a provider.
+
+  In this configuration the component is a client corba and it looks for the
+  associated servant during the startup of the ServiceUnit, so the user must
+  specify a way to localize the service using a property called <<localizationType>>.
+
+  The localizationType property can assume the following values:
+  NameService, IOR, corbaname and corbaloc.
+
+  The name changes with the localizationType:
+
+*----------------------+-------------------------------------------------------------+
+| <<localizationType>> | <<name>>                                                    |
+*----------------------+-------------------------------------------------------------+
+| NameService          |                                                             |
+*----------------------+-------------------------------------------------------------+
+| IOR                  | The absolute path where there is a file that contains a IOR |
+*----------------------+-------------------------------------------------------------+
+| corbaname            | The corbaname url of the service                            |
+*----------------------+-------------------------------------------------------------+
+| corbaloc             | The corbaloc url of the service                             |
+*----------------------+-------------------------------------------------------------+
+
+
+Sample - WSDL deploy and NameService
+
+  In this example the binding component is deployed using the WSDL file
+  and the localizationType is NameService.
+
++------------------------------------------+
+  <wsdl:binding name="EchoWSDLJBIPortBinding" type="tns:EchoWSDLPortType">
+    <imolacorba:binding>
+      <imolacorba:idl>	
+        ... the idl file content.
+      </imolacorba:idl>
+    </imolacorba:binding>
+
+  [...]
+  </wsdl:binding>
+
+  <wsdl:service name="EchoWSDL">
+    <wsdl:port binding="tns:EchoWSDLJBIPortBinding" name="EchoWSDLJBIPort">
+      <imolacorba:address name="ServantTestSimpleWsdl" localizationType="NameService">
+        <imolacorba:orb>
+          <imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+          <imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+        </imolacorba:orb>
+      </imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
++------------------------------------------+
+
+Sample - WSDL deploy and IOR
+
+  In this example the binding component is deployed using the WSDL file
+  and the localizationType is IOR.
+  (The servant can avoid the registration in the NameService) 
+
++------------------------------------------+
+  [...]
+
+  <wsdl:service name="EchoIorWSDL">
+    <wsdl:port binding="tns:EchoIorWSDLJBIPortBinding" name="EchoIorWSDLJBIPort">
+      <imolacorba:address localizationType="IOR" name="c:/wolv/EchoIorWsdlImpl.txt" />		
+    </wsdl:port>
+  </wsdl:service>
++------------------------------------------+
+
+
+Sample - WSDL deploy and corbaname
+
+  In this example the binding component is deployed using the WSDL file
+  and the localizationType is corbaname.
+  (The IP and port used in the name is the network address of the NameService
+  where the servant registered itself previuosly with the name indicated after
+  the '#' character.)
+
++------------------------------------------+
+  [...]
+
+  <wsdl:service name="ServantCorbanameWsdl">
+    <wsdl:port binding="tns:ServantCorbanameWsdlJBIPortBinding" name="ServantCorbanameWsdlJBIPort">
+      <imolacorba:address localizationType="corbaname"
+                          name="corbaname::127.0.0.1:1050#ServantCorbanameWsdl" />		
+    </wsdl:port>
+  </wsdl:service>
++------------------------------------------+
+
+
+Sample - WSDL deploy and corbaloc
+
+  In this example the binding component is deployed using the WSDL file
+  and the localizationType is corbaloc.
+
+  In this configuration the servant can avoid the NameService registration,
+  but it must publish itself with an IP, port and name.
+  This features is usually provided with a specific method of the vendor 
+  implementation of the ORB.
+
+  For the ORB of SUN Microsystem the corba service published using the following code
+
++------------------------------------------+
+((com.sun.corba.se.impl.orb.ORBImpl) orb).
+	register_initial_reference( 
+	"ServantCorbaloc", rootPOA.servant_to_reference(servant) );
++------------------------------------------+
+
++------------------------------------------+
+  [...]
+
+  <wsdl:service name="ServantCorbalocWsdl">
+    <wsdl:port binding="tns:ServantCorbalocWsdlJBIPortBinding" name="ServantCorbalocWsdlJBIPort">
+  		<imolacorba:address localizationType="corbaloc" 
+                          name="corbaloc:iiop:1.2@127.0.0.1:1061/ServantCorbalocWsdl" />		
+    </wsdl:port>
+  </wsdl:service>
++------------------------------------------+

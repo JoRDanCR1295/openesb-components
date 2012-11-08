@@ -1,0 +1,134 @@
+<definitions targetNamespace="Iep_EjbEventProcess_iep"
+             xmlns:tns="Iep_EjbEventProcess_iep"
+             xmlns:typens="Iep_EjbEventProcess_iep"
+             xmlns:defns="Iep_EjbEventProcess_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="Iep_EjbEventProcess_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="IEP_EJB_SteamInput_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="IntegerField" type="xsd:int"/>
+                    <xsd:element name="BigIntField" type="xsd:long"/>
+                    <xsd:element name="DoubleField" type="xsd:double"/>
+                    <xsd:element name="VarCharField" type="xsd:string"/>
+                    <xsd:element name="TimeField" type="xsd:time"/>
+                    <xsd:element name="TimeStampField" type="xsd:dateTime"/>
+                    <xsd:element name="DateField" type="xsd:date"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="IEP_EJB_SteamInputBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="IEP_EJB_SteamInput_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="IntegerField" type="xsd:int"/>
+                                <xsd:element name="BigIntField" type="xsd:long"/>
+                                <xsd:element name="DoubleField" type="xsd:double"/>
+                                <xsd:element name="VarCharField" type="xsd:string"/>
+                                <xsd:element name="TimeField" type="xsd:time"/>
+                                <xsd:element name="TimeStampField" type="xsd:dateTime"/>
+                                <xsd:element name="DateField" type="xsd:date"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="IEP_EJB_StreamOutput_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="IntegerField" type="xsd:int"/>
+                   <xsd:element name="BigIntField" type="xsd:long"/>
+                   <xsd:element name="DoubleField" type="xsd:double"/>
+                   <xsd:element name="VarCharField" type="xsd:string"/>
+                   <xsd:element name="TimeField" type="xsd:time"/>
+                   <xsd:element name="TimeStampField" type="xsd:dateTime"/>
+                   <xsd:element name="DateField" type="xsd:date"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="IEP_EJB_SteamInput_Msg">
+    <part name="input" element="typens:IEP_EJB_SteamInput_MsgObj"/>
+</message>
+<message name="IEP_EJB_SteamInputBatch_Msg">
+    <part name="input" element="typens:IEP_EJB_SteamInputBatch_MsgObj"/>
+</message>
+<message name="IEP_EJB_StreamOutput_Msg">
+    <part name="output" element="typens:IEP_EJB_StreamOutput_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="IEP_EJB_SteamInput">
+        <input message="tns:IEP_EJB_SteamInput_Msg"/>
+    </operation>
+    <operation name="IEP_EJB_SteamInputBatch">
+        <input message="tns:IEP_EJB_SteamInputBatch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_IEP_EJB_StreamOutput">
+    <operation name="IEP_EJB_StreamOutput">
+        <input message="tns:IEP_EJB_StreamOutput_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_IEP_EJB_StreamOutput" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_IEP_EJB_StreamOutput" portType="tns:OutputPt_IEP_EJB_StreamOutput"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="IEP_EJB_SteamInput">
+        <soap:operation soapAction="IEP_EJB_SteamInput"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="IEP_EJB_SteamInputBatch">
+        <soap:operation soapAction="IEP_EJB_SteamInputBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- output binding -->
+<binding name="OutputBinding_IEP_EJB_StreamOutput" type="defns:OutputPt_IEP_EJB_StreamOutput">
+    <file:binding/>
+    <operation name="IEP_EJB_StreamOutput">
+        <file:operation/>
+        <input>
+            <file:message fileName="IEP_EJB_StreamOutput.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+            </file:message>
+        </input>
+    </operation>
+</binding>
+
+<!-- The service name and the tns represent my service ID QName -->
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/Iep_EjbEventProcess_iep"/>
+    </port>
+</service>
+<!-- output service -->
+<service name="OutputService_IEP_EJB_StreamOutput">
+    <port name="OutputPort_IEP_EJB_StreamOutput" binding="tns:OutputBinding_IEP_EJB_StreamOutput">
+        <file:address fileDirectory="@tempdir@/Iep_EjbEventProcess_iep"/>
+    </port>
+</service>
+</definitions>

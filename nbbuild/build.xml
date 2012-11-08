@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)build.xml
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="capstool" basedir="." default="build">
+    <description>Builds Alaska JBI Component Modules.</description>
+    <property name="suite.dtel" value="${basedir}/../dtelse" />
+    <property file="caps.jbi.components"/>
+    <property file="caps.jbi.install.components"/>
+    <property file="caps.jbi.uninstall.components"/>
+    <property environment="env" />
+
+    <target name="print-time">
+        <tstamp>
+            <format property="current.time" pattern="MM/dd/yyyy hh:mm:ss aaa" unit="day"/>
+        </tstamp>
+        <echo message="Current Time :${current.time}"/>
+    </target>
+
+    <target name="-caps-ant-setup">
+        <javac srcdir="antsrc" destdir="antsrc" deprecation="true" debug="true" source="1.4" classpath="${ant.home}/lib/ant.jar"/>
+        <jar jarfile="caps-antext.jar" basedir="antsrc" update="true">
+            <exclude name="**/*.java"/>
+            <exclude name="package-list"/>
+        </jar>
+
+         <taskdef name="test-for-each-installable"
+         classname="com.sun.caps.ant.taskdefs.TestForEachInstallable"
+         classpath="./caps-antext.jar"/>
+
+        <taskdef name="for-each-driver-test"
+         classname="com.sun.caps.ant.taskdefs.ForEachDriverTest"
+         classpath="./caps-antext.jar"/>
+
+        <taskdef name="test-for-each-deployable"
+         classname="com.sun.caps.ant.taskdefs.TestForEachDeployable"
+         classpath="./caps-antext.jar"/>
+
+        <taskdef name="for-each"
+         classname="com.sun.caps.ant.taskdefs.ForEach"
+         classpath="./caps-antext.jar"/>
+        <taskdef name="set-project-private"
+         classname="com.sun.caps.ant.taskdefs.SetProjectPrivate"
+         classpath="./caps-antext.jar"/>
+        <taskdef name="set-web-project-private"
+         classname="com.sun.caps.ant.taskdefs.SetProjectPrivate"
+         classpath="./caps-antext.jar"/>
+    </target>
+
+    <target name="init" depends="-caps-ant-setup">
+        <property file="caps.build.properties"/>
+        <condition property="caps.pointers.defined">
+           <and>
+               <isset property="caps.appserver.home"/>
+           </and>
+        </condition>
+
+        <fail unless="caps.pointers.defined">
+            Missing build properties:
+            --------------------------------------------------------------
+            Please edit "caps.build.properties" to define build properties.
+            --------------------------------------------------------------
+        </fail>
+
+        <set-project-private locations="${caps.jbi.components}"/>
+        <set-web-project-private locations="${caps.web.components}"/>
+
+    </target>
+
+    <target name="init-test" depends="init">
+        <property file="caps.jbi.tests"/>
+        <set-project-private rootDir="driver-tests"/>
+    </target>
+
+    <target name="start-server" depends="start-server-windows,start-server-unix"/>
+    <target name="stop-server" depends="stop-server-windows,stop-server-unix"/>
+
+    <target name="check-os">
+        <condition property="is-windows">
+            <os family="windows"/>
+        </condition>
+    </target>
+
+   <target name="start-server-windows" depends="check-os" if="is-windows">
+        <echo>Starting server on Windows</echo>
+        <property file="caps.build.properties"/>
+        <exec executable="cmd" spawn="true">
+            <arg value="/c ${caps.appserver.home}/bin/asadmin start-domain domain1"/>
+        </exec>
+    </target>
+
+    <target name="stop-server-windows" depends="check-os" if="is-windows">
+        <echo>Stoping server on Windows</echo>
+        <property file="caps.build.properties"/>
+        <exec executable="cmd" spawn="true">
+            <arg value="/c ${caps.appserver.home}/bin/asadmin stop-domain domain1"/>
+        </exec>
+    </target>
+
+    <target name="start-server-unix" depends="check-os" unless="is-windows">
+        <echo>Starting server on UNIX</echo>
+        <property file="caps.build.properties"/>
+        <exec executable="bash" spawn="true">
+            <arg value="/c ${caps.appserver.home}/bin/asadmin start-domain domain1"/>
+        </exec>
+    </target>
+
+    <target name="stop-server-unix" depends="check-os" unless="is-windows">
+        <echo>Stoping server on UNIX</echo>
+        <property file="caps.build.properties"/>
+        <exec executable="bash" spawn="true">
+            <arg value="/c ${caps.appserver.home}/bin/asadmin stop-domain domain1"/>
+        </exec>
+    </target>
+
+
+    <target name="build" depends="init">
+        <for-each startdir=".." target="jar" locations="${caps.jbi.components}" inheritAll="false"/>
+    </target>
+
+    <target name="build-build" depends="init">
+        <for-each startdir=".." target="jar" locations="${caps.jbi.components}" inheritAll="false">
+        <property name="junit.emma.enabled" value="true" />
+        <property name="emma.home" value="${env.EMMA_HOME}" />
+        </for-each>
+    </target>
+
+    <target name="build-for-driver-test" depends="init">
+        <for-each-driver-test logdir="${env.BUILD_OUTPUT_HOME}/drivertest/build" prefix="build" startdir=".." target="jar" locations="${caps.jbi.components}" inheritAll="false"/>
+    </target>
+
+
+    <target name="junit" depends="init">
+        <for-each startdir=".." target="test" locations="${caps.jbi.components}" inheritAll="false"/>
+    </target>
+
+    <target name="build-junit" depends="init">
+        <for-each startdir=".." target="test" locations="${caps.jbi.components}" inheritAll="false">
+        <property name="junit.emma.enabled" value="true" />
+        <property name="emma.home" value="${env.EMMA_HOME}" />
+        </for-each>
+    </target>
+
+
+    <target name="junitreport">
+        <junitreport>
+            <fileset dir="..">
+                <include name="ojc-core/**/TEST-*.xml"/>
+            </fileset>
+            <report todir="../../process/results/junit"/>
+            <report format="frames"/>
+         </junitreport>
+    </target>
+
+    <target name="junitreportnoframes">
+       <junitreport>
+            <fileset dir="..">
+                <include name="ojc-core/**/TEST-*.xml"/>
+            </fileset>
+            <echo message="fileset"/>
+            <report todir="../../process/results/junit"/>
+            <report format="noframes"/>
+         </junitreport>
+    </target>
+
+   <target name="install-jbicomps" depends="init">
+        <!--<antcall target="jbi-install-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-component-sharedlibrary"/>
+            <param name="jbi.jar" value="${componentsdir}/componentsl-installer-1.0.jar"/>
+        </antcall>-->
+
+        <antcall target="jbi-install-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-shared-util-library"/>
+            <param name="jbi.jar" value="${componentsdir}/sharedutillib.jar"/>
+        </antcall>
+
+        <antcall target="jbi-install-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-encoder-library"/>
+            <param name="jbi.jar" value="${componentsdir}/encoderlib.jar"/>
+        </antcall>
+        <antcall target="jbi-install-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-transform-library"/>
+            <param name="jbi.jar" value="${componentsdir}/transformlib.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-bpel-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/bpelserviceengine.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-dtel-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/dtelserviceengine.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-iep-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/iepserviceengine.jar"/>
+        </antcall>
+        <!--<antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-etl-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/etlse-installer-1.0.jar"/>
+        </antcall>-->
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-wlm-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/worklistmanagerse.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-xslt-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/xsltserviceengine.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-ale-engine"/>
+            <param name="jbi.jar" value="${componentsdir}/aleserviceengine.jar"/>
+        </antcall>
+
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-file-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/filebc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-ftp-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/ftpbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-hl7-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/hl7bc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-http-binding"/>
+            <!--<param name="jbi.jar" value="${componentsdir}/httpsoapbc.jar"/>-->
+            <param name="jbi.jar" value="${componentsdir}/httpbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-jdbc-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/jdbcbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-jms-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/jmsbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-webspheremq-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/mqbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-msmq-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/msmqbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-sap-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/sapbc.jar"/>
+        </antcall>
+        <antcall target="jbi-start">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-smtp-binding"/>
+            <param name="jbi.jar" value="${componentsdir}/smtpbc.jar"/>
+        </antcall>
+   </target>
+
+   <target name="uninstall-jbicomps" depends="init">
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-bpel-engine"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-dtel-engine"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-iep-engine"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-etl-engine"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-wlm-engine"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-xslt-engine"/>
+        </antcall>
+
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-file-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-ftp-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-hl7-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-http-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-jdbc-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-jms-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-webspheremq-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-msmq-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-sap-binding"/>
+        </antcall>
+        <antcall target="jbi-uninstall">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-smtp-binding"/>
+        </antcall>
+
+        <antcall target="jbi-uninstall-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-component-sharedlibrary"/>
+        </antcall>
+        <antcall target="jbi-uninstall-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-encoder-library"/>
+        </antcall>
+        <antcall target="jbi-uninstall-shared-library">
+            <param name="asadmin.port" value="4848" />
+            <param name="jbi.id" value="sun-shared-util-library"/>
+        </antcall>
+
+    </target>
+
+    <target name="jbi-install">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="install-jbi-component --port ${asadmin.port} ${jbi.jar}"/>
+        </antcall>
+    </target>
+
+    <target name="jbi-install-shared-library">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="install-jbi-shared-library --port ${asadmin.port} ${jbi.jar}"/>
+        </antcall>
+    </target>
+
+    <target name="jbi-start" depends="jbi-install">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="start-jbi-component --port ${asadmin.port} ${jbi.id}"/>
+        </antcall>
+    </target>
+
+    <target name="jbi-stop">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="stop-jbi-component --port ${asadmin.port} ${jbi.id}"/>
+        </antcall>
+    </target>
+
+    <target name="jbi-uninstall" depends="jbi-stop">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="uninstall-jbi-component --port ${asadmin.port} ${jbi.id}"/>
+        </antcall>
+    </target>
+
+    <target name="jbi-uninstall-shared-library">
+        <antcall target="exec-asadmin">
+            <param name="arg.line" value="uninstall-jbi-shared-library --port ${asadmin.port} ${jbi.id}"/>
+        </antcall>
+    </target>
+
+    <target name="exec-asadmin" depends="exec-asadmin-windows,exec-asadmin-unix">
+    </target>
+    <target name="exec-asadmin-windows" depends="check-os" if="is-windows">
+        <exec failonerror="false" executable="${caps.appserver.home}/bin/asadmin.bat">
+            <arg line="${arg.line}"/>
+        </exec>
+    </target>
+    <target name="exec-asadmin-unix" depends="check-os" unless="is-windows">
+        <exec failonerror="false" executable="${caps.appserver.home}/bin/asadmin">
+            <arg line="${arg.line}"/>
+        </exec>
+    </target>
+
+    <target name="install" depends="build">
+        <ant dir="${basedir}/../sharedlibrary/encoderlib" antfile="build.xml" target="jbi-install"/>
+        <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../dtelse" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../etlse" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../filebc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../ftpbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="jbi-start"/>
+        <!--ant dir="${basedir}/../sapbc" antfile="build.xml" target="jbi-start"/-->
+        <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../alese/jbiadapter" antfile="build.xml" target="jbi-start"/>
+        <!--ant dir="${basedir}/../msmqbc" antfile="build.xml" target="jbi-start"/-->
+        <ant dir="${basedir}/../mqbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../hl7bc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../workflowse" antfile="build.xml" target="jbi-start"/>
+        <!--ant dir="${basedir}/../cam" antfile="build.xml" target="jbi-start"/-->
+
+    </target>
+
+   <target name="new-install" depends="build">
+        <test-for-each-installable startdir=".." installtype="install" locations="${caps.jbi.install.components}" inheritAll="true" />
+    </target>
+
+    <target name="uninstall" depends="init">
+        <test-for-each-installable startdir=".." installtype="uninstall" locations="${caps.jbi.uninstall.components}" inheritAll="true" />
+    </target>
+
+    <target name="build-install" depends="init">
+        <test-for-each-installable startdir=".." installtype="install" locations="${caps.jbi.install.components}" inheritAll="true" />
+    </target>
+
+    <target name="build-uninstall" depends="init">
+        <test-for-each-installable startdir=".." installtype="uninstall" locations="${caps.jbi.uninstall.components}" inheritAll="true" />
+    </target>
+
+    <!--
+    <target name="build-install" depends="init">
+        <ant dir="${basedir}/../sharedlibrary/encoderlib" antfile="build.xml" target="jbi-install"/>
+        <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../dtelse" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../etlse" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../filebc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../sapbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../msmqbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../mqbc" antfile="build.xml" target="jbi-start"/>
+        <ant dir="${basedir}/../hl7bc" antfile="build.xml" target="jbi-start"/>
+    </target>
+
+    <target name="build-uninstall" depends="init">
+
+        <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../dtelse" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../dtelse" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../etlse" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../etlse" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../filebc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../filebc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../sapbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../sapbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../msmqbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../msmqbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../mqbc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../mqbc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../hl7bc" antfile="build.xml" target="jbi-stop"/>
+        <ant dir="${basedir}/../hl7bc" antfile="build.xml" target="jbi-uninstall"/>
+
+        <ant dir="${basedir}/../sharedlibrary/encoderlib" antfile="build.xml" target="jbi-uninstall"/>
+
+    </target>
+
+    <target name="install-for-driver-test" depends="build-for-driver-test">
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.sharedlibrary.encoderlib.properties" action="start" />
+            <ant dir="${basedir}/../sharedlibrary/encoderlib" antfile="build.xml" target="jbi-install"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.sharedlibrary.encoderlib.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.bpelse.bpeljbiadapter.properties" action="start" />
+            <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.bpelse.bpeljbiadapter.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.dtelse.properties" action="start" />
+            <ant dir="${basedir}/../dtelse" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.dtelse.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.etlse.properties" action="start" />
+            <ant dir="${basedir}/../etlse" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.etlse.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.filebc.properties" action="start" />
+            <ant dir="${basedir}/../filebc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.filebc.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.httpsoapbc.properties" action="start" />
+            <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.httpsoapbc.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.iepse.iepjbiadapter.properties" action="start" />
+            <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.iepse.epjbiadapter.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.jmsbc.properties" action="start" />
+            <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.jmsbc.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.jdbcbc.properties" action="start" />
+            <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.jdbcbc.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.smtpbc.properties" action="start" />
+            <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.smtpbc.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.xsltse.jbiadapter.properties" action="start" />
+            <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.xsltse.jbiadapter.properties" action="stop" />
+
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.mqbc.properties" action="start" />
+            <ant dir="${basedir}/../mqbc" antfile="build.xml" target="jbi-start"/>
+    <record name="${env.BUILD_OUTPUT_HOME}/drivertest/install/install.mqbc.properties" action="stop" />
+
+    </target>
+
+    -->
+
+    <target name="clean" depends="init">
+        <for-each startdir=".." target="clean" locations="${caps.jbi.components}" inheritAll="false"/>
+    </target>
+
+    <target name="test" depends="print-time, init, init-test, start-server">
+        <property file="${caps.build.properties}"/>
+        <for-each startdir=".." target="jbi-unit-test" locations="${caps.jbi.tests}" inheritAll="false"/>
+    </target>
+
+    <!-- This target should be used once we switch to ANT based script
+    <target name="build-test" depends="print-time, init, init-test, start-server">
+        <property file="${caps.build.properties}"/>
+        <test-for-each-deployable startdir=".." locations="${caps.jbi.tests}" inheritAll="false" >
+        <property name="driver.emma.enabled" value="true" />
+        <property name="emma.home" value="${emma.home}" />
+        </test-for-each-deployable>
+    </target>
+    -->
+
+    <target name="build-test" depends="print-time, init, init-test">
+        <property file="${caps.build.properties}"/>
+        <test-for-each-deployable startdir=".." createDir="true" locations="${caps.jbi.tests}" inheritAll="false">
+        </test-for-each-deployable>
+    </target>
+
+    <target name="build-test-for-code-coverage" depends="print-time, init, init-test">
+        <property file="${caps.build.properties}"/>
+        <test-for-each-deployable startdir=".." locations="${caps.jbi.tests}" inheritAll="false">
+        <property name="driver.emma.enabled" value="true" />
+        <property name="emma.home" value="${env.EMMA_HOME}" />
+        </test-for-each-deployable>
+    </target>
+
+    <target name="test-for-driver-test" depends="print-time, init, init-test, start-server">
+        <property file="${caps.build.properties}"/>
+        <for-each-driver-test logdir="${env.BUILD_OUTPUT_HOME}/drivertest/deploy" prefix="deploy" startdir=".." target="jbi-unit-test" locations="${caps.jbi.tests}" inheritAll="false"/>
+    </target>
+
+
+    <target name="clean-private-properties" depends="-caps-ant-setup">
+        <set-project-private locations="${caps.jbi.components}" clean="true"/>
+    </target>
+
+    <target name="jbi-autoinstall-components" depends="build">
+        <ant dir="${basedir}/../bpelse/bpeljbiadapter" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../dtelse" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../etlse" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../filebc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../ftpbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../httpsoapbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../iepse/iepjbiadapter" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../jmsbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../jdbcbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../sapbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../smtpbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../xsltse/jbiadapter" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../alese/jbiadapter" antfile="build.xml" target="do-autoinstall"/>
+        <!--ant dir="${basedir}/../msmqbc" antfile="build.xml" target="do-autoinstall"/-->
+        <ant dir="${basedir}/../mqbc" antfile="build.xml" target="do-autoinstall"/>
+        <ant dir="${basedir}/../hl7bc" antfile="build.xml" target="do-autoinstall"/>
+
+    </target>
+
+
+</project>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InOutTx"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOutTxBpel/InOutTx"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InOutTxBpel/InOutTx" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InOutTx">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOutTx" location="InOutTx.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="OutboundPartner" partnerLinkType="ns1:OutboundPLT" partnerRole="TestOutboundPTRole"/>
+        <partnerLink name="InOutTxPartner" partnerLinkType="ns1:InOutTxPLT" partnerRole="InOutTxPTRole"/>
+        <partnerLink name="InboundPartner" partnerLinkType="ns1:InboundPLT" myRole="TestInboundPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutFaultVar" messageType="ns1:simpleMsg"/>
+        <variable name="InOutTxFaultVar" messageType="ns1:simpleMsg"/>
+        <variable name="OutErrVar" messageType="ns1:simpleMsg"/>
+        <variable name="TestOutboundVar" messageType="ns1:simpleMsg"/>
+        <variable name="InOutTxOutVar" messageType="ns1:simpleMsg"/>
+        <variable name="InOutTxInVar" messageType="ns1:simpleMsg"/>
+        <variable name="TestInboundVar" messageType="ns1:simpleMsg"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence1">
+                <assign name="MEErrorAssign">
+                    <copy>
+                        <from>
+                            <literal>Err on ME:</literal>
+                        </from>
+                        <to>$OutErrVar.simplePart/elem</to>
+                    </copy>
+                </assign>
+                <invoke name="OutErrInv" partnerLink="OutboundPartner" operation="TestOutboundOper" 
+                		portType="ns1:TestOutboundPT" inputVariable="OutErrVar"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="InboundRec" createInstance="yes" partnerLink="InboundPartner" operation="TestInboundOper" 
+        		 portType="ns1:TestInboundPT" variable="TestInboundVar"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$TestInboundVar.simplePart/elem</from>
+                <to>$InOutTxInVar.simplePart/elem</to>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catch faultName="ns1:InOutTxOperFault" faultVariable="InOutTxFaultVar" faultMessageType="ns1:simpleMsg">
+                    <sequence name="Sequence2">
+		                <assign name="FaultHandlingAssign">
+                    		<copy>
+                        		<from>
+                            		<literal>Fault Response handled:</literal>
+                        		</from>
+                        		<to>$OutFaultVar.simplePart/elem</to>
+                    		</copy>
+                		</assign>
+                        <invoke name="OutFaultInv" partnerLink="OutboundPartner" operation="TestOutboundOper" 
+                        		portType="ns1:TestOutboundPT" inputVariable="OutFaultVar"/>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+		    <sequence>
+	            <invoke name="InOutTxInv" partnerLink="InOutTxPartner" operation="InOutTxOper" portType="ns1:InOutTxPT" 
+	            		inputVariable="InOutTxInVar" outputVariable="InOutTxOutVar"/>
+    	    	<assign name="Assign2">
+        	    	<copy>
+            	    	<from>$InOutTxOutVar.simplePart/elem</from>
+            		    <to>$TestOutboundVar.simplePart/elem</to>
+	        	    </copy>
+    		    </assign>
+	    	    <invoke name="OutboundInv" partnerLink="OutboundPartner" operation="TestOutboundOper" 
+	    	    		portType="ns1:TestOutboundPT" inputVariable="TestOutboundVar"/>
+		    </sequence>
+        </scope>
+    </sequence>
+</process>

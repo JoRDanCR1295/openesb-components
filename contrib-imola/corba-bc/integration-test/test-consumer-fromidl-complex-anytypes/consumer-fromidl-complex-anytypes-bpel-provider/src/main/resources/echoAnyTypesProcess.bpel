@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoProcessAnyTypes"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoAnyTypesProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/scProcess" 
+    xmlns:ns1="urn:jbi4corba/test-consumer-fromidl-complex-anytypes" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://testconsumerfromidlanytypes.test.jbi4corba.imolinfo.it/">
+    <import namespace="urn:jbi4corba/test-consumer-fromidl-complex-anytypes" location="EchoAnyTypes.wsdl"  importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="echoAnyTypesProcess" partnerLinkType="ns1:echoAnyTypesProcess" myRole="echoAnyTypesProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoAnyExceptionFaultVar" messageType="ns1:EchoAnyException"/>
+        <variable name="Echo4Out" messageType="ns1:echo4Response"/>
+        <variable name="Echo4In" messageType="ns1:echo4"/>
+        <variable name="Echo3Out" messageType="ns1:echo3Response"/>
+        <variable name="Echo3In" messageType="ns1:echo3"/>
+        <variable name="Echo2Out" messageType="ns1:echo2Response"/>
+        <variable name="Echo2In" messageType="ns1:echo2"/>
+        <variable name="Echo1Out" messageType="ns1:echo1Response"/>
+        <variable name="Echo1In" messageType="ns1:echo1"/>
+    </variables>
+    <sequence name="Sequence1">
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="echoAnyTypesProcess" operation="echo1" portType="ns1:EchoAnyTypesPortType" variable="Echo1In">
+                <sequence name="Sequence2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>$Echo1In.parameters/ns1:msg</from>
+                            <to>$Echo1Out.parameters/ns1:msg</to>
+                        </copy>
+                        <copy>
+                            <from>'good return'</from>
+                            <to>$Echo1Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="echoAnyTypesProcess" operation="echo1" portType="ns1:EchoAnyTypesPortType" variable="Echo1Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoAnyTypesProcess" operation="echo2" portType="ns1:EchoAnyTypesPortType" variable="Echo2In">
+                <sequence name="Sequence3">
+                    <if name="If1">
+                        <condition>'exception' = $Echo2In.parameters/ns1:msg</condition>
+                        <sequence name="Sequence6">
+                            <assign name="Assign5">
+                                <copy>
+                                    <from>$Echo2In.parameters/ns1:msg</from>
+                                    <to>$EchoAnyExceptionFaultVar.EchoAnyException/ns1:reason</to>
+                                </copy>
+                            </assign>
+                            <reply name="Reply5" partnerLink="echoAnyTypesProcess" operation="echo2" portType="ns1:EchoAnyTypesPortType" faultName="ns1:EchoAnyException" variable="EchoAnyExceptionFaultVar"/>
+                        </sequence>
+                    </if>
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$Echo2In.parameters/ns1:msg</from>
+                            <to>$Echo2Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply2" partnerLink="echoAnyTypesProcess" operation="echo2" portType="ns1:EchoAnyTypesPortType" variable="Echo2Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoAnyTypesProcess" operation="echo3" portType="ns1:EchoAnyTypesPortType" variable="Echo3In">
+                <sequence name="Sequence4">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>$Echo3In.parameters/ns1:msg/ns2:two_format</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldAny</to>
+                        </copy>
+                        <copy>
+                            <from>true()</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo3In.parameters/ns1:msg/ns2:numeric</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply3" partnerLink="echoAnyTypesProcess" operation="echo3" portType="ns1:EchoAnyTypesPortType" variable="Echo3Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoAnyTypesProcess" operation="echo4" portType="ns1:EchoAnyTypesPortType" variable="Echo4In">
+                <sequence name="Sequence5">
+                    <assign name="Assign4">
+                        <copy>
+                            <from>$Echo4In.parameters/ns1:msg/ns2:fieldBoolean</from>
+                            <to>$Echo4Out.parameters/ns1:msg/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo4In.parameters/ns1:msg/ns2:fieldAny</from>
+                            <to>$Echo4Out.parameters/ns1:msg/ns2:fieldAny</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo4In.parameters/ns1:msg/ns2:fieldChar</from>
+                            <to>$Echo4Out.parameters/ns1:msg/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo4In.parameters/ns1:msg/ns2:fieldAny</from>
+                            <to>$Echo4Out.parameters/ns1:return/item</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply4" partnerLink="echoAnyTypesProcess" operation="echo4" portType="ns1:EchoAnyTypesPortType" variable="Echo4Out"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>
+
+

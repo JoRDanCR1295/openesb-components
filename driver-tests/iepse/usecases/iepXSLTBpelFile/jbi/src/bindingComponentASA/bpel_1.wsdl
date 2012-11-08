@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="iepStockVolumeAlert_iep"
+             targetNamespace="iepStockVolumeAlert_iep"
+             xmlns:tns="iepStockVolumeAlert_iep"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+        <wsdl:types>
+        <xsd:schema targetNamespace="iepStockVolumeAlert_iep">
+            <xsd:element name="StreamOutput0_MsgObj">
+            <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="SYMB" type="xsd:string"/>
+                        <xsd:element name="AVGVolumeA" type="xsd:double"/>
+                        <xsd:element name="AVGVolumeB" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+        </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="In_Msg">
+        <wsdl:part element="tns:StreamOutput0_MsgObj" name="input"/>
+    </wsdl:message>
+      <wsdl:portType name="MyPortType">
+              <wsdl:operation name="StreamOutput0">
+                  <wsdl:input name="input" message="tns:In_Msg"/>
+              </wsdl:operation>
+   </wsdl:portType>
+
+        <binding name="SoapBinding" type="tns:MyPortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+            <operation name="StreamOutput0">
+                <soap:operation soapAction="StreamOutput0"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            </operation>
+        </binding>
+   
+         <wsdl:service name="bpel_1Service">
+		<wsdl:port name="bpel_1PortName" binding="tns:SoapBinding">                    
+                     <soap:address location="http://localhost:18181/bpel_1"/>
+		</wsdl:port>
+        </wsdl:service>
+
+	<plnk:partnerLinkType name="OutputPl_StreamOutput0">
+		<plnk:role name="bpel_1Provider" portType="tns:MyPortType"/>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

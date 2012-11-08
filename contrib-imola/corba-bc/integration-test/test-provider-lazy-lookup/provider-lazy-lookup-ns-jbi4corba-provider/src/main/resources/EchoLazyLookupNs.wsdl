@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoLazyLookupNs" targetNamespace="urn:jbi4corba/test-provider-lazy-lookup" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-provider-lazy-lookup" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+       
+         <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-provider-lazy-lookup" xmlns="urn:jbi4corba/test-provider-lazy-lookup" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="echo">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>   
+    </wsdl:types>
+    <wsdl:message name="echo">
+        <wsdl:part name="parameters" element="tns:echo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="parameters" element="tns:echoResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EchoLazyLookupNs">
+        <wsdl:operation name="echo">
+            <wsdl:input name="echo" message="tns:echo">
+            </wsdl:input>
+            <wsdl:output name="echoResponse" message="tns:echoResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EchoLazyLookupNsCorbaBinding" type="tns:EchoLazyLookupNs">
+        <imolacorba:binding>
+            <imolacorba:idl>
+//IDL
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testproviderlazylookup{
+					
+						interface InterfaceEchoLazyLookupNs {
+							string echo(in string msg);
+						};
+
+//						interface InterfaceEchoLazyLookupCorbaloc {
+//							string echo(in string msg);
+//						};
+//
+//						interface InterfaceEchoLazyLookupCorbaname {
+//							string echo(in string msg);
+//						};
+//
+//						interface InterfaceEchoLazyLookupIOR {
+//							string echo(in string msg);
+//						};
+					
+				};
+			};
+		};
+	};
+};
+            </imolacorba:idl>
+        </imolacorba:binding>
+        <wsdl:operation name="echo">
+            <wsdl:input name="echo">
+            </wsdl:input>
+            <wsdl:output name="echoResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EchoLazyLookupNs">
+        <wsdl:port name="EchoLazyLookupNsCorbaPort" binding="tns:EchoLazyLookupNsCorbaBinding">
+            <imolacorba:address name="EchoLazyLookupNs" localizationType="NameService">
+                <imolacorba:orb>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+                </imolacorba:orb>
+            </imolacorba:address>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="EchoLazyLookupNs">
+        <plnk:role name="EchoLazyLookupNsPortTypeRole" portType="tns:EchoLazyLookupNs"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>

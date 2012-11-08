@@ -1,0 +1,89 @@
+                                ---
+								Documentation
+								---
+								Raffaele Spazzoli
+								---
+								05/08/2009
+
+IDL to WSDL Tool
+
+  The IDL2WSDLTool is a convenient command line tool that can be used to create WSL files starting from IDL files.
+  It uses the same runtime code as the netbeans plugin.
+  Please notice that the plugin has two bath command that can be used to run it. Before starting please configure the batch file by:
+
+  * configuring the JAVA_HOME directory
+
+  * adding the correct tools.jar to the classpath
+
+  []
+
+  The plugin requires two command line arguments and a property file containing the configuration for the elaboration.
+
+  IDL2WSDLTool command line arguments:
+
+*----------------------+-------------------------------------------------------------+
+| <idl file name> | it is the name of the root IDL. All IDL referenced by this one via include directive will be elaborated. The interfaces specified in the properties file must be present in this idl or in the included ones |
+*----------------------+-------------------------------------------------------------+
+| <property file name>| it is the name of the property file containing the configuration|
+*----------------------+-------------------------------------------------------------+
+
+  example: IDL2WSDLTool myidl.idl myproperties.properties
+
+  The property file has the following format:
+
+*----------------------+-------------------------------------------------------------+
+| <<property name>> | <<description>>                                                    |
+*----------------------+-------------------------------------------------------------+
+| InterfaceCount       | The number of interface to be analized, the plugin will create one WSDL per interface. Properties referred to a single interface will have a leading number identifing the interface. The enumeration starts from 0.                                                             |
+*----------------------+-------------------------------------------------------------+
+|Interface<n>.FileName   | The file name of the resulting WSDL |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.IDLInterfaceName            | The name of the corba interface                            |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.LocalizationType             | The localization type. Possible values are NameService, corbaname, corbaloc, IOR.                             |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.Address             | The value of the address, please notice that the address format depends on the localization type, please see the documentation for more details                             |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.ORBPropertiesCount             | The number of orb properties, enumeration starts from 0.                             |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.ORBPropertyName<m>             | the name of the orb property                            |
+*----------------------+-------------------------------------------------------------+
+| Interface<n>.ORBPropertyValue<m>             | The value of the orb property                            |
+*----------------------+-------------------------------------------------------------+
+
+  An example of a configuration file with two interfaces:
+
++-----------------------------+
+
+  InterfaceCount=2
+  Interface0.FileName=Echo.wsdl
+  Interface0.IDLInterfaceName=Echo
+  Interface0.Address=Echo
+  Interface0.LocalizationType=NameService
+  Interface0.ORBPropertiesCount=3
+  Interface0.ORBPropertyName0=org.omg.CORBA.ORBInitialPort
+  Interface0.ORBPropertyValue0=1050
+  Interface0.ORBPropertyName1=org.omg.CORBA.ORBClass
+  Interface0.ORBPropertyValue1=com.sun.corba.ee.impl.orb.ORBImpl
+  Interface0.ORBPropertyName2=org.omg.CORBA.ORBInitialHost
+  Interface0.ORBPropertyValue2=localhost
+
+  Interface1.FileName=Factory.wsdl
+  Interface1.IDLInterfaceName=Factory
+  Interface1.Address=Factory
+  Interface1.LocalizationType=NameService
+  Interface1.ORBPropertiesCount=3
+  Interface1.ORBPropertyName0=org.omg.CORBA.ORBInitialPort
+  Interface1.ORBPropertyValue0=1050
+  Interface1.ORBPropertyName1=org.omg.CORBA.ORBClass
+  Interface1.ORBPropertyValue1=com.sun.corba.ee.impl.orb.ORBImpl
+  Interface1.ORBPropertyName2=org.omg.CORBA.ORBInitialHost
+  Interface1.ORBPropertyValue2=localhost
+
++--------------------------------------+
+
+  The IDL2WSDLTool produce the wsdl and the xsd files in the same
+  directory of the idl file.
+
+  The IDL2WSDLTool generate a log file, named IDL2WSDL.log, in the tmp
+  directory of the user.

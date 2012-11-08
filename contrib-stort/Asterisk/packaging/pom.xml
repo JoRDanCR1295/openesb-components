@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>com.stort.openesb</groupId>
+        <version>1.0</version>
+        <relativePath>../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stort.openesb</groupId>
+    <artifactId>asterisk-bc-installer</artifactId>
+    <version>${contrib.stort.currentVersion}</version>
+
+    <name>contrib-stort-asterisk-bc-installer</name>
+    <description>Asterisk-BC JBI Install Package</description>
+
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>../src/conf/META-INF</directory>
+                <includes>
+                    <include>jbi.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>bld/staging</directory>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+                <excludes>
+                    <exclude>**/asterisk-bc.jar</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/staging/lib</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-rename-component</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>asterisk-bc</artifactId>
+                                    <version>${contrib.stort.currentVersion}</version>
+                                    <outputDirectory>${project.build.directory}/staging</outputDirectory>
+                                    <destFileName>component.jar</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>Helios</artifactId>
+                                    <version>${contrib.stort.currentVersion}</version>
+                                    <destFileName>Helios.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.directory}/staging/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>        
+    </dependencies>
+</project>

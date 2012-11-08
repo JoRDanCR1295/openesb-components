@@ -1,0 +1,259 @@
+
+This test is designed to test ojc issue 237 (https://open-jbi-components.dev.java.net/issues/show_bug.cgi?id=237).  Not sure what is so special about this BPEL (WSDLs and XSDs), but BPEL SE failed to load the BPEL when using the old model with following exception:
+
+namespace 'http://www.utbm.fr/schema/GPSPointSchema' not declared in schema
+        at
+org.exolab.castor.xml.schema.reader.ImportUnmarshaller.<init>(ImportUnmarshaller.java:144)
+        at
+org.exolab.castor.xml.schema.reader.SchemaUnmarshaller.startElement(SchemaUnmarshaller.java:432)
+        at
+org.exolab.castor.xml.schema.reader.Sax2ComponentReader.startElement(Sax2ComponentReader.java:255)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:453)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanStartElement(XMLDocumentFragmentScannerImpl.java:1357)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2740)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+org.exolab.castor.xml.schema.reader.SchemaReader.read(SchemaReader.java:285)
+        at
+com.sun.wsdl.model.xsd.impl.CastorSupportImpl.parseSchema(CastorSupportImpl.java:177)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor$TypesXmlParser.processSchemas(SAXParseVisitor.java:2195)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor$TypesXmlParser.endElement(SAXParseVisitor.java:2132)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endElement(AbstractSAXParser.java:601)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(XMLDocumentFragmentScannerImpl.java:1772)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2923)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:140)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor.startParsing(SAXParseVisitor.java:408)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.traverse(WSDLDocumentParserFactoryImpl.java:155)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.loadWSDL(WSDLDocumentParserFactoryImpl.java:135)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.loadWSDL(WSDLDocumentParserFactoryImpl.java:117)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.load(WSDLDocumentParserFactoryImpl.java:84)
+        at com.sun.wsdl.model.impl.WSDLDocumentImpl.load(WSDLDocumentImpl.java:208)
+        at
+com.sun.bpel.model.impl.DefaultWSDLResolverImpl.parseWSDL(DefaultWSDLResolverImpl.java:149)
+        at
+com.sun.bpel.model.impl.DefaultWSDLResolverImpl.resolve(DefaultWSDLResolverImpl.java:122)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.importWSDLDocument(LazyImportVisitor.java:142)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.importDocument(LazyImportVisitor.java:112)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.visit(LazyImportVisitor.java:98)
+        at com.sun.bpel.model.impl.ImportImpl.getImportedObject(ImportImpl.java:137)
+        at
+com.sun.bpel.model.impl.BPELProcessImpl.getAllImportedWSDLDefinitions(BPELProcessImpl.java:918)
+        at
+com.sun.bpel.model.impl.BPELProcessImpl.getWSDLMessage(BPELProcessImpl.java:996)
+        at
+com.sun.bpel.model.impl.VariableImpl.initWSDLMessageType(VariableImpl.java:109)
+        at com.sun.bpel.model.impl.VariableImpl.initMembers(VariableImpl.java:99)
+        at
+com.sun.bpel.model.meta.impl.RVariableImpl.initMembers(RVariableImpl.java:94)
+        at
+com.sun.bpel.model.visitor.DefaultXmlParserFactory$VariablesXmlParser.startElement(DefaultXmlParserFactory.java:728)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:501)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractXMLDocumentParser.emptyElement(AbstractXMLDocumentParser.java:179)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:377)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2740)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:140)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+com.sun.bpel.model.visitor.SAXParseVisitor.visit(SAXParseVisitor.java:432)
+        at
+com.sun.bpel.model.impl.BPELDocumentImpl.accept(BPELDocumentImpl.java:312)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.traverse(BPELDocumentParseFactoryImpl.java:109)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.load(BPELDocumentParseFactoryImpl.java:94)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.load(BPELDocumentParseFactoryImpl.java:65)
+        at
+com.sun.jbi.engine.bpel.EngineHelper.loadDefinitions(EngineHelper.java:138)
+        at com.sun.jbi.engine.bpel.EngineHelper.deploy(EngineHelper.java:215)
+        at com.sun.jbi.engine.bpel.BPELSEDeployer.init(BPELSEDeployer.java:216)
+        at
+com.sun.jbi.framework.ServiceUnitOperation.process(ServiceUnitOperation.java:167)
+        at com.sun.jbi.framework.Operation.run(Operation.java:104)
+        at java.lang.Thread.run(Thread.java:619)
+namespace 'http://www.utbm.fr/schema/GPSPointSchema' not declared in schema
+        at
+org.exolab.castor.xml.schema.reader.Sax2ComponentReader.startElement(Sax2ComponentReader.java:259)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:453)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanStartElement(XMLDocumentFragmentScannerImpl.java:1357)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2740)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+org.exolab.castor.xml.schema.reader.SchemaReader.read(SchemaReader.java:285)
+        at
+com.sun.wsdl.model.xsd.impl.CastorSupportImpl.parseSchema(CastorSupportImpl.java:177)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor$TypesXmlParser.processSchemas(SAXParseVisitor.java:2195)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor$TypesXmlParser.endElement(SAXParseVisitor.java:2132)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endElement(AbstractSAXParser.java:601)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(XMLDocumentFragmentScannerImpl.java:1772)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2923)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:140)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+com.sun.wsdl.model.visitor.SAXParseVisitor.startParsing(SAXParseVisitor.java:408)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.traverse(WSDLDocumentParserFactoryImpl.java:155)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.loadWSDL(WSDLDocumentParserFactoryImpl.java:135)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.loadWSDL(WSDLDocumentParserFactoryImpl.java:117)
+        at
+com.sun.wsdl.model.impl.WSDLDocumentParserFactoryImpl.load(WSDLDocumentParserFactoryImpl.java:84)
+        at com.sun.wsdl.model.impl.WSDLDocumentImpl.load(WSDLDocumentImpl.java:208)
+        at
+com.sun.bpel.model.impl.DefaultWSDLResolverImpl.parseWSDL(DefaultWSDLResolverImpl.java:149)
+        at
+com.sun.bpel.model.impl.DefaultWSDLResolverImpl.resolve(DefaultWSDLResolverImpl.java:122)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.importWSDLDocument(LazyImportVisitor.java:142)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.importDocument(LazyImportVisitor.java:112)
+        at
+com.sun.bpel.model.visitor.LazyImportVisitor.visit(LazyImportVisitor.java:98)
+        at com.sun.bpel.model.impl.ImportImpl.getImportedObject(ImportImpl.java:137)
+        at
+com.sun.bpel.model.impl.BPELProcessImpl.getAllImportedWSDLDefinitions(BPELProcessImpl.java:918)
+        at
+com.sun.bpel.model.impl.BPELProcessImpl.getWSDLMessage(BPELProcessImpl.java:996)
+        at
+com.sun.bpel.model.impl.VariableImpl.initWSDLMessageType(VariableImpl.java:109)
+        at com.sun.bpel.model.impl.VariableImpl.initMembers(VariableImpl.java:99)
+        at
+com.sun.bpel.model.meta.impl.RVariableImpl.initMembers(RVariableImpl.java:94)
+        at
+com.sun.bpel.model.visitor.DefaultXmlParserFactory$VariablesXmlParser.startElement(DefaultXmlParserFactory.java:728)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(AbstractSAXParser.java:501)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractXMLDocumentParser.emptyElement(AbstractXMLDocumentParser.java:179)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:377)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2740)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:645)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:140)
+        at
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:508)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:807)
+        at
+com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:737)
+        at
+com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:107)
+        at
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1205)
+        at
+com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:522)
+        at
+com.sun.bpel.model.visitor.SAXParseVisitor.visit(SAXParseVisitor.java:432)
+        at
+com.sun.bpel.model.impl.BPELDocumentImpl.accept(BPELDocumentImpl.java:312)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.traverse(BPELDocumentParseFactoryImpl.java:109)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.load(BPELDocumentParseFactoryImpl.java:94)
+        at
+com.sun.bpel.model.impl.BPELDocumentParseFactoryImpl.load(BPELDocumentParseFactoryImpl.java:65)
+        at
+com.sun.jbi.engine.bpel.EngineHelper.loadDefinitions(EngineHelper.java:138)
+        at com.sun.jbi.engine.bpel.EngineHelper.deploy(EngineHelper.java:215)
+        at com.sun.jbi.engine.bpel.BPELSEDeployer.init(BPELSEDeployer.java:216)

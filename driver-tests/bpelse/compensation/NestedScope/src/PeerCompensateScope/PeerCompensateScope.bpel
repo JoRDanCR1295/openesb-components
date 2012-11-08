@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PeerCompensateScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/NestedScope/PeerCompensateScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/NestedScope/PeerCompensateScope" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/interfacePeerCS"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/interfacePeerCS" location="interfacePeerCS.wsdl" 
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InitPeerCSBPELPartner" partnerLinkType="ns1:PeerCSPLT" myRole="PeerCSPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="GlobalScope1Var" type="xsd:string"/>
+        <variable name="GlobalScope2Var" type="xsd:string"/>
+        <variable name="GlobalScope3Var" type="xsd:string"/>
+        <variable name="GlobalScope4Var" type="xsd:string"/>
+        <variable name="GlobalFaultVar" type="xsd:string"/>
+        <variable name="InitReplyVar" messageType="ns1:RepMsg"/>
+        <variable name="InitRecVar" messageType="ns1:InMsg"/>
+    </variables>
+    <sequence>
+        <receive name="InitRec" createInstance="yes" partnerLink="InitPeerCSBPELPartner" operation="PeerCSOper" portType="ns1:PeerCSPT" variable="InitRecVar"/>
+        <assign name="InitAssign">
+            <copy>
+                <from>concat($InitRecVar.InPart, ' In Main Process:')</from>
+                <to variable="GlobalFaultVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <variables>
+                <variable name="Scope1Var" type="xsd:string"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="ns2:uninitializedVariable">
+                    <sequence name="FaultHandlerSeq">
+                        <assign name="AssignInFault">
+                            <copy>
+                                <from>concat($GlobalFaultVar, ' Fault handled in Scope1:')</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                        <compensateScope name="compensateScope2" target="Scope2"/>
+                        <compensateScope name="compensateScope4" target="Scope4"/>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence name="S1Seq">
+                <assign name="S1StartAssign">
+                    <copy>
+                        <from>
+                            <literal> Scope1 Start:</literal>
+                        </from>
+                        <to variable="Scope1Var"/>
+                    </copy>
+                </assign>
+                <scope name="Scope2">
+                    <variables>
+                        <variable name="Scope2Var" type="xsd:string"/>
+                    </variables>
+                    <compensationHandler>
+                        <sequence name="Scope2CHSeq">
+                            <assign name="Scope2CHAssign">
+                                <copy>
+                                    <from>concat($GlobalFaultVar, ' In Scope2 CH :')</from>
+                                    <to variable="GlobalFaultVar"/>
+                                </copy>
+                            </assign>
+                            <compensate/>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="S2Seq">
+                        <assign name="S2StartAssign">
+                            <copy>
+                                <from>
+                                    <literal> Scope2 Start:</literal>
+                                </from>
+                                <to variable="Scope2Var"/>
+                            </copy>
+                        </assign>
+                        <assign name="S2EndAssign">
+                            <copy>
+                                <from>concat($Scope2Var, ' Scope2 End:')</from>
+                                <to variable="Scope2Var"/>
+                            </copy>
+                            <copy>
+                                <from variable="Scope2Var"/>
+                                <to variable="GlobalScope2Var"/>
+                            </copy>
+                            <copy>
+                                <from>concat($GlobalFaultVar, $GlobalScope2Var)</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <scope name="Scope3">
+                    <variables>
+                        <variable name="Scope3Var" type="xsd:string"/>
+                    </variables>
+                    <compensationHandler>
+                        <sequence name="Scope3CHSeq">
+                            <assign name="Scope3CHAssign">
+                                <copy>
+                                    <from>concat($GlobalFaultVar, ' In Scope3 CH :')</from>
+                                    <to variable="GlobalFaultVar"/>
+                                </copy>
+                            </assign>
+                            <compensate/>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="S3Seq">
+                        <assign name="S3StartAssign">
+                            <copy>
+                                <from>
+                                    <literal> Scope3 Start:</literal>
+                                </from>
+                                <to variable="Scope3Var"/>
+                            </copy>
+                        </assign>
+                        <assign name="S3EndAssign">
+                            <copy>
+                                <from>concat($Scope3Var, ' Scope3 End:')</from>
+                                <to variable="Scope3Var"/>
+                            </copy>
+                            <copy>
+                                <from variable="Scope3Var"/>
+                                <to variable="GlobalScope3Var"/>
+                            </copy>
+                            <copy>
+                                <from>concat($GlobalFaultVar, $GlobalScope3Var)</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                            
+                        </assign>
+                    </sequence>
+                </scope>
+                <scope name="Scope4">
+                    <variables>
+                        <variable name="Scope4Var" type="xsd:string"/>
+                    </variables>
+                    <compensationHandler>
+                        <sequence name="Scope4CHSeq">
+                            <assign name="Scope4CHAssign">
+                                <copy>
+                                    <from>concat($GlobalFaultVar, ' In Scope4 CH :')</from>
+                                    <to variable="GlobalFaultVar"/>
+                                </copy>
+                            </assign>
+                            <compensate/>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="S4Seq">
+                        <assign name="S4StartAssign">
+                            <copy>
+                                <from>
+                                    <literal> Scope4 Start:</literal>
+                                </from>
+                                <to variable="Scope4Var"/>
+                            </copy>
+                        </assign>
+                        <assign name="S4EndAssign">
+                            <copy>
+                                <from>concat($Scope4Var, ' Scope4 End:')</from>
+                                <to variable="Scope4Var"/>
+                            </copy>
+                            <copy>
+                                <from variable="Scope4Var"/>
+                                <to variable="GlobalScope4Var"/>
+                            </copy>
+                            <copy>
+                                <from>concat($GlobalFaultVar, $GlobalScope4Var)</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <assign name="Scope1BeforeFault">
+                    <copy>
+                        <from>concat($Scope1Var, ' Scope1 before fault:')</from>
+                        <to variable="Scope1Var"/>
+                    </copy>
+                    <copy>
+                        <from variable="Scope1Var">$Scope1Var</from>
+                        <to variable="GlobalScope1Var"/>
+                    </copy>
+                    <copy>
+                        <from>concat($GlobalFaultVar, $GlobalScope1Var)</from>
+                        <to variable="GlobalFaultVar"/>
+                    </copy>
+                </assign>
+                <ns2:throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+        <assign name="ReplyAssign">
+            <copy>
+                <from variable="GlobalScope1Var"/>
+                <to>$InitReplyVar.RepPart/Scope1Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalScope2Var"/>
+                <to>$InitReplyVar.RepPart/Scope2Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalScope3Var"/>
+                <to>$InitReplyVar.RepPart/Scope3Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalScope4Var"/>
+                <to>$InitReplyVar.RepPart/Scope4Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalFaultVar"/>
+                <to>$InitReplyVar.RepPart/OutVar</to>
+            </copy>
+        </assign>
+        <reply name="InitReply" partnerLink="InitPeerCSBPELPartner" operation="PeerCSOper" portType="ns1:PeerCSPT" variable="InitReplyVar"/>
+    </sequence>
+</process>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="GetInfo"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:/NameInfo.wsdl"
+        xmlns:tns="urn:/NameInfo.wsdl"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:smix="http://servicemix.org/wsdl/jbi/"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:/NameInfo.wsdl"
+                    xmlns="http://www.w3.org/2000/10/XMLSchema"
+                    elementFormDefault="qualified">
+            <xsd:element name="NameRequest">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="text" type="xsd:string"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="NameResponse">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="text" type="xsd:string"/>
+                    </xsd:all>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="NameRequest">
+        <wsdl:part name="body" element="tns:NameRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="NameResponse">
+        <wsdl:part name="body" element="tns:NameResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="NamePortType">
+        <wsdl:operation name="GetInfo">
+            <wsdl:input message="tns:NameRequest"/>
+            <wsdl:output message="tns:NameResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="NamePortTypeBinding" type="tns:NamePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetInfo">
+            <soap:operation/>
+            <wsdl:input>
+                <soap:body use="literal" parts="body"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="body"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="NameInfoService">
+        <wsdl:port name="NamePortTypeBindingPort" binding="tns:NamePortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NameInfoService"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="NamePartnerLinkType">
+        <plnk:role name="Provider" portType="tns:NamePortType"/>
+    </plnk:partnerLinkType>
+	
+</wsdl:definitions>

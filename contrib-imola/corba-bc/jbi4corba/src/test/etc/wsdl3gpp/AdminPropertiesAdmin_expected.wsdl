@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="AdminPropertiesAdmin" targetNamespace="http://CosNotification.AdminPropertiesAdmin" xmlns:tns="http://CosNotification.AdminPropertiesAdmin" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://CosNotification.AdminPropertiesAdmin" xmlns="http://CosNotification.AdminPropertiesAdmin" xmlns:ns1="http://CosNotification/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://CosNotification/" schemaLocation="TypeDef_CosNotification.xsd"/>
+<xs:element name="get_admin">
+<xs:complexType>
+<xs:sequence/>
+</xs:complexType>
+</xs:element>
+<xs:element name="get_adminResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="return" type="ns1:property"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="set_admin">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="admin" type="ns1:property"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="set_adminResponse">
+<xs:complexType>
+<xs:sequence/>
+</xs:complexType>
+</xs:element>
+<xs:element name="UnsupportedAdmin" type="UnsupportedAdmin"/>
+<xs:complexType name="UnsupportedAdmin">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="admin_err" type="ns1:propertyError"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="set_admin">
+    <wsdl:part name="parameters" element="tns:set_admin">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="get_adminResponse">
+    <wsdl:part name="parameters" element="tns:get_adminResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="get_admin">
+    <wsdl:part name="parameters" element="tns:get_admin">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="set_adminResponse">
+    <wsdl:part name="parameters" element="tns:set_adminResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UnsupportedAdmin">
+    <wsdl:part name="UnsupportedAdmin" element="tns:UnsupportedAdmin">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="AdminPropertiesAdmin">
+    <wsdl:operation name="get_admin">
+      <wsdl:input name="get_admin" message="tns:get_admin">
+    </wsdl:input>
+      <wsdl:output name="get_adminResponse" message="tns:get_adminResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="set_admin">
+      <wsdl:input name="set_admin" message="tns:set_admin">
+    </wsdl:input>
+      <wsdl:output name="set_adminResponse" message="tns:set_adminResponse">
+    </wsdl:output>
+      <wsdl:fault name="UnsupportedAdmin" message="tns:UnsupportedAdmin">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="AdminPropertiesAdminCorbaBinding" type="tns:AdminPropertiesAdmin">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="AlarmIRPSystem.idl" relativepath=".">
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32111-3-620.zip
+//File: AlarmIRPSystem.idl
+
+#ifndef _ALARMIRPSYSTEM_IDL_
+#define _ALARMIRPSYSTEM_IDL_
+
+#include &quot;AlarmIRPConstDefs.idl&quot;
+#include &quot;ManagedGenericIRPSystem.idl&quot;
+
+// This statement must appear after all include statements
+#pragma prefix &quot;3gppsa5.org&quot;
+
+/* ## Module: AlarmIRPSystem
+This module contains the specification of all operations of Alarm IRP Agent.
+================================================================
+*/
+module AlarmIRPSystem
+{
+   /*
+   System fails to complete the operation.  System can provide reason
+   to qualify the exception.  The semantics carried in reason
+   is outside the scope of this IRP.
+   */
+   exception GetAlarmIRPVersions { string reason; };
+   exception GetAlarmIRPOperationsProfile { string reason; };
+   exception GetAlarmIRPNotificationProfile { string reason; };
+   exception AcknowledgeAlarms { string reason; };
+   exception UnacknowledgeAlarms { string reason; };
+   exception CommentAlarms { string reason; };
+   exception ClearAlarms { string reason; };
+   exception GetAlarmList { string reason; };
+   exception GetAlarmCount { string reason; };
+   exception NextAlarmInformations { string reason; };
+
+   /*
+   The AlarmInformationIterator is used to iterate through a snapshot of
+   Alarm Informations taken from the Alarm List when IRPManager invokes
+   get_alarm_list. IRPManager uses it to pace the return of Alarm
+   Informations.
+   IRPAgent controls the life-cycle of the iterator. However, a destroy
+   operation is provided to handle the case where IRPManager wants to stop
+   the iteration procedure before reaching the last iteration.
+   */
+   interface AlarmInformationIterator
+   {
+      /*
+      This method returns between 1 and &quot;how_many&quot; Alarm Informations. The
+      IRPAgent may return less than &quot;how_many&quot; items even if there are more
+      items to return. &quot;how_many&quot; must be non-zero. Return TRUE if there may
+      be more Alarm Information to return. Return FALSE if there are no more
+      Alarm Information to be returned.
+      If FALSE is returned, the IRPAgent will automatically destroy the
+      iterator.
+      */
+      boolean next_alarmInformations (
+         in unsigned short how_many,
+         out AlarmIRPConstDefs::AlarmInformationSeq alarm_informations
+      )
+      raises (NextAlarmInformations, ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method destroys the iterator.
+      */
+      void destroy();
+   };
+
+   interface AlarmIRP
+   {
+      /*
+      Return the list of all supported Alarm IRP versions.
+      Implementations are to provide a return value consisting of one or more
+      IRPVersions.
+      Each IRPVersion is defined by the rule in the clause titled
+      &quot;IRP document version number string&quot;
+      */
+      ManagedGenericIRPConstDefs::VersionNumberSet get_alarm_IRP_versions (
+      )
+      raises (GetAlarmIRPVersions);
+
+      /*
+      Return the list of all supported operations and their supported
+      parameters for a specific Alarm IRP version.
+      */
+      ManagedGenericIRPConstDefs::MethodList get_alarm_IRP_operations_profile (
+         in ManagedGenericIRPConstDefs::VersionNumber alarm_irp_version
+      )
+      raises (GetAlarmIRPOperationsProfile,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Return the list of all supported notifications and their supported
+      parameters for a specific Alarm IRP version.
+      */
+      ManagedGenericIRPConstDefs::MethodList get_alarm_IRP_notification_profile
+      (
+         in ManagedGenericIRPConstDefs::VersionNumber alarm_irp_version
+      )
+      raises (GetAlarmIRPNotificationProfile,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to acknowledge one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal acknowledge_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdAndSevSeq
+            alarm_information_id_and_sev_list,
+         in string ack_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt ack_system_id,
+         out AlarmIRPConstDefs::BadAcknowledgeAlarmInfoSeq
+            bad_ack_alarm_info_list
+      )
+      raises (AcknowledgeAlarms, ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to remove acknowledgement information of one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal unacknowledge_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string ack_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt ack_system_id,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+             bad_alarm_information_id_list
+      )
+      raises (UnacknowledgeAlarms,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Make comment to one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal comment_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string comment_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt comment_system_id,
+         in string comment_text,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+             bad_alarm_information_id_list
+      )
+      raises (CommentAlarms, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to clear one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal clear_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string clear_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt clear_system_id,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+            bad_alarm_information_id_list
+      )
+raises (ClearAlarms, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method returns Alarm Informations.
+      If flag is TRUE, all returned Alarm Informations shall be
+      in AlarmInformationSeq that contains 0 or more Alarm Informations.
+      Output parameter iter shall be useless.
+      If flag is FALSE, no Alarm Informations shall be in AlarmInformationSeq.
+      IRPAgent needs to use iter to retrieve them.
+      */
+      AlarmIRPConstDefs::AlarmInformationSeq get_alarm_list (
+         in ManagedGenericIRPConstDefs::StringTypeOpt filter,
+         in AlarmIRPConstDefs::DNTypeOpt base_object,
+         out boolean flag,
+         out AlarmInformationIterator iter
+      )
+      raises (GetAlarmList, ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method returns the count of Alarm Informations.
+      */
+      void get_alarm_count (
+         in ManagedGenericIRPConstDefs::StringTypeOpt filter,
+         out unsigned long critical_count,
+         out unsigned long major_count,
+         out unsigned long minor_count,
+         out unsigned long warning_count,
+         out unsigned long indeterminate_count,
+         out unsigned long cleared_count
+      )
+      raises (GetAlarmCount, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+   };
+};
+
+#endif // _AlarmIRPSystem_idl_
+
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="ManagedGenericIRPConstDefs.idl" relativepath="">
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32303-630.zip
+//File: ManagedGenericIRPConstDefs.idl
+
+#ifndef _MANAGEDGENERICIRPCONSTDEFS_IDL_
+#define _MANAGEDGENERICIRPCONSTDEFS_IDL_
+
+#include &quot;TimeBase.idl&quot;
+
+// This statement must appear after all include statements
+#pragma prefix &quot;3gppsa5.org&quot;
+
+/* ## Module: ManagedGenericIRPConstDefs
+This module contains definitions commonly used among all IRPs such as Alarm IRP.
+================================================================
+*/
+module ManagedGenericIRPConstDefs
+{
+   /*
+   Definition imported from CosTime.  
+   The time refers to time in Greenwich Time Zone.
+   It also consists of a time displacement factor in the form of minutes of
+   displacement from the Greenwich Meridian.
+   */
+   typedef TimeBase::UtcT IRPTime;
+
+   enum Signal {OK, FAILURE, PARTIALFAILURE};
+
+   /*
+   The VersionNumber is a string that identifies the IRP specification name
+   and its version number.  See definition &quot;IRP document version number 
+   string&quot; or &quot;IRPVersion&quot;. 
+   
+   The VersionNumberSet is a sequenece of such VersionNumber.  It is returned
+   by get_XXX_IRP_versions().  The sequence order has no significance.
+   */
+   typedef string VersionNumber;
+   typedef sequence &lt;VersionNumber&gt; VersionNumberSet;
+
+   typedef string MethodName;
+   typedef string ParameterName;
+   typedef sequence &lt;ParameterName&gt; ParameterList;
+
+   /*
+   The Method defines the structure to be returned as part of
+   get_supported_operations_profile().  The name shall be the actual method
+   name (ex. &quot;attach_push&quot;, &quot;change_subscription_filter&quot;, etc.)
+   The parameter_list contains a list of strings.  Each string shall be
+   the actual parameter name (ex. &quot;manager_reference&quot;, &quot;filter&quot;, etc.)
+   */
+   struct Method
+   {
+      MethodName name;
+      ParameterList parameter_list;
+   };
+
+   /*
+   List of all methods and their associated parameters.
+   */
+   typedef sequence &lt;Method&gt; MethodList;
+
+   /*
+   StringTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union StringTypeOpt switch (boolean)
+   {
+      case TRUE: string value;
+	case FALSE: string value1;
+
+   };
+
+   /*
+   ShortTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union ShortTypeOpt switch (boolean)
+   {
+      case TRUE: short value;
+	case FALSE: string value1;
+   };
+
+   /*
+   UnsignedShortTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union UnsignedShortTypeOpt switch (boolean)
+   {
+      case TRUE: unsigned short value;
+	case FALSE: unsigned short value1;
+
+   };
+
+   /*
+   LongTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union LongTypeOpt switch (boolean)
+   {
+      case TRUE: long value;
+	case FALSE: long value1;
+
+   };
+
+   /*
+   UnsignedLongTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union UnsignedLongTypeOpt switch (boolean)
+   {
+      case TRUE: unsigned long value;
+	case FALSE: unsigned long value1;
+
+   };
+};
+
+#endif  // _MANAGEDGENERICIRPCONSTDEFS_IDL_
+
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="CosNotification.idl" relativepath="">
+//File: CosNotification.idl
+//Part of the Notification Service
+
+#ifndef _COS_NOTIFICATION_IDL_
+#define _COS_NOTIFICATION_IDL_
+#pragma prefix &quot;omg.org&quot;
+
+module CosNotification {
+
+   typedef string Istring;
+   typedef Istring PropertyName;
+   typedef any PropertyValue;
+
+   struct Property {
+      PropertyName name;
+      PropertyValue value;
+   };
+   typedef sequence&lt;Property&gt; PropertySeq;
+
+   // The following are the same, but serve different purposes.
+   typedef PropertySeq OptionalHeaderFields;
+   typedef PropertySeq FilterableEventBody;
+   typedef PropertySeq QoSProperties;
+   typedef PropertySeq AdminProperties;
+
+   struct _EventType {
+      string domain_name;
+      string type_name;
+   };
+   typedef sequence&lt;_EventType&gt; EventTypeSeq;
+
+   struct PropertyRange {
+      PropertyValue low_val;
+      PropertyValue high_val;
+   };
+
+   struct NamedPropertyRange {
+      PropertyName name;
+      PropertyRange range;
+   };
+   typedef sequence&lt;NamedPropertyRange&gt; NamedPropertyRangeSeq;
+
+   enum QoSError_code {
+      UNSUPPORTED_PROPERTY,
+      UNAVAILABLE_PROPERTY,
+      UNSUPPORTED_VALUE,
+      UNAVAILABLE_VALUE,
+      BAD_PROPERTY,
+      BAD_TYPE,
+      BAD_VALUE
+   };
+
+   struct PropertyError {
+      QoSError_code code;
+      PropertyName name;
+      PropertyRange available_range;
+   };
+   typedef sequence&lt;PropertyError&gt; PropertyErrorSeq;
+
+   exception UnsupportedQoS { PropertyErrorSeq qos_err; };
+   exception UnsupportedAdmin { PropertyErrorSeq admin_err; };
+
+   // Define the Structured Event structure
+   struct FixedEventHeader {
+      _EventType event_type;
+      string event_name;
+   };
+
+   struct EventHeader {
+      FixedEventHeader fixed_header;
+      OptionalHeaderFields variable_header;
+   };
+
+   struct StructuredEvent {
+      EventHeader header;
+      FilterableEventBody filterable_data;
+      any remainder_of_body;
+   }; // StructuredEvent
+   typedef sequence&lt;StructuredEvent&gt; EventBatch;
+
+   // The following constant declarations define the standard
+   // QoS property names and the associated values each property
+   // can take on. The name/value pairs for each standard property
+   // are grouped, beginning with a string constant defined for the
+   // property name, followed by the values the property can take on.
+
+   const string EventReliability = &quot;EventReliability&quot;;
+   const short BestEffort = 0;
+   const short Persistent = 1;
+
+   const string ConnectionReliability = &quot;ConnectionReliability&quot;;
+   // Can take on the same values as EventReliability
+
+   const string Priority = &quot;Priority&quot;;
+   const short LowestPriority = -32767;
+   const short HighestPriority = 32767;
+   const short DefaultPriority = 0;
+
+   const string StartTime = &quot;StartTime&quot;;
+   // StartTime takes a value of type TimeBase::UtcT.
+
+   const string StopTime = &quot;StopTime&quot;;
+   // StopTime takes a value of type TimeBase::UtcT.
+
+   const string Timeout = &quot;Timeout&quot;;
+   // Timeout takes on a value of type TimeBase::TimeT
+
+   const string OrderPolicy = &quot;OrderPolicy&quot;;
+   const short AnyOrder = 0;
+   const short FifoOrder = 1;
+   const short PriorityOrder = 2;
+   const short DeadlineOrder = 3;
+
+   const string DiscardPolicy = &quot;DiscardPolicy&quot;;
+   // DiscardPolicy takes on the same values as OrderPolicy, plus
+   const short LifoOrder = 4;
+
+   const string MaximumBatchSize = &quot;MaximumBatchSize&quot;;
+   // MaximumBatchSize takes on a value of type long
+
+   const string PacingInterval = &quot;PacingInterval&quot;;
+   // PacingInterval takes on a value of type TimeBase::TimeT
+
+   const string StartTimeSupported = &quot;StartTimeSupported&quot;;
+   // StartTimeSupported takes on a boolean value
+
+   const string StopTimeSupported = &quot;StopTimeSupported&quot;;
+   // StopTimeSupported takes on a boolean value
+
+   const string MaxEventsPerConsumer = &quot;MaxEventsPerConsumer&quot;;
+   // MaxEventsPerConsumer takes on a value of type long
+
+   interface QoSAdmin {
+
+      QoSProperties get_qos();
+
+      void set_qos ( in QoSProperties qos)
+         raises ( UnsupportedQoS );
+
+      void validate_qos (
+            in QoSProperties required_qos,
+            out NamedPropertyRangeSeq available_qos )
+         raises ( UnsupportedQoS );
+
+   }; // QosAdmin
+
+   // Admin properties are defined in similar manner as QoS
+   // properties. The only difference is that these properties
+   // are related to channel administration policies, as opposed
+   // message quality of service
+
+   const string MaxQueueLength = &quot;MaxQueueLength&quot;;
+   // MaxQueueLength takes on a value of type long
+
+   const string MaxConsumers = &quot;MaxConsumers&quot;;
+   // MaxConsumers takes on a value of type long
+
+   const string MaxSuppliers = &quot;MaxSuppliers&quot;;
+   // MaxSuppliers takes on a value of type long
+
+   const string RejectNewEvents = &quot;RejectNewEvents&quot;;
+   // RejectNewEvents takes on a value of type Boolean
+
+   interface AdminPropertiesAdmin {
+
+      AdminProperties get_admin();
+
+      void set_admin (in AdminProperties admin)
+         raises ( UnsupportedAdmin);
+
+   }; // AdminPropertiesAdmin
+
+}; // CosNotification
+
+#endif /* _COS_NOTIFICATION_IDL_ */
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="TimeBase.idl" relativepath="">
+
+#ifndef _TIME_BASE_IDL
+#define _TIME_BASE_IDL
+#pragma prefix &quot;omg.org&quot;
+
+//#include &lt;orb.idl&gt;
+
+module TimeBase 
+{
+		
+#ifdef NOLONGLONG
+    struct ulonglong {
+	unsigned long low;
+	unsigned long high;
+    };
+    typedef ulonglong TimeT;
+#else
+    typedef unsigned long long TimeT;
+#endif
+		
+    typedef TimeT              InaccuracyT;
+    typedef short              TdfT;
+		
+    struct UtcT {
+	TimeT            time;    // 8 octets
+	unsigned long    inacclo; // 4 octets
+	unsigned short   inacchi; // 4 octets
+	TdfT             tdf;     // 2 octets
+	// total 16 octets
+    };
+		
+    struct IntervalT {
+	TimeT            lower_bound;
+	TimeT            upper_bound;
+    };
+
+};
+#endif /* _TIME_BASE_IDL */
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="AlarmIRPConstDefs.idl" relativepath="">
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32111-3-620.zip
+//File: AlarmIRPConstDefs.idl
+
+//	Fixed following typos:
+// 	Line 390:
+//      const string VENDOR SPECIFIC ALARM TYPE = &quot;JJ&quot;;
+// 	to:
+//      const string VENDOR_SPECIFIC_ALARM_TYPE = &quot;JJ&quot;;
+
+#ifndef _AlarmIRPConstDefs_idl_
+#define _AlarmIRPConstDefs_idl_
+
+#include &quot;CosNotification.idl&quot;
+#include &quot;ManagedGenericIRPConstDefs.idl&quot;
+
+// This statement must appear after all include statements
+#pragma prefix &quot;3gppsa5.org&quot;
+
+/* ## Module: AlarmIRPConstDefs
+This module contains commonly used definitions for Alarm IRP
+================================================================
+*/
+module AlarmIRPConstDefs
+{
+   /*
+   The format of Distinguished Name (DN) is specified in 3GPP TS 32.300
+   &quot;Name Conventions for Managed Objects&quot;.
+   */
+   typedef string DN;
+
+   /* DNTypeOpt is an optional type.
+   If the discriminator is true the value is present.
+   Otherwise the value is null.
+   */
+   union DNTypeOpt switch (boolean)
+   {
+      case TRUE: DN value;
+	case FALSE: DN value1;
+   };
+
+   /*
+   This block identifies the alarm types specified for this IRP version.
+   These types carry the same semantics as the TMN ITU-T defined event
+   types of the same name.
+   Their encodings for this version of Alarm IRP are defined here.  Other IRP
+   documents, or other versions of Alarm IRP, shall identify their own
+   alarm types for their use.  They shall define their encodings
+   as well.  Values defined here are unique among themselves.
+   */
+   interface AlarmType
+   {
+      const string COMMUNICATIONS_ALARM = &quot;x1&quot;;
+      const string PROCESSING_ERROR_ALARM = &quot;x2&quot;;
+      const string ENVIRONMENTAL_ALARM = &quot;x3&quot;;
+      const string QUALITY_OF_SERVICE_ALARM = &quot;x4&quot;;
+      const string EQUIPMENT_ALARM = &quot;x5&quot;;
+      const string INTEGRITY_VIOLATION = &quot;x6&quot;;
+      const string OPERATIONAL_VIOLATION = &quot;x7&quot;;
+      const string PHYSICAL_VIOLATION = &quot;x8&quot;;
+      const string SECURITY_SERVICE_OR_MECHANISM_VIOLATION = &quot;x9&quot;;
+      const string TIME_DOMAIN_VIOLATION = &quot;x10&quot;;
+   };
+
+   /*
+   This block identifies the notification types defined by this
+   Alarm IRP version.
+   */
+   interface NotificationType
+   {
+      const string NOTIFY_FM_NEW_ALARM = &quot;x1&quot;;
+      const string NOTIFY_FM_CHANGED_ALARM = &quot;x2&quot;;
+      const string NOTIFY_FM_ACK_STATE_CHANGED = &quot;x3&quot;;
+      const string NOTIFY_FM_COMMENT_ADDED = &quot;x4&quot;;
+      const string NOTIFY_FM_CLEARED_ALARM = &quot;x5&quot;;
+      const string NOTIFY_FM_ALARM_LIST_REBUILT = &quot;x6&quot;;
+      const string NOTIFY_FM_POTENTIAL_FAULTY_ALARM_LIST = &quot;x7&quot;;
+   };
+
+   /*
+   This block identifies the levels of severity.
+   */
+   interface PerceivedSeverity
+   {
+      const short INDETERMINATE = 1;
+      const short CRITICAL = 2;
+      const short MAJOR = 3;
+      const short MINOR = 4;
+      const short WARNING = 5;
+      const short CLEARED = 6;
+   };
+
+   /*
+   This block identifies the probable cause of a reported alarm.
+   */
+   interface ProbableCause
+   {
+      /*
+      Probable causes originating from M.3100.
+      Values below correspond to M.3100 values.
+      */
+      const short INDETERMINATE = 0;
+      const short ALARM_INDICATION_SIGNAL = 1;
+      const short CALL_SETUP_FAILURE = 2;
+      const short DEGRADED_SIGNAL = 3;
+      const short FAR_END_RECEIVER_FAILURE = 4;
+      const short FRAMING_ERROR = 5;
+      const short LOSS_OF_FRAME = 6;
+      const short LOSS_OF_POINTER = 7;
+      const short LOSS_OF_SIGNAL = 8;
+      const short PAYLOAD_TYPE_MISMATCH = 9;
+
+      // Values 10 correspond to a duplicated probable cause
+      const short REMOTE_ALARM_INTERFACE = 11;
+      const short EXCESSIVE_BIT_ERROR_RATE = 12;
+      const short PATH_TRACE_MISMATCH = 13;
+      const short UNAVAILABLE = 14;
+      const short SIGNAL_LABEL_MISMATCH = 15;
+      const short LOSS_OF_MULTI_FRAME = 16;
+      const short COMMUNICATIONS_RECEIVE_FAILURE = 17;
+      const short COMMUNICATIONS_TRANSMIT_FAILURE = 18;
+      const short MODULATION_FAILURE = 19;
+      const short DEMODULATION_FAILURE = 20;
+      // Values 21-26 correspond to duplicated probable causes
+      // Values 27-50 are reserved for M.3100 potential future extensions
+      const short BACK_PLANE_FAILURE = 51;
+      const short DATA_SET_PROBLEM = 52;
+      const short EQUIPMENT_IDENTIFIER_DUPLICATION = 53;
+      const short EXTERNAL_IF_DEVICE_PROBLEM = 54;
+      const short LINE_CARD_PROBLEM = 55;
+      const short MULTIPLEXER_PROBLEM = 56;
+      const short NE_IDENTIFIER_DUPLICATION = 57;
+      const short POWER_PROBLEM = 58;
+      const short PROCESSOR_PROBLEM = 59;
+      const short PROTECTION_PATH_FAILURE = 60;
+      const short RECEIVER_FAILURE = 61;
+      const short REPLACEABLE_UNIT_MISSING = 62;
+      const short REPLACEABLE_UNIT_TYPE_MISMATCH = 63;
+      const short SYNCHRONIZATION_SOURCE_MISMATCH = 64;
+      const short TERMINAL_PROBLEM = 65;
+      const short TIMING_PROBLEM = 66;
+      const short TRANSMITTER_FAILURE = 67;
+      const short TRUNK_CARD_PROBLEM = 68;
+      const short REPLACEABLE_UNIT_PROBLEM = 69;
+      const short REAL_TIME_CLOCK_FAILURE = 70;
+      // Values 71-80 correspond to duplicated probable causes
+      const short PROTECTION_MECHANISM_FAILURE = 81;
+      const short PROTECTING_RESOURCE_FAILURE = 82;
+      // Values 83-100 are reserved for M.3100 potential future extensions
+      const short AIR_COMPRESSOR_FAILURE = 101;
+      const short AIR_CONDITIONING_FAILURE = 102;
+      const short AIR_DRYER_FAILURE = 103;
+      const short BATTERY_DISCHARGING = 104;
+      const short BATTERY_FAILURE = 105;
+      const short COMMERCIAL_POWER_FAILURE = 106;
+      const short COOLING_FAN_FAILURE = 107;
+      const short ENGINE_FAILURE = 108;
+      const short FIRE_DETECTOR_FAILURE = 109;
+      const short FUSE_FAILURE = 110;
+      const short GENERATOR_FAILURE = 111;
+      const short LOW_BATTERY_THRESHOLD = 112;
+      const short PUMP_FAILURE = 113;
+      const short RECTIFIER_FAILURE = 114;
+      const short RECTIFIER_HIGH_VOLTAGE = 115;
+      const short RECTIFIER_LOW_F_VOLTAGE = 116;
+      const short VENTILATION_SYSTEM_FAILURE = 117;
+      const short ENCLOSURE_DOOR_OPEN = 118;
+      const short EXPLOSIVE_GAS = 119;
+      const short FIRE = 120;
+      const short FLOOD = 121;
+      const short HIGH_HUMIDITY = 122;
+      const short HIGH_TEMPERATURE = 123;
+      const short HIGH_WIND = 124;
+      const short ICE_BUILD_UP = 125;
+      const short INTRUSION_DETECTION = 126;
+      const short LOW_FUEL = 127;
+      const short LOW_HUMIDITY = 128;
+      const short LOW_CABLE_PRESSURE = 129;
+      const short LOW_TEMPERATURE = 130;
+      const short LOW_WATER = 131;
+      const short SMOKE = 132;
+      const short TOXIC_GAS = 133;
+      // Values 134-135 correspond to duplicated probable causes
+      const short EXTERNAL_POINT_FAILURE = 136;
+      // Values 137-150 are reserved for potential M.3100 future extensions
+      const short STORAGE_CAPACITY_PROBLEM = 151;
+      const short MEMORY_MISMATCH = 152;
+      const short CORRUPT_DATA = 153;
+      const short OUT_OF_CPU_CYCLES = 154;
+      const short SOFTWARE_ENVIRONMENT_PROBLEM = 155;
+      const short SOFTWARE_DOWNLOAD_FAILURE = 156;
+      const short LOSS_OF_REAL_TIME = 157;
+      const short REINITIALIZED = 158;
+      // Values 159-167 correspond to duplicated probable causes
+      // Values 168-200 are reserved for potential M.3100 future extensions
+      // Values 201-202 correspond to duplicated probable causes
+      const short EXCESSIVE_ERROR_RATE = 203;
+      // Values 204-207 correspond to duplicated probable causes
+      // Values 208-300 are reserved for potential M.3100 future extensions
+      /*
+      Probable causes originating from X.721.
+      Values below correspond to X.721 values with an offset of 300.
+      */
+      const short ADAPTER_ERROR = 301;
+      const short APPLICATION_SUBSYSTEM_FAILURE = 302;
+      const short BANDWIDTH_REDUCED = 303;
+      // Value 304 corresponds to a duplicated probable cause
+      const short COMMUNICATIONS_PROTOCOL_ERROR = 305;
+      const short COMMUNICATIONS_SUBSYSTEM_FAILURE = 306;
+      const short CONFIGURATION_OR_CUSTOMIZATION_ERROR = 307;
+      const short CONGESTION = 308;
+      // Value 309 corresponds to a duplicated probable cause
+      const short CPU_CYCLES_LIMIT_EXCEEDED = 310;
+      const short DATA_SET_OR_MODEM_ERROR = 311;
+      // Value 312 corresponds to a duplicated probable cause
+      const short DTE_DCE_INTERFACE_ERROR = 313;
+      // Value 314 corresponds to a duplicated probable cause
+      const short EQUIPMENT_MALFUNCTION = 315;
+      const short EXCESSIVE_VIBRATION = 316;
+      const short FILE_ERROR = 317;
+      // Values 318-320 correspond to duplicated probable causes
+      const short HEATING_OR_VENTILATION_OR_COOLING_SYSTEM_PROBLEM = 321;
+      const short HUMIDITY_UNACCEPTABLE = 322;
+      const short INPUT_OUTPUT_DEVICE_ERROR = 323;
+      const short INPUT_DEVICE_ERROR = 324;
+      const short LAN_ERROR = 325;
+      const short LEAK_DETECTED = 326;
+      const short LOCAL_NODE_TRANSMISSION_ERROR = 327;
+      // Values 328-329 correspond to duplicated probable causes
+      const short MATERIAL_SUPPLY_EXHAUSTED = 330;
+      // Value 331 corresponds to a duplicated probable cause
+      const short OUT_OF_MEMORY = 332;
+      const short OUTPUT_DEVICE_ERROR = 333;
+      const short PERFORMANCE_DEGRADED = 334;
+      // Value 335 corresponds to a duplicated probable cause
+      const short PRESSURE_UNACCEPTABLE = 336;
+      // Values 337-338 correspond to duplicated probable causes
+      const short QUEUE_SIZE_EXCEEDED = 339;
+      const short RECEIVE_FAILURE = 340;
+      // Value 341 corresponds to a duplicated probable cause
+      const short REMOTE_NODE_TRANSMISSION_ERROR = 342;
+      const short RESOURCE_AT_OR_NEARING_CAPACITY = 343;
+      const short RESPONSE_TIME_EXCESSIVE = 344;
+      const short RETRANSMISSION_RATE_EXCESSIVE = 345;
+      const short SOFTWARE_ERROR = 346;
+      const short SOFTWARE_PROGRAM_ABNORMALLY_TERMINATED = 347;
+      const short SOFTWARE_PROGRAM_ERROR = 348;
+      // Value 349 corresponds to a duplicated probable cause
+      const short TEMPERATURE_UNACCEPTABLE = 350;
+      const short THRESHOLD_CROSSED = 351;
+      // Value 352 corresponds to a duplicated probable cause
+      const short TOXIC_LEAK_DETECTED = 353;
+      const short TRANSMIT_FAILURE = 354;
+      // Value 355 corresponds to a duplicated probable cause
+      const short UNDERLYING_RESOURCE_UNAVAILABLE = 356;
+      const short VERSION_MISMATCH = 357;
+      // Values 358-500 are reserved for potential X.721 future extensions
+      /*
+      Probable causes for 2G &amp; 3G wireless systems.
+      */
+      const short A_BIS_TO_BTS_INTERFACE_FAILURE = 501;
+      const short A_BIS_TO_TRX_INTERFACE_FAILURE = 502;
+      const short ANTENNA_PROBLEM = 503;
+      const short BATTERY_BREAKDOWN = 504;
+      const short BATTERY_CHARGING_FAULT = 505;
+      const short CLOCK_SYNCHRONIZATION_PROBLEM = 506;
+      const short COMBINER_PROBLEM = 507;
+      const short DISK_PROBLEM = 508;
+      // Value 509 corresponds to a duplicated probable cause
+      const short EXCESSIVE_RECEIVER_TEMPERATURE = 510;
+      const short EXCESSIVE_TRANSMITTER_OUTPUT_POWER = 511;
+      const short EXCESSIVE_TRANSMITTER_TEMPERATURE = 512;
+      const short FREQUENCY_HOPPING_DEGRADED = 513;
+      const short FREQUENCY_HOPPING_FAILURE = 514;
+      const short FREQUENCY_REDEFINITION_FAILED = 515;
+      const short LINE_INTERFACE_FAILURE = 516;
+      const short LINK_FAILURE = 517;
+      const short LOSS_OF_SYNCHRONIZATION = 518;
+      const short LOST_REDUNDANCY = 519;
+      const short MAINS_BREAKDOWN_WITH_BATTERY_BACKUP = 520;
+      const short MAINS_BREAKDOWN_WITHOUT_BATTERY_BACKUP = 521;
+      const short POWER_SUPPLY_FAILURE = 522;
+      const short RECEIVER_ANTENNA_FAULT = 523;
+      // Value 524 corresponds to a duplicated probable cause
+      const short RECEIVER_MULTICOUPLER_FAILURE = 525;
+      const short REDUCED_TRANSMITTER_OUTPUT_POWER = 526;
+      const short SIGNAL_QUALITY_EVALUATION_FAULT = 527;
+      const short TIMESLOT_HARDWARE_FAILURE = 528;
+      const short TRANSCEIVER_PROBLEM = 529;
+      const short TRANSCODER_PROBLEM = 530;
+      const short TRANSCODER_OR_RATE_ADAPTER_PROBLEM = 531;
+      const short TRANSMITTER_ANTENNA_FAILURE = 532;
+      const short TRANSMITTER_ANTENNA_NOT_ADJUSTED = 533;
+      // Value 534 corresponds to a duplicated probable cause
+      const short TRANSMITTER_LOW_VOLTAGE_OR_CURRENT = 535;
+      const short TRANSMITTER_OFF_FREQUENCY = 536;
+      const short DATABASE_INCONSISTENCY = 537;
+      const short FILE_SYSTEM_CALL_UNSUCCESSFUL = 538;
+      const short INPUT_PARAMETER_OUT_OF_RANGE = 539;
+      const short INVALID_PARAMETER = 540;
+      const short INVALID_POINTER = 541;
+      const short MESSAGE_NOT_EXPECTED = 542;
+      const short MESSAGE_NOT_INITIALIZED = 543;
+      const short MESSAGE_OUT_OF_SEQUENCE = 544;
+      const short SYSTEM_CALL_UNSUCCESSFUL = 545;
+      const short TIMEOUT_EXPIRED = 546;
+      const short VARIABLE_OUT_OF_RANGE = 547;
+      const short WATCH_DOG_TIMER_EXPIRED = 548;
+      const short COOLING_SYSTEM_FAILURE = 549;
+      const short EXTERNAL_EQUIPMENT_FAILURE = 550;
+      const short EXTERNAL_POWER_SUPPLY_FAILURE = 551;
+      const short EXTERNAL_TRANSMISSION_DEVICE_FAILURE = 552;
+      // Values 553-560 correspond to duplicated probable causes
+      const short REDUCED_ALARM_REPORTING = 561;
+      const short REDUCED_EVENT_REPORTING = 562;
+      const short RECUCED_LOGGING_CAPABILITY = 563;
+      const short SYSTEM_RESOURCES_OVERLOAD = 564;
+      const short BROADCAST_CHANNEL_FAILURE = 565;
+      const short CONNECTION_ESTABLISHMENT_ERROR = 566;
+      const short INVALID_MESSAGE_RECEIVED = 567;
+      const short INVALID_MSU_RECEIVED = 568;
+      const short LAPD_LINK_PROTOCOL_FAILURE = 569;
+      const short LOCAL_ALARM_INDICATION = 570;
+      const short REMOTE_ALARM_INDICATION = 571;
+      const short ROUTING_FAILURE = 572;
+      const short SS7_PROTOCOL_FAILURE = 573;
+      const short TRANSMISSION_ERROR = 574;
+      // Value 575 corresponds to a duplicated probable cause
+      // Values 576-700 are reserved for potential future extensions
+      // for 2G &amp; 3G wireless systems
+      /*
+      Probable causes originating from M.3100 security alarm causes.
+      Values below correspond to M.3100 values with an offset of 700.
+      */
+      const short Authentication_Failure	= 701;
+      const short Breach_of_ConfidentialitY = 702;
+      const short Cable_Tamper = 703;
+      const short Delayed_Information = 704;
+      const short Denial_of_Service = 705;
+      const short Duplicate_Information = 706;
+      const short Information_Missing = 707;
+      const short Information_Modification_detected = 708;
+      const short Information_out_of_Sequence = 709;
+      // Value 710 corresponds to a duplicated probable cause
+      const short Key_Expired = 711;
+      const short Non_Repudiation_Failure = 712;
+      const short Out_of_Hours_Activity = 713;
+      const short Out_of_Service = 714;
+      const short Procedural_Error = 715;
+      const short Unauthorised_Access_Attempt = 716;
+      const short Unexpected_Information	= 717;
+      const short Unspecified_Reason = 718;
+      // Values 719-800 are reserved for potential M.3100 future extensions
+   };
+
+   /*
+   This block identifies the acknowledgement state of a reported alarm.
+   */
+   interface AckState
+   {
+      const short ACKNOWLEDGED = 1;
+      const short UNACKNOWLEDGED = 2;
+   };
+
+   /*
+   This block identifies attributes which are included as part of the Alarm IRP
+   These attribute values should not clash with those defined for the attributes
+   of notification header (see IDL of Notification IRP).
+   */
+   interface AttributeNameValue
+   {
+      const string ALARM_ID = &quot;f&quot;;
+      const string PROBABLE_CAUSE = &quot;g&quot;;
+      const string PERCEIVED_SEVERITY = &quot;h&quot;;
+      const string SPECIFIC_PROBLEM = &quot;i&quot;;
+      const string ADDITIONAL_TEXT = &quot;j&quot;;
+      const string ACK_TIME = &quot;k&quot;;
+      const string ACK_USER_ID = &quot;l&quot;;
+      const string ACK_SYSTEM_ID = &quot;m&quot;;
+      const string ACK_STATE = &quot;n&quot;;
+      const string COMMENTS = &quot;o&quot;;
+      const string BACKED_UP_STATUS = &quot;p&quot;;
+      const string BACK_UP_OBJECT = &quot;q&quot;;
+      const string THRESHOLD_INFO = &quot;r&quot;;
+      const string TREND_INDICATION = &quot;s&quot;;
+      const string STATE_CHANGE_DEFINITION = &quot;t&quot;;
+      const string MONITORED_ATTRIBUTES = &quot;u&quot;;
+      const string PROPOSED_REPAIR_ACTIONS = &quot;v&quot;;
+      const string CORRELATED_NOTIFICATIONS = &quot;w&quot;;
+      const string REASON = &quot;x&quot;;
+      const string CLEAR_USER_ID = &quot;y&quot;;
+      const string CLEAR_SYSTEM_ID = &quot;z&quot;;
+      const string ALARM_LIST_ALIGNMENT_REQUIREMENT = &quot;ff&quot;;
+      const string SERVICE_USER = &quot;gg&quot;;
+      const string SERVICE_PROVIDER = &quot;hh&quot;;
+      const string SECURITY_ALARM_DETECTOR = &quot;ii&quot;;
+      const string VENDOR_SPECIFIC_ALARM_TYPE = &quot;JJ&quot;;
+   };
+
+   /*
+   Defines the content of a Comment
+   */
+   struct Comment
+   {
+      ManagedGenericIRPConstDefs::IRPTime comment_time;
+      string comment_text;
+      string user_id;
+      string system_id;
+   };
+
+   /*
+   Defines a set of comments which are placed in the COMMENTS attribute
+   of a structured event.
+   */
+   typedef sequence &lt;Comment&gt; CommentSet;
+
+   /*
+   It indicates if an object has a back up.
+   True implies backed up.  False implies not backed up.
+   */
+   typedef boolean BackedUpStatusType;
+
+   /*
+   It indicates if the threshold crossed was in the up or down direction.
+   */
+   enum ThresholdIndicationType {UP, DOWN};
+
+   /*
+   It indicates if the AlarmList alignment is required.
+   */
+   enum AlarmListAlignmentRequirementType {REQUIRED, NOTREQUIRED};
+
+   /* FloatTypeOpt is an optional type.
+   If the discriminator is true the value is present.
+   Otherwise the value is null.
+   */
+   union FloatTypeOpt switch (boolean)
+   {
+      case TRUE: float value;
+	case FALSE: float value1;
+   };
+
+   /* ThresholdLevelIndType describes multi-level
+   threshold crossings.
+   Up is the only permitted choice for a counter.
+   If indication is &quot;up&quot;, low value is optional.
+   @member indication: indicates up or down direction
+     of crossing.
+   @member low: the low observed value.
+   @member high: the high observed value.
+   */
+   struct ThresholdLevelIndType
+   {
+      ThresholdIndicationType indication;
+      FloatTypeOpt low;
+      float high;
+   };
+
+   /* ThresholdLevelIndTypeOpt is an optional type.
+   If the discriminator is true the value is present.
+   Otherwise, the value is null.
+   */
+   union ThresholdLevelIndTypeOpt switch (boolean)
+   {
+      case TRUE: ThresholdLevelIndType value;
+	case FALSE: string value1;
+   };
+
+   /* ThresholdInfoType indicates some gauge or counter
+   attribute passed a set threshold.
+   @member attributeID: identifies the attribute that
+     crossed the threshold.
+   @member observedValue: attributes that are of type
+     integer will be converted to floats.
+   @member thresholdlevel: This parameter is for
+     multi-level thresholds. Optional.
+   @member armTime: May contain empty string.
+   */
+   struct ThresholdInfoType
+   {
+      string attributeID;
+      float observedValue;	
+      ThresholdLevelIndTypeOpt thresholdLevel;
+      string armTime;
+   };
+
+   /*
+   It indicates if some observed condition is getting better, worse,
+   or not changing.
+   */
+   enum TrendIndicationType {LessSevere, NoChange, MoreSevere};
+
+   /*
+   It is used to report a changed attribute value.
+   */
+   struct AttributeValueChangeType
+   {
+      string attribute_name;
+      any    old_value;  // type depends on attribute
+      any    new_value;  // type depends on attribute
+   };
+
+   typedef sequence &lt;AttributeValueChangeType&gt; AttributeChangeSetType;
+
+   /*
+   It is used to report an attribute and its value.
+   */
+   struct AttributeValueType
+   {
+      string attribute_name;
+      any    value;  // type depends on the attribute
+   };
+
+   typedef sequence &lt;AttributeValueType&gt; AttributeSetType;
+
+   typedef sequence &lt;long&gt; NotifIdSetType;
+
+   /*
+   This holds identifiers of notifications that are correlated.
+   */
+   struct CorelatedNotification
+   {
+      DN source;  // Contains DN of MO that emitted the set of notifications
+                  // DN string format in compliance with Name Convention for
+                  // Managed Object.
+                  // This may be a zero-length string.  In this case, the MO
+                  // is identified by the value of the MOI attribute
+                  // of the Structured Event, i.e., the notification.
+      NotifIdSetType notif_id_set;  // Set of related notification ids
+   };
+
+   /*
+   Correlated Notification sets are sets of Correlated Notification
+   structures.
+   */
+   typedef sequence &lt;CorelatedNotification&gt; CorrelatedNotificationSetType;
+
+   /*
+   Define the structure of Alarm ID and Perceived Severity used within the
+   alarm acknowledgment operation. Note: perceived_severity is an optional
+   parameter. If this value is present, it must have one of the defined values
+   of Interface PerceivedSeverity.
+   */
+   struct AlarmInformationIdAndSev
+   {
+      string alarm_information_reference;
+      ManagedGenericIRPConstDefs::ShortTypeOpt perceived_severity;
+   };
+
+   /*
+   Define set of the above structure of Alarm ID and Perceived Severity.
+   */
+   typedef sequence &lt;AlarmInformationIdAndSev&gt; AlarmInformationIdAndSevSeq;
+
+   /*
+   It indicates the reason for an alarm acknowledgement to have failed:
+     - The specified Alarm Information is absent from the Alarm List
+     - The Perceived Severity to be acknowledged has changed and/or is different
+       within the Alarm List
+     - The acknowledgement failed for some other reason
+   */
+   enum AcknowledgeFailureCategories
+   {
+      UnknownAlarmId,
+      WrongPerceivedSeverity,
+      AcknowledgmentFailed
+   };
+
+   /*
+   Define the structure returned when an operation fails for a set of alarm ids.
+   A reason is provided in order to indicate why the operation failed.
+   */
+   struct BadAlarmInformationId
+   {
+      string alarm_information_reference;
+      string reason;
+   };
+
+   /*
+   Define the structure returned when the acknowledge operation fails for a set
+   of alarm ids.
+   A failure category and a reason are provided in order to indicate why the
+   operation failed.
+   */
+   struct BadAcknowledgeAlarmInfo
+   {
+      string alarm_information_reference;
+      AcknowledgeFailureCategories failure_category;
+      string reason;
+   };
+
+   typedef sequence &lt;BadAlarmInformationId&gt; BadAlarmInformationIdSeq;
+   typedef sequence &lt;BadAcknowledgeAlarmInfo&gt; BadAcknowledgeAlarmInfoSeq;
+   typedef sequence &lt;string&gt; AlarmInformationIdSeq;
+   typedef CosNotification::EventBatch AlarmInformationSeq;
+
+   /*
+   Define the cause values of notifyPotentialFaultyAlarmList and
+   notifyAlarmListRebuilt,which have been defined in 32111-2.
+   */
+   const string AGENTNE_COMMUNICATION_ERROR = &quot;Agent-NE communication error&quot;;
+   const string AGENT_RESTARTS = &quot;Agent restarts&quot;;
+   const string INDETERMINATE = &quot;Indeterminate&quot;;
+
+};
+#endif // _AlarmIRPConstDefs_idl_
+
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="ManagedGenericIRPSystem.idl" relativepath="">
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32303-630.zip
+//File: ManagedGenericIRPSystem.idl
+
+#ifndef _MANAGEDGENERICIRPSYSTEM_IDL_
+#define _MANAGEDGENERICIRPSYSTEM_IDL_
+
+// This statement must appear after all include statements
+#pragma prefix &quot;3gppsa5.org&quot;
+
+/* ## Module: ManagedGenericIRPSystem
+This module contains definitions commonly used among all IRPs such as Alarm IRP.
+================================================================
+*/
+module ManagedGenericIRPSystem
+{
+   /*
+   Exception thrown when an unsupported optional parameter 
+   is passed with information.
+   The parameter shall be the actual unsupported parameter name.
+   */
+   exception ParameterNotSupported { string parameter; };
+
+   /*
+   Exception thrown when an invalid parameter value is passed.
+   The parameter shall be the actual parameter name.
+   */
+   exception InvalidParameter { string parameter; };
+
+   /*
+   Exception thrown when a valid but unsupported parameter value is passed.
+   The parameter shall be the actual parameter name.
+   */
+   exception ValueNotSupported { string parameter; };
+
+   /*
+   Exception thrown when an unsupported optional method is called.
+   */
+   exception OperationNotSupported {};
+};
+
+#endif  // _MANAGEDGENERICIRPSYSTEM_IDL_
+
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="get_admin">
+      <wsdl:input name="get_admin">
+      </wsdl:input>
+      <wsdl:output name="get_adminResponse">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="set_admin">
+      <wsdl:input name="set_admin">
+      </wsdl:input>
+      <wsdl:output name="set_adminResponse">
+      </wsdl:output>
+      <wsdl:fault name="UnsupportedAdmin">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AdminPropertiesAdmin">
+    <wsdl:port name="AdminPropertiesAdminCorbaPort" binding="tns:AdminPropertiesAdminCorbaBinding">
+<imolacorba:address name="AdminPropertiesAdmin" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

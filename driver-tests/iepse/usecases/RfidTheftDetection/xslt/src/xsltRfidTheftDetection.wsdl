@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:defns="RfidTheftDetection_iep" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="RfidTheftDetection_iep" xmlns:typens="RfidTheftDetection_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="RfidTheftDetection_iep">
+    <types>
+        <xsd:schema xmlns:file="http://www.stc.com/file/" targetNamespace="RfidTheftDetection_iep">
+            <xsd:element name="ExitAlarmFile_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="productId" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="AlertSecutiryFile_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="productId" type="xsd:string"/>
+                        <xsd:element name="location" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="AlertSecutiryFile_Msg">
+        <part name="output" type="typens:AlertSecutiryFile_MsgType"/>
+    </message>
+    <message name="ExitAlarmFile_Msg">
+        <part name="output" type="typens:ExitAlarmFile_MsgType"/>
+    </message>
+    <portType name="OutputPt_AlertSecutiryFile">
+        <operation name="AlertSecutiryFile">
+            <input message="tns:AlertSecutiryFile_Msg"/>
+        </operation>
+    </portType>
+    <portType name="OutputPt_ExitAlarmFile">
+        <operation name="ExitAlarmFile">
+            <input message="tns:ExitAlarmFile_Msg"/>
+        </operation>
+    </portType>
+    <binding name="OutputBinding_AlertSecutiryFile" type="defns:OutputPt_AlertSecutiryFile">
+        <file:binding/>
+        <operation name="AlertSecutiryFile">
+            <file:operation/>
+            <input>
+                <file:message fileName="actualAlertSecurity.txt"
+                            fileNameIsPattern="false"
+                            addEOL="false"
+                            multipleRecordsPerFile="true"
+                            use="literal">
+                </file:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="OutputBinding_ExitAlarmFile" type="defns:OutputPt_ExitAlarmFile">
+        <file:binding/>
+        <operation name="ExitAlarmFile">
+            <file:operation/>
+            <input>
+                <file:message fileName="actualExitAlarm.txt"
+                            fileNameIsPattern="false"
+                            addEOL="false"
+                            multipleRecordsPerFile="true"
+                            use="literal">
+                </file:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutputService_AlertSecutiryFile">
+        <port binding="tns:OutputBinding_AlertSecutiryFile" name="OutputPort_AlertSecutiryFile">
+            <file:address fileDirectory="@drivertest_dir@/iepse/usecases/RfidTheftDetection/jbi/test/RfidTheftDetection"/>
+        </port>
+    </service>
+    <service name="OutputService_ExitAlarmFile">
+        <port binding="tns:OutputBinding_ExitAlarmFile" name="OutputPort_ExitAlarmFile">
+            <file:address fileDirectory="@drivertest_dir@/iepse/usecases/RfidTheftDetection/jbi/test/RfidTheftDetection"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_AlertSecutiryFile">
+        <plnk:role name="OutputRn_AlertSecutiryFile" portType="tns:OutputPt_AlertSecutiryFile"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_ExitAlarmFile">
+        <plnk:role name="OutputRn_ExitAlarmFile" portType="tns:OutputPt_ExitAlarmFile"/>
+    </plnk:partnerLinkType>
+</definitions>

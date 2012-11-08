@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="hotelReservation"
+         targetNamespace="http://www.seebeyond.com/eInsight/hotelReservation"
+         xmlns:tns="http://www.seebeyond.com/eInsight/hotelReservation"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BluePrint5/HotelReservation"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://localhost/BluePrint5/HotelReservation"
+            location="HotelReservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="hotelReservationPLink"
+                     partnerLinkType="ns0:HotelReservationPLinkType"
+                     myRole="reservingRole"/>
+        <partnerLink name="hotelReservationStatus"
+                     partnerLinkType="ns0:HotelReservStatusPLinkType"
+                     partnerRole="statusReceivingRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="reserveHotel"
+                  messageType="ns0:HotelReservation"></variable>
+        <variable name="sendHotelStatus"
+                  messageType="ns0:HotelReservationStatus"></variable>
+    </variables>
+    <sequence>
+        <receive name="reserveHotel"
+                 partnerLink="hotelReservationPLink"
+                 portType="ns0:HotelReservationPortType"
+                 operation="reserveHotel"
+                 variable="reserveHotel"
+                 createInstance="yes"></receive>
+        <assign name="Assign">
+            <copy>
+                <from>$reserveHotel.reserveHotelPart/reservationID</from>
+                <to>$sendHotelStatus.status/reservationID</to>
+            </copy>
+            <copy>
+            <from>contains($reserveHotel.reserveHotelPart/description, 'book_hotel')</from><to>$sendHotelStatus.status/reservationStatus</to>
+            </copy>
+        </assign>
+        <invoke name="sendHotelStatus"
+                partnerLink="hotelReservationStatus"
+                portType="ns0:HotelStatusPortType"
+                operation="sendHotelStatus"
+                inputVariable="sendHotelStatus"></invoke>
+    </sequence>
+</process>

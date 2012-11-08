@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="CorrelatedJavaBP" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:tns="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP" xmlns:ns="http://xml.netbeans.org/schema/CorrelationSample" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP">
+            <xsd:import schemaLocation="correlationSample.xsd" namespace="http://xml.netbeans.org/schema/CorrelationSample"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="CallInOperationRequest">
+        <wsdl:part name="InMessage" element="ns:CSInput"/>
+    </wsdl:message>
+    <wsdl:message name="CallBackOperationRequest">
+        <wsdl:part name="OutMessage" element="ns:CSOutput"/>
+    </wsdl:message>
+    <wsdl:portType name="CallJavaInPortType">
+        <wsdl:operation name="CallJavaInOperation">
+            <wsdl:input name="InJavaMessage" message="tns:CallInOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CallBackPortType">
+        <wsdl:operation name="CallBackOperation">
+            <wsdl:input name="BackToFeederBPMsg" message="tns:CallBackOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="JavaToPassBPPortType">
+        <wsdl:operation name="JavaToPassBPPortTypeOper">
+            <wsdl:input name="JavaToPassBPMsg" message="tns:CallInOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CallJavaInBinding" type="tns:CallJavaInPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="CallJavaInOperation">
+            <wsdl:input name="InJavaMessage">
+                <soap:body parts="InMessage" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CallBackBinding" type="tns:CallBackPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="CallBackOperation">
+            <wsdl:input name="BackToFeederBPMsg">
+                <soap:body parts="OutMessage" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="JavaToPassBPBinding" type="tns:JavaToPassBPPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="JavaToPassBPPortTypeOper">
+            <wsdl:input name="JavaToPassBPMsg">
+                <soap:body parts="InMessage" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CallJavaInService">
+        <wsdl:port name="CallInJavaPort" binding="tns:CallJavaInBinding">
+            <soap:address location="http://localhost:18181/BPJavaBPProject/CorrelatedJavaBP/CallInJavaPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="CallBackService">
+        <wsdl:port name="CallBackFeederPort" binding="tns:CallBackBinding">
+            <soap:address location="http://localhost:18181/BPJavaBPProject/CorrelatedJavaBP/CallBackFeederPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="JavaToPassBPService">
+        <wsdl:port name="JavaToPassBPPort" binding="tns:JavaToPassBPBinding">
+            <soap:address location="http://localhost:18181/BPJavaBPProject/CorrelatedJavaBP/JavaToPassBPPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="CorrelatedJavaBPPartner">
+        <plnk:role name="CallJavaInPortTypeRole" portType="tns:CallJavaInPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="CallBackBPPartner">
+        <plnk:role name="CallBackPortTypeRole" portType="tns:CallBackPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JavaToPassBPPartner">
+        <plnk:role name="JavaToPassBPPortTypeRole" portType="tns:JavaToPassBPPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="correlationId" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:correlationId" messageType="tns:CallInOperationRequest" part="InMessage">
+        <vprop:query>/CSInput/Id</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:correlationId" messageType="tns:CallBackOperationRequest" part="OutMessage">
+        <vprop:query>/CSOutput/Id</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

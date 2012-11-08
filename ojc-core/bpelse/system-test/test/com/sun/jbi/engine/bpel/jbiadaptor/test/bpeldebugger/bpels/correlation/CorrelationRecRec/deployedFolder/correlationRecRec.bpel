@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="correlationRecRec" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/correlationRecRec"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/correlationRecRec" xmlns:ns1="urn:correlationRecRecTargetNamespace">
+   <import namespace="urn:correlationRecRecTargetNamespace" location="correlation.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns1:correlationRecRecServiceLinkType1" myRole="correlationRecRecServerRole1"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:correlationRecRecServiceLinkType" myRole="correlationRecRecServerRole"/>
+   </partnerLinks> 
+   <variables>
+      <variable name="CorrelationRecRecOperation1In1" messageType="ns1:correlationRecRecMessage"/>
+      <variable name="CorrelationRecRecOperationIn1" messageType="ns1:correlationRecRecMessage"/>
+   </variables>
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns1:propertyName1"/>
+    </correlationSets> 
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="correlationRecRecOperation" portType="ns1:correlationRecRecPortType" variable="CorrelationRecRecOperationIn1">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="yes"/>
+            </correlations>
+      </receive>         
+      <receive name="Receive2" createInstance="no" partnerLink="PartnerLink2" operation="correlationRecRecOperation1" portType="ns1:correlationRecRecPortType1" variable="CorrelationRecRecOperation1In1">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="no"/>
+            </correlations>
+      </receive>
+          
+   </sequence>
+   
+</process>

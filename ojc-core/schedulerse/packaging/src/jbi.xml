@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"    
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0" 
+    xmlns:logging="http://www.sun.com/jbi/descriptor/logging"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+
+    <!-- identification information about this engine -->
+    <component type="service-engine">
+        <identification>
+            <name>${project.name}</name>
+            <description>Scheduler Service Engine provides scheduling service (powered by Quartz)</description>
+            <identification:VersionInfo component-version="${schedulerse.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="Scheduler SE Component" >com.sun.jbi.engine.scheduler.SchedulerSEComponentManager</component-class-name>
+        <component-class-path>
+            <path-element>lib/schedulerse.jar</path-element>
+            <path-element>lib/component-toolkit.jar</path-element> 
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/quartz.jar</path-element>
+            <path-element>lib/commons-collections.jar</path-element>
+            <path-element>lib/commons-logging.jar</path-element>
+            <path-element>lib/jdbc-stdext.jar</path-element>
+        </component-class-path>
+        <bootstrap-class-name>com.sun.jbi.engine.scheduler.SchedulerSEBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+            <path-element>lib/schedulerse.jar</path-element>
+            <path-element>lib/component-toolkit.jar</path-element> 
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/quartz.jar</path-element>
+            <path-element>lib/commons-collections.jar</path-element>
+            <path-element>lib/commons-logging.jar</path-element>
+            <path-element>lib/jdbc-stdext.jar</path-element>
+        </bootstrap-class-path>
+        <shared-library>sun-shared-util-library</shared-library>
+        <config:Configuration>
+            <config:Property name="PollerCount" 
+                             displayName="Thread Count" 
+                             displayDescription="Number of threads listening on message bus." 
+                             type="xsd:int" 
+                             defaultValue="10"
+                             showDisplay="all"
+                             isComponentRestartRequired="true">
+                <!--  Prevents less than 0 and more than 100 listener threads...  -->
+                <config:Constraint facet="minInclusive" value="1"/>
+                <config:Constraint facet="maxInclusive" value="100"/>
+            </config:Property>
+        </config:Configuration>
+        <logging:Logging>
+            <!--                QoS                     -->    
+            <logging:logger displayName="Messaging Channel (QoS)">com.sun.jbi.common.qos.messaging.MessagingChannel</logging:logger>
+            <logging:logger displayName="Deployment Lookup (QoS)">com.sun.jbi.common.qos.descriptor.DeploymentLookup</logging:logger>
+            <!--          Component Toolkit             -->
+            <logging:logger displayName="Accept Poller Thread (CompTK)">com.sun.jbi.component.toolkit.lifecycle.impl.AcceptPoller</logging:logger>
+            <!--                SchedulerSE                  -->
+            <logging:logger displayName="SchedulerSE Component Manager">com.sun.jbi.engine.scheduler.SchedulerSEComponentManager</logging:logger>
+            <logging:logger displayName="SchedulerSE Endpoint Manager">com.sun.jbi.engine.scheduler.SchedulerSEEndpointManager</logging:logger>
+            <logging:logger displayName="SchedulerSE Exchange Handler">com.sun.jbi.engine.scheduler.SchedulerSEExchangeHandler</logging:logger>
+        </logging:Logging>  
+    </component>
+</jbi>
+
+

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMS" targetNamespace="http://j2ee.netbeans.org/wsdl/JMS"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMS" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types/>
+    <message name="JMSOperationRecvRequest">
+        <part name="input" type="xsd:string"/>
+    </message>
+    <message name="JMSOperationSendRequest">
+        <part name="input" type="xsd:string"/>
+    </message>
+    <portType name="JMSPortTypeRecv">
+        <operation name="JMSOperationRecv">
+            <input name="input1" message="tns:JMSOperationRecvRequest"/>
+        </operation>
+    </portType>
+    <portType name="JMSPortTypeSend">
+        <operation name="JMSOperationSend">
+            <input name="input1" message="tns:JMSOperationSendRequest"/>
+        </operation>
+    </portType>
+    <binding name="JMSBindingRecv" type="tns:JMSPortTypeRecv">
+        <jms:binding/>
+        <operation name="JMSOperationRecv">
+            <jms:operation destination="QOSQueue" destinationType="Queue" transaction="XATransaction" concurrencyMode="sync" maxConcurrentConsumers="1"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="input"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="JMSSendBinding" type="tns:JMSPortTypeSend">
+        <jms:binding/>
+        <operation name="JMSOperationSend">
+            <jms:operation destination="QOSQueue" destinationType="Queue" transaction="XATransaction"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="input"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="JMSService">
+        <port name="JMSPortRecv" binding="tns:JMSBindingRecv">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+        <port name="JMSPortSend" binding="tns:JMSSendBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="JMS">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSPortTypeRecvRole" portType="tns:JMSPortTypeRecv"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMS2">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSPortTypeSendRole" portType="tns:JMSPortTypeSend"/>
+    </plnk:partnerLinkType>
+</definitions>

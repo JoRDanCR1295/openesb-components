@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TestHL7Encoder"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestHL7Encoder"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/TestHL7Encoder" xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder" location="TestHL7Encoder.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:TestHL7EncoderPartner" myRole="TestHL7EncoderPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="TestHL7EncoderOperationOut" messageType="ns1:TestHL7EncoderOperationReply"/>
+        <bpws:variable name="TestHL7EncoderOperationIn" messageType="ns1:TestHL7EncoderOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="TestHL7EncoderOperation" portType="ns1:TestHL7EncoderPortType" variable="TestHL7EncoderOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$TestHL7EncoderOperationIn.part1/MSH</bpws:from>
+                <bpws:to>$TestHL7EncoderOperationOut.part1/MSH</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TestHL7EncoderOperationIn.part1/EVN</bpws:from>
+                <bpws:to>$TestHL7EncoderOperationOut.part1/EVN</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TestHL7EncoderOperationIn.part1/PID</bpws:from>
+                <bpws:to>$TestHL7EncoderOperationOut.part1/PID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TestHL7EncoderOperationIn.part1/PV1</bpws:from>
+                <bpws:to>$TestHL7EncoderOperationOut.part1/PV1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="TestHL7EncoderOperation" portType="ns1:TestHL7EncoderPortType" variable="TestHL7EncoderOperationOut"/>
+    </sequence>
+</process>

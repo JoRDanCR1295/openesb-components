@@ -1,0 +1,21 @@
+delete all rows from drivertest_location table
+
+date :
+
+locid -  location - address
+1 -  bangalore - india
+2 -  bangalore - india
+3 -  bangalore - india
+
+---------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/" xmlns:m="http://j2ee.netbeans.org/wsdl/SoapWSDL">
+<SOAP-ENV:Header/>
+<SOAP-ENV:Body>
+  <m:SoapWSDLOperationResponse xmlns:m="http://j2ee.netbeans.org/wsdl/SoapWSDL">
+    <part1>3</part1>
+  </m:SoapWSDLOperationResponse>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+------------------------------------------------------------------

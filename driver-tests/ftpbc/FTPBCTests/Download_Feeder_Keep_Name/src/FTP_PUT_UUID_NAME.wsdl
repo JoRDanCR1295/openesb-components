@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP_PUT_UUID_NAME" targetNamespace="http://j2ee.netbeans.org/wsdl/Download_Feeder_Keep_Name/FTP_PUT_UUID_NAME"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:tns="http://j2ee.netbeans.org/wsdl/Download_Feeder_Keep_Name/FTP_PUT_UUID_NAME" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types/>
+    <message name="OutboundOneWayMessagingOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="OutboundOneWayMessagingPortType">
+        <operation name="OutboundOneWayMessagingOperation">
+            <input name="input1" message="tns:OutboundOneWayMessagingOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="OutboundOneWayMessagingBinding" type="tns:OutboundOneWayMessagingPortType">
+        <ftp:binding/>
+        <operation name="OutboundOneWayMessagingOperation">
+            <ftp:operation/>
+            <input name="input1">
+                <ftp:message messageRepository="DOWNLOAD_KEEP_NAME" messageName="%u" messageNamePrefixOB="" archive="true" protect="true" stage="true" use="literal" messageCorrelate="false" fileType="text" part="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutboundOneWayMessagingService">
+        <port name="FTP_PUT_UUID_NAME_OutboundOneWayMessagingPort" binding="tns:OutboundOneWayMessagingBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" securedFTP="None" enableCCC="false" cmdChannelTimeout="45000" dataChannelTimeout="45000" controlChannelEncoding=""/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FTP_PUT_UUID_NAME">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="OutboundOneWayMessagingPortTypeRole" portType="tns:OutboundOneWayMessagingPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

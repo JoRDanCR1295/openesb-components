@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP" targetNamespace="http://j2ee.netbeans.org/wsdl/FTP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FTP" xmlns:ns="http://xml.netbeans.org/schema/Greeting" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/FTP">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Greeting" schemaLocation="Greeting.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="FTPOperationRequest">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <message name="FTPOperationReply">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <portType name="SayHelloPortType">
+        <wsdl:operation name="FTPOperation">
+            <wsdl:input name="input1" message="tns:FTPOperationRequest"/>
+            <wsdl:output name="output1" message="tns:FTPOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="FTPBinding" type="tns:SayHelloPortType">
+        <ftp:binding/>
+        <wsdl:operation name="FTPOperation">
+            <ftp:operation/>
+            <wsdl:input name="input1">
+                <ftp:message messageRepository="HELLO_DUKE_COMPLEX" messageName="" messageNamePrefixIB="" messageNamePrefixOB="" pollIntervalMillis="5000" archive="true" protect="true" stage="true" use="literal" encodingStyle="" messageCorrelate="true"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <ftp:message messageRepository="HELLO_DUKE_COMPLEX" messageName="" messageNamePrefixIB="" messageNamePrefixOB="" pollIntervalMillis="5000" archive="true" protect="true" stage="true" use="literal" encodingStyle="" messageCorrelate="true"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="FTPService">
+        <wsdl:port name="FTPPort" binding="tns:FTPBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" cmdChannelTimeout="45000" dataChannelTimeout="45000"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="FTP1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SayHelloPortTypeRole" portType="tns:SayHelloPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

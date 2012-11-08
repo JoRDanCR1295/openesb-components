@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DeleteFalseCondBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DeleteFalseCondBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DeleteFalseCondBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/DeleteFalseCondBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="DeleteFalseCondSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/DeleteFalseCondBpel" location="DeleteFalseCondBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:DeleteFalseCondBpelPartner" partnerRole="DeleteFalseCondBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:DeleteFalseCondSql_sqlsePartnerLinkType" myRole="DeleteFalseCondSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="DeleteFalseCondOut" messageType="ns1:DeleteFalseCondResponse"/>
+      <bpws:variable name="DeleteFalseCondBpelOperationOut" messageType="ns2:DeleteFalseCondBpelOperationReply"/>
+      <bpws:variable name="DeleteFalseCondBpelOperationIn" messageType="ns2:DeleteFalseCondBpelOperationRequest"/>
+      <bpws:variable name="DeleteFalseCondIn" messageType="ns1:DeleteFalseCondRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DeleteFalseCond" portType="ns1:DeleteFalseCondSql_sqlsePortType" variable="DeleteFalseCondIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="DeleteFalseCondIn" part="DeleteFalseCondRequestPart"/>
+            <bpws:to variable="DeleteFalseCondBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="DeleteFalseCondBpelOperation" portType="ns2:DeleteFalseCondBpelPortType" inputVariable="DeleteFalseCondBpelOperationIn" outputVariable="DeleteFalseCondBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteFalseCondBpelOperationOut" part="part1"/>
+            <bpws:to variable="DeleteFalseCondOut" part="DeleteFalseCondResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="DeleteFalseCond" portType="ns1:DeleteFalseCondSql_sqlsePortType" variable="DeleteFalseCondOut"/>
+   </sequence>
+</process>

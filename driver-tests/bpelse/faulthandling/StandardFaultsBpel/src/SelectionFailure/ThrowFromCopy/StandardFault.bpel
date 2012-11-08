@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="StandardFault"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/SelectionFailure/ThrowFromCopy/StandardFault"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/SelectionFailure/ThrowFromCopy/StandardFault" xmlns:ns1="http://j2ee.netbeans.org/wsdl/StandardFault/src/SelectionFailure/ThrowFromCopy/StandardFault" xmlns:ns0="http://xml.netbeans.org/schema/StandardFaultsBpel/src/SelectionFailure/XmlSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/StandardFault/src/SelectionFailure/ThrowFromCopy/StandardFault" location="StandardFault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkA" partnerLinkType="ns1:StandardFault1" myRole="StandardFaultPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="StandardFaultOperationFault" messageType="ns1:StandardFaultOperationFault"/>
+        <variable name="StandardFaultOperationOut" messageType="ns1:StandardFaultOperationReply"/>
+        <variable name="StandardFaultOperationIn" messageType="ns1:StandardFaultOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" variable="StandardFaultOperationIn"/>
+        <bpws:if name="If1">
+            <bpws:condition> ( $StandardFaultOperationIn.input/ns0:Id = 'case1' ) </bpws:condition>
+            <bpws:scope name="Scope1">
+                <bpws:faultHandlers>
+                        <bpws:catch faultName="bpws:selectionFailure">
+                                <bpws:sequence name="Sequence1">
+                                        <bpws:assign name="Assign2">
+                                                <bpws:copy>
+                                                        <bpws:from>
+                                                                <bpws:literal>Caught selection failure standard fault. Fault due to unqualified element.</bpws:literal>
+                                                            </bpws:from>
+                                                            <bpws:to>$StandardFaultOperationFault.fault/ns0:Data</bpws:to>
+                                                    </bpws:copy>
+                                                    <bpws:copy>
+                                                        <bpws:from>$StandardFaultOperationIn.input/ns0:Id</bpws:from>
+                                                            <bpws:to>$StandardFaultOperationFault.fault/ns0:Id</bpws:to>
+                                                    </bpws:copy>
+                                            </bpws:assign>
+                                            <bpws:reply name="Reply2" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" faultName="ns1:fault1" variable="StandardFaultOperationFault"/>
+                                    </bpws:sequence>
+                            </bpws:catch>
+                    </bpws:faultHandlers>
+                    <bpws:assign name="Fault_due_to_unqualified_element">
+                        <bpws:copy>
+                                <bpws:from>$StandardFaultOperationIn.input/Id</bpws:from>
+                                    <bpws:to>$StandardFaultOperationOut.output/ns0:Id</bpws:to>
+                            </bpws:copy>
+                            <bpws:copy>
+                                <bpws:from>$StandardFaultOperationIn.input/ns0:Data</bpws:from>
+                                    <bpws:to>$StandardFaultOperationOut.output/ns0:Data</bpws:to>
+                            </bpws:copy>
+                    </bpws:assign>
+            </bpws:scope>
+            <bpws:else>
+                <bpws:scope name="Scope2">
+                    <bpws:faultHandlers>
+                        <bpws:catch faultName="bpws:selectionFailure">
+                            <bpws:sequence name="Sequence2">
+                                <bpws:assign name="Assign4">
+                                    <bpws:copy>
+                                        <bpws:from>
+                                            <bpws:literal>Caught selection failure standard fault. Fault due to unknown element.</bpws:literal>
+                                        </bpws:from>
+                                        <bpws:to>$StandardFaultOperationFault.fault/ns0:Data</bpws:to>
+                                    </bpws:copy>
+                                    <bpws:copy>
+                                        <bpws:from>$StandardFaultOperationIn.input/ns0:Id</bpws:from>
+                                        <bpws:to>$StandardFaultOperationFault.fault/ns0:Id</bpws:to>
+                                    </bpws:copy>
+                                </bpws:assign>
+                                <bpws:reply name="Reply3" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" faultName="ns1:fault1" variable="StandardFaultOperationFault"/>
+                            </bpws:sequence>
+                        </bpws:catch>
+                    </bpws:faultHandlers>
+                    <bpws:assign name="Fault_due_to_unknown_element">
+                        <bpws:copy>
+                            <bpws:from>$StandardFaultOperationIn.input/ns0:WrongElement</bpws:from>
+                            <bpws:to>$StandardFaultOperationOut.output/ns0:Id</bpws:to>
+                        </bpws:copy>
+                        <bpws:copy>
+                            <bpws:from>$StandardFaultOperationIn.input/ns0:Data</bpws:from>
+                            <bpws:to>$StandardFaultOperationOut.output/ns0:Data</bpws:to>
+                        </bpws:copy>
+                    </bpws:assign>
+                </bpws:scope>
+            </bpws:else>
+        </bpws:if>
+        <reply name="Reply1" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" variable="StandardFaultOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/echoOverSSL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SSLSymmetricTest" xmlns:ns3="http://j2ee.netbeans.org/wsdl/Trigger" xmlns:ns4="http://enterprise.netbeans.org/bpel/echoOverSSL" xmlns:ns5="http://enterprise.netbeans.org/bpel/SSLServer" xmlns:ns6="http://enterprise.netbeans.org/bpel/SSLSymmetricTest" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="echoOverSSLPort" interface-name="ns1:echoOverSSLPortType" name="endpoint1" service-name="ns1:echoOverSSLService"/>
+<endpoint endpoint-name="SSLSymmetricTestPort" interface-name="ns2:SSLSymmetricTestPortType" name="endpoint2" service-name="ns2:SSLSymmetricTestService"/>
+<endpoint endpoint-name="TriggerPort" interface-name="ns3:TriggerPortType" name="endpoint3" service-name="ns3:TriggerService"/>
+<endpoint endpoint-name="echoOverSSLPortTypeRole_myRole" interface-name="ns1:echoOverSSLPortType" name="endpoint4" service-name="ns4:PartnerLink1"/>
+<endpoint endpoint-name="SSLServerRole_myRole" interface-name="ns2:SSLSymmetricTestPortType" name="endpoint5" service-name="ns5:PartnerLink1"/>
+<endpoint endpoint-name="TriggerRole_myRole" interface-name="ns3:TriggerPortType" name="endpoint6" service-name="ns6:PartnerLink1"/>
+<endpoint endpoint-name="SSLClientRole_partnerRole" interface-name="ns2:SSLSymmetricTestPortType" name="endpoint7" service-name="ns6:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="HttpSSLBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="HttpSSLJBI-HttpSSLBpel" unit-name="HttpSSLBpel" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint4"/>
+<provides endpoint="endpoint5"/>
+<provides endpoint="endpoint6"/>
+<consumes endpoint="endpoint7"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="HttpSSLJBI-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/InboundSSLTest/echoOverSSL.wsdl#xpointer(/definitions/service[@name='echoOverSSLService']/port[@name='echoOverSSLPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/SSLSymmetricTest.wsdl#xpointer(/definitions/service[@name='SSLSymmetricTestService']/port[@name='SSLSymmetricTestPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/Trigger.wsdl#xpointer(/definitions/service[@name='TriggerService']/port[@name='TriggerPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint1" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint2" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint7" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint6" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/InboundSSLTest/echoOverSSL.wsdl#xpointer(/definitions/portType[@name='echoOverSSLPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/SSLSymmetricTest.wsdl#xpointer(/definitions/portType[@name='SSLSymmetricTestPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/Trigger.wsdl#xpointer(/definitions/portType[@name='TriggerPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/InboundSSLTest/echoOverSSL.wsdl#xpointer(/definitions/binding[@name='echoOverSSLBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/SSLSymmetricTest.wsdl#xpointer(/definitions/binding[@name='SSLSymmetricTestBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/Trigger.wsdl#xpointer(/definitions/binding[@name='TriggerBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/InboundSSLTest/echoOverSSL.wsdl#xpointer(/definitions/service[@name='echoOverSSLService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/SSLSymmetricTest.wsdl#xpointer(/definitions/service[@name='SSLSymmetricTestService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/HttpSSLBpel/SymmetricSSLTest/Trigger.wsdl#xpointer(/definitions/service[@name='TriggerService'])" xlink:type="simple"/>
+</services>
+<regions>
+<region name="WSDL Endpoints" width="150"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

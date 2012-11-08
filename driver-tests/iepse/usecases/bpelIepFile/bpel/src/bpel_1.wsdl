@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="bpel_1"
+             targetNamespace="bpel_1"
+             xmlns:tns="bpel_1"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+         <types>
+        <xsd:schema xmlns:file="http://www.stc.com/file/" targetNamespace="bpel_1">
+            <xsd:element name="inputMessageObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ProdID" type="xsd:int"/>
+                        <xsd:element name="ProdName" type="xsd:string"/>
+                        <xsd:element name="ProdQuantity" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>    
+
+    
+    <message name="inputMessage">
+            <part element="tns:inputMessageObj" name="input"/>
+        </message>         
+	<wsdl:portType name="MyPortType">
+              <wsdl:operation name="invokeBPEL">
+                <input message="tns:inputMessage"></input>
+              </wsdl:operation>
+	</wsdl:portType>
+
+        <binding name="FileInBinding" type="tns:MyPortType">
+            <file:binding/>
+            <operation name="invokeBPEL">
+            <file:operation/>
+            <input>
+                <file:message fileType="text" use="literal" fileName="Input.xml" pollingInterval="5000" use="literal"/>
+            </input>
+            <output>
+                <file:message fileType="text" fileName="Output.xml" multipleRecordsPerFile="false" use="literal"/>
+            </output>
+        </operation>
+        </binding>
+
+   
+         <wsdl:service name="bpel_1Service">
+		<wsdl:port name="bpel_1PortName" binding="tns:FileInBinding">                    
+                     <file:address fileDirectory="@drivertest_dir@/iepse/usecases/bpelIepFile/jbi/test/bpelIepFile"/>
+		</wsdl:port>
+                
+        </wsdl:service>
+ 	<plnk:partnerLinkType name="bpel_1PartnerLinkType">
+		<plnk:role name="bpel_1Provider" portType="tns:MyPortType"/>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

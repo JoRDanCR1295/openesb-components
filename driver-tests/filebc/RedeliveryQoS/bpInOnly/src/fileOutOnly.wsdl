@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="fileOutOnly" targetNamespace="http://j2ee.netbeans.org/wsdl/fileOutOnly"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileOutOnly" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types/>
+    <message name="fileOutOnlyOperationRequest">
+        <part name="part1" type="xsd:anyType"/>
+    </message>
+    <portType name="fileOutOnlyPortType">
+        <operation name="fileOutOnlyOperation">
+            <input name="input1" message="tns:fileOutOnlyOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="fileOutOnlyBinding" type="tns:fileOutOnlyPortType">
+        <file:binding/>
+        <operation name="fileOutOnlyOperation">
+            <file:operation/>
+            <input name="input1">
+                <file:message use="literal" fileName="out_%d.xml" pollingInterval="1000" fileNameIsPattern="true"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="fileOutOnlyService">
+        <port name="fileOutOnlyPort" binding="tns:fileOutOnlyBinding">
+            <file:address fileDirectory="C:\Temp\oneWayIn" lockName="filebc.lck" workArea="filebc_tmp" seqName="filebc.seq"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="fileOutOnly">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="fileOutOnlyPortTypeRole" portType="tns:fileOutOnlyPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

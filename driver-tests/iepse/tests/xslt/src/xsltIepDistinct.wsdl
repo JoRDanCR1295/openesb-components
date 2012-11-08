@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:defns="iepDistinct_iep" 
+             xmlns:file="http://schemas.stc.com/jbi/wsdl-extensions/file/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:tns="iepDistinct_iep" 
+             xmlns:typens="iepDistinct_iep" 
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             targetNamespace="iepDistinct_iep">
+    <types>
+        <xsd:schema targetNamespace="iepDistinct_iep">
+            <xsd:element name="FileOut_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="value" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="FileOut_Msg">
+        <part element="typens:FileOut_MsgObj" name="output"/>
+    </message>
+    <portType name="OutputPt_FileOut">
+        <operation name="FileOut">
+            <input message="tns:FileOut_Msg"/>
+        </operation>
+    </portType>
+    <binding name="OutputBinding_FileOut" type="tns:OutputPt_FileOut">
+        <file:binding/>
+        <operation name="FileOut">
+            <file:operation/> 
+            <input>
+                <file:message fileName="actual.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+                </file:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutputService_FileOut">
+        <port binding="tns:OutputBinding_FileOut" name="OutputPort_FileOut">
+            <file:address fileDirectory="@drivertest_dir@/iepse/tests/jbi/test/IepDistinct/"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_FileOut">
+        <plnk:role name="OutputRn_FileOut" portType="tns:OutputPt_FileOut"/>
+    </plnk:partnerLinkType>
+</definitions>

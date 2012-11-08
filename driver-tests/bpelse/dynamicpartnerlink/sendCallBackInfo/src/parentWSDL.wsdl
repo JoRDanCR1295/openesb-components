@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="parentWSDL" targetNamespace="http://j2ee.netbeans.org/wsdl/parentWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/parentWSDL" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+    xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/parentWSDL">
+            <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+            <xsd:import schemaLocation="http://docs.oasis-open.org/wsbpel/2.0/OS/serviceref/ws-bpel_serviceref.xsd" namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref"/>
+            <xsd:element name="EndpointReference" type="wsa:EndpointReferenceType"/>
+            <xsd:complexType name="serviceRef">
+                <xsd:sequence>
+                    <xsd:element ref="sref:service-ref"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EPR">
+                <xsd:sequence>
+                    <xsd:element ref="tns:EndpointReference"/>
+                </xsd:sequence>
+            </xsd:complexType>            
+        </xsd:schema>            
+    </types>
+    <message name="parentWSDLOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="parentWSDLOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="parentWSDLOperationRequest1">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="parentWSDLOperationRequest12">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="tns:EPR"/>
+    </message>
+    <portType name="parentWSDLPortType">
+        <operation name="parentWSDLOperation">
+            <input name="input1" message="tns:parentWSDLOperationRequest"/>
+            <output name="output1" message="tns:parentWSDLOperationReply"/>
+        </operation>
+    </portType>
+    <portType name="StaticInvokePortType">
+        <operation name="CallBackOperation">
+            <input name="input1" message="tns:parentWSDLOperationRequest1"/>
+        </operation>
+    </portType>
+    <portType name="DynamicInvokePortType">
+        <operation name="CallBackOperation">
+            <input name="input1" message="tns:parentWSDLOperationRequest1"/>
+        </operation>
+    </portType>
+    <portType name="subBPPortType">
+        <operation name="subBPOperation">
+            <input name="input1" message="tns:parentWSDLOperationRequest12"/>
+        </operation>
+    </portType>
+    <binding name="parentWSDLBinding" type="tns:parentWSDLPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="parentWSDLOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/parentWSDL"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/parentWSDL"/>
+            </output>
+
+        </operation>
+    </binding>
+    <service name="parentWSDLService">
+        <port name="parentWSDLPort" binding="tns:parentWSDLBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/parentWSDLService/parentWSDLPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="parentWSDL1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="parentWSDLPortTypeRole" portType="tns:parentWSDLPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="property" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property" messageType="tns:parentWSDLOperationRequest" part="part1"/>
+    <plnk:partnerLinkType name="parentWSDL12">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="StaticInvokePortTypeRole" portType="tns:StaticInvokePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="parentWSDL13">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="DynamicInvokePortTypeRole" portType="tns:DynamicInvokePortType"/>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias propertyName="tns:property" messageType="tns:parentWSDLOperationRequest1" part="part1"/>
+    <plnk:partnerLinkType name="parentWSDL14">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="subBPPortTypeRole" portType="tns:subBPPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

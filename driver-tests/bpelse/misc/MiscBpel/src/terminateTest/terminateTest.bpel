@@ -1,0 +1,77 @@
+<bpel_20:process name="terminateTest"
+                 targetNamespace="http://www.seebeyond.com/eInsight/terminateTest"
+                 sbynpxp:end_YLoc="94.0"
+                 sbynpxp:start_YLoc="91.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="21.0"
+                 sbynpxp:end_XLoc="660.0"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/terminateTest"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="http://stc.com/terminateTest"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <bpel_20:import namespace="http://stc.com/terminateTest"
+                    location="terminateTest.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="Client2BPLink"
+                             partnerLinkType="ns0:SLT"
+                             myRole="server"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="testOperation_Output"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="testOperation_Input"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+    </bpel_20:variables>
+    <sequence>
+        <bpel_20:receive name="testOperation"
+                         partnerLink="Client2BPLink"
+                         portType="ns0:testPort"
+                         operation="testOperation"
+                         variable="testOperation_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="81.0"
+                         sbynpxp:YLoc="84.0"></bpel_20:receive>
+        <bpel_20:if name="Decision"
+                        sbynpxp:XLoc="183.0"
+                        sbynpxp:YLoc="84.0"
+                        sbynpxp:YLoc_MergeNode="95.0"
+                        sbynpxp:XLoc_MergeNode="539.0">
+            <condition>$testOperation_Output.part/value = false()</condition>
+                <sequence>
+                    <bpel_20:exit name="Terminate"
+                                  sbynpxp:XLoc="332.0"
+                                  sbynpxp:YLoc="56.0"></bpel_20:exit>
+                </sequence>
+            <bpel_20:elseif sbynpx:lineLabel="true">
+                <condition>$testOperation_Output.part/value and true()</condition>
+                <sequence>
+                    <bpel_20:assign name="Assign"
+                                    sbynpxp:XLoc="331.0"
+                                    sbynpxp:YLoc="159.0">
+                        <bpel_20:copy>
+                            <bpel_20:from>$testOperation_Output.part/value</bpel_20:from>
+                            <bpel_20:to>$testOperation_Input.part/value</bpel_20:to>
+                        </bpel_20:copy>
+                    </bpel_20:assign>
+                    <bpel_20:reply name="testOperation.Reply"
+                                   partnerLink="Client2BPLink"
+                                   portType="ns0:testPort"
+                                   operation="testOperation"
+                                   variable="testOperation_Input"
+                                   sbynpxp:XLoc="405.0"
+                                   sbynpxp:YLoc="157.0"></bpel_20:reply>
+                </sequence>
+            </bpel_20:elseif>
+        </bpel_20:if>
+    </sequence>
+</bpel_20:process>

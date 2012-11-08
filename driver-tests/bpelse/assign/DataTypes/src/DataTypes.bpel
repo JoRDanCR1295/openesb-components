@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DataTypes"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DataTypes"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DataTypes" xmlns:ns1="http://j2ee.netbeans.org/wsdl/DataTypes">
+   <import namespace="http://j2ee.netbeans.org/wsdl/DataTypes" location="DataTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:DataTypes1" myRole="DataTypesPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="varGDay" type="xsd:gDay"/>
+      <bpws:variable name="DataTypesOperationOut" messageType="ns1:DataTypesOperationReply"/>
+      <bpws:variable name="DataTypesOperationIn" messageType="ns1:DataTypesOperationRequest"/>
+      <bpws:variable name="booleanVar" type="xsd:boolean"/>
+      <bpws:variable name="doubleVar" type="xsd:double"/>
+      <bpws:variable name="floatVar" type="xsd:float"/>
+      <bpws:variable name="durationVar" type="xsd:duration"/>
+      <bpws:variable name="decimalVar" type="xsd:decimal"/>
+      <bpws:variable name="dateTimeVar" type="xsd:dateTime"/>
+      <bpws:variable name="dateVar" type="xsd:date"/>
+      <bpws:variable name="timeVar" type="xsd:time"/>
+      <bpws:variable name="intVar" type="xsd:int"/>
+      <bpws:variable name="stringVar" type="xsd:string"/>
+
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DataTypesOperation" portType="ns1:DataTypesPortType" variable="DataTypesOperationIn"/>
+            <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from> ( 4 div 3 ) </bpws:from>
+            <bpws:to variable="doubleVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from> ( 4 div 3 ) </bpws:from>
+            <bpws:to variable="floatVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>P0Y0M0DT0H3M0S</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="durationVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from> ( 5 div 2 ) </bpws:from>
+            <bpws:to variable="decimalVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+                <bpws:literal>2006-06-27T23:51:26.41-08:00</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="dateTimeVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+                <bpws:literal>2006-06-27-08:00</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="dateVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+                <bpws:literal>23:51:26.53-08:00</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="timeVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>5</bpws:from>
+            <bpws:to variable="intVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>SampleString</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="stringVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from> ( true() and false() ) </bpws:from>
+            <bpws:to variable="booleanVar"/>
+         </bpws:copy>
+               <bpws:copy>
+                  <bpws:from>
+                     <bpws:literal>25</bpws:literal>
+                  </bpws:from>
+                  <bpws:to variable="varGDay"/>
+               </bpws:copy>
+            </bpws:assign>
+      <bpws:assign name="Assign2">
+          <bpws:copy>
+            <bpws:from>concat("Input:", $DataTypesOperationIn.part1, ' Double: ', $doubleVar, ' Float: ', $floatVar, ' Duration: ', $durationVar, ' Decimal: ', $decimalVar, ' DateTime: ', $dateTimeVar, ' Date: ', $dateVar, ' Time: ', $timeVar, ' Int: ', $intVar, ' String: ', $stringVar, ' Boolean: ', $booleanVar, ' gDay: ', $varGDay)</bpws:from>
+            <bpws:to part="part1" variable="DataTypesOperationOut"/>
+         </bpws:copy>
+      </bpws:assign>
+
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="DataTypesOperation" portType="ns1:DataTypesPortType" variable="DataTypesOperationOut"/>
+   </sequence>
+</process>

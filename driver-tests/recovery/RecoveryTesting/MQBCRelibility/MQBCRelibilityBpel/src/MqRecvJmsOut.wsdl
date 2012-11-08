@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MqRecvJmsOut" targetNamespace="http://j2ee.netbeans.org/wsdl/MqRecvJmsOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/MqRecvJmsOut" xmlns:ns1="http://xml.netbeans.org/schema/MqMsg" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/MqRecvJmsOut" xmlns:ns1="http://xml.netbeans.org/schema/MqMsg">
+            <xsd:import namespace="http://xml.netbeans.org/schema/MqMsg" schemaLocation="MqMsg.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="message_JMSOut">
+        <part name="part_JMSOut"
+              type="xsd:string"></part>
+        <part name="IdProperty" type="xsd:long"/>
+    </message>
+    <message name="message1MqRecv">
+        <wsdl:part name="part1MqRecv" element="ns1:MqMessage"/>
+    </message>
+    <portType name="MqRecvPortType">
+        <wsdl:operation name="MqRecvOperation">
+            <wsdl:input name="input1" message="tns:message1MqRecv"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JmsOutPortType">
+        <wsdl:operation name="JmsOutOperation">
+            <wsdl:input name="input1" message="tns:message_JMSOut"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="binding1Mqrecv" type="tns:MqRecvPortType">
+        <mq:binding/>
+        <wsdl:operation name="MqRecvOperation">
+            <mq:operation queueName="Client_Publish_BP2BPReliabilityTest1_Feeder" queueOpenOptions="49" transaction="XATransaction"/>
+            <wsdl:input name="input1">
+                <mq:body MessageBody="part1MqRecv" use="literal" MessageType="TextMessage" SyncPoint="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="binding1JmsOut" type="tns:JmsOutPortType">
+        <jms:binding/>
+        <wsdl:operation name="JmsOutOperation">
+            <jms:operation destination="ext_client_consume_mqbcRelibilityTest1" destinationType="Queue" transaction="XATransaction" deliveryMode="PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part_JMSOut">
+                    <jms:properties>
+                        <jms:property name="counter" part="IdProperty" type="long"/>
+                    </jms:properties>
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="service1MqRecv">
+        <wsdl:port name="port1MqRecv" binding="tns:binding1Mqrecv">
+            <mq:address portNumber="1418" queueManagerName="rchen2kmq6qmgr3" channelName="svrconnchnl3" hostName="rchen-2k"/>
+        </wsdl:port>
+    </service>
+    <service name="service1JmsOut">
+        <wsdl:port name="port1JmsOut" binding="tns:binding1JmsOut">
+            <jms:address connectionURL="mq://localhost:20000" username="admin" password="admin"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="partnerlinktype1MqRecv">
+        <plnk:role name="role1mqRecv" portType="tns:MqRecvPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1JmsOut">
+        <plnk:role name="role1JmsOut" portType="tns:JmsOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

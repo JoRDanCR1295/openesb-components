@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="modelIdParsing"
+                 targetNamespace="http://www.seebeyond.com/eInsight/newuntitled"
+                 sbynpxp:end_YLoc="179.0"
+                 sbynpxp:start_YLoc="25.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="15.0"
+                 sbynpxp:end_XLoc="872.0"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/newuntitled"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="urn:Foo"
+                 xmlns:ns1="https://hhws.portamedic.com/DocumentService/"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <bpel_20:import namespace="urn:Foo"
+                    location="echo.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:import namespace="https://hhws.portamedic.com/DocumentService/"
+                    location="ORDER.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="plink2"
+                             partnerLinkType="ns0:HelloIFServiceLink"
+                             myRole="HelloIFRole"
+                             partnerRole="HelloIFRole"/>
+        <bpel_20:partnerLink name="plink3"
+                             partnerLinkType="ns1:SLT"
+                             myRole="Server"/>
+        <partnerLink name="plink1"
+                     partnerLinkType="ns0:HelloIFServiceLink"
+                     myRole="HelloIFRole"
+                     partnerRole="HelloIFRole"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="var2"
+                          messageType="ns0:HelloIF_sayHelloResponse"></bpel_20:variable>
+        <bpel_20:variable name="var3"
+                          messageType="ns1:SubmitOrderDataSoapIn"></bpel_20:variable>
+        <bpel_20:variable name="var4"
+                          messageType="ns1:SubmitOrderDataSoapOut"></bpel_20:variable>
+        <bpel_20:variable name="var1"
+                          messageType="ns0:HelloIF_sayHello"></bpel_20:variable>
+    </bpel_20:variables>
+    <sequence>
+        <bpel_20:receive name="Receive1"
+                         partnerLink="plink1"
+                         portType="ns0:HelloIF"
+                         operation="sayHello"
+                         variable="var1"
+                         createInstance="yes"
+                         sbynpxp:XLoc="71.0"
+                         sbynpxp:YLoc="25.0"></bpel_20:receive>
+        <bpel_20:invoke name="Invoke1"
+                        partnerLink="plink1"
+                        portType="ns0:HelloIF"
+                        operation="sayHello"
+                        inputVariable="var1"
+                        outputVariable="var2"
+                        sbynpxp:XLoc="129.0"
+                        sbynpxp:YLoc="26.0"></bpel_20:invoke>
+        <bpel_20:wait name="Wait1"
+                      sbynpxp:XLoc="197.0"
+                      sbynpxp:YLoc="24.0">
+            <bpel_20:for>&apos;P0Y0DT5H&apos;</bpel_20:for>
+        </bpel_20:wait>
+        <bpel_20:reply name="Reply1"
+                       partnerLink="plink1"
+                       portType="ns0:HelloIF"
+                       operation="sayHello"
+                       variable="var1"
+                       sbynpxp:XLoc="131.0"
+                       sbynpxp:YLoc="143.0"></bpel_20:reply>
+        <bpel_20:pick name="Event_Based_Decision"
+                      createInstance="no"
+                      sbynpxp:XLoc="192.0"
+                      sbynpxp:YLoc="138.0"
+                      sbynpxp:YLoc_MergeNode="144.0"
+                      sbynpxp:XLoc_MergeNode="564.0">
+            <bpel_20:onMessage partnerLink="plink3"
+                               portType="ns1:SubmitOrderSoap"
+                               operation="SubmitOrderData"
+                               variable="var2"
+                               sbynpxp:XLoc="268.0"
+                               sbynpxp:YLoc="79.0"
+                               sbynpx:lineLabel="OnMessage1">
+                <sequence>
+                    <bpel_20:assign name="BusinessRule1"
+                                    sbynpxp:XLoc="372.0"
+                                    sbynpxp:YLoc="32.0">                                            <bpel_20:copy>
+                                                <bpel_20:from>$var1.parameters/OrderData</bpel_20:from>
+                                                <bpel_20:to>$var2.parameters/SubmitOrderDataResult</bpel_20:to>
+                                            </bpel_20:copy>
+</bpel_20:assign>
+                    <bpel_20:wait name="Wait2"
+                                  sbynpxp:XLoc="473.0"
+                                  sbynpxp:YLoc="32.0">
+                        <bpel_20:for>getContainerData(&apos;adsf&apos;, &apos;body&apos;, &apos;/helloObj/int&apos;)</bpel_20:for>
+                    </bpel_20:wait>
+                </sequence>
+            </bpel_20:onMessage>
+            <bpel_20:onMessage partnerLink="plink3"
+                               portType="ns1:SubmitOrderSoap"
+                               operation="SubmitOrderData"
+                               variable="var3"
+                               sbynpxp:XLoc="253.0"
+                               sbynpxp:YLoc="132.0"
+                               sbynpx:lineLabel="OnMessage2">
+                <sequence>
+                    <bpel_20:assign name="BusinessRulec"
+                                    sbynpxp:XLoc="343.0"
+                                    sbynpxp:YLoc="139.0">                                            <bpel_20:copy>
+                                                <bpel_20:from>$var1.parameters/OrderData</bpel_20:from>
+                                                <bpel_20:to>$var2.parameters/SubmitOrderDataResult</bpel_20:to>
+                                            </bpel_20:copy>
+</bpel_20:assign>
+                    <bpel_20:invoke name="Invoke2"
+                        partnerLink="plink1"
+                        portType="ns0:HelloIF"
+                        operation="sayHello"
+                        inputVariable="var1"
+                        outputVariable="var2"
+                                    sbynpxp:XLoc="463.0"
+                                    sbynpxp:YLoc="141.0"></bpel_20:invoke>
+                </sequence>
+            </bpel_20:onMessage>
+            <bpel_20:onAlarm sbynpxp:XLoc="273.0"
+                             sbynpxp:YLoc="195.0"
+                             sbynpxp:deadline="(GMT-12:00) Internatinal Date Line West"
+                             sbynpx:lineLabel="OnAlarm1">
+                <for>getContainerData(&apos;var2&apos;, &apos;result&apos;, &apos;/int&apos;)</for>
+                <sequence>
+                    <bpel_20:assign name="BusinessRule"
+                                    sbynpxp:XLoc="365.0"
+                                    sbynpxp:YLoc="264.0">                                            <bpel_20:copy>
+                                                <bpel_20:from>$var1.parameters/OrderData</bpel_20:from>
+                                                <bpel_20:to>$var2.parameters/SubmitOrderDataResult</bpel_20:to>
+                                            </bpel_20:copy>
+</bpel_20:assign>
+                    <bpel_20:receive name="Receive2"
+                                     partnerLink="plink3"
+                                     portType="ns1:SubmitOrderSoap"
+                                     operation="SubmitOrderData"
+                                     variable="var3"
+                                     createInstance="no"
+                                     sbynpxp:XLoc="485.0"
+                                     sbynpxp:YLoc="262.0"></bpel_20:receive>
+                </sequence>
+            </bpel_20:onAlarm>
+        </bpel_20:pick>
+        <bpel_20:reply name="Reply2"
+                       partnerLink="plink3"
+                       portType="ns1:SubmitOrderSoap"
+                       operation="SubmitOrderData"
+                       variable="var4"
+                       sbynpxp:XLoc="678.0"
+                       sbynpxp:YLoc="159.0"></bpel_20:reply>
+    </sequence>
+</bpel_20:process>

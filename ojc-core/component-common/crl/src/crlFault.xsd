@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)crlFault.xsd 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://sun.com/crl"
+            xmlns:tns="http://sun.com/crl"
+            xmlns="http://sun.com/crl">
+    
+	<xsd:element name="crlFault" processContents="lax">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element name="Fault" type="tns:Fault"/>
+				<xsd:element name="DetailCode" type="tns:DetailCode"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="Fault" final="extension">
+		<xsd:sequence>
+			<xsd:element name="faultcode" type="xsd:QName"/>
+			<xsd:element name="faultstring" type="xsd:string"/>
+			<xsd:element name="faultactor" type="xsd:anyURI" minOccurs="0"/>
+			<xsd:element name="detail" type="tns:detail" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="detail">
+		<xsd:sequence>
+			<xsd:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##any" processContents="lax"/>
+	</xsd:complexType>
+			
+	<xsd:complexType name="DetailCode" final="##all">
+		<xsd:sequence>
+			<xsd:element name="code" type="tns:code"/>
+			<xsd:element name="detail" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="code">
+		<xsd:annotation><xsd:documentation>
+			Multi-part string to categorize a fault code. 
+			The first part indicates the source of fault-inducing error: 
+			service engine (SE), binding component (BC), shared library (SL), or 
+			a third-party/unknown source (TP).
+			The second part is a 4-letter categorization or naming of the source.
+			The third part is 2-digit numeric code to describe the actual error.
+			
+			For example, "SEBPEL55" would indicate the fault originated in a
+			BPEL service engine, which is responsible for providing a description
+			of what error the numeric code 55 represents.
+		</xsd:documentation></xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(SE|BC|SL|TP)[A-Z]{4}[0-9]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

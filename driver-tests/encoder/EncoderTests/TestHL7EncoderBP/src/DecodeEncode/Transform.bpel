@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Transform"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestHL7EncoderTransform"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/TestHL7EncoderTransform"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/Transform"
+    xmlns:ns0="urn:hl7-org:v2xml">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/Transform"
+        location="Transform.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:Transform1"
+            myRole="TransformPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="TransformOperationOut"
+            messageType="ns1:TransformOperationReply"/>
+        <bpws:variable name="TransformOperationIn"
+            messageType="ns1:TransformOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive-input.txt" createInstance="yes"
+            partnerLink="PartnerLink1" operation="TransformOperation"
+            portType="ns1:TransformPortType" variable="TransformOperationIn"/>
+        <bpws:assign name="Assign-Mappings">
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:MSH</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:MSH</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:EVN</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:EVN</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:PID</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:PID</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:if name="ExistsPD1">
+            <bpws:condition>boolean($TransformOperationIn.toIn/ns0:PD1)</bpws:condition>
+            <bpws:assign name="Assign2">
+                <bpws:copy>
+                    <bpws:from>$TransformOperationIn.toIn/ns0:PD1</bpws:from>
+                    <bpws:to>$TransformOperationOut.toOut/ns0:PD1</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:if>
+        <bpws:if name="ExistsNK1">
+            <bpws:condition>boolean($TransformOperationIn.toIn/ns0:NK1)</bpws:condition>
+            <bpws:assign name="Assign3">
+                <bpws:copy>
+                    <bpws:from>$TransformOperationIn.toIn/ns0:NK1</bpws:from>
+                    <bpws:to>$TransformOperationOut.toOut/ns0:NK1</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:if>
+        <bpws:assign name="Assign4">
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:PV1</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:PV1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:if name="ExistsROL">
+            <bpws:condition>boolean($TransformOperationIn.toIn/ns0:ROL)</bpws:condition>
+            <bpws:assign name="Assign5">
+                <bpws:copy>
+                    <bpws:from>$TransformOperationIn.toIn/ns0:ROL</bpws:from>
+                    <bpws:to>$TransformOperationOut.toOut/ns0:ROL</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:if>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1"
+            operation="TransformOperation" portType="ns1:TransformPortType"
+            variable="TransformOperationOut"/>
+    </sequence>
+</process>

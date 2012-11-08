@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="urn:Crm1wayWhileOutonlyWSDL" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:tns="http://www.seebeyond.com/eInsight/Crm1wayWhileOutonly" name="Crm1wayWhileOutonly" sbynpxp:end_XLoc="894.0" sbynpxp:end_YLoc="127.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="2.0" sbynpxp:start_YLoc="157.0" targetNamespace="http://www.seebeyond.com/eInsight/Crm1wayWhileOutonly">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="Crm1wayWhileOutonly.wsdl" namespace="urn:Crm1wayWhileOutonlyWSDL"/>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="Crm1wayWhileOutonlyIFRole" name="p1" partnerLinkType="ns0:HelloIFServiceLink"/>
+        <bpel_20:partnerLink name="p2" partnerLinkType="ns0:HelloIFServiceLinkNew" partnerRole="Crm1wayWhileOutonlyIFRolesubBP"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns0:HelloIF_sayHello" name="sayHello_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:counter" name="counterVar1"/>
+        <bpel_20:variable messageType="ns0:counter" name="counerVar2"/>
+    </bpel_20:variables>
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="sayHello" operation="sayHello" partnerLink="p1" portType="ns0:Crm1wayWhileOutonlyIF" sbynpxp:XLoc="41.0" sbynpxp:YLoc="113.0" variable="sayHello_Output"/>
+        <bpel_20:assign name="Assign_5" sbynpxp:XLoc="105.0" sbynpxp:YLoc="101.0">
+            <bpel_20:copy>
+                <bpel_20:from>5</bpel_20:from>
+                <bpel_20:to part="counterPart" variable="counterVar1"/>
+            </bpel_20:copy>
+            <bpel_20:copy>
+                <bpel_20:from>2</bpel_20:from>
+                <bpel_20:to part="counterPart" variable="counerVar2"/>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:while name="While2" sbynpxp:XLoc="175.0" sbynpxp:YLoc="29.0" sbynpxp:isExpanded="true"><bpel_20:condition>$counterVar1.counterPart &gt;= 1</bpel_20:condition>
+            <bpel_20:sequence>
+                <bpel_20:assign name="Assign3" sbynpxp:XLoc="235.0" sbynpxp:YLoc="100.0">
+                    <bpel_20:copy>
+                        <bpel_20:from>2</bpel_20:from>
+                        <bpel_20:to part="counterPart" variable="counerVar2"/>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+                <bpel_20:while name="While" sbynpxp:XLoc="290.0" sbynpxp:YLoc="59.0" sbynpxp:isExpanded="true"><bpel_20:condition>$counerVar2.counterPart &gt;= 1</bpel_20:condition>
+                    <bpel_20:sequence>
+                        <bpel_20:invoke inputVariable="sayHello_Output" name="Activity_6" operation="sayHello" partnerLink="p2" portType="ns0:Crm1wayWhileOutonlyIFsubBP" sbynpxp:XLoc="362.0" sbynpxp:YLoc="105.0"/>
+                        <bpel_20:assign name="aAssign45" sbynpxp:XLoc="440.0" sbynpxp:YLoc="97.0">
+                            <bpel_20:copy>
+                                <bpel_20:from>$counerVar2.counterPart - 1 </bpel_20:from>
+                                <bpel_20:to part="counterPart" variable="counerVar2"/>
+                            </bpel_20:copy>
+                        </bpel_20:assign>
+                    </bpel_20:sequence>
+                </bpel_20:while>
+                <bpel_20:assign name="Assign2" sbynpxp:XLoc="603.0" sbynpxp:YLoc="144.0">
+                    <bpel_20:copy>
+                        <bpel_20:from>$counterVar1.counterPart - 1 </bpel_20:from>
+                        <bpel_20:to part="counterPart" variable="counterVar1"/>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+            </bpel_20:sequence>
+        </bpel_20:while>
+        <bpel_20:invoke inputVariable="sayHello_Output" name="Activity" operation="sayHello" partnerLink="p2" portType="ns0:Crm1wayWhileOutonlyIFsubBP" sbynpxp:XLoc="744.0" sbynpxp:YLoc="111.0"/>
+        <bpel_20:assign name="Assign" sbynpxp:XLoc="813.0" sbynpxp:YLoc="110.0">
+            <bpel_20:copy>
+                <bpel_20:from>'Some static Value
+'</bpel_20:from>
+                <bpel_20:to>$sayHello_Output.body/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+    </bpel_20:sequence>
+    
+    
+    
+</bpel_20:process>

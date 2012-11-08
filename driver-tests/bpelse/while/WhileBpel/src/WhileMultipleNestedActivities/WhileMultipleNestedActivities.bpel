@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileMultipleNestedActivities" 
+    targetNamespace="http://www.mycomp.org/MultipleNestedActivities/MultipleNestedActivitiesBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/MultipleNestedActivities/MultipleNestedActivitiesBP" xmlns:ns1="http://www.mycomp.org/MultipleNestedActivities/MultipleNestedActivities">
+    <import namespace="http://www.mycomp.org/MultipleNestedActivities/MultipleNestedActivities" location="WhileMultipleNestedActivities.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:MultipleNestedActivitiesPartnerLinkType" myRole="MultipleNestedActivitiesProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Nested_In" messageType="ns1:requestMsg"/>
+        <variable name="Nested_Out" messageType="ns1:responseMsg"/>
+        <variable name="counter" messageType="ns1:CountMsg"/>
+    </variables>
+    <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="NestedOperation" portType="ns1:NestedPort" variable="Nested_In"/>
+      <assign name="Assign2">
+         <copy>
+         <from>1</from><to part="i" variable="counter"/>
+         </copy>
+      </assign>
+      <while name="While1">
+         <condition> ( $counter.i &lt;= 3 ) </condition>
+         <sequence name="Sequence1">
+            <assign name="Assign1">
+               <copy>
+               <from>concat($Nested_In.req, '--OuterWhile--:', $counter.i, '-Time-:--')</from><to part="res" variable="Nested_Out"/>
+               </copy>
+               <copy>
+               <from> ( $counter.i + 1 ) </from><to part="i" variable="counter"/>
+               </copy>
+            </assign>
+            <assign name="Assign3">
+               <copy>
+               <from>1</from><to part="j" variable="counter"/>
+               </copy>
+            </assign>
+            <while name="While2">
+               <condition> ( $counter.j &lt;= 2 ) </condition>
+               <sequence name="Sequence2">
+                  <assign name="Assign4">
+                     <copy>
+                     <from>concat($Nested_Out.res, ' **Inner While 1** ')</from><to part="res" variable="Nested_Out"/>
+                     </copy>
+                  </assign>
+                  <assign name="Assign5">
+                     <copy>
+                     <from> ( $counter.j + 1 ) </from><to part="j" variable="counter"/>
+                     </copy>
+                     <copy>
+                     <from>1</from><to part="k" variable="counter"/>
+                     </copy>
+                  </assign>
+                  <while name="While3">
+                     <condition> ( $counter.k &lt;= 2 ) </condition>
+                     <sequence name="Sequence3">
+                        <assign name="Assign15">
+                           <copy>
+                           <from>concat($Nested_Out.res, '** Inner While2** ')</from><to part="res" variable="Nested_Out"/>
+                           </copy>
+                        </assign>
+                        <assign name="Assign16">
+                           <copy>
+                           <from> ( $counter.k + 1 ) </from><to part="k" variable="counter"/>
+                           </copy>
+                           <copy>
+                           <from>1</from><to part="l" variable="counter"/>
+                           </copy>
+                        </assign>
+                     </sequence>
+                  </while>
+               </sequence>
+            </while>
+            <assign name="Assign14">
+               <copy>
+               <from variable="Nested_Out" part="res"/><to variable="Nested_In" part="req"/>
+               </copy>
+            </assign>
+         </sequence>
+      </while>
+      <assign name="Assign13">
+         <copy>
+         <from variable="Nested_In" part="req"/><to variable="Nested_Out" part="res"/>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="NestedOperation" portType="ns1:NestedPort" variable="Nested_Out"/>
+   </sequence>
+   
+</process>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="newWSDL" targetNamespace="http://j2ee.netbeans.org/wsdl/newWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/newWSDL" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+    xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/newWSDL">
+            <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+            schemaLocation="http://schemas.xmlsoap.org/ws/2004/08/addressing/"/>
+            <xsd:import schemaLocation="http://docs.oasis-open.org/wsbpel/2.0/OS/serviceref/ws-bpel_serviceref.xsd" 
+            namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref"/>           
+            <xsd:element name="EndpointReference" type="wsa:EndpointReferenceType"/>
+            <xsd:complexType name="serviceRef">
+                <xsd:sequence>
+                    <xsd:element ref="sref:service-ref"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EPR">
+                <xsd:sequence>
+                    <xsd:element ref="tns:EndpointReference"/>
+                </xsd:sequence>
+            </xsd:complexType>            
+        </xsd:schema>            
+    </types>
+    <message name="newWSDLOperationRequest">
+        <part name="part1" type="xsd:string"/>     
+    </message>
+    <message name="newWSDLOperationReply">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="tns:EPR"/>         
+    </message>
+    <portType name="newWSDLPortType">
+        <operation name="newWSDLOperation">
+            <input name="input1" message="tns:newWSDLOperationRequest"/>
+            <output name="output1" message="tns:newWSDLOperationReply"/>
+        </operation>
+    </portType>
+    <binding name="newWSDLBinding" type="tns:newWSDLPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="newWSDLOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/newWSDL"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/newWSDL"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="newWSDLService">
+        <port name="newWSDLPort" binding="tns:newWSDLBinding">
+            <soap:address location="http://localhost:18181/newWSDLService/newWSDLPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="newWSDL1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="newWSDLPortTypeRole" portType="tns:newWSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

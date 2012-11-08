@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="oneWayOperation" 
+    targetNamespace="http://www.mycomp.org/oneWayOperation/oneWayOperation"
+    xmlns:tns="http://www.mycomp.org/oneWayOperation/oneWayOperation"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/oneWayOperation/oneWayOperation">
+    <import location="oneWayOperation.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://www.mycomp.org/oneWayOperation/oneWayOperation"/>
+    <partnerLinks>
+        <partnerLink name="invokePLink" partnerLinkType="wsdlNS:oneWayOperationPartnerLinkType" partnerRole="oneWayOperationProvider"/>
+        <partnerLink name="receivePLink" partnerLinkType="wsdlNS:receiveOperPartnerLinkType" myRole="receiveOperationProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReceiveOperIn1" messageType="wsdlNS:message1"/>
+        <variable name="OneWayInvokeOperIn1" messageType="wsdlNS:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="receivePLink" operation="receiveOper" portType="wsdlNS:receivePortType" variable="ReceiveOperIn1" createInstance="yes"/>
+        <bpws:if name="If1">
+            <bpws:condition> ( $ReceiveOperIn1.part1 = 'normal' ) </bpws:condition>
+            <bpws:sequence name="Sequence1">
+        <assign name="Assign1">
+            <copy>
+            <from variable="ReceiveOperIn1" part="part1"/><to variable="OneWayInvokeOperIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="invokePLink" operation="oneWayInvokeOper" portType="wsdlNS:invokePortType" inputVariable="OneWayInvokeOperIn1"/>
+            </bpws:sequence>
+            <bpws:else>
+                <bpws:sequence name="Sequence2">
+                    <bpws:empty name="Empty1"/>
+                    <bpws:throw name="Throw1" faultVariable="ReceiveOperIn1" faultName="bpws:testFault1"/>
+                </bpws:sequence>
+            </bpws:else>
+        </bpws:if>
+    </sequence>
+   
+</process>

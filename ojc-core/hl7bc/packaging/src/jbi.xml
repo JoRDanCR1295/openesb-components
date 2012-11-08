@@ -1,0 +1,364 @@
+<?xml version="1.0"?>
+<!-- jbi.xml descriptor for the binding component (BC) -->
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"    
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0" 
+    xmlns:logging="http://www.sun.com/jbi/descriptor/logging"
+>
+<!-- identification information about this binding -->
+    <component type="binding-component">
+        <identification>
+            <name>${project.name}</name>
+            <description>HL7 binding</description>
+            <identification:VersionInfo component-version="${hl7bc.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="The boot strap class" >com.sun.jbi.hl7bc.HL7BindingComponent</component-class-name>
+        <component-class-path>
+            <path-element>lib/hl7bcimpl.jar</path-element>
+            <path-element>lib/wsdl4j.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+            <path-element>lib/mina-core.jar</path-element>
+            <path-element>lib/slf4j-api.jar</path-element>
+			<path-element>lib/slf4j-simple.jar</path-element>
+			<path-element>lib/common-util.jar</path-element>
+            <path-element>lib/qos.jar</path-element> 
+			<path-element>lib/axiondb.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.itf.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.impl.jar</path-element>
+		</component-class-path>
+        <bootstrap-class-name>com.sun.jbi.hl7bc.bootstrap.HL7BindingBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+			<path-element>lib/hl7bcimpl.jar</path-element>
+			<path-element>lib/componentsl.jar</path-element>
+			<path-element>lib/common-util.jar</path-element>
+			<path-element>lib/qos.jar</path-element>  
+			<path-element>lib/axiondb.jar</path-element>
+        </bootstrap-class-path>
+        <shared-library>sun-encoder-library</shared-library>
+        <logging:Logging root="com.sun.jbi.hl7bc">
+            <logging:logger displayName="InboundMessageProcessor">com.sun.jbi.hl7bc.InboundMessageProcessor</logging:logger>
+            <logging:logger displayName="OutboundMessageProcessor">com.sun.jbi.hl7bc.OutboundMessageProcessor</logging:logger>
+            <logging:logger displayName="InboundReceiver">com.sun.jbi.hl7bc.InboundReceiver</logging:logger>
+            <logging:logger displayName="OutboundReceiver">com.sun.jbi.hl7bc.OutboundReceiver</logging:logger>
+            <logging:logger displayName="HL7Normalizer">com.sun.jbi.hl7bc.HL7Normalizer</logging:logger>
+            <logging:logger displayName="HL7Denormalizer">com.sun.jbi.hl7bc.HL7Denormalizer</logging:logger>
+            <logging:logger displayName="HL7BindingDeployer">com.sun.jbi.hl7bc.HL7BindingDeployer</logging:logger>
+            <logging:logger displayName="ServiceUnitImpl">com.sun.jbi.hl7bc.ServiceUnitImpl</logging:logger>
+            <logging:logger displayName="EndpointImpl">com.sun.jbi.hl7bc.EndpointImpl</logging:logger>
+            <logging:logger displayName="HL7BindingComponent">com.sun.jbi.hl7bc.HL7BindingComponent</logging:logger>
+        </logging:Logging>
+        <config:Configuration>
+			<config:Property name="Threads" 
+                            type="xsd:int" 
+                            displayName="Number of Outbound Processor Threads" 
+                            displayDescription="Number of threads to concurrently process outbound HL7 requests. The range of meaningful values is from 1 to 2147483647." 
+                            defaultValue="10" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="5"/> 
+               <config:Constraint facet="maxInclusive" value="2147483647"/>
+           </config:Property>
+			<config:Property name="InboundReplyThreads" 
+                            type="xsd:int" 
+                            displayName="Number of InboundReply Threads" 
+                            displayDescription="Maximum number of threads to process response for HL7 client Requests concurrently. Any integer number between 1 and 2147483647 is allowed." 
+                            defaultValue="10" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="5"/> 
+               <config:Constraint facet="maxInclusive" value="2147483647"/>
+           </config:Property>
+		   <config:Property name="DatabaseJNDIName"
+						displayName="Data Source Name"
+            			displayDescription="Name of the Datasource where sun-hl7-binding persists sequence number and hl7 acknowledgment messages"
+                        showDisplay="all"
+                        type="xsd:string"
+            			defaultValue="jdbc/hl7bcdb"/>
+			<config:Property name="AllowDynamicEndpoint" 
+                            type="xsd:boolean" 
+                            defaultValue="false" 
+                            displayName="Allow Dynamic Endpoint" 
+                            displayDescription="Indicate if Dynamic Endpoint is allowed" 
+                            showDisplay="all"
+                            isApplicationRestartRequired="true" 
+                            isComponentRestartRequired="true"/>
+			<config:Property name="AlwaysCreatesNewConnection" 
+                            type="xsd:boolean" 
+                            defaultValue="true" 
+                            displayName="Always Creates New Connection" 
+                            displayDescription="It specifies whether ALWAYS try to create a new connection for a connection establishment request. If it is false, HL7BC will try to use an existing connection taken from pool; if it is true, then it is always try to create a new connection without trying to match existing connection." 
+                            showDisplay="all"
+                            isApplicationRestartRequired="true" 
+                            isComponentRestartRequired="true"/>
+			<config:Property name="ConnectionPoolMinSize" 
+                            type="xsd:int" 
+                            defaultValue="2" 
+                            displayName="Minimum Connection Pool Size" 
+                            displayDescription="Minimum number of connections to be held in the pool" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="0"/> 
+               <config:Constraint facet="maxInclusive" value="65535"/>     
+            </config:Property>
+			<config:Property name="ConnectionPoolMaxSize" 
+                            type="xsd:int" 
+                            defaultValue="32" 
+                            displayName="Maximum Connection Pool Size" 
+                            displayDescription="Maximum number of connections to be held in the pool" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="1"/> 
+               <config:Constraint facet="maxInclusive" value="65535"/>     
+            </config:Property>
+			<config:Property name="ConnectionMaxIdleTimeout" 
+                            type="xsd:int" 
+                            defaultValue="60000" 
+                            displayName="Max Idle Timeout for Pooled Connection"
+                            displayDescription="Max Idle Timeout for connections in the pool in milli-seconds (> 1000)."
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="1000"/> 
+           </config:Property>
+            <config:Property name="DefaultMaxTimeToWaitForAResponse" 
+                            type="xsd:int" 
+                            defaultValue="-1" 
+                            displayName="Default Max Time To Wait For A Response"
+                            displayDescription="For outbound messages being sent, the maximum time to wait for a response in seconds (or -1 to wait forever). This setting applies only to ports where hl7:communicationcontrol value for TIME_TO_WAIT_FOR_A_RESPONSE has not been set in individual WSDLs."
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="-1"/> 
+           </config:Property>
+			 <config:ApplicationConfiguration>
+               <config:Property name="configurationName" 
+                                type="xsd:string" 
+                                displayName="Application Configuration Name" 
+                                displayDescription="Name of the application configuration" 
+                                required="true"
+                                isApplicationRestartRequired="true"/>
+				<config:Property name="hostName" 
+                               type="xsd:string"
+                               displayName="Host Name" 
+                               displayDescription="TCP/IP host name of the server"  
+                               required="true"
+							   defaultValue="localhost" 
+                               isApplicationRestartRequired="true"/>
+				 <config:Property name="port" 
+								type="xsd:int"
+								displayName="Host Port" 
+								displayDescription="The port number at which the HL7 external system receives messages. The range of meaningful values is from 1 to 65535."  
+								required="true"
+								defaultValue="-1" 
+								isApplicationRestartRequired="true">
+				   <config:Constraint facet="minInclusive" value="-1"/> 
+				   <config:Constraint facet="maxInclusive" value="65535"/>     
+			   </config:Property>
+               <config:Property name="tcpRole" 
+                               type="xsd:string"
+                               displayName="TCP Role" 
+                               displayDescription="Indicates whether the HL7 BC should act as a TCP server or client. Valid values are 'client', 'server' or blank to assume default behavior."
+                               required="false"
+                               defaultValue=""
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="validateMSH" 
+                               type="xsd:boolean"
+                               displayName="Validate MSH" 
+                               displayDescription="True/False indidicating MSH segment validation needs to be done or not."  
+                               required="false"
+							   defaultValue="false"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="acknowledgmentMode" 
+                               type="xsd:string"
+                               displayName="Acknowledgement Mode" 
+                               displayDescription="Defines the acknowledgement mode to use to acknowledge the hl7 transactions"  
+                               required="false"
+							   defaultValue="original"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="llpType" 
+                               type="xsd:string"
+                               displayName="LLP Type" 
+                               displayDescription="Defines the type of Lower Layer Protocol to use."  
+                               required="false"
+							   defaultValue="MLLPv1"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="startBlockCharacter" 
+                               type="xsd:int"
+                               displayName="Start Block Char" 
+                               displayDescription="Defines Start Block Character Value in decimal ascii number. The allowed range is 1 to 127. Unless there is a conflict, the value should be ASCII VT, i.e., decimal 11."  
+                               required="false"
+							   defaultValue="11"
+                               isApplicationRestartRequired="true">
+					   <config:Constraint facet="minInclusive" value="1"/> 
+					   <config:Constraint facet="maxInclusive" value="256"/> 
+				</config:Property>
+			   <config:Property name="endDataCharacter" 
+                               type="xsd:int"
+                               displayName="End Data Char" 
+                               displayDescription="Defines End Data Character Value in decimal ascii number. The allowed range is 1 to 127. Unless there is a conflict, the value should be ASCII FS, i.e., decimal 28."  
+                               required="false"
+							   defaultValue="28"
+                               isApplicationRestartRequired="true">
+					   <config:Constraint facet="minInclusive" value="1"/> 
+					   <config:Constraint facet="maxInclusive" value="256"/> 
+				</config:Property>
+			   <config:Property name="endBlockCharacter" 
+                               type="xsd:int"
+                               displayName="End Block Char" 
+                               displayDescription="Defines End Block Character Value in decimal ascii number. The allowed range is 1 to 127. To be strictly compliant with the HL7 Standard, this parameter MUST be set to a Carriage Return, i.e., decimal 13."  
+                               required="false"
+							   defaultValue="13"
+                               isApplicationRestartRequired="true">
+					   <config:Constraint facet="minInclusive" value="1"/> 
+					   <config:Constraint facet="maxInclusive" value="256"/> 
+				</config:Property>
+			   <config:Property name="hllpChecksumEnabled" 
+                               type="xsd:boolean"
+                               displayName="HLLP Checksum" 
+                               displayDescription="Enables or disables HLLP Checksum"  
+                               required="false"
+							   defaultValue="false"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="mllpv2RetriesCountOnNak" 
+                               type="xsd:int"
+                               displayName="MLLPV2 Retries Count On Nak" 
+                               displayDescription="Maximum number of retries on receipt of MLLP V2 negative acknowledgement"  
+                               required="false"
+							   defaultValue="0"
+                               isApplicationRestartRequired="true">
+				   <config:Constraint facet="minInclusive" value="0"/> 
+				   <config:Constraint facet="maxInclusive" value="65535"/>     
+			   </config:Property>
+			   <config:Property name="mllpv2RetryInterval" 
+                               type="xsd:int"
+                               displayName="MLLPV2 Retry Interval" 
+                               displayDescription="Time duration to wait in milliseconds before each retry."  
+                               required="false"
+							   defaultValue="0"
+                               isApplicationRestartRequired="true">
+				   <config:Constraint facet="minInclusive" value="0"/> 
+				   <config:Constraint facet="maxInclusive" value="2147483647"/>
+			   </config:Property>
+
+			   <config:Property name="mllpv2TimeToWaitForAckNak" 
+                               type="xsd:int"
+                               displayName="MLLPV2 Time to Wait For Ack/Nak" 
+                               displayDescription="Time duration to wait in milliseconds for receiving MLLP V2 commit acknowledgement / negative acknowledgement"  
+                               required="false"
+							   defaultValue="0"
+                               isApplicationRestartRequired="true">
+				   <config:Constraint facet="minInclusive" value="0"/> 
+				   <config:Constraint facet="maxInclusive" value="2147483647"/>
+			   </config:Property>
+
+			   <config:Property name="seqNumEnabled" 
+                               type="xsd:boolean"
+                               displayName="Sequence Number" 
+                               displayDescription="Enables or disables sequence number protocol"  
+                               required="false"
+							   defaultValue="false"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="processingID" 
+                               type="xsd:string"
+                               displayName="Processing Id" 
+                               displayDescription="Defines the ProcessingID value against which MSH-11-ProcessingID field in the received message is validated when validateMSH is set to true. Valid values are 'P', 'D' or 'T'"  
+                               required="false"
+							   defaultValue="D"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="versionID" 
+                               type="xsd:string"
+                               displayName="Version Id" 
+                               displayDescription="Defines the versionID value against which MSH-12-VersionID field in the received message is validated when validateMSH is set to true. Valid values are '2.1', '2.2' , '2.3', '2.3.1', '2.4', '2.5', '2.5.1'"  
+                               required="false"
+							   defaultValue="2.3.1"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="fieldSeparator" 
+                               type="xsd:string"
+                               displayName="Field Separator" 
+                               displayDescription="Defines Field Separator character value in decimal ascii number. This represents the separator between the segment ID and the first real field, MSH-2-encoding characters. As such it serves as the separator and defines the character to be used as a separator for the rest of the message. The default setting is 124 which is character '|'. The allowed range is 1 to 127. This attribute value is used in creating the NAK for invalid HL7 message "  
+                               required="false"
+							   defaultValue="124"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="encodingCharacters" 
+                               type="xsd:string"
+                               displayName="Encoding Characters" 
+                               displayDescription="Specifies the encoding characters to be used in creating the NAK for invalid HL7 message. This attribute contains the four characters in the following order: the component separator, repetition separator, escape character, and subcomponent separator. Recommended values are ^~\\&amp; i.e. ASCII 94, 126, 92, and 38 respectively"  
+                               required="false"
+							   defaultValue="^~\\&amp;"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="sendingApplication" 
+                               type="xsd:string"
+                               displayName="Sending Application" 
+                               displayDescription="Specifies the MSH-03 Sending Application to be used in creating the NAK for invalid HL7 message."  
+                               required="false"
+							   defaultValue="Sun HL7 Binding Component"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="sendingFacility" 
+                               type="xsd:string"
+                               displayName="Sending Facility" 
+                               displayDescription="Specifies the MSH-04 Sending Facility to be used in creating the NAK for invalid HL7 message"  
+                               required="false"
+							   defaultValue="Sun HL7 Binding Component"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="enabledSFT" 
+                               type="xsd:boolean"
+                               displayName="SFT Enabled" 
+                               displayDescription="Enables or disables SFT segment processing."  
+                               required="false"
+							   defaultValue="false"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareVendorOrganization" 
+                               type="xsd:string"
+                               displayName="Software Vendor Organization" 
+                               displayDescription="Defines the Software Vendor Organization field (SFT-1-Software Vendor Organization) which identifies the vendor who is responsible for maintaining the application"  
+                               required="false"
+							   defaultValue="Sun Microsystems, Inc."
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareCertifiedVersionOrReleaseNumber" 
+                               type="xsd:string"
+                               displayName="Software Version or Release Number" 
+                               displayDescription="Specifies HL7 segment SFT-02, the Software Certified Version or Release Number. The latest software version number or release number for the sending system, helps to provide a more complete profile of the application that is sending or receiving HL7 messages" 
+                               required="false"
+							   defaultValue="2.0"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareProductName" 
+                               type="xsd:string"
+                               displayName="Software Product Name" 
+                               displayDescription="Specifies HL7 segment SFT-03, the name of the software product that submitted the transaction.The software product name is a key component for identifying the sending application"  
+                               required="false"
+							   defaultValue="Sun HL7 Binding Component"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareBinaryID" 
+                               type="xsd:string"
+                               displayName="Software Binary Id" 
+                               displayDescription="Specifies HL7 segment SFT-04, the Software Binary ID. This property is available starting with HL7 version 2.5. Software Binary IDs are issued by a vendor for each unique software version instance. These IDs are used to differentiate between differing versions of the same software.Identical Primary IDs indicate that the software is identical at the binary level, but configuration settings may differ"  
+                               required="false"
+							   defaultValue="2.0"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareProductInformation" 
+                               type="xsd:string"
+                               displayName="Software Product Information" 
+                               displayDescription="Specifies HL7 segment SFT-05, software product identification information. This may include a description of the software application, configuration settings,modifications made to the software"  
+                               required="false"
+							   defaultValue="It is a binding component for HL7 over TCP/IP connection"
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="softwareInstallDate" 
+                               type="xsd:string"
+                               displayName="Software Install Date" 
+                               displayDescription="Specifies HL7 segment SFT-06, the Software Install Date. This is the date(format should be YYYYMMDDHHSS) on which the submitting software was installed at the sending site"  
+                               required="false"
+							   defaultValue=""
+                               isApplicationRestartRequired="true"/>
+			   <config:Property name="journallingEnabled" 
+                               type="xsd:boolean"
+                               displayName="Journalling HL7 Message/ACK" 
+                               displayDescription="True/False indidicating Journal the messahe needs to be done or not."  
+                               required="false"
+							   defaultValue="false"
+                               isApplicationRestartRequired="true"/>
+			</config:ApplicationConfiguration>
+           <config:ApplicationVariable isApplicationRestartRequired="true">
+               <config:name/>
+               <config:type/>
+               <config:value/>
+           </config:ApplicationVariable>
+        </config:Configuration>   
+    </component>
+</jbi>

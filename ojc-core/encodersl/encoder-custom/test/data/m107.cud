@@ -1,0 +1,29 @@
+# T: Multi-char delims, and prec=11 delims visible in fixed children.
+# F: from 7460.bud
+#
+# Note: original ".bud" version had shared delim descriptor, can't do in CUD.
+#
+# by Michael Libourel
+# $Revision: 1.1 $
+
+version 1
+struct Root {
+    root is group of delim
+    struct {
+        delim prec 11 term force "$$";
+        string { delim "##"; } field1;
+        struct {
+            is fixed;
+            string { delim "@@"; } field2;
+            struct {
+                delim "@";
+                struct {
+                    delim prec 11 "!";
+                    of fixed string { length 7; } field3;
+                    of fixed string { length 5; } ?field4;
+                } ?Element4;
+                string { delim prec 11 "!"; } field5;
+            } +Element3;
+        } ?Element2;
+    } +Element1;
+};

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0" xmlns:ns0="urn:jmsservice" xmlns:ns1="http://webservices.concurrentParent.com/websvc" xmlns:ns2="concurrentParent" xmlns:ns3="https://webservices.concurrentParent.com/websvc" xmlns:ns4="urn:concurrentChildTargetNamespace" xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1" xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2" xmlns:tns="http://www.seebeyond.com/eInsight/concurrentParent" name="concurrentParent" sbynpxp:end_XLoc="865.0" sbynpxp:end_YLoc="13.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="-11.0" sbynpxp:start_YLoc="43.0" targetNamespace="http://www.seebeyond.com/eInsight/concurrentParent">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="concurrentParent.wsdl" namespace="concurrentParent"/>
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="concurrentChild.wsdl" namespace="urn:concurrentChildTargetNamespace"/>
+    
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="Server" name="concurrentParentServiceLink" partnerLinkType="ns2:concurrentParentServiceLinkType"/>
+        <bpel_20:partnerLink name="concurrentChildPartner" partnerLinkType="ns4:concurrentChildServiceLinkType" partnerRole="concurrentChildServerRole"/>
+    </bpel_20:partnerLinks>
+    
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns2:concurrentParentMessage" name="MyRole_concurrentParentOperation_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns2:concurrentParentMessage" name="MyRole_concurrentParentOperation_Input" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns4:concurrentChildMessage" name="concurrentChildContainer"/>
+    </bpel_20:variables>
+    
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="MyRole.concurrentParentOperation.Receive" operation="concurrentParentOperation" partnerLink="concurrentParentServiceLink" portType="ns2:concurrentParentPortType" sbynpxp:XLoc="22.0" sbynpxp:YLoc="37.0" variable="MyRole_concurrentParentOperation_Output"/>
+        <bpel_20:assign name="Assign1" sbynpxp:XLoc="96.0" sbynpxp:YLoc="111.0">
+	    <bpel_20:copy>
+                <bpel_20:from>'output'</bpel_20:from>
+                <bpel_20:to>$concurrentChildContainer.concurrentChildPart/string</bpel_20:to>
+            </bpel_20:copy>        
+	</bpel_20:assign>
+        <bpel_20:invoke inputVariable="concurrentChildContainer" name="Activity" operation="concurrentChildOperation" outputVariable="concurrentChildContainer" partnerLink="concurrentChildPartner" portType="ns4:concurrentChildPortType" sbynpxp:XLoc="217.0" sbynpxp:YLoc="125.0"/>
+        <bpel_20:assign name="Assign" sbynpxp:XLoc="288.0" sbynpxp:YLoc="96.0">
+            <bpel_20:copy>
+                <bpel_20:from>'output'</bpel_20:from>
+                <bpel_20:to>$MyRole_concurrentParentOperation_Input.concurrentParentPart/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:reply name="MyRole.concurrentParentOperation.Reply" operation="concurrentParentOperation" partnerLink="concurrentParentServiceLink" portType="ns2:concurrentParentPortType" sbynpxp:XLoc="429.0" sbynpxp:YLoc="76.0" variable="MyRole_concurrentParentOperation_Input"/>
+    </bpel_20:sequence>
+</bpel_20:process>

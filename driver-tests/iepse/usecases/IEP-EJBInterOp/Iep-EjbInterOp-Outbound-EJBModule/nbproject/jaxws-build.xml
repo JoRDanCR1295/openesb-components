@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/service"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-service-check-NewWebServiceFromWSDL" depends="wsimport-init">
+        <condition property="wsimport-service-NewWebServiceFromWSDL.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/iep_ejbeventprocess_iep/OutputService_IEP_EJB_StreamOutput.java"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-NewWebServiceFromWSDL" depends="wsimport-init,wsimport-service-check-NewWebServiceFromWSDL" unless="wsimport-service-NewWebServiceFromWSDL.notRequired">
+        <property name="service-wsdl-NewWebServiceFromWSDL" location="${meta.inf}/xml-resources/web-services/NewWebServiceFromWSDL/wsdl/Iep-EjbEventProcess.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/wsimport/service" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${service-wsdl-NewWebServiceFromWSDL}" catalog="catalog.xml"/>
+        <property name="targetLocation-NewWebServiceFromWSDL" location="${meta.inf}/wsdl/NewWebServiceFromWSDL"/>
+        <property name="sourceLocation-NewWebServiceFromWSDL" location="${meta.inf}/xml-resources/web-services/NewWebServiceFromWSDL/wsdl/"/>
+        <copy todir="${targetLocation-NewWebServiceFromWSDL}">
+            <fileset dir="${sourceLocation-NewWebServiceFromWSDL}"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-NewWebServiceFromWSDL" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/iep_ejbeventprocess_iep"/>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-NewWebServiceFromWSDL"/>
+    <target name="wsimport-service-compile" depends="wsimport-service-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/service" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}"/>
+    </target>
+</project>

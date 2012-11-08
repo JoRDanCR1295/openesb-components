@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ScalabilityBpel/SubProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ScalabilityBpel/SubProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ParentPartnerLink" partnerLinkType="ns1:SubBPWSDLRIT14201" myRole="SubBPWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable2" messageType="ns1:SubBPWSDLOperationReply"/>
+        <variable name="Variable1" messageType="ns1:SubBPWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ParentPartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType" variable="Variable1"/>
+        <wait name="Wait1">
+            <for>$Variable1.part1</for>
+        </wait>
+        <assign name="Assign1">
+            <copy>
+                <from variable="Variable1" part="part1"/>
+                <to variable="Variable2" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="ParentPartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType" variable="Variable2"/>
+    </sequence>
+</process>

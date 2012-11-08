@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="client" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/client"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/client" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FILE" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FTP">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FILE" location="FILE.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FTP" location="FTP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:FTPPartner" partnerRole="FTPPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:FILEPartner" myRole="FILEPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FILEOperationOut" messageType="ns1:FILEOperationReply"/>
+        <bpws:variable name="FTPOperationOut" messageType="ns2:FTPOperationReply"/>
+        <bpws:variable name="FTPOperationIn" messageType="ns2:FTPOperationRequest"/>
+        <bpws:variable name="FILEOperationIn" messageType="ns1:FILEOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FILEOperation" portType="ns1:FILEPortType" variable="FILEOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="FILEOperationIn" part="part1"/>
+                <bpws:to variable="FTPOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="FTPOperation" portType="ns2:FTPPortType" inputVariable="FTPOperationIn" outputVariable="FTPOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="FTPOperationOut" part="part1"/>
+                <bpws:to variable="FILEOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="FILEOperation" portType="ns1:FILEPortType" variable="FILEOperationOut"/>
+   </sequence>
+   
+</process>

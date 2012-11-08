@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver"
+             name="JMSBCXAInOnlyDriver"
+             xmlns:tns="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:nsInput="http://sun.com/JMSBCXATest/EmplInput"
+             xmlns:nsOutput="http://sun.com/JMSBCXATest/EmplOutput">
+    <plink:partnerLinkType name="JMSXAInOnlyRequestReplyLnkType">
+        <plink:role name="roleJMSXAInOnlyTestTrigger"
+                    portType="tns:portTypeRequestReply"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSXAInOnlyOutLnkType">
+        <plink:role name="roleJMSXAInOnlyTestSender"
+                    portType="tns:portTypeOneWayOut"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSXAInOnlyInLnkType">
+        <plink:role name="roleJMSXAInOnlyTestReceiver"
+                    portType="tns:portTypeOneWayIn"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:property name="props1"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:props1"
+                        messageType="tns:messageRequest"
+                        part="partRequest">
+        <vprop:query>EmployeeNumber</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:props1"
+                        messageType="tns:messageReply"
+                        part="partReply">
+        <vprop:query>EmpId</vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <!--
+        <xsd:schema targetNamespace="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified">  
+                    
+            <xsd:element name="EmployeeInput">
+                    <xsd:complexType>
+                            <xsd:sequence>
+                                    <xsd:element name="EmployeeNumber" type="xsd:string"/>
+                                    <xsd:element name="LastName" type="xsd:string"/>
+                                    <xsd:element name="FirstName" type="xsd:string"/>
+                                    <xsd:element name="JobTitle" type="xsd:string"/>
+                                    <xsd:element name="HoursWorked" type="xsd:int"/>
+                                    <xsd:element name="PayRate" type="xsd:int"/>
+                            </xsd:sequence>
+                    </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="EmployeeOutput">
+                    <xsd:complexType>
+                            <xsd:sequence>
+                                    <xsd:element name="EmpId" type="xsd:string"/>
+                                    <xsd:element name="LName" type="xsd:string"/>
+                                    <xsd:element name="FName" type="xsd:string"/>
+                                    <xsd:element name="Title" type="xsd:string"/>
+                                    <xsd:element name="Amt"   type="xsd:int"/>
+                            </xsd:sequence>
+                    </xsd:complexType>
+            </xsd:element>            
+        </xsd:schema>
+        -->
+        <xsd:schema targetNamespace="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver">
+            <xsd:import schemaLocation="EmployeeInput.xsd" namespace="http://sun.com/JMSBCXATest/EmplInput"/>
+            <xsd:import schemaLocation="EmployeeOutput.xsd" namespace="http://sun.com/JMSBCXATest/EmplOutput"/>
+        </xsd:schema>
+    </types>    
+    <message name="messageRequest">
+        <part name="partRequest"
+              element="nsInput:EmployeeInput"></part>
+    </message>
+    <message name="messageReply">
+        <part name="partReply"
+              element="nsOutput:EmployeeOutput"></part>
+    </message>
+    <portType name="portTypeRequestReply">
+        <operation name="operationRequestReply">
+            <input name="input"
+                   message="tns:messageRequest"></input>
+            <output name="output"
+                    message="tns:messageReply"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayOut">
+        <operation name="operationOneWayOut">
+            <input name="input"
+                   message="tns:messageRequest"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayIn">
+        <operation name="operationOneWayIn">
+            <input name="input"
+                   message="tns:messageReply"></input>
+        </operation>
+    </portType>
+    <binding name="bindingHttpRequestReply"
+             type="tns:portTypeRequestReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operationRequestReply">
+            <soap:operation soapAction="soapActionJMSXAInOnlyTest"/>
+            <input name="input">
+                <soap:body parts="partRequest"
+                           use="literal"/>
+            </input>
+            <output name="output">
+                <soap:body parts="partReply"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayOut"
+             type="tns:portTypeOneWayOut">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayOut">
+            <jms:operation destination="JMSXAInOnlyTestInQueue" destinationType="Queue" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partRequest" />
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayIn"
+             type="tns:portTypeOneWayIn">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayIn">
+            <jms:operation destination="JMSXAInOnlyTestOutQueue" destinationType="Queue" transaction="NoTransaction" >
+                <jms:options>
+                    <jms:option name="endpointPoolMaxSize" value="1"/>
+                </jms:options>
+            </jms:operation>
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partReply" />
+            </input>
+        </operation>
+    </binding>
+    <service name="service_0">
+        <port name="portJMSInOutTestTrigger"
+              binding="tns:bindingHttpRequestReply">
+            <soap:address location="http://localhost:12100/service/testJMSBCXAInOnlyWithXSLT"/>
+        </port>
+        <port name="portJMSXAInOnlySend"
+              binding="tns:bindingJMSOneWayOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portJMSXAInOnlyRecv"
+              binding="tns:bindingJMSOneWayIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+</definitions>

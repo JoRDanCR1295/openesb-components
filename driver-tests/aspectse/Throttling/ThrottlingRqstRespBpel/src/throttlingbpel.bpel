@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="throttlingbpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/throttlingbpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/throttlingbpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/throttlingbpel" xmlns:ns2="http://j2ee.netbeans.org/wsdl/throttling" xmlns:ns3="http://j2ee.netbeans.org/wsdl/helloPartner">
+    <import namespace="http://j2ee.netbeans.org/wsdl/throttlingbpel" location="throttlingbpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/throttling" location="throttling.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/helloPartner" location="helloPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="ThrottlingPartnerLink" partnerLinkType="ns2:throttling1" partnerRole="throttlingPortTypeRole"/>
+        <bpws:partnerLink name="BPELPartnerLink" partnerLinkType="ns1:throttlingbpelPartner" myRole="throttlingbpelPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="ThrottlingbpelOperationOut" messageType="ns1:throttlingbpelOperationReply"/>
+        <bpws:variable name="ThrottlingOperationOut" messageType="ns3:helloPartnerOperationReply"/>
+        <bpws:variable name="ThrottlingOperationIn" messageType="ns3:helloPartnerOperationRequest"/>
+        <bpws:variable name="ThrottlingbpelOperationIn" messageType="ns1:throttlingbpelOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="BPELPartnerLink" operation="throttlingbpelOperation" portType="ns1:throttlingbpelPortType" variable="ThrottlingbpelOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="ThrottlingbpelOperationIn" part="part1"/>
+                <bpws:to variable="ThrottlingOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="ThrottlingPartnerLink" operation="throttlingOperation" portType="ns2:throttlingPortType" inputVariable="ThrottlingOperationIn" outputVariable="ThrottlingOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="ThrottlingOperationOut" part="part1"/>
+                <bpws:to variable="ThrottlingbpelOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="BPELPartnerLink" operation="throttlingbpelOperation" portType="ns1:throttlingbpelPortType" variable="ThrottlingbpelOperationOut"/>
+    </sequence>
+</process>

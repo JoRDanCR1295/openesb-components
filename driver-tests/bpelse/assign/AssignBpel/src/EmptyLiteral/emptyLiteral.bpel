@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="emptyLiteral"
+    targetNamespace="http://enterprise.netbeans.org/bpel/emptyLiteral"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/emptyLiteral" xmlns:ns1="http://j2ee.netbeans.org/wsdl/emptyLiteral">
+    <import namespace="http://j2ee.netbeans.org/wsdl/emptyLiteral" location="emptyLiteral.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:emptyLiteral1" myRole="emptyLiteralPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="var1" type="xsd:string"/>
+        <bpws:variable name="output" messageType="ns1:emptyLiteralOperationReply"/>
+        <bpws:variable name="input" messageType="ns1:emptyLiteralOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="emptyLiteralOperation" portType="ns1:emptyLiteralPortType" variable="input"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal></bpws:literal>
+                </bpws:from>
+                <bpws:to variable="var1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($input.part1, $var1)</bpws:from>
+                <bpws:to part="part1" variable="output"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="emptyLiteralOperation" portType="ns1:emptyLiteralPortType" variable="output"/>
+    </sequence>
+</process>

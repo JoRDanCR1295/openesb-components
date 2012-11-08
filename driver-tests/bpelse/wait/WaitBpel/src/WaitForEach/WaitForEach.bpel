@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WaitForEach" 
+    targetNamespace="http://localhost/WaitBpel/WaitForEach"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://localhost/WaitBpel/WaitForEach">
+    <import location="WaitForEach.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://localhost/WaitBpel/WaitForEach"/>
+    <partnerLinks>
+        <partnerLink name="WaitForEachPartnerLink1" partnerLinkType="wsdlNS:WaitForEachPartnerlinktype1" myRole="WaitForEachPartnerlinktyperole1"/>    </partnerLinks>
+    <variables>
+        <variable name="outputMessage" messageType="wsdlNS:message1"/>
+        <variable name="inputMessage" messageType="wsdlNS:message1"/>
+        <variable name="counterVar" type="xsd:int"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="WaitForEachPartnerLink1" operation="WaitForEachOperation1" portType="wsdlNS:WaitForEachPortType1" variable="inputMessage" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to variable="counterVar"/>
+            </copy>
+        </assign>
+        <forEach name="ForEach1" counterName="counter" parallel="no">
+            <startCounterValue>$counterVar</startCounterValue>
+            <finalCounterValue>5</finalCounterValue>
+            <scope name="Scope1">
+                <sequence name="Sequence1">
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M7S'</for>
+                    </wait>
+                    <assign name="concatMessage">
+                        <copy>
+                        <from>concat('***Loop:', $inputMessage.string1)</from><to part="string1" variable="inputMessage"/>
+                        </copy>
+                    </assign>
+                    <assign name="updateCount">
+                        <copy>
+                        <from>      ( 1 + $counter )      </from><to variable="counterVar"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </scope>
+        </forEach>
+        <assign name="Assign2">
+            <copy>
+            <from variable="inputMessage" part="string1"/><to variable="outputMessage" part="string1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="WaitForEachPartnerLink1" operation="WaitForEachOperation1" portType="wsdlNS:WaitForEachPortType1" variable="outputMessage"/>
+    </sequence>
+   
+</process>

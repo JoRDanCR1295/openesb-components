@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>scriptse-installer</artifactId>
+    <name>sun-script-engine</name>
+    <version>${scriptse.artifact.version}</version>
+    <description>script packaging description</description>
+    <build>
+         <!-- NOTE:  build <resources> inherited from package-common. -->
+        <plugins>
+   
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-script-engine</Bundle-SymbolicName>
+                        <Bundle-Name>Scripting SE Component</Bundle-Name>
+                        <Bundle-Description>This is a Scripting Service engine.</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/scriptse-core.jar,
+                            lib/scriptse-jbiadapter.jar,
+                            lib/componentsl.jar,
+                            lib/component-toolkit.jar,
+                            lib/common-util.jar,
+                            lib/qos.jar,
+                            lib/scriptdatatypes.jar,
+                            lib/ScrCfg.jar,
+                            lib/jruby.jar,
+                            lib/jruby-engine.jar,
+                            lib/groovy-all.jar,
+                            lib/groovy-engine.jar,
+                            lib/xbean.jar,
+                            lib/javaxscript.jar,
+                            lib/js.jar,
+                            lib/js-engine.jar,
+                            lib/asm.jar,
+                            lib/scheme-engine.jar,
+                            lib/sisc-lib.jar,
+                            lib/sisc-opt.jar,
+                            lib/sisc.jar,
+                            lib/java-engine.jar,
+                            lib/javac.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                            org.w3c.dom,
+                            javax.xml.namespace,
+                            !org.apache.xmlbeans.impl.*,
+                            !junit.*,
+                            !com.thoughtworks.*,
+                            !javax.wsdl.*,
+                            !org.apache.xml.resolver.*,
+                            !junit.textui,
+                            !sun.reflect.*,
+                            !xmlbean,
+                            !sun.misc.*,
+                            !org.apache.bsf.*,
+                            !org.apache.commons.*,
+                            !sun.security.util.*,
+                            !org.apache.tools.ant.*,
+                            !com.sun.codemodel.*,
+                            !groovy.runtime.*,
+                            !com.sun.tools.xjc.*,
+                            !org.apache.tools.ant.util.*,
+                            !org.apache.tools.ant.helper.*,
+                            !groovyjarjarasm.asm.*,
+                            !com.ibm.wsdl.*,
+                            !com.mockobjects.*,
+                            !javax.servlet.*,
+                            !com.sun.tools.javadoc.*,
+                            !com.sun.javadoc.*,
+                            !javax.xml.bind.*,
+                            *;-nouses:=true
+                        </Import-Package>
+
+                    </instructions>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>scriptse-jbiadapter</artifactId>
+            <version>${scriptse.artifact.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>scriptse-core</artifactId>
+            <version>${scriptse.artifact.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>javaxscript</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>scriptdatatypes</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>serializer</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>asm</artifactId>
+            <optional>true</optional>
+            <version>2.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>groovy-all</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>groovy-engine</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>java-engine</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>javac</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>scheme-engine</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>sisc-lib</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>sisc-opt</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>sisc</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>jruby</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>jruby-engine</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>js</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>js-engine</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>ScrCfg</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>xalan</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>xbean</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.scriptse</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+</project>

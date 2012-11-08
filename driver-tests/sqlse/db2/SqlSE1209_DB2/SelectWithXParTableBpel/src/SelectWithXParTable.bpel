@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SelectWithXParTable"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SelectWithXParTable"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SelectWithXParTable" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SoapWSDL" location="SoapWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="SelectWithXParTableSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:SelectWithXParTableSql_sqlsePartnerLinkType" partnerRole="SelectWithXParTableSql_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:SoapWSDLPartner" myRole="SoapWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="SelectWithXParTableOut" messageType="ns2:SelectWithXParTableResponse"/>
+        <bpws:variable name="SelectWithXParTableIn" messageType="ns2:SelectWithXParTableRequest"/>
+        <bpws:variable name="SoapWSDLOperationOut" messageType="ns1:SoapWSDLOperationReply"/>
+        <bpws:variable name="SoapWSDLOperationIn" messageType="ns1:SoapWSDLOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapWSDLOperationIn" part="part1"/>
+                <bpws:to>$SelectWithXParTableIn.SelectWithXParTableRequestPart/ns2:param1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="SelectWithXParTable" portType="ns2:SelectWithXParTableSql_sqlsePortType" inputVariable="SelectWithXParTableIn" outputVariable="SelectWithXParTableOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$SelectWithXParTableOut.SelectWithXParTableResponsePart/ns2:EMPID</bpws:from>
+                <bpws:to>$SoapWSDLOperationOut.part1/ns0:EMPID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SelectWithXParTableOut.SelectWithXParTableResponsePart/ns2:DEPTID</bpws:from>
+                <bpws:to>$SoapWSDLOperationOut.part1/ns0:DEPTID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SelectWithXParTableOut.SelectWithXParTableResponsePart/ns2:ENAME</bpws:from>
+                <bpws:to>$SoapWSDLOperationOut.part1/ns0:ENAME</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="StockQuoteService_DiscontExecInFaultedScope1"
+         targetNamespace="http://www.seebeyond.com/eInsight/Stock_DiscontExecInFaultedScope1"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Stock_DiscontExecInFaultedScope1"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1"
+            location="Stock_DiscontExecInFaultedScope1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="StockQuoteServiceLink1"
+                     partnerLinkType="ns0:StockQuoteServiceLT"
+                     myRole="StockQuoteServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="GetQuote_Output"
+                  messageType="ns0:GetQuoteSoapIn"></variable>
+        <variable name="GetQuote_Input"
+                  messageType="ns0:GetQuoteSoapOut"></variable>
+    </variables>
+    <sequence>
+        <receive name="GetQuote"
+                 partnerLink="StockQuoteServiceLink1"
+                 portType="ns0:StockQuoteSoap"
+                 operation="GetQuote"
+                 variable="GetQuote_Output"
+                 createInstance="yes"/>
+        <scope name="OuterScope">
+            <faultHandlers>
+                <catch faultName="tns:Fault1">
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>&apos;Caught by catch(Q1) OuterScope&apos;</from>
+                                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catch faultName="tns:Fault1"
+                       faultVariable="GetQuote_Input1" 
+                       faultMessageType="ns0:GetQuoteSoapOut">
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>&apos;Caught by catch(Q1,M1) OuterScope&apos;</from>
+                                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catchAll>
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>&apos;Caught by catchAll OuterScope&apos;</from>
+                                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence>
+                <scope name="InnerScope">
+                    <faultHandlers>
+                        <catch faultName="tns:Fault1"
+	                       faultVariable="GetQuote_Output2" 
+	                       faultMessageType="ns0:GetQuoteSoapIn">
+                            <sequence>
+                                <assign>
+                                    <copy>
+                                        <from>&apos;Caught by catch(Q1, M2) InnerScope&apos;</from>
+                                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </catch>
+                    </faultHandlers>
+                    <sequence>
+                        <assign>
+                             <copy>
+                                  <from>&apos;Throwing Fault1&apos;</from>
+                                  <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                             </copy>
+                        </assign>                    
+                        <throw name="Throw"
+                               faultName="tns:Fault1"
+                               faultVariable="GetQuote_Input"/>
+                    </sequence>
+                </scope>
+                <assign>
+                      <copy>
+                         <from>&apos;Erroneously continuing in a faulted scope - OuterScope&apos;</from>
+                         <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                      </copy>
+                </assign>                
+            </sequence>
+        </scope>
+        <reply name="GetQuote.Reply"
+               partnerLink="StockQuoteServiceLink1"
+               portType="ns0:StockQuoteSoap"
+               operation="GetQuote"
+               variable="GetQuote_Input"/>
+    </sequence>
+</process>

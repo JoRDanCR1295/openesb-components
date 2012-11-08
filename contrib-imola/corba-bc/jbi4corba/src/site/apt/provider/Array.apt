@@ -1,0 +1,97 @@
+											---
+											Supported IDL data types
+											---
+											Mirco Casoni
+											---
+											09/08/2007
+
+Array
+
+  The JBI4CORBA component supports the IDL array but there are some limitations.
+
+
+* Size definition
+
+
+  The IDL syntax used to declare an array is the following
+
++------------------------------------------+
+
+  typedef string ArrayString[2];
+
++------------------------------------------+
+
+  and is used with the operations as well as all the others data types.
+
++------------------------------------------+
+
+  ArrayString echoArrayString(in ArrayString e);
+
++------------------------------------------+
+
+  The major difference between this kind of data type and the Java array is
+	the <<size>> declaration.
+	In fact, in Java we usually define the arrays without indicating
+	the associated size that it will be passed during the <<construction>>
+	of the object.
+	The IDL syntax, instead, obligates the developer to define the array size.
+
+  This situation creates a little problem during the wsdl generation of the
+	endpoint.
+	In fact, the Java source of the corba interface produced does not contain
+	the information about the array size and when this code is visited to generate
+	the WSDL the result does not contain the size too (of course).
+
++------------------------------------------+
+
+  String [] echoArrayString(String [] e);
+
++------------------------------------------+
+
+
+  The WSDL generated does not express the equivalent interface defined in the
+	IDL file because the <<minOccurs>> and the <<maxOccurs>> of the type are
+	wrong.
+
++------------------------------------------+
+
+<xsd:complexType name="ArrayOfString">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="string" nillable="true" type="xsd:string"/>
+<xsd:sequence>
+<xsd:complexType>
+
++------------------------------------------+
+
+
+  Unfortunately the <<stub>> of the corba client generated is compliant with the
+	IDL file, but we expose our service using the WSDL file.
+
+  At runtime, the corba client fails if you don't pass an array with a correct
+	size but this information is reported only in the IDL file.
+
+
+* Unsupported array of octet
+
++------------------------------------------+
+
+byte[] echoArrayOctet (byte[] e);
+
++------------------------------------------+
+
+  The component supports any kind of array except the array of octet because
+	it is translated in a wsdl data type not supported (xsd:base64Binary).
+
++------------------------------------------+
+
+<xsd:element name="echoArrayOctet">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="e" nillable="true" type="xsd:base64Binary"/>
+<xsd:sequence>
++------------------------------------------+
+
+  This data type is managed in a different way beacause the <<java to wsdl>>
+	specifications maps an array of byte (the associated Java type of the
+	octet IDL data type) directly to a XML Schema data type called <<base64Binary>>.
+

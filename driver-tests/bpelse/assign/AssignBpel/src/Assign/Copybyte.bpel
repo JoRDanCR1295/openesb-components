@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="Copybyte" targetNamespace="http://www.seebeyond.com/eInsight/CopyTest" xmlns:tns="http://www.seebeyond.com/eInsight/CopyTest" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="urn:CopyDataTypeTNS" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/">
+	<import namespace="urn:CopyDataTypeTNS" location="CopyDataType.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+	<partnerLinks>
+		<partnerLink name="copyTestPLink" partnerLinkType="ns0:CopyDataTypePLT" myRole="server"/>
+	</partnerLinks>
+	<variables>
+		<variable name="byteOperation_Output" messageType="ns0:byteMessage"/>
+		<variable name="byteOperation_Input" messageType="ns0:byteMessage"/>
+	</variables>
+	<sequence>
+		<receive name="byteOperation" partnerLink="copyTestPLink" portType="ns0:CopyDataTypePortType" operation="byteOperation" variable="byteOperation_Output" createInstance="yes"/>
+		<assign>
+			<copy>
+				<from>$byteOperation_Output.bytePart/repeat_byte</from>
+				<to>$byteOperation_Input.bytePart/repeat_byte</to>
+			</copy>
+			<copy>
+				<from>$byteOperation_Output.bytePart/optional_byte</from>
+				<to>$byteOperation_Input.bytePart/optional_byte</to>
+			</copy>
+			<copy>
+				<from>$byteOperation_Output.bytePart/xsd_byte</from>
+				<to>$byteOperation_Input.bytePart/xsd_byte</to>
+			</copy>
+		</assign>
+		<reply partnerLink="copyTestPLink" portType="ns0:CopyDataTypePortType" operation="byteOperation" variable="byteOperation_Input"/>
+	</sequence>
+</process>

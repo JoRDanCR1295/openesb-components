@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinEHOnAlarmProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinEHOnAlarmProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinEHOnAlarmProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinEHOnAlarm" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinEHOnAlarm" location="WithinEHOnAlarm.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinEHOnAlarm1" myRole="WithinEHOnAlarmPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WithinEHOnAlarmOperationOut" messageType="ns1:WithinEHOnAlarmOperationReply"/>
+        <variable name="WithinEHOnAlarmOperationIn" messageType="ns1:WithinEHOnAlarmOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinEHOnAlarmOperationReply" faultVariable="WithinEHOnAlarmOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinEHOnAlarmOperation" portType="ns1:WithinEHOnAlarmPortType" variable="WithinEHOnAlarmOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinEHOnAlarmOperation" portType="ns1:WithinEHOnAlarmPortType" variable="WithinEHOnAlarmOperationIn"/>
+        <scope name="Scope1">
+            <faultHandlers>
+                    <catch faultName="tns:catchFault" faultMessageType="ns1:WithinEHOnAlarmOperationReply" faultVariable="WithinEHOnAlarmOperationOut">
+                        <scope name="Scope4">
+                            <eventHandlers>
+                                <onAlarm>
+                                    <for>'P0Y0M0DT0H0M1S'</for>
+                                    <scope name="Scope5">
+                                        <rethrow name="Rethrow2"/>
+                                    </scope>
+                                </onAlarm>
+                            </eventHandlers>
+                            <wait name="Wait_5Secs">
+                                <documentation/>
+                                <for>'P0Y0M0DT0H0M5S'</for>
+                            </wait>
+                        </scope>
+                    </catch>
+                        <catchAll>
+                            <scope name="Scope2">
+                                <eventHandlers>
+                                    <onAlarm>
+                                        <for>'P0Y0M0DT0H0M1S'</for>
+                                        <scope name="Scope3">
+                                            <rethrow name="Rethrow1">
+                                    </rethrow>
+                                        </scope>
+                                    </onAlarm>
+                                </eventHandlers>
+                                <wait name="Wait_5Secs">
+                                    <for>'P0Y0M0DT0H0M5S'</for>
+                                </wait>
+                            </scope>
+                        </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition> $WithinEHOnAlarmOperationIn.part2 = 'catchAll' </condition>
+                        <sequence name="Sequence1">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($WithinEHOnAlarmOperationIn.part1, '-catchAll-')</from>
+                                <to part="part1" variable="WithinEHOnAlarmOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinEHOnAlarmOperationOut"/>
+                    </sequence>
+                        <else>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($WithinEHOnAlarmOperationIn.part1, '-catch-')</from>
+                                    <to part="part1" variable="WithinEHOnAlarmOperationOut"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinEHOnAlarmOperationOut"/>
+                        </sequence>
+                    </else>
+                </if>
+        </scope>
+    </sequence>
+</process>

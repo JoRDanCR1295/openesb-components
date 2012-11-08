@@ -1,0 +1,139 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+  =========================================================
+                                                COORDINATES
+  =========================================================
+  -->
+  <groupId>it.imolinfo.jbi4cics</groupId>
+  <artifactId>integration-test</artifactId>
+  <version>0.5-SNAPSHOT</version>
+
+  <!--
+  =========================================================
+                                                DESCRIPTION
+  =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+
+  <!--
+    =========================================================
+    SCM
+    =========================================================
+  -->
+  <scm>
+    <connection>scm:cvs:pserver:anonymous@cvs.dev.java.net:/cvs:open-jbi-components/contrib-imola/cics-bc/integration-test</connection>
+  </scm>
+
+  <!--
+  =========================================================
+                                                  PACKAGING
+  =========================================================
+  -->
+  <packaging>pom</packaging>
+
+
+  <!--
+  =========================================================
+                                               REPOSITORIES
+  =========================================================
+  -->
+  <repositories>
+    <repository>
+      <id>servicemix-stable-repo</id>
+      <name>Servicemix Maven2 Repository with stable releases</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>
+
+    <!-- this is to pick up opensaml 1.1, required by servicemix-soap. RT 12/3/07 -->
+    <repository>
+      <id>iona-m2-repo</id>
+      <name>Iona Maven2 Repository</name>
+      <url>http://repo.open.iona.com/maven2-all</url>
+    </repository>
+  </repositories>
+
+  <!--
+  =========================================================
+                                                    MODULES
+  =========================================================
+  -->
+  <modules>
+    <module>test-vinci</module>
+    <module>test-nested</module>
+    <module>test-occurs</module>
+    <module>test-nested-wsdl</module>
+    <module>test-occurs-wsdl</module>
+  </modules>
+  
+  <!--
+  =========================================================
+                                                      BUILD
+  =========================================================
+  -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+    </plugins>
+  </build>
+
+<profiles>
+<!-- Profile which creates an assembly for Service Mix -->
+<profile>
+<id>ServiceMix</id>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <version>3.1.1-incubating</version>
+        <extensions>true</extensions>
+        <configuration>
+          <deployDependencies>false</deployDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <activation>
+    <activeByDefault>true</activeByDefault>
+  </activation>
+</profile>
+<!-- Profile which creates an assembly for Open ESB -->
+<profile>
+<id>OpenESB</id>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>m2-snapshot-repository</id>
+      <name>Servicemix Maven2 Repository with snapshot releases</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <version>3.1.1-incubating</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+  <activation>
+    <property>
+      <name>OpenESB</name>
+    </property>    
+  </activation>
+</profile>
+</profiles>
+
+</project>

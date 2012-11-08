@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrEventHandlerRecInitNo"
+         targetNamespace="http://enterprise.netbeans.org/bpel/corrEventHandlerRecInitNo"
+         xmlns:tns="http://enterprise.netbeans.org/bpel/corrEventHandlerRecInitNo"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://enterprise.netbeans.org/wsdl/corrEventHandlerRecInitNo"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://enterprise.netbeans.org/wsdl/corrEventHandlerRecInitNo"
+            location="EventHandlerRecInitNo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns0:corrEventHandlerRecPLinkType3" myRole="corrEventHandlerRecPLinkRole3"/>
+        <partnerLink name="PartnerLink1"
+                     partnerLinkType="ns0:corrEventHandlerRecPLinkType"
+                     myRole="corrEventHandlerRecPLinkRole"/>
+        <partnerLink name="PartnerLink2"
+                     partnerLinkType="ns0:corrEventHandlerRecPLinkType2"
+                     myRole="corrEventHandlerRecPLinkRole2"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input" messageType="ns0:CorrelationMessage"/>
+        <variable name="output" messageType="ns0:CorrelationMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet1" properties="ns0:prop1"/>
+        <correlationSet name="cSet2" properties="ns0:prop2"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" 
+                 operation="CorrelationOperation" portType="ns0:CorrelationPortType" 
+                 variable="input">
+            <bpws:correlations>
+                <bpws:correlation set="cSet2" initiate="yes"/>
+            </bpws:correlations>
+        </receive>         
+        <assign>
+            <copy>
+                <from>$input.data/string</from>
+                <to>$output.data/string</to>
+            </copy>
+        </assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onEvent partnerLink="PartnerLink2" operation="CorrelationOperation2" 
+                              portType="ns0:CorrelationPortType2" variable="evtVar" messageType="ns0:CorrelationMessage">
+                    <bpws:correlations>
+                        <bpws:correlation set="cSet1" initiate="yes"/>
+                        <bpws:correlation set="cSet2" initiate="no"/>
+                    </bpws:correlations>
+                    <bpws:scope name="Scope2">
+                        <bpws:reply partnerLink="PartnerLink1" portType="ns0:CorrelationPortType"
+                                    operation="CorrelationOperation" variable="output">
+                        </bpws:reply>
+                    </bpws:scope>
+                </bpws:onEvent>
+            </bpws:eventHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:wait name="Wait1">
+                    <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+                </bpws:wait>
+            </bpws:sequence>
+        </bpws:scope>
+        <bpws:receive name="Receive2" createInstance="no" partnerLink="PartnerLink3" 
+                         operation="CorrelationOperation3" portType="ns0:CorrelationPortType3" 
+                         variable="input">
+                                <bpws:correlations>
+                                    <bpws:correlation set="cSet1" initiate="no"/>
+                                </bpws:correlations>
+                            </bpws:receive>
+    </sequence>
+</process>

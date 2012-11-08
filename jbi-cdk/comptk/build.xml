@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="comptk-cli" default="help" basedir=".">
+
+    <property environment="env"/>
+    <property name="gf.home" value="${env.JV_GFBASE}"/>
+    <property name="ojc" value="${env.JV_SRCROOT}"/>
+	<property file="build.properties"/>
+
+    <path id="ojc.classpath">
+        <pathelement path="${bld}/common-util.jar"/>
+        <pathelement path="${bld}/qos.jar"/>
+        <pathelement path="${bld}/component-toolkit.jar"/>
+        <pathelement path="${bld}/wsdl4jext.jar"/>
+    	<pathelement path="${bld}/wsdl4j.jar"/>
+    	<pathelement path="${gf.home}/jbi/lib/jbi.jar"/>
+        <!--
+        <pathelement path="${ant.library.dir}/ant-launcher.jar"/>
+        <pathelement path="${bld}/saxon9.jar"/>
+        <fileset dir="${common}/common-util/bld" defaultexcludes="yes">
+            <include name="*.jar"/>
+            <exclude name="*-sources.jar"/>
+        </fileset>
+        <fileset dir="${common}/qos/bld" defaultexcludes="yes">
+            <include name="*.jar"/>
+            <exclude name="*-sources.jar"/>
+        </fileset>
+        <fileset dir="${common}/component-toolkit/bld" defaultexcludes="yes">
+            <include name="*.jar"/>
+            <exclude name="*-sources.jar"/>
+        </fileset>
+        <fileset dir="${common}/wsdl4jext/bld" defaultexcludes="yes">
+            <include name="*.jar"/>
+            <exclude name="*-sources.jar"/>
+        </fileset>
+        <fileset dir="${ojc.core}/vendor-libs/saxon/saxonb9-1-0-3" defaultexcludes="yes">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${gf.home}/jbi/lib">
+            <include name="jbi.jar"/>
+        </fileset>
+        <fileset dir="${gf.home}/lib">
+            <include name="javaee.jar"/>
+        </fileset>
+        <!- - in case we're using TransformSL - ->
+        <fileset dir="${tsl.jar.dir}/bld">
+            <include name="*.jar"/>
+            <exclude name="*-sources.jar"/>
+        </fileset>
+        -->
+    </path>
+
+    <target name="open" depends="compile"><!--,check-open,input-open" if="check.open">
+        <echo>***********************************************************</echo>
+        <echo>***                                                     ***</echo>
+        <echo>           ${check.open}</echo>
+        <echo>***                                                     ***</echo>
+        <echo>***********************************************************</echo>
+        <echo/-->
+        <antcall target="exec-java">
+            <param name="axn" value="open"/>
+        </antcall>
+    </target>
+	
+    <target name="check-open">
+        <condition property="check.open" 
+                   value="Opening JBI component: ${project.name}">
+            <isset property="project.name"/>
+        </condition>
+    </target>
+
+    <target name="input-open" unless="check.open">
+        <echo>***********************************************************</echo>
+        <input message="Please enter project name (i.e. root project folder name):"
+               addproperty="project.name" />
+        <property name="check.open" value="Opening JBI component: ${project.name}"/>
+    </target>
+    
+    <target name="create" 
+    	    description="Creates a new JBI component project."
+            depends="token-wizard,check-create,warn-create,create-project,create-jbic-file">
+    </target>
+
+    <target name="check-create">
+	    <condition property="check.create" 
+	    	       value="Creating JBI ${component.type} component: ${project.name}">
+	        <and>
+	        	<isset property="project.name"/>
+	        	<isset property="component.type"/>
+	        	<isset property="proj.root"/>
+	        </and>
+	    </condition>
+	</target>
+
+	<target name="warn-create" unless="check.create">
+		<echo>***********************************************************</echo>
+		<echo>***                                                     ***</echo>
+		<echo>***              PROJECT CREATION FAILED!               ***</echo>
+		<echo>***                                                     ***</echo>
+		<echo>***        The following properties are required:       ***</echo>
+		<echo>***            'project.name'                           ***</echo>
+		<echo>***            'component.type'                         ***</echo>
+		<echo>***            'proj.root'                              ***</echo>
+		<echo>***                                                     ***</echo>
+		<echo>***********************************************************</echo>
+	</target>
+	
+    <target name="create-project" 
+    	    depends="copy-template,generate-src"/>
+    
+	<target name="copy-template" if="check.create">
+		<echo>***********************************************************</echo>
+		<echo>***                                                     ***</echo>
+		<echo>           ${check.create}</echo>
+		<echo>***                                                     ***</echo>
+		<echo>***********************************************************</echo>
+		<echo/>
+
+		<!-- TODO if 'proj.root' exists, ask user if it should be deleted -->
+		<!--      BUT NOT IF 'proj.root' IS THE SAME AS 'ojc.core' -->
+		
+        <mkdir dir="${proj.root}"/>
+        <copy todir="${proj.root}">
+            <fileset dir="${template.project}">
+                <exclude name="**/CVS/**"/>
+                <exclude name="**/bld/**"/>
+                <exclude name="**/${jbi.src.root}/**"/>
+            	<exclude name="**/packaging/src/*-config.properties"/>
+            </fileset>
+        	<!--
+            <mapper type="glob" from="*.java" to="${@CLASS_PREFIX@}*.java"/> -->
+        </copy>
+        <mkdir dir="${proj.root}/${jbi.src.root}/${component.type}/${project.name}"/>
+		<touch file="${proj.root}/packaging/src/${project.name}-config.properties"/>
+	</target>
+	
+	<target name="generate-src" depends="compile">
+		<ant antfile="templates.xml" dir="${templates}" 
+			 target="generate-all" inheritrefs="true">
+		</ant>
+	</target>
+	
+	<target name="create-jbic-file" depends="compile" if="check.create">
+    	<antcall target="exec-java">
+    	    <param name="axn" value="create"/>
+    	</antcall>
+    </target>
+
+    <target name="token-wizard" depends="compile">
+        <antcall target="exec-java">
+            <param name="axn" value="wizard"/>
+        </antcall>
+    	<loadproperties srcfile="wizard.properties"/>
+    	<property name="project.name" value="${%PROJ_NAME%}"/>
+    	<property name="component.type" value="${%COMP_TYPE_FLAG%}"/>
+    	<property name="proj.root" value="${%PROJ_ROOT%}"/>
+    	<concat destfile="${bld}/${project.name}.properties">
+    		<fileset dir="${basedir}" includes="wizard.properties*"/>
+    	</concat>
+    	<delete file="${basedir}/wizard.properties"/>
+    	<property name="token.file" value="${project.name}.properties"/>
+    </target>
+
+	<target name="exec-java" depends="compile">
+		<java classname="${proj.clz}" fork="true" failonerror="true">
+            <arg value="${axn}"/>
+			<arg path="${ant.home}"/>
+            <arg path="${env.JV_SRCROOT}"/>
+			<arg path="${env.JV_GFBASE}"/>
+			<arg path="${basedir}"/>
+			<arg path="${project.name}"/>
+            <classpath>
+                <path refid="ojc.classpath"/>
+                <pathelement path="${clz}"/>
+            </classpath>
+        </java>
+	</target>
+
+    <target name="init">
+    	<tstamp/>
+        <mkdir dir="${bld}"/>
+    	<mkdir dir="${clz}"/>
+    </target>
+
+	<target name="copy-ojc-jars" if="env.JV_SRCROOT">
+		<copy tofile="${bld}/common-util.jar">
+	        <fileset dir="${common}/common-util/bld" defaultexcludes="yes">
+	            <include name="*.jar"/>
+	            <exclude name="*-sources.jar"/>
+	        </fileset>
+		</copy>
+        <copy tofile="${bld}/qos.jar">
+            <fileset dir="${common}/qos/bld" defaultexcludes="yes">
+                <include name="*.jar"/>
+                <exclude name="*-sources.jar"/>
+            </fileset>
+        </copy>
+        <copy tofile="${bld}/component-toolkit.jar">
+            <fileset dir="${common}/component-toolkit/bld" defaultexcludes="yes">
+                <include name="*.jar"/>
+                <exclude name="*-sources.jar"/>
+            </fileset>
+        </copy>
+        <copy tofile="${bld}/wsdl4jext.jar">
+            <fileset dir="${common}/wsdl4jext/bld" defaultexcludes="yes">
+                <include name="*.jar"/>
+                <exclude name="*-sources.jar"/>
+            </fileset>
+        </copy>
+        <copy tofile="${bld}/wsdl4j.jar">
+            <fileset dir="${common}/wsdl4j/bld" defaultexcludes="yes">
+                <include name="*.jar"/>
+                <exclude name="*-sources.jar"/>
+            </fileset>
+        </copy>
+		<!-- TODO probably need to include customized-xmlbeans.jar,
+		      deferring until someone actually needs it as the file be large -->
+        <copy todir="${bld}">
+            <fileset dir="${saxon.lib}" defaultexcludes="yes">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+	</target>
+	
+	<target name="compile" depends="init,copy-ojc-jars">
+	    <javac srcdir="${src}" destdir="${clz}" debug="true">
+	    	<classpath refid="ojc.classpath"/>
+	    </javac>
+		<copy todir="${clz}">
+			<fileset dir="${src}">
+			    <include name="**/*.properties"/>
+				<include name="**/*.xsl"/>
+				<include name="**/*.png"/>
+                <include name="**/jbic.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+    <target name="clean">
+        <delete dir="${bld}"/>
+    	<delete dir="${dist}"/>
+    </target>
+
+	<target name="dist" depends="compile">
+		<!-- always start fresh -->
+        <delete dir="${dist}"/>
+		<delete file="${dist.zip}.zip"/>
+		
+		<mkdir dir="${dist}"/>
+		<!-- copy src and templates -->
+		<copy todir="${dist}">
+			<fileset dir="${basedir}">
+				<include name="src/"/>
+				<include name="templates/"/>
+			</fileset>
+		</copy>
+		<!-- copy build script and properties -->
+		<copy todir="${dist}">
+			<fileset dir="${basedir}">
+			  	<include name="dist.xml"/>
+				<include name="dist.properties"/>
+			</fileset>
+			<mapper type="glob" from="dist.*" to="build.*"/>
+		</copy>
+		<!-- copy dependent jars -->
+		<copy todir="${dist}/lib">
+			<fileset dir="${bld}">
+				<include name="*.jar"/>
+				<exclude name="*saxon*"/>
+			</fileset>
+			<fileset dir="${gf.home}/jbi/lib">
+				<include name="jbi.jar"/>
+			</fileset>
+		</copy>
+		<!-- create distributable versions of CDK -->
+		<zip destfile="${dist.zip}.zip" basedir="${dist}"/>
+		
+    </target>
+	
+	<target name="testdist">
+		<!-- testing -->
+		<delete dir="${dist.zip}" />
+		<antcall target="dist"/>
+		<unzip src="${dist.zip}.zip" dest="${dist.zip}"/>
+	</target>
+	<target name="su">
+        <xslt style="${template.project}/packaging/compile.xsl" in="test.xml" out="su.xml"/>
+    </target>
+	
+	<!-- Reference for when Build action is implemented
+    <target name="maven" depends="init-as-props">
+    	<echo>${env.MAVEN_HOME} ${command}</echo>
+        <exec executable="${env.MAVEN_HOME}/bin/mvn">
+        	<env key="maven.test.skip" value="true"/>
+        	<env key="maven.repo.local" value="${MAVEN_REPOSITORY}"/>
+        	<arg value="${command}"/>
+    	</exec>
+    </target>
+    -->
+	
+	<target name="help" description="Displays instructions for CompTK-CLI script.">
+		<echo>The following commands are available from this Ant script:</echo>
+		<echo/>
+		<echo>    create           Creates a new JBI component project.</echo>
+		<echo/>
+        <echo>    open             Displays a JBI component project in the JBIC Editor.</echo>
+        <echo/>
+        <echo>    dist             Creates a distributable version of the CDK.</echo>
+        <echo/>
+		<echo>    help             Displays this set of instructions.</echo>
+		<echo/>
+	</target>
+</project>
+

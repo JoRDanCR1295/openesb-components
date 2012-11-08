@@ -1,0 +1,45 @@
+<process name="subBPThrowsFault"
+    targetNamespace="http://www.seebeyond.com/eInsight/subBPThrowsFault"
+    xmlns:tns="http://www.seebeyond.com/eInsight/subBPThrowsFault"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:subBPThrowsFaultTargetNamespace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:subBPThrowsFaultTargetNamespace"
+    location="subBPThrowsFault.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="subBPThrowsFaultPLink"
+        partnerLinkType="ns0:subBPThrowsFaultServiceLinkType"
+        myRole="subBPThrowsFaultServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="subBPThrowsFaultOperation_Output"
+        messageType="ns0:subBPThrowsFaultMessage"/>
+        <variable name="subBPThrowsFaultOperation_Input"
+        messageType="ns0:subBPThrowsFaultMessage"/>
+        <variable name="subBPThrowsFaultOperation_Fault"
+        messageType="ns0:subBPThrowsFaultMessage"/>
+    </variables>
+    <sequence>
+        <receive name="subBPThrowsFaultOperation"
+        partnerLink="subBPThrowsFaultPLink"
+        portType="ns0:subBPThrowsFaultPortType"
+        operation="subBPThrowsFaultOperation"
+        variable="subBPThrowsFaultOperation_Output"
+        createInstance="yes"/>
+        <assign>
+            <copy>
+                <from variable="subBPThrowsFaultOperation_Output"
+                part="subBPThrowsFaultPart"/>
+                <to variable="subBPThrowsFaultOperation_Fault"
+                part="subBPThrowsFaultPart"/>
+            </copy>
+        </assign>
+        <reply name="Reply"
+        partnerLink="subBPThrowsFaultPLink"
+        portType="ns0:subBPThrowsFaultPortType"
+        operation="subBPThrowsFaultOperation"
+        variable="subBPThrowsFaultOperation_Fault"
+        faultName="ns0:Fault"/>
+    </sequence>
+</process>

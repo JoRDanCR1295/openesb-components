@@ -1,0 +1,156 @@
+<process name="bpelfaultCatch"
+    targetNamespace="http://www.seebeyond.com/eInsight/bpelfaultCatch"
+    xmlns:tns="http://www.seebeyond.com/eInsight/bpelfaultCatch"
+    xmlns:ns0="urn:bpelfaultCatchTargetNamespace"
+    xmlns:ns1="urn:subBPThrowsFaultTargetNamespace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:bpelfaultCatchTargetNamespace"
+    location="bpelfaultCatch.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:subBPThrowsFaultTargetNamespace"
+    location="subBPThrowsFault.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="PartnerLink"
+        partnerLinkType="ns0:bpelfaultCatchServiceLinkType"
+        myRole="bpelfaultCatchServerRole"/>
+        <partnerLink name="subBPInvokePLink"
+        partnerLinkType="ns1:subBPThrowsFaultServiceLinkType"
+        partnerRole="subBPThrowsFaultServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MyRole_bpelfaultCatchOperation_Output"
+        messageType="ns0:bpelfaultCatchMessage"/>
+        <variable name="MyRole_bpelfaultCatchOperation_Input"
+        messageType="ns0:bpelfaultCatchMessage"/>
+        <variable name="MyRole_bpelfaultCatchOperation_Fault"
+        messageType="ns0:bpelfaultCatchMessage"/>
+        <variable name="subBPThrowsFaultOperation_Input"
+        messageType="ns1:subBPThrowsFaultMessage"/>
+        <variable name="subBPThrowsFaultOperation_Output"
+        messageType="ns1:subBPThrowsFaultMessage"/>
+        <variable name="subBPThrowsFaultOperation_Fault"
+        messageType="ns1:subBPThrowsFaultMessage"/>
+    </variables>
+    <sequence>
+        <receive name="MyRole.bpelfaultCatchOperation.Receive"
+        partnerLink="PartnerLink"
+        portType="ns0:bpelfaultCatchPortType"
+        operation="bpelfaultCatchOperation"
+        variable="MyRole_bpelfaultCatchOperation_Output"
+        createInstance="yes"/>
+        <scope name="Scope">
+            <faultHandlers>
+                <catch faultName="tns:MyFault"
+                    faultVariable="MyRole_bpelfaultCatchOperation_Fault"
+                    faultMessageType="ns0:bpelfaultCatchMessage">
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>concat($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;MyFault_And_Some_Variable&apos;)</from>
+                                <to>$MyRole_bpelfaultCatchOperation_Input.bpelfaultCatchPart/string</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catch faultName="tns:MyFault1"
+                    faultVariable="MyRole_bpelfaultCatchOperation_Fault"
+                    faultMessageType="ns0:bpelfaultCatchMessage">
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>concat($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;MyFault1_And_Some_Variable&apos;)</from>
+                                <to>$MyRole_bpelfaultCatchOperation_Input.bpelfaultCatchPart/string</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catch faultVariable="subBPThrowsFaultOperation_Fault"
+                    faultMessageType="ns1:subBPThrowsFaultMessage">
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>concat($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;OnlyFaultVariable&apos;)</from>
+                                <to>$MyRole_bpelfaultCatchOperation_Input.bpelfaultCatchPart/string</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+                <catch faultName="tns:OnlyFaultName">
+                    <sequence>
+                        <assign name="assign">
+                            <copy>
+                                <from>concat($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;OnlyFaultName&apos;)</from>
+                                <to>$MyRole_bpelfaultCatchOperation_Input.bpelfaultCatchPart/string</to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence>
+                <if>
+                    <condition>starts-with($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;MyFault_And_Some_Variable&apos;)</condition>
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>'Throwing MyFault with variable'</from>
+                                <to>$MyRole_bpelfaultCatchOperation_Fault.bpelfaultCatchPart/string</to>
+                            </copy>                        
+                        </assign>
+                        <throw faultName="tns:MyFault"
+                        faultVariable="MyRole_bpelfaultCatchOperation_Fault"/>
+                    </sequence>
+                    <elseif>
+                        <condition>starts-with($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;MyFault1_And_Some_Variable&apos;)</condition>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>'Throwing MyFault1 with variable'</from>
+                                    <to>$MyRole_bpelfaultCatchOperation_Fault.bpelfaultCatchPart/string</to>
+                                </copy>                        
+                            </assign>                        
+                            <throw faultName="tns:MyFault1"
+                            faultVariable="MyRole_bpelfaultCatchOperation_Fault"/>
+                        </sequence>
+                    </elseif>
+                    <elseif>
+                        <condition>starts-with($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;OnlyFaultName&apos;)</condition>
+                        <sequence>
+                            <throw faultName="tns:OnlyFaultName"/>
+                        </sequence>
+                    </elseif>
+                    <elseif>
+                        <condition>starts-with($MyRole_bpelfaultCatchOperation_Output.bpelfaultCatchPart/string, &apos;OnlyFaultVariable&apos;)</condition>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>'subBP input'</from>
+                                    <to>$subBPThrowsFaultOperation_Input.subBPThrowsFaultPart/string</to>
+                                </copy>                        
+                            </assign>                                                
+                            <invoke partnerLink="subBPInvokePLink"
+                            portType="ns1:subBPThrowsFaultPortType"
+                            operation="subBPThrowsFaultOperation"
+                            inputVariable="subBPThrowsFaultOperation_Input"
+                            outputVariable="subBPThrowsFaultOperation_Output"/>
+                        </sequence>
+                    </elseif>
+                    <else>
+                        <sequence>
+                            <assign name="Assign">
+                                <copy>
+                                    <from>&quot;shouldn&apos;t have taken otherwise branch. check switch conditions in bpel&quot;</from>
+                                    <to>$MyRole_bpelfaultCatchOperation_Input.bpelfaultCatchPart/string</to>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </else>
+                </if>
+            </sequence>
+        </scope>
+        <reply partnerLink="PartnerLink"
+        portType="ns0:bpelfaultCatchPortType"
+        operation="bpelfaultCatchOperation"
+        variable="MyRole_bpelfaultCatchOperation_Input"/>
+    </sequence>
+</process>

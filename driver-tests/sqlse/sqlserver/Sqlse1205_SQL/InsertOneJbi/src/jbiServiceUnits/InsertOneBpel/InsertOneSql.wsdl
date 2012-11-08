@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InsertOneSql" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="InsertOneRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="InsertOneResponse">
+    <part name="InsertOneResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="InsertOneRequest">
+    <part name="InsertOneRequestPart" element="tns:InsertOneRequest"/>
+  </message>
+  <portType name="InsertOneSql_sqlsePortType">
+    <operation name="InsertOne">
+      <input name="InsertOneRequest" message="tns:InsertOneRequest"/>
+      <output name="InsertOneResponse" message="tns:InsertOneResponse"/>
+    </operation>
+  </portType>
+  <binding name="InsertOneSqlBinding" type="tns:InsertOneSql_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="InsertOne">
+      <soap:operation/>
+      <input name="InsertOneRequest">
+        <soap:body/>
+      </input>
+      <output name="InsertOneResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="InsertOneSql_sqlseService">
+    <port name="InsertOneSql_sqlsePort" binding="tns:InsertOneSqlBinding">
+      <soap:address location="http://localhost:18181/InsertOneSql/InsertOneSql/InsertOneSql_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="InsertOneSql_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="InsertOneSql_myrole" portType="tns:InsertOneSql_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

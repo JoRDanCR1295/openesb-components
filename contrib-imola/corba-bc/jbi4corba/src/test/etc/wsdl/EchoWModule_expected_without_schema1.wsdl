@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Echo7" targetNamespace="http://default.Echo7" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://default.Echo7" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://default.Echo7" xmlns="http://default.Echo7" xmlns:ns1="http://www.w3.org/2005/08/addressing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="ws-addr.xsd"/>
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="mesg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="ns1:EndpointReferenceType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Echo7">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Echo7CorbaBinding" type="tns:Echo7">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoMultipleWithoutModule.idl" relativepath=".">
+
+		   interface Echo {
+    		
+			string echo(in string msg);
+
+                 };
+	
+	
+	
+		   
+		   interface Echo7{
+		   	Echo echo(in string mesg);
+		   };
+
+		   interface Echo8{
+		     Echo echo(in Echo intf); 
+               };
+
+		   interface Echo9{
+		    Echo echo(in string luca,in Echo pippo,out Echo echoinout); 	
+		   };
+
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo7">
+    <wsdl:port name="Echo7CorbaPort" binding="tns:Echo7CorbaBinding">
+<imolacorba:address name="Echo7" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

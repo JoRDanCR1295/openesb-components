@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>restjbiadapter</artifactId>
+    <name>restjbiadapter</name>
+    <version>${restbc.artifact.version}</version>
+    <description>Implementation of Rest Binding Component</description>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <!-- note that the <id> is important - must agree with the config in global-common/pom.xml
+              ## This allows us to specify mirror settings uniformly.  RT 10/11/07
+              -->
+            <id>java-net-legacy-repository</id>
+            <name>java.net Maven 1.x repository</name>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                    <exclude>**/*.wsdl</exclude>
+                    <exclude>**/*.pom</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${artifactId}-extract-globalized-messages</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="i18n" classname="${I18NTASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n dir="${project.build.outputDirectory}"
+                                    file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                    strict="true"
+                                    prefix=""
+                                    pattern="(RESTBC-[1-7]\d\d\d)(: )(.*)" />
+                                <!-- copy file to classes dir: -->
+                                <copy file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                     todir="${project.build.outputDirectory}/${msgs.package}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-run-junit-and-derby-via-ant</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <patternset id="jbicomps.junit.test.patternset">
+                                    <include name="**/*Test.java"></include>
+                                </patternset>
+                                <ant antfile="${SRCROOT}/global-common/m2.ant" dir="${project.build.sourceDirectory}/.." target="run_junit">
+                                    <property name="maven.test.skip" value="${maven.test.skip}"></property>
+                                    <property name="maven.repo.local" value="${maven.repo.local}"></property>
+                                    <property name="project.artifactId" value="${project.artifactId}"></property>
+                                    <property name="project.build.directory" value="${project.build.directory}"></property>
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}"></property>
+                                    
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties"></propertyset>
+                                    
+                                    <reference refid="maven.test.classpath"></reference>
+                                    <reference refid="jbicomps.junit.sysproperties"></reference>
+                                    <reference refid="jbicomps.junit.test.patternset"></reference>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4jext</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
+            <version>1.0.3.1</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.grizzly</groupId>
+          <artifactId>grizzly-servlet-webserver</artifactId>
+          <version>1.9.10</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+          <version>1.0</version>
+        </dependency>
+        <dependency>
+          <groupId>asm</groupId>
+          <artifactId>asm</artifactId>
+          <version>3.1</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+          <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>0.9.9-6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>0.9.9-6</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.itf</artifactId>
+            <optional>true</optional>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.impl</artifactId>
+            <optional>true</optional>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <properties>
+        <msgs.package>com/sun/jbi/restbc/jbiadapter</msgs.package> 
+    </properties>
+</project>
+

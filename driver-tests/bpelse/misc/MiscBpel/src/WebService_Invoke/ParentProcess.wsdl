@@ -1,0 +1,98 @@
+<definitions targetNamespace="http://stc.com/ParentProcess"
+             name="ParentProcess"
+             xmlns:tns="http://stc.com/ParentProcess"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:tns0="http://stc.com/ParentProcess"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns1="http://stc.com/ParentProcess"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+    <types>
+        <xsd:schema targetNamespace="http://stc.com/ParentProcess"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://stc.com/ParentProcess"
+                    xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:tns0="http://stc.com/ParentProcess"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+             
+             
+    
+                         
+            
+            
+             
+            
+                    <xsd:element type="tns:SimpleObjectType"
+                         name="SimpleObject"></xsd:element>
+            <xsd:element type="tns:simpleobjectResponseType"
+                         name="simpleobjectResponse"></xsd:element>
+            <xsd:complexType name="SimpleObjectType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:int"
+                                 name="number"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="simpleobjectResponseType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="NumberToWordsResult"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="SimpleObjectInput">
+        <!-- <part name="date"
+              type="xsd:date"></part> -->
+        <part name="body"
+              element="tns:SimpleObject"></part>
+    </message>
+    <!-- <message name="SimpleObjectResponse">
+        <part name="simpleobject"
+              element="tns:SimpleObject"></part>
+    </message>-->
+    <message name="SimpleObjectResponse">
+        <part name="body"
+              element="tns:simpleobjectResponse"></part>
+    </message>
+    <portType name="SimpleObjectPortType">
+        <operation name="SimpleOperation">
+            <input message="tns:SimpleObjectInput"></input>
+            <output message="tns:SimpleObjectResponse"></output>
+        </operation>
+    </portType>
+    <binding name="SimpleObjectBinding"
+             type="tns:SimpleObjectPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="SimpleOperation">
+            <soap:operation soapAction="getsimpleobject"/>
+            <input>
+                <soap:body parts="body"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="body"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="SimpleObjectService">
+        <documentation>
+      Returns the day-of-week name for a given date
+    </documentation>
+        <port name="SimpleObjectPort"
+              binding="tns:SimpleObjectBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/getsimpleobject"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="SLT"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="SimpleObjectrole"
+                   portType="tns:SimpleObjectPortType"></plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

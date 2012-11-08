@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:cfg="http://www.sun.com/jbi/Configuration/V1.0"
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0"
+    xmlns:logging="http://www.sun.com/jbi/descriptor/logging"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+
+    <!-- identification information about this engine -->
+    <component type="service-engine">
+        <identification>
+            <name>${project.name}</name>
+            <description>Sun POJO Service Engine</description>
+            <identification:VersionInfo component-version="${pojose.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="POJO SE Component" >org.glassfish.openesb.pojose.jbi.PojoSEComponentManager
+        </component-class-name>
+        <component-class-path>
+            <path-element>lib/sun-pojo-engine-api.jar</path-element>
+            <path-element>lib/pojo-core.jar</path-element>
+            <path-element>lib/pojose-jbiadapter.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+        </component-class-path>
+        <bootstrap-class-name>org.glassfish.openesb.pojose.jbi.PojoSEBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+            <path-element>lib/sun-pojo-engine-api.jar</path-element>
+            <path-element>lib/pojo-core.jar</path-element>
+            <path-element>lib/pojose-jbiadapter.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+        </bootstrap-class-path>
+        <!--shared-library>sun-shared-util-library</shared-library-->
+        <cfg:Configuration name="pojo4jbi-configuration">
+            <cfg:PropertyGroup name="InboundProcessor" displayName="InboundProcessor" displayDescription="Configure InboundProcessor" showDisplay="all">
+                <cfg:Property name="CoreThreadPoolSize"
+                                 displayName="Core Thread Pool Size"
+                                 displayDescription="Number of core threads in ThreadPoolExecutor for processing inbound messages."
+                                 type="xsd:int"
+                                 defaultValue="15"
+                                 showDisplay="all"
+                                 isComponentRestartRequired="false">
+                    <!--  Prevents less than 1 and more than 1000 threads...  -->
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="1000"/>
+                </cfg:Property>
+                <cfg:Property name="MaxThreadPoolSize"
+                                 displayName="Max Thread Pool Size"
+                                 displayDescription="Maximum number of threads in ThreadPoolExecutor for processing inbound messages."
+                                 type="xsd:int"
+                                 defaultValue="50"
+                                 showDisplay="all"
+                                 isComponentRestartRequired="false">
+                    <!--  Prevents less than 1 and more than 5000 listener threads...  -->
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="5000"/>
+                </cfg:Property>
+                <cfg:Property name="ThreadPoolBlockingQueueSize"
+                                 displayName="Thread pool blocking queue size"
+                                 displayDescription="Thread pool blocking queue size."
+                                 type="xsd:int"
+                                 defaultValue="50"
+                                 showDisplay="all"
+                                 isComponentRestartRequired="true">
+                    <!--  Prevents less than 1 and more than 50000 listener threads...  -->
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="50000"/>
+                </cfg:Property>
+            </cfg:PropertyGroup>
+        </cfg:Configuration>
+        <logging:Logging root="org.glassfish.openesb.pojose">
+            <!--                QoS                     
+            <logging:logger displayName="Messaging Channel (QoS)" addPrefix="false">com.sun.jbi.common.qos.messaging.MessagingChannel</logging:logger>
+            <logging:logger displayName="Deployment Lookup (QoS)" addPrefix="false">com.sun.jbi.common.qos.descriptor.DeploymentLookup</logging:logger>
+            -->
+            <!--                PojoSE                  -->
+            <logging:logger displayName="PojoSE Bootstrap" addPrefix="false">org.glassfish.openesb.pojose.jbi.PojoSEBootstrap</logging:logger>
+            <logging:logger displayName="PojoSE Component Manager" addPrefix="false">org.glassfish.openesb.pojose.jbi.PojoSEComponentManager</logging:logger>
+            <logging:logger displayName="PojoSE Life Cycle" addPrefix="false">org.glassfish.openesb.pojose.jbi.PojoSELifeCycle</logging:logger>
+            <logging:logger displayName="PojoSE Service Unit Manager" addPrefix="false">org.glassfish.openesb.pojose.jbi.PojoSEServiceUnitManager</logging:logger>
+            <logging:logger displayName="PojoSE Service Unit" addPrefix="false">org.glassfish.openesb.pojose.jbi.su.PojoSEServiceUnit</logging:logger>
+            <logging:logger displayName="PojoSE Annotation Processor" addPrefix="false">org.glassfish.openesb.pojose.core.anno.processor.POJOAnnotationProcessor</logging:logger>
+            <logging:logger displayName="PojoSE Inbound Processor" addPrefix="false">org.glassfish.openesb.pojose.jbi.thread.InboundProcessor</logging:logger>
+            <logging:logger displayName="PojoSE Executor" addPrefix="false">org.glassfish.openesb.pojose.jbi.nmr.BasePojoExecutor</logging:logger>
+            <logging:logger displayName="PojoSE Util" addPrefix="false">org.glassfish.openesb.pojose.core.util.Util</logging:logger>
+        </logging:Logging>
+    </component>
+</jbi>
+
+

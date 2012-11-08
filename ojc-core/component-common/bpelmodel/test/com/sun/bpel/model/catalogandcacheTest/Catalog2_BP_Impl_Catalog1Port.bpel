@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Catalog2_BP_Impl_Catalog1Port"
+    targetNamespace="http://enterprise.netbeans.org/bpel/CatalogBpel2/Catalog2_BusinessProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/CatalogBpel2/Catalog2_BusinessProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Catalog1_WSDefinition" xmlns:ns0="http://j2ee.netbeans.org/wsdl/Catalog2_WSDefinition" xmlns:ns3="http://xml.netbeans.org/schema/Catalog1_Schema" xmlns:ns2="http://xml.netbeans.org/schema/Catalog2_Schema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Catalog1_WSDefinition" location="CatalogBpel1/Catalog1_WSDefinition.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/Catalog2_WSDefinition" location="Catalog2_WSDefinition.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/Catalog1_Schema" location="CatalogBpel1/Catalog1_Schema.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <import namespace="http://xml.netbeans.org/schema/Catalog2_Schema" location="Catalog2_Schema.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:Catalog1_WSDefinition" myRole="Catalog1_WSDefinitionPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" element="ns3:catalog1_root"/>
+        <variable name="Catalog1_WSDefinitionOperationOut" messageType="ns1:Catalog1_WSDefinitionOperationResponse"/>
+        <variable name="Catalog1_WSDefinitionOperationIn" messageType="ns1:Catalog1_WSDefinitionOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="Catalog1_WSDefinitionOperation" portType="ns1:Catalog1_WSDefinitionPortType" variable="Catalog1_WSDefinitionOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$Catalog1_WSDefinitionOperationOut.part1/ns3:catalog1_subelem1</from>
+                <to>$Variable1/ns3:catalog1_subelem1</to>
+            </copy>
+            <copy>
+                <from>$Catalog1_WSDefinitionOperationOut.part1/ns3:catalog1_subelem2</from>
+                <to>$Variable1/ns3:catalog1_subelem2</to>
+            </copy>
+            <copy>
+                <from>$Variable1/ns3:catalog1_subelem1</from>
+                <to>$Catalog1_WSDefinitionOperationOut.part1/ns3:catalog1_subelem1</to>
+            </copy>
+            <copy>
+                <from>$Variable1/ns3:catalog1_subelem2</from>
+                <to>$Catalog1_WSDefinitionOperationOut.part1/ns3:catalog1_subelem2</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="Catalog1_WSDefinitionOperation" portType="ns1:Catalog1_WSDefinitionPortType" variable="Catalog1_WSDefinitionOperationOut"/>
+    </sequence>
+</process>

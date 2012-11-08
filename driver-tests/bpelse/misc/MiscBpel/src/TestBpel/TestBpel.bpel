@@ -1,0 +1,59 @@
+<process name="TestBpel"
+         targetNamespace="http://www.seebeyond.com/eInsight/TestBpel"
+         sbynpxp:end_YLoc="170.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="467.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/TestBpel"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/TestBpel"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/TestBpel"
+            location="TestBpel.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="Client2BP"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <variables>
+        <variable name="TestBpel_Output"
+                  messageType="ns0:TestBpel"></variable>
+        <variable name="TestBpel_Input"
+                  messageType="ns0:TestBpel"></variable>
+    </variables>
+    <sequence>
+        <receive name="TestBpel"
+                 partnerLink="Client2BP"
+                 portType="ns0:TestBpel"
+                 operation="TestBpel"
+                 variable="TestBpel_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="128.0"
+                 sbynpxp:YLoc="259.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="232.0"
+                sbynpxp:YLoc="210.0">
+            <copy>
+                <from>$TestBpel_Output.part/value</from>
+                <to>$TestBpel_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="TestBpel.Reply"
+               partnerLink="Client2BP"
+               portType="ns0:TestBpel"
+               operation="TestBpel"
+               variable="TestBpel_Input"
+               sbynpxp:XLoc="359.0"
+               sbynpxp:YLoc="228.0"></reply>
+    </sequence>
+</process>

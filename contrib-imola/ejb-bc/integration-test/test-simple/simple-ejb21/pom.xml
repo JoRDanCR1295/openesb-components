@@ -1,0 +1,212 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!--
+    =========================================================
+    COORDINATES
+    =========================================================
+  -->
+  <parent>
+    <artifactId>integration-test</artifactId>
+    <groupId>it.imolinfo.jbi4ejb</groupId>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <artifactId>simple-ejb21</artifactId>
+
+  <!--
+    =========================================================
+    DESCRIPTION
+    =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <packaging>ejb</packaging>
+
+
+  <!--
+    =========================================================
+    DEPENDENCIES
+    =========================================================
+  -->
+  <dependencies>
+    <!-- J2EE 1.4 spec -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee_1.4_spec</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <!--
+    =========================================================
+    PLUGINS
+    =========================================================
+  -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <generateClient>false</generateClient>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!--
+    =========================================================
+    PROFILES
+    =========================================================
+  -->
+  <profiles>
+
+    <!-- Profile which creates an assembly for glassfish (default) -->
+    <profile>
+      <id>Glassfish</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/resources/glassfish</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**</include>
+            </includes>
+          </resource>
+        </resources>
+      </build>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+
+    <!-- Profile which creates an assembly for Websphere 6-->
+
+    <profile>
+      <id>Websphere</id>
+      <build>
+
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <configuration>
+                  <tasks>
+                    <!--   <property name="was6.home" value="/opt/IBM/Websphere61" /> -->
+
+                    <path id="was.classpath">
+
+                      <fileset dir="${was6.home}/plugins">
+                        <include name="**.jar" />
+                      </fileset>
+
+                      <fileset dir="${was6.home}/lib">
+                        <include name="wsanttasks.jar" />
+                        <include name="webservices.jar" />
+                        <include name="wsprofile.jar" />
+                        <include name="j2ee.jar" />
+                        <include name="ffdc.jar" />
+                        <include name="wsdl4j.jar" />
+                        <include name="bootstrap.jar" />
+                        <include name="commons-logging-api.jar" />
+                        <include name="commons-discovery.jar" />
+                        <include name="ras.jar" />
+                        <include name="wsexception.jar" />
+                        <include name="emf.jar" />
+                        <include name="classloader.jar" />
+                      </fileset>
+
+                      <fileset dir="${was6.home}/java/jre/lib">
+                        <include name="xml.jar" />
+                        <include name="ibmorb.jar" />
+                        <include name="ibmorbapi.jar" />
+                      </fileset>
+                    </path>
+
+                    <path id="wsejbdeploy.path">
+                      <path refid="maven.compile.classpath" />
+                      <fileset dir="${was6.home}/java/jre/lib">
+                        <include name="xml.jar" />
+                        <include name="ibmorb.jar" />
+                        <include name="ibmorbapi.jar" />
+                      </fileset>
+                    </path>
+
+                    <taskdef name="wasEjbDeploy" classname="com.ibm.websphere.ant.tasks.WsEjbDeploy" classpathref="was.classpath" />
+
+                    <delete dir="${project.build.directory}/ejbdeploy-working" />
+
+                    <wasEjbDeploy inputJar="${project.build.directory}/${project.artifactId}-${version}.jar"
+                      outputJar="${project.build.directory}/${project.artifactId}-${version}-OUTPUT.jar" wasHome="${was6.home}"
+                      classpathref="wsejbdeploy.path" workingDirectory="${project.build.directory}/ejbdeploy-working" keepGenerated="true"
+                      failonerror="false" noInform="true" trace="true" quiet="false" noWarnings="true" />
+
+
+                    <move file="${project.build.directory}/${project.artifactId}-${version}.jar"
+                      tofile="${project.build.directory}/${project.artifactId}-${version}-INPUT.jar" />
+
+                    <move file="${project.build.directory}/${project.artifactId}-${version}-OUTPUT.jar"
+                      tofile="${project.build.directory}/${project.artifactId}-${version}.jar" />
+                  </tasks>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+
+        <resources>
+          <resource>
+            <directory>src/main/resources/websphere</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**</include>
+            </includes>
+          </resource>
+        </resources>
+
+      </build>
+    </profile>
+
+
+    <!-- Profile which creates an assembly for jboss -->
+    <profile>
+      <id>Jboss</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/resources/jboss</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**</include>
+            </includes>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+
+    <!-- Profile which creates an assembly for jboss -->
+    <profile>
+      <id>Weblogic</id>
+      <build>
+        <resources>
+          <resource>
+            <directory>src/main/resources/weblogic</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**</include>
+            </includes>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+    
+  </profiles>
+
+</project>

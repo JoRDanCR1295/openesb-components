@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="rssWsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/rssWsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/rssWsdl" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:rss="http://schemas.sun.com/jbi/wsdl-extensions/rss/">
+    <types/>
+    <message name="rssWsdlOperationRequest">
+        <part name="entryTitle" type="xsd:string"/>
+        <part name="entryLink" type="xsd:anyURI"/>
+        <part name="entryDescription" type="xsd:string"/>
+        <part name="longitude" type="xsd:double"/>
+        <part name="latitude" type="xsd:double"/>
+        <part name="destinationUrl" type="xsd:anyURI" />
+    </message>
+    <portType name="rssWsdlPortType">
+        <wsdl:operation name="rssWsdlOperation">
+            <wsdl:input name="input1" message="tns:rssWsdlOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="rssWsdlBinding" type="tns:rssWsdlPortType">
+        <rss:binding/>
+        <wsdl:operation name="rssWsdlOperation">
+            <rss:operation name="publish"/>
+            <wsdl:input name="input1">
+                <rss:input entryTitle="entryTitle" entryLink="entryLink" entryDescription="entryDescription" longitude="longitude" latitude="latitude" destinationUrl="destinationUrl"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="rssWsdlService">
+        <wsdl:port name="rssWsdlPort" binding="tns:rssWsdlBinding">
+            <rss:address feedTitle="Chad's Blog" feedDescription="Test Blog" feedType="atom_1.0" location="http://gallemore.blogspot.com/feeds/posts/default?alt=rss" username="username" password="password"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="rssWsdl1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="rssWsdlPortTypeRole" portType="tns:rssWsdlPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

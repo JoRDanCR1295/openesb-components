@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RepRecRecInitNo_DriverBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepRecRecInitNo_DriverBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepRecRecInitNo_DriverBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepRecRecInitNo_DriverWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/RepRecRecInitNo_ParentWSDL" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecRecInitNo_DriverWSDL" location="RepRecRecInitNo_DriverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecRecInitNo_ParentWSDL" location="RepRecRecInitNo_ParentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink3" partnerLinkType="ns2:RepRecRecInitNo_ParentWSDLPartner3" partnerRole="RepRecRecInitNo_ParentWSDLPortType3Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink2" partnerLinkType="ns2:RepRecRecInitNo_ParentWSDLPartner2" partnerRole="RepRecRecInitNo_ParentWSDLPortType2Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink1" partnerLinkType="ns2:RepRecRecInitNo_ParentWSDLPartner1" partnerRole="RepRecRecInitNo_ParentWSDLPortType1Role"/>
+        <bpws:partnerLink name="ExternalPartnerLink" partnerLinkType="ns1:RepRecRecInitNo_DriverWSDLPartner" myRole="RepRecRecInitNo_DriverWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OutputVariable2" messageType="ns2:RepRecRecInitNo_ParentWSDLOperationReply"/>
+        <bpws:variable name="OutputVariable1" messageType="ns2:RepRecRecInitNo_ParentWSDLOperationReply"/>
+        <bpws:variable name="InputVariable1" messageType="ns2:RepRecRecInitNo_ParentWSDLOperationRequest"/>
+        <bpws:variable name="RepRecRecInitNo_DriverWSDLOperationOut" messageType="ns1:RepRecRecInitNo_DriverWSDLOperationReply"/>
+        <bpws:variable name="RepRecRecInitNo_DriverWSDLOperationIn" messageType="ns1:RepRecRecInitNo_DriverWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ExternalPartnerLink" operation="RepRecRecInitNo_DriverWSDLOperation" portType="ns1:RepRecRecInitNo_DriverWSDLPortType" variable="RepRecRecInitNo_DriverWSDLOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="RepRecRecInitNo_DriverWSDLOperationIn" part="part1"/>
+                <bpws:to variable="InputVariable1" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="ParentBPEL_Invoke1" partnerLink="ParentBPEL_PartnerLink1" operation="RepRecRecInitNo_ParentWSDLOperation1" portType="ns2:RepRecRecInitNo_ParentWSDLPortType1" inputVariable="InputVariable1" outputVariable="OutputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke2" partnerLink="ParentBPEL_PartnerLink2" operation="RepRecRecInitNo_ParentWSDLOperation2" portType="ns2:RepRecRecInitNo_ParentWSDLPortType2" inputVariable="InputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke3" partnerLink="ParentBPEL_PartnerLink3" operation="RepRecRecInitNo_ParentWSDLOperation3" portType="ns2:RepRecRecInitNo_ParentWSDLPortType3" inputVariable="InputVariable1" outputVariable="OutputVariable2"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$OutputVariable2.part1/ns0:string</bpws:from>
+                <bpws:to>$RepRecRecInitNo_DriverWSDLOperationOut.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ExternalPartnerLink" operation="RepRecRecInitNo_DriverWSDLOperation" portType="ns1:RepRecRecInitNo_DriverWSDLPortType" variable="RepRecRecInitNo_DriverWSDLOperationOut"/>
+    </sequence>
+</process>

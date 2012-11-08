@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echo" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echo" targetNamespace="http://stc.com/echo">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echo">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="key" type="xsd:string"/>
+                        <xsd:element name="queryString" type="xsd:string" />  
+                        <xsd:element name="startIndex" type="xsd:int" /> 
+                        <xsd:element name="maxResults" type="xsd:int" /> 
+                        <xsd:element name="filter" type="xsd:boolean" /> 
+                        <xsd:element name="restricts" type="xsd:string" /> 
+                        <xsd:element name="safesearch" type="xsd:boolean" /> 
+                        <xsd:element name="languageRestriction" type="xsd:string" /> 
+                        <xsd:element name="ie" type="xsd:string" /> 
+                        <xsd:element name="oe" type="xsd:string" /> 
+                        
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ResultElements">
+                <xsd:complexType>
+                    <xsd:sequence maxOccurs="unbounded">
+                        <xsd:element name="snippet" type="xsd:string"/>
+                        <xsd:element name="URL" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echo">
+        <part element="tns:item" name="part"/>
+    </message>
+    <message name="echoResponse">
+        <part element="tns:ResultElements" name="part"/>
+    </message>
+    <portType name="echo">
+        <operation name="echo">
+            <input message="tns:echo"/>
+            <output message="tns:echoResponse"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echo">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echo">
+            <soap:operation soapAction="echo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:12011/echo"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echo"/>
+    </plnk:partnerLinkType>
+</definitions>

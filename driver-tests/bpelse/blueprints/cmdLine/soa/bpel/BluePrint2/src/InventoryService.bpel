@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Header: /cvs/open-jbi-components/driver-tests/bpelse/blueprints/cmdLine/soa/bpel/BluePrint2/src/InventoryService.bpel,v 1.10 2010/02/04 06:08:09 fkieviet Exp $ -->
+<process name="InventoryService"
+         targetNamespace="http://manufacturing.org/wsdl/inventory/bp2"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:invs="http://manufacturing.org/wsdl/inventory/bp2">
+    <import namespace="http://manufacturing.org/wsdl/inventory/bp2"
+            location="InventoryService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="inventoryServicing"
+                     partnerLinkType="invs:inventoryRequestingLT"
+                     myRole="inventoryService"
+                     partnerRole="inventoryServiceRequester"/>
+    </partnerLinks>
+    <variables>
+        <variable name="inventoryServiceVar"
+                  messageType="invs:POMessage"></variable>
+        <variable name="inventoryServiceResponseVar"
+                  messageType="invs:InventoryMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="inventoryService"
+                 partnerLink="inventoryServicing"
+                 portType="invs:inventoryPortType"
+                 operation="inventoryService"
+                 variable="inventoryServiceVar"
+                 createInstance="yes"/>
+        <if name="checkAvailability">
+            <condition>starts-with($inventoryServiceVar.purchaseOrder/orderDescription, 'OrderVal')</condition>
+                <sequence name="Case1">
+                    <assign name="Assign1">
+                        <copy>
+                        <from>$inventoryServiceVar.purchaseOrder/orderId</from><to>$inventoryServiceResponseVar.inventoryPart/orderId</to>
+                        </copy>
+                        <copy>
+                        <from>true()</from><to>$inventoryServiceResponseVar.inventoryPart/inventoryStatus</to>
+                        </copy>
+                        <copy>
+                        <from>'available'</from><to>$inventoryServiceResponseVar.inventoryPart/inventoryStatusMessage</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            <else>
+                <sequence name="Case2">
+                    <assign name="Assign2">
+                        <copy>
+                        <from>$inventoryServiceVar.purchaseOrder/orderId</from><to>$inventoryServiceResponseVar.inventoryPart/orderId</to>
+                        </copy>
+                        <copy>
+                        <from>false()</from><to>$inventoryServiceResponseVar.inventoryPart/inventoryStatus</to>
+                        </copy>
+                        <copy>
+                        <from>'currently out of stock'</from><to>$inventoryServiceResponseVar.inventoryPart/inventoryStatusMessage</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            </else>
+        </if>
+        <invoke name="inventoryServiceResponse"
+                partnerLink="inventoryServicing"
+                portType="invs:inventoryServiceCallbackPortType"
+                operation="inventoryServiceResponse"
+                inputVariable="inventoryServiceResponseVar"/>
+    </sequence>
+</process>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="jmsReadC"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSOndemand/jmsReadC"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/JMSOndemand/jmsReadC" xmlns:ns0="http://xml.netbeans.org/schema/xxx" xmlns:ns1="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension" ns1:ignoreMissingFromData="yes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" location="triggerJMSC.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" location="jmsReadC.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" partnerLinkType="tns:jmsReadC" partnerRole="JMSSolicitedReadPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" partnerLinkType="tns:triggerJMSC" myRole="triggerJMSCPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReadOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" messageType="tns:SolicitedReadOutputMessage"/>
+        <variable name="ReadIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" messageType="tns:SolicitedReadInputMessage"/>
+        <variable name="TriggerJMSCOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" messageType="tns:triggerJMSCOperationResponse"/>
+        <variable name="TriggerJMSCOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" messageType="tns:triggerJMSCOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="triggerJMSCOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" portType="tns:triggerJMSCPortType" variable="TriggerJMSCOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$TriggerJMSCOperationIn.part1/ns0:y</from>
+                <to>$ReadIn.part1/ns0:y</to>
+            </copy>
+            <copy>
+                <from>$TriggerJMSCOperationIn.part1/ns0:z</from>
+                <to>$ReadIn.part1/ns0:z</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="read" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" portType="tns:JMSSolicitedReadPortType" inputVariable="ReadIn" outputVariable="ReadOut"/>
+        <if name="If1">
+            <condition>count($ReadOut.part1/*) &gt; 0</condition>
+            <assign name="Assign2">
+                <copy>
+                    <from>$ReadOut.part1/ns0:y</from>
+                    <to>$TriggerJMSCOperationOut.part1/ns0:y</to>
+                </copy>
+                <copy>
+                    <from>$ReadOut.part1/ns0:z</from>
+                    <to>$TriggerJMSCOperationOut.part1/ns0:z</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign3">
+                    <copy>
+                        <from>
+                            <literal>empty</literal>
+                        </from>
+                        <to>$TriggerJMSCOperationOut.part1/ns0:y</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>empty</literal>
+                        </from>
+                        <to>$TriggerJMSCOperationOut.part1/ns0:z</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="triggerJMSCOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/triggerJMSC" portType="tns:triggerJMSCPortType" variable="TriggerJMSCOperationOut"/>
+    </sequence>
+</process>

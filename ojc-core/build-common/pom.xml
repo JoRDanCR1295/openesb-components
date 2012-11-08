@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <!-- IMPORTANT:  all plugin and dependency versions are managed in ojc-common!  -->
+        <artifactId>ojc-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>ojc-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>build-common</artifactId>
+    <packaging>pom</packaging>
+    <name>build-common</name>
+    <version>1.1</version>
+    <description>Common definitions inherited by ojc-core build projects.</description>
+    <url>https://open-jbi-components.dev.java.net/</url>
+    <inceptionYear>2006</inceptionYear>
+    <build>
+        <!--  we use bld/test instead of bld/test-classes for historical reasons
+         !    (some of the old test source used to scribble on the source tree, and
+         !    expect the leaf name "test").  RT 1/30/08.
+        -->
+        <testOutputDirectory>bld/test</testOutputDirectory>
+        <filters>
+            <filter>${version.properties}</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <!--
+                     ! project-wide excludes for build resource copies.
+                     ! add <resources> in local pom to override.
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/checkstyle.suppressions</exclude>
+                    <exclude>**/package.html</exclude>
+                    <exclude>**/.*.swp</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/jbi.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <!--
+                     ! project-wide excludes for test resource copies.
+                     ! add <testresources> in local pom to override.
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <!-- generate source bundles as a default in build & test projects.
+         !   see pluginManagement for default config.  RT 1/30/08
+        -->
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-generate-source-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <!-- plugin management for build and test only.  plugin versions in ojc-common: -->
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <!-- generate 1.5 class files: -->
+                        <source>1.5</source>
+                        <target>1.5</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <!-- see ojc-common/pom.xml for version notes on surefire.  RT 3/21/08 -->
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <forkMode>pertest</forkMode>
+                        <!-- shows total/fail/error summaries on stdout:  -->
+                        <printSummary>true</printSummary>
+                        <!-- this gives test class name & time elapsed in report files:  -->
+                        <reportFormat>plain</reportFormat>
+                        <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                        <workingDirectory>${basedir}</workingDirectory>
+                        <excludes>
+                            <exclude>**/TestRegisteredFailure.java</exclude>
+                        </excludes>
+                        <systemProperties>
+                            <condition property="isWindows">
+                                <os family="windows"/>
+                            </condition>
+
+                            <property>
+                                <name>com.sun.jbi.home</name>
+                                <value>${JBI_HOME}</value>
+                            </property>
+                            <property>
+                                <name>junit.srcroot</name>
+                                <value>${SRCROOT}</value>
+                            </property>
+                            <property>
+                                <name>junit.as8base</name>
+                                <value>${AS8BASE}</value>
+                            </property>
+                            <!-- codegen substitution variables -->
+                            <!-- not yet used -->
+                            <property>
+                                <name>asadmin_cmd</name>
+                                <value>bin/asadmin</value>
+                            </property>
+                            <property>
+                                <name>asant_cmd</name>
+                                <value>bin/asant</value>
+                            </property>
+                            <property>
+                                <name>shell_cmd</name>
+                                <value>sh</value>
+                            </property>
+                            <property>
+                                <name>tempdir</name>
+                                <value>/tmp</value>
+                            </property>
+                            -->
+                            <property>
+                                <name>ALASKA_ROOT</name>
+                                <value>${ALASKA_ROOT}</value>
+                            </property>
+                            <property>
+                                <name>ALASKA_SHAREDLIBRARY</name>
+                                <value>${ALASKA_SHAREDLIBRARY}</value>
+                            </property>
+                            <property>
+                                <name>JBICOMPS_HOME</name>
+                                <value>${JBICOMPS_HOME}</value>
+                            </property>
+                            <property>
+                                <name>SRCROOT</name>
+                                <value>${SRCROOT}</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <configuration>
+                        <attach>true</attach>
+                        <excludeResources>true</excludeResources>
+                    </configuration>
+
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+    <reporting>
+        <outputDirectory>${project.build.directory}/site</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <configuration>
+                    <!-- this is the input test-reports directory from the junit run: -->
+                    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>${project.artifactId}-test-report-only</id>
+                        <inherited>true</inherited>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <bottom>Copyright (c) 2004-2007 Sun Microsystems Inc.  All Rights Reserved.</bottom>
+                    <windowTitle>open-jbi-components ${project.version} Reference</windowTitle>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <minmemory>128m</minmemory>
+                    <maxmemory>512m</maxmemory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+    <properties>
+        <!--
+         ! Note - the order of these declarations is unimportant.
+        -->
+
+        <!-- required env. vars: -->
+        <ALASKA_ROOT>${env.JV_SRCROOT}/ojc-core</ALASKA_ROOT>
+        <ALASKA_SHAREDLIBRARY>${env.JV_SRCROOT}/ojc-core/component-common</ALASKA_SHAREDLIBRARY>
+        <JBICOMPS_HOME>${env.JV_SRCROOT}/ojc-core</JBICOMPS_HOME>
+        <OPEN_ESB_VERSION>1.1</OPEN_ESB_VERSION>
+    </properties>
+</project>

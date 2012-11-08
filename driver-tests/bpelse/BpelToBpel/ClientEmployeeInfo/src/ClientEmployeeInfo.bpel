@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ClientEmployeeInfo"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ClientEmployeeInfo"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ClientEmployeeInfo" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ClientEmployeeInfo" xmlns:ns2="http://j2ee.netbeans.org/wsdl/employeeInfo">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ClientEmployeeInfo" location="ClientEmployeeInfo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/employeeInfo" location="employeeInfo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:employeeInfoPartnerlinktype" partnerRole="employeeInfoPartnerlinktyperole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:ClientEmployeeInfo" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ClientEmployeeInfoOperationOut1" messageType="ns1:ClientEmployeeInfoResponse"/>
+        <variable name="GetEmployeeInfoOut1" messageType="ns2:employeeInfo"/>
+        <variable name="GetEmployeeInfoIn1" messageType="ns2:employeeName"/>
+        <variable name="ClientEmployeeInfoOperationIn1" messageType="ns1:ClientEmployeeInfoRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ClientEmployeeInfoOperation" portType="ns1:ClientEmployeeInfoPortType" variable="ClientEmployeeInfoOperationIn1"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="ClientEmployeeInfoOperationIn1" part="id"/>
+                <to variable="GetEmployeeInfoIn1" part="employeeNamePart"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="getEmployeeInfo" portType="ns2:employeeInfoPortType" inputVariable="GetEmployeeInfoIn1" outputVariable="GetEmployeeInfoOut1"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="GetEmployeeInfoOut1" part="employeeInfoPart"/>
+                <to variable="ClientEmployeeInfoOperationOut1" part="item"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="ClientEmployeeInfoOperation" portType="ns1:ClientEmployeeInfoPortType" variable="ClientEmployeeInfoOperationOut1"/>
+   </sequence>
+
+</process>

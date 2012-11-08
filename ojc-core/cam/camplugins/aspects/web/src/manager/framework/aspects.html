@@ -1,0 +1,137 @@
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)aspects.html 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Aspects</title>
+<link id="link1" rel="stylesheet" type="text/css" href="css/aspects.css" />
+
+<script type="text/javascript" src="javascript/dataarr.js"></script>
+<script type="text/javascript" src="javascript/dnd.js"></script>
+<script type="text/javascript" src="javascript/grid.js"></script>
+<script type="text/javascript" src="javascript/ajax.js"></script>
+<script type="text/javascript" src="javascript/actions.js"></script>
+</head>
+
+<body id="bodyID" style="margin:10px;">
+<form name="f1" id="f1" onsubmit="return false;" style="display:inline;">
+<table class="Tbl" border="0" cellpadding="0" cellspacing="0">
+	<tr valign="middle">
+		<td><b>URL:</b> &nbsp;<input type="text" name="wsdlURL" id="wsdlURL" size="40" style="width:200px;"> <input type="submit" name="go" id="go" value="Go" onclick="getWSDL(this.form.wsdlURL.value);"></td>
+		<td>&nbsp; &nbsp; &nbsp; <span style="font-size:24px;">|</span> &nbsp; &nbsp; &nbsp; <b onclick="showChainTest();">Aspects:</b> &nbsp;</td>
+		<td><SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">document.write(aspIMGstr); initImgDrag();</SCRIPT></td>
+		<td>&nbsp; &nbsp; &nbsp; <span style="font-size:24px;">|</span> &nbsp; &nbsp; &nbsp; <button onclick="clearCanvas();">Clear Canvas</button>&nbsp; &nbsp; &nbsp; <span style="font-size:24px;">|</span> &nbsp; &nbsp; &nbsp; <button onclick="saveAspects();">Save Aspects</button> &nbsp;</td>
+
+	</tr>
+</table>
+</form>
+<hr size="1" noshade>
+ 
+<table class="Tbl" border="0" cellpadding="4" cellspacing="0">
+	<tr>
+		<td><b>Service:</b> &nbsp;<span id="serviceNameSpan"></span></td>
+		<td>&nbsp;</td>
+		<td><b>Port Type:</b> &nbsp;<span id="portTypeNameSpan"></span></td>
+		<td>&nbsp;</td>
+		<td><b>Operation:</b> &nbsp;<span id="operNameSpan"></span></td>
+	</tr>
+</table>
+
+<div id="theTableDiv">&nbsp;</div>
+<div id="canvasDiv" dropID="1" onclick="deSelectAspect();">&nbsp;</div>
+
+<div id="propsDiv">
+	<form name="f2" id="f2" onsubmit="return false;" style="display:inline;">
+	<span id="propsSpan"></span>
+	<img src="images/pix.gif" width="40" height="10" border="0">
+	<button onclick="saveConfig();" style="width:120px;">Apply</button>
+	<img src="images/pix.gif" width="40" height="10" border="0">
+	<button onclick="removeAspect();" style="width:120px;">Remove Aspect</button>
+	</form>
+	
+	<div id="asp_config" class="configDiv">
+	<hr size="1" noshade>
+	<form name="asp_config_form" id="asp_config_form" onsubmit="return false;" style="display:inline;">
+	<br>
+	<b>Configuration:</b>
+	<table border="0" cellspacing="2" cellpadding="2">
+	<tr id="asp_config_row_0">
+	<td><span id="p_label_0">&nbsp;</span>:</td>
+	<td id="td_p_0"><input type="text" class="infield" name="n_0" id="p_0" value=""></td>
+	</tr>
+	<tr id="asp_config_row_1">
+	<td><span id="p_label_1">&nbsp;</span>:</td>
+	<td id="td_p_1"><input type="text" class="infield" name="n_1" id="p_1" value=""></td>
+	</tr>
+	<tr id="asp_config_row_2">
+	<td><span id="p_label_2">&nbsp;</span>:</td>
+	<td id="td_p_2"><input type="text" class="infield" name="n_2" id="p_2" value=""></td>
+	</tr>
+	</table>
+	<hr size="1" noshade>
+	<br>
+	<b>Rules:</b>
+	<table border="0" cellspacing="2" cellpadding="2">
+	<tr>
+	<td>Operation XML:</td>
+	<td>xPath:</td>
+	</tr>
+	<tr valign="top">
+	<td><textarea cols="30" rows="10" name="displayXML" id="displayXML" class="xmlfield" readonly>
+	Please wait.
+	Data is loading...
+	</textarea></td>
+	<td><textarea cols="30" rows="10" name="xpathEdit" id="xpathEdit" class="infield"></textarea></td>
+	</tr>
+	</table>
+	</form>
+	</div>
+</div>
+
+
+<!--	DRAG TIP	-->
+<div id="tip" style="position:absolute; left: 0px; top: 0px; visibility:hidden; height:14px; cursor:move;"><div id="tipSpan" style="border:1px #999999 solid; background-color:#FFCC66; font:normal 9pt Arial, Verdana, sans-serif; vertical-align:top; color:#333333; line-height:150%; white-space:nowrap; padding:4px;">&nbsp;</div></div>
+
+<div id="tipAsp" style="position:absolute; left: 0px; top: 0px; visibility:hidden; height:14px; cursor:move;"><div id="tipSpanAsp">&nbsp;</div></div>
+
+<!--	GET AJAX DATA ON OPERATION DROP	-->
+<textarea cols="10" rows="2" name="xmlFromAjax" id="xmlFromAjax" style="display:none;">
+Please wait.
+Data is loading...
+</textarea>
+
+<form action="TESTprocess.html" method="get" name="export_form" id="export_form" style="display:inline;">
+<div id="exportDiv"></div>
+</form>
+
+</body>
+</html>

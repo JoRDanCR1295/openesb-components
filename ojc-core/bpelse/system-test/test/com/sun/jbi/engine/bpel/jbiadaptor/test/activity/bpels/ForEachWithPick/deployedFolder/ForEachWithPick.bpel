@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ForEachWithPick" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/ForEachWithPick"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/ForEachWithPick">
+    <import namespace="http://enterprise.netbeans.org/wsdl/ForEachWithPick" 
+            location="ForEachWithPick.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ForEachPartnerLinkType" 
+                     myRole="ForEachPLinkTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:partnerlinktype2" 
+        			 myRole="partnerlinktyperole2"/>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:InvokePLT"
+        			 partnerRole="InvokePLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ForEachInMessage" messageType="wsdlNS:ForEachInputMsg"/>
+        <variable name="ForEachOutMessage" messageType="wsdlNS:ForEachOutputMsg"/>
+        <variable name="result" type="xsd:string"/>
+    </variables>
+    
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" 
+                 operation="ForEachOperation" portType="wsdlNS:ForEachPortType" 
+                 variable="ForEachInMessage" createInstance="yes"/>
+      	<assign name="Assign1">
+       	   <copy>
+       	       <from part="data" variable="ForEachInMessage"/>
+       	       <to variable="result"/>
+       	   </copy>
+	    </assign>
+	    <forEach name="ForEach1" counterName="ForEachCounter" parallel="no">
+	    	<startCounterValue>1</startCounterValue>
+          	<finalCounterValue>$ForEachInMessage.count</finalCounterValue>
+          	<scope name="Scope1">
+           	    <sequence>
+           	        <assign name="AssignLoop">
+           	            <copy>
+           	                <from>concat($result, $ForEachCounter)</from>
+           	                <to variable="result"/>
+           	            </copy>
+           	        </assign>
+				    <pick name="Pick1">
+						<onMessage partnerLink="PartnerLink2" operation="PickOperation2" 
+								   portType="wsdlNS:portType2" variable="ForEachInMessage">
+							<sequence>
+								<assign name="AssignPickOnMsg">
+									<copy>
+										<from>concat($result, 'onmsg')</from>
+										<to variable="result"/>
+									</copy>
+								</assign>
+							</sequence>
+						</onMessage>
+						<onAlarm>
+						 <bpws:until>'2007-01-28T12:14:03'</bpws:until>
+						 <assign name="AssignPickOnAlarm">
+								<copy>
+									<from>concat($result,'alarm')</from>
+									<to variable="result"/>
+								</copy>
+							</assign>
+						</onAlarm>
+				    </pick>
+				</sequence>
+			</scope>
+		</forEach>
+		<assign name="AssignDone">
+        	<copy>
+            	<from variable="result"/>
+              	<to part="data" variable="ForEachOutMessage"/>
+          	</copy>
+      	</assign>
+      	<invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="InvokeOperation" portType="wsdlNS:InvokePortType"
+                inputVariable="ForEachOutMessage"/>
+      	
+      	<bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="ForEachOperation" 
+      				portType="wsdlNS:ForEachPortType" variable="ForEachOutMessage"/>
+    </sequence>
+</process>

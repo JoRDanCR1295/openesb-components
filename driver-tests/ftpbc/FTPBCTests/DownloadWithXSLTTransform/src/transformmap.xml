@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transformmap
+    xmlns="http://www.sun.com/jbi/xsltse/transformmap"
+    targetNamespace="http://enterprise.netbeans.org/transformmap/DownloadWithXSLTTransform"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/transformmap/DownloadWithXSLTTransform" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FTP_In_File_Out_Services">
+
+<!-- Standard transformmap document structure appears as follows:
+
+    <service name="service1" portType="ns0:portType1">
+            <operation opName="operation0" inputVariable="inVar0" outputVariable="outVar0">
+               <transform result="" source="" name="transform1" file="test.xsl">
+                   <param name="param1" type="literal"></param>
+                   <param name="param2" type="part"></param>
+               </transform>
+            </operation>
+            <operation opName="operation1" inputVariable="inVar1" outputVariable="outVar1">
+                    <invoke name="invoke1" portType="ns1:portType2" opName="operation2" inputVariable="inVar2" outputVariable="outVar2"/>
+            </operation>
+    </service>
+-->
+    <import namespace="http://j2ee.netbeans.org/wsdl/FTP_In_File_Out_Services" location="FTP_In_File_Out_Services.wsdl"/>
+    <service name="Remote2Transform2LocalService" portType="ns1:FTP_POLL">
+        <operation opName="FTP_POLL_OP" inputVariable="inOpVar1" outputVariable="outOpVar1">
+            <transform file="Empl-Input2Output.xsl" source="$inOpVar1.part1" result="$inInvokeVar1.part1" name="InTransform1"/>
+            <invoke inputVariable="inInvokeVar1" outputVariable="outInvokeVar1" name="Invoke1" portType="ns1:FILE_WRITE" opName="FILE_WRITE_OP"/>
+        </operation>
+    </service>
+</transformmap>

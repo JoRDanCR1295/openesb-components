@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="urn:Test19TargetNamespace" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:tns="http://www.seebeyond.com/eInsight/test19" name="test19" sbynpxp:end_XLoc="804.0" sbynpxp:end_YLoc="219.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="50.0" sbynpxp:start_YLoc="213.0" targetNamespace="http://www.seebeyond.com/eInsight/test19">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="test19.wsdl" namespace="urn:Test19TargetNamespace"/>
+    
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="Test19ServerRole" name="PartnerLink" partnerLinkType="ns0:Test19ServiceLinkType"/>
+        <bpel_20:partnerLink name="RecursiveInvokePartnerLink" partnerLinkType="ns0:Test19ServiceLinkType" partnerRole="Test19RecursiveRole"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns0:Test19Message" name="MyRole_Test19Operation_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:Test19Message" name="PartnerRole_Test19Operation_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:Test19Message" name="PartnerRole_Test19Operation_Input" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:Test19Message" name="MyRole_Test19Operation_Input" sbyncreation:type="auto"/>
+    </bpel_20:variables>
+    
+    
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="MyRole.Test19Operation.Receive" operation="Test19Operation" partnerLink="PartnerLink" portType="ns0:Test19PortType" sbynpxp:XLoc="143.0" sbynpxp:YLoc="223.0" variable="MyRole_Test19Operation_Output"/>
+        <bpel_20:assign name="assign12" sbynpxp:XLoc="281.0" sbynpxp:YLoc="223.0">
+            <bpel_20:copy>
+                <bpel_20:from>2</bpel_20:from>
+                <bpel_20:to>$PartnerRole_Test19Operation_Input.Test19Part/int</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:if name="Decision" sbynpx:lineLabel="Decision" sbynpxp:XLoc="404.0" sbynpxp:XLoc_MergeNode="605.0" sbynpxp:YLoc="216.0" sbynpxp:YLoc_MergeNode="223.0">
+            <bpel_20:condition>false()</bpel_20:condition>
+                <bpel_20:sequence>
+                    <bpel_20:assign name="assign" sbynpxp:XLoc="536.0" sbynpxp:YLoc="216.0">
+                        <bpel_20:copy>
+                            <bpel_20:from>1</bpel_20:from>
+                            <bpel_20:to>$PartnerRole_Test19Operation_Input.Test19Part/int</bpel_20:to>
+                        </bpel_20:copy>
+                    </bpel_20:assign>
+                </bpel_20:sequence>
+        </bpel_20:if>
+        <bpel_20:reply name="MyRole.Test19Operation.Reply" operation="Test19Operation" partnerLink="PartnerLink" portType="ns0:Test19PortType" sbynpxp:XLoc="686.0" sbynpxp:YLoc="213.0" variable="PartnerRole_Test19Operation_Input"/>
+    </bpel_20:sequence>
+</bpel_20:process>

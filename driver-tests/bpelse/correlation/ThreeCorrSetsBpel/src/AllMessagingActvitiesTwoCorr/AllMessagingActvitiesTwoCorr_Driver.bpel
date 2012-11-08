@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AllMessagingActvitiesTwoCorr_Driver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AllMessagingActvitiesTwoCorr_Driver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/AllMessagingActvitiesTwoCorr_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/AllMessagingActvitiesTwoCorr_PTypes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AllMessagingActvitiesTwoCorr_Driver" location="AllMessagingActvitiesTwoCorr_Driver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/AllMessagingActvitiesTwoCorr_PTypes" location="AllMessagingActvitiesTwoCorr_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink4" partnerLinkType="ns2:AllMessagingActvitiesTwoCorr_PTypesPartner1" myRole="AllMessagingActvitiesTwoCorr_PTypesPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:AllMessagingActvitiesTwoCorr_PTypesPartner2" partnerRole="AllMessagingActvitiesTwoCorr_PTypesPortType2Role"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:AllMessagingActvitiesTwoCorr_PTypesPartner" partnerRole="AllMessagingActvitiesTwoCorr_PTypesPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:AllMessagingActvitiesTwoCorr_DriverPartner" myRole="AllMessagingActvitiesTwoCorr_DriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="AllMessagingActvitiesTwoCorr_PTypesOperationIn" messageType="ns3:message1"/>
+        <bpws:variable name="AllMessagingActvitiesTwoCorr_DriverOperationIn" messageType="ns1:message1"/>
+        <bpws:variable name="AllMessagingActvitiesTwoCorr_DriverOperationOut" messageType="ns1:message1"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet2" properties="ns3:property2"/>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns3:property1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AllMessagingActvitiesTwoCorr_DriverOperation" portType="ns1:AllMessagingActvitiesTwoCorr_DriverPortType" variable="AllMessagingActvitiesTwoCorr_DriverOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Initialized Id1</bpws:literal>
+                </bpws:from>
+                <bpws:to>$AllMessagingActvitiesTwoCorr_PTypesOperationIn.part1/Id1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Initialized Id2</bpws:literal>
+                </bpws:from>
+                <bpws:to>$AllMessagingActvitiesTwoCorr_PTypesOperationIn.part1/Id2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="AllMessagingActvitiesTwoCorr_PTypesOperation" portType="ns2:AllMessagingActvitiesTwoCorr_PTypesPortType" inputVariable="AllMessagingActvitiesTwoCorr_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+                <bpws:correlation set="CorrelationSet2" initiate="yes"/>                
+            </bpws:correlations>
+        </bpws:invoke>
+       <bpws:invoke name="Invoke2" partnerLink="PartnerLink2" operation="AllMessagingActvitiesTwoCorr_PTypesOperation1" portType="ns2:AllMessagingActvitiesTwoCorr_PTypesPortType" inputVariable="AllMessagingActvitiesTwoCorr_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no"/>                
+            </bpws:correlations>
+        </bpws:invoke>
+       <bpws:invoke name="Invoke3" partnerLink="PartnerLink2" operation="AllMessagingActvitiesTwoCorr_PTypesOperation2" portType="ns2:AllMessagingActvitiesTwoCorr_PTypesPortType" inputVariable="AllMessagingActvitiesTwoCorr_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no"/>                
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:wait name="Wait1">
+            <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+        </bpws:wait>
+        <bpws:invoke name="Invoke4" partnerLink="PartnerLink3" operation="AllMessagingActvitiesTwoCorr_PTypesOperation" portType="ns2:AllMessagingActvitiesTwoCorr_PTypesPortType2" inputVariable="AllMessagingActvitiesTwoCorr_PTypesOperationIn" outputVariable="AllMessagingActvitiesTwoCorr_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no" pattern="request-response"/>                
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:receive name="Receive2" partnerLink="PartnerLink4" operation="AllMessagingActvitiesTwoCorr_PTypesOperation" portType="ns2:AllMessagingActvitiesTwoCorr_PTypesPortType1" createInstance="no" variable="AllMessagingActvitiesTwoCorr_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($AllMessagingActvitiesTwoCorr_PTypesOperationIn.part1/Id1, ': ', $AllMessagingActvitiesTwoCorr_PTypesOperationIn.part1/Id2)</bpws:from>
+                <bpws:to part="part1" variable="AllMessagingActvitiesTwoCorr_DriverOperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="AllMessagingActvitiesTwoCorr_DriverOperation" portType="ns1:AllMessagingActvitiesTwoCorr_DriverPortType" variable="AllMessagingActvitiesTwoCorr_DriverOperationOut"/>
+    </sequence>
+</process>

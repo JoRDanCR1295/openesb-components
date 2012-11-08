@@ -1,0 +1,1 @@
+deploy the javaee WS HelloWS and then run the coposite app driver tests

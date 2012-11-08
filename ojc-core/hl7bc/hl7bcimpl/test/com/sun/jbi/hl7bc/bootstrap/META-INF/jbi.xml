@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!-- jbi.xml descriptor for the binding component (BC) -->
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"    
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification">
+<!-- identification information about this binding -->
+    <component type="binding-component">
+        <identification>
+            <name>sun-hl7-binding</name>
+            <description>HL7 binding</description>
+            <identification:VersionInfo specification-version="${JBI_SPEC_VERSION}" build-number="${BUILD_NUMBER}"/>            
+        </identification>
+        <component-class-name description="The boot strap class" >com.sun.jbi.hl7bc.HL7BindingComponent</component-class-name>
+        <component-class-path>
+            <path-element>lib/hl7bcimpl.jar</path-element>
+            <path-element>lib/wsdl4j.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+            <path-element>lib/mina-core.jar</path-element>
+            <path-element>lib/slf4j-api.jar</path-element>
+			<path-element>lib/slf4j-simple.jar</path-element>
+			<path-element>lib/common-util.jar</path-element>
+            <path-element>lib/qos.jar</path-element> 
+		</component-class-path>
+        <bootstrap-class-name>com.sun.jbi.hl7bc.bootstrap.HL7BindingBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+			<path-element>lib/hl7bcimpl.jar</path-element>
+			<path-element>lib/componentsl.jar</path-element>
+			<path-element>lib/common-util.jar</path-element>
+			<path-element>lib/qos.jar</path-element>  
+        </bootstrap-class-path>
+        <shared-library>sun-encoder-library</shared-library>
+        <config:Configuration>
+			<config:Property name="Threads" 
+                            type="xsd:int" 
+                            displayName="Number of Outbound Processor Threads" 
+                            displayDescription="Number of threads to concurrently process outbound HL7 requests. The range of meaningful values is from 1 to 2147483647." 
+                            defaultValue="10" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="1"/> 
+               <config:Constraint facet="maxInclusive" value="2147483647"/>
+           </config:Property>
+		   <config:Property name="DatabaseJNDIName"
+						displayName="Data Source Name"
+            			displayDescription="Name of the Datasource where sun-hl7-binding persists sequence number and hl7 acknowledgment messages"
+                        showDisplay="all"
+                        type="xsd:string"
+            			defaultValue="jdbc/__default"/>
+			 <config:ApplicationConfiguration>
+               <config:Property name="configurationName" 
+                                type="xsd:string" 
+                                displayName="Application Configuration Name" 
+                                displayDescription="Name of the application configuration" 
+                                required="true"
+                                isApplicationRestartRequired="true"/>
+				<config:Property name="hostName" 
+                               type="xsd:string"
+                               displayName="Host Name" 
+                               displayDescription="TCP/IP host name of the server"  
+                               required="true"
+                               isApplicationRestartRequired="true"/>
+				 <config:Property name="port" 
+								type="xsd:int"
+								displayName="Host Port" 
+								displayDescription="The port number at which the HL7 external system receives messages. The range of meaningful values is from 1 to 65535."  
+								required="true"
+								defaultValue="-1" 
+								isApplicationRestartRequired="true">
+				   <config:Constraint facet="minInclusive" value="-1"/> 
+				   <config:Constraint facet="maxInclusive" value="65535"/>     
+			   </config:Property>
+			</config:ApplicationConfiguration>
+           <config:ApplicationVariable isApplicationRestartRequired="true">
+               <config:name/>
+               <config:type/>
+               <config:value/>
+           </config:ApplicationVariable>
+        </config:Configuration>   
+    </component>
+</jbi>

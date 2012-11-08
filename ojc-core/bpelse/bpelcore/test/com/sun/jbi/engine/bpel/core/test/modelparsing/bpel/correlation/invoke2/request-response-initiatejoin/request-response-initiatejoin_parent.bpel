@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="request-response-initiatejoin_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/request-response-initiatejoin_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/request-response-initiatejoin_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:request-response-initiatejoinChildTargetNamespace"
+         xmlns:ns1="request-response-initiatejoinParent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:request-response-initiatejoinChildTargetNamespace"
+            location="request-response-initiatejoin_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="request-response-initiatejoinParent"
+            location="request-response-initiatejoin_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:request-response-initiatejoinChildServiceLinkType"
+                     partnerRole="request-response-initiatejoinChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:request-response-initiatejoinParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:request-response-initiatejoinParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childOperation"
+                  messageType="ns0:request-response-initiatejoinChildMessage"></variable>
+        <variable name="request-response-initiatejoinParentOperation_Output"
+                  messageType="ns1:request-response-initiatejoinParentMessage"></variable>
+        <variable name="request-response-initiatejoinParentOperation_Input"
+                  messageType="ns1:request-response-initiatejoinParentMessage"></variable>
+        <variable name="request-response-initiatejoinParentOperation1_Output"
+                  messageType="ns1:request-response-initiatejoinParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corProp1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="request-response-initiatejoinParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:request-response-initiatejoinParentPortType"
+                 operation="request-response-initiatejoinParentOperation"
+                 variable="request-response-initiatejoinParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$request-response-initiatejoinParentOperation_Output.request-response-initiatejoinParentPart/string</from>
+                <to>$childOperation.request-response-initiatejoinChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke name="Activity" partnerLink="plink_child"
+                portType="ns0:request-response-initiatejoinChildPortType"
+                operation="request-response-initiatejoinChildOperation"
+                inputVariable="childOperation"
+                outputVariable="childOperation">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="join"
+                             pattern="request-response"/>
+            </correlations>
+        </invoke>
+        <receive name="request-response-initiatejoinParentOperation1"
+                 partnerLink="plink_parent1"
+                 portType="ns1:request-response-initiatejoinParentPortType1"
+                 operation="request-response-initiatejoinParentOperation1"
+                 variable="request-response-initiatejoinParentOperation1_Output">
+            <correlations>
+                <correlation set="corProp1"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$request-response-initiatejoinParentOperation1_Output.request-response-initiatejoinParentPart/string</from>
+                <to>$request-response-initiatejoinParentOperation_Input.request-response-initiatejoinParentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parent"
+               portType="ns1:request-response-initiatejoinParentPortType"
+               operation="request-response-initiatejoinParentOperation"
+               variable="request-response-initiatejoinParentOperation_Input"></reply>
+    </sequence>
+</process>

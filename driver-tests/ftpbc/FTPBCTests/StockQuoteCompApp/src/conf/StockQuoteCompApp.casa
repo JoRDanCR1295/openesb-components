@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://enterprise.netbeans.org/bpel/SERV_STOCK_QUOTE" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SERV_STOCK_QUOTE_FTP" xmlns:ns3="http://enterprise.netbeans.org/bpel/GET_STOCK_QUOTE" xmlns:ns4="http://j2ee.netbeans.org/wsdl/FILE_REQ_FEEDER" xmlns:ns5="http://j2ee.netbeans.org/wsdl/STOCK_OVER_FTP" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint display-name="PartnerLink1" endpoint-name="SERV_STOCK_QUOTE_FTPPortTypeRole_myRole" file-path="SERV_STOCK_QUOTE.bpel" interface-name="ns2:SERV_STOCK_QUOTE_FTPPortType" name="endpoint1" process-name="SERV_STOCK_QUOTE" service-name="ns1:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="FILE_REQ_FEEDERPortTypeRole_myRole" file-path="GET_STOCK_QUOTE.bpel" interface-name="ns4:FILE_REQ_FEEDERPortType" name="endpoint2" process-name="GET_STOCK_QUOTE" service-name="ns3:PartnerLink2"/>
+<endpoint display-name="PartnerLink1" endpoint-name="STOCK_OVER_FTPPortTypeRole_partnerRole" file-path="GET_STOCK_QUOTE.bpel" interface-name="ns5:STOCK_OVER_FTPPortType" name="endpoint3" process-name="GET_STOCK_QUOTE" service-name="ns3:PartnerLink1"/>
+<endpoint endpoint-name="FILE_REQ_FEEDERPort" interface-name="ns4:FILE_REQ_FEEDERPortType" name="endpoint4" service-name="ns4:FILE_REQ_FEEDERService"/>
+<endpoint endpoint-name="port1" interface-name="ns5:STOCK_OVER_FTPPortType" name="endpoint5" service-name="ns5:service1"/>
+<endpoint endpoint-name="port1" interface-name="ns2:SERV_STOCK_QUOTE_FTPPortType" name="endpoint6" service-name="ns2:service1"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="GiveStockQuote.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="StockQuoteCompApp-GiveStockQuote" unit-name="GiveStockQuote" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint1"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="GetStockQuote.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="StockQuoteCompApp-GetStockQuote" unit-name="GetStockQuote" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint2"/>
+<consumes endpoint="endpoint3"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="StockQuoteCompApp-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/GetStockQuote/FILE_REQ_FEEDER.wsdl#xpointer(/definitions/service[@name='FILE_REQ_FEEDERService']/port[@name='FILE_REQ_FEEDERPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-ftp-binding.jar" component-name="sun-ftp-binding" description="Represents this Service Unit" name="StockQuoteCompApp-sun-ftp-binding" unit-name="sun-ftp-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/GetStockQuote/STOCK_OVER_FTP.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+<provides endpoint="endpoint5"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/GiveStockQuote/SERV_STOCK_QUOTE_FTP.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint6"/>
+<provides endpoint="endpoint6"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint6" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint2" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint5" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/FILE_REQ_FEEDER.wsdl#xpointer(/definitions/portType[@name='FILE_REQ_FEEDERPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/STOCK_OVER_FTP.wsdl#xpointer(/definitions/portType[@name='STOCK_OVER_FTPPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GiveStockQuote/SERV_STOCK_QUOTE_FTP.wsdl#xpointer(/definitions/portType[@name='SERV_STOCK_QUOTE_FTPPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/FILE_REQ_FEEDER.wsdl#xpointer(/definitions/binding[@name='FILE_REQ_FEEDERBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/STOCK_OVER_FTP.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GiveStockQuote/SERV_STOCK_QUOTE_FTP.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/FILE_REQ_FEEDER.wsdl#xpointer(/definitions/service[@name='FILE_REQ_FEEDERService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GetStockQuote/STOCK_OVER_FTP.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/GiveStockQuote/SERV_STOCK_QUOTE_FTP.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

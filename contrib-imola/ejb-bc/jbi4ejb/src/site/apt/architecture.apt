@@ -1,0 +1,46 @@
+																			---
+																			Architecture
+																			---
+																			Marco Piraccini
+																			---
+																			30/07/2007
+																			
+Introduction
+
+  To fully understand this Binding Component architecture we focus on two main phases: 
+  {{{architecture.html#The Deploy time}The Deploy time}} and {{{architecture.html#The Runtime}The Runtime}} 																			
+  
+* {The Deploy time}
+
+  At deploy time the following sequence of events occurs:
+  
+  [[1]] From the WSDL, the remote interface and the objects managed by the EJB (parameters, return type and exceptions) are dynamically 
+  		created.  
+  		  
+  [[2]] Using RMIC, the RMI over IIOP stub are also created
+  
+  [[3]] The EJB is located using the corbaname
+  
+  [[4]] A JBI Endpoint based on the previous classes is created and published. 
+  
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[images/jbi4EjbDeployTime.jpg] The deploy time sequence.
+
+* {The Runtime}
+
+  At runtime the following sequence of events occurs:
+  
+  [[1]] A JBI Endpoint sends a messages to the Jbi4Ejb endpoint  
+  
+  [[2]] The received message is unmarshalled and the parameter objects are dynamically populated 
+  
+  [[3]] The EJB is called using the the created objects
+  
+  [[4]] The EJB result is converted as a JBI xml message and sent back the consumer (the endpoint that sent the message).  		 
+  
+  []
+  
+[images/jbi4EjbRuntime.jpg] The runtime sequence

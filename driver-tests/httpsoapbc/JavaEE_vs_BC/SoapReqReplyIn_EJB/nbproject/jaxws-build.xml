@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/service"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-service-check-EE_SoapReqReplyInDoc" depends="wsimport-init">
+        <condition property="wsimport-service-EE_SoapReqReplyInDoc.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soapreqreplyindoc" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-EE_SoapReqReplyInDoc" depends="wsimport-init,wsimport-service-check-EE_SoapReqReplyInDoc" unless="wsimport-service-EE_SoapReqReplyInDoc.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/service" extension="true" verbose="true" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/${meta.inf}/xml-resources/web-services/EE_SoapReqReplyInDoc/wsdl/SoapReqReplyInDoc.wsdl" catalog="catalog.xml"/>
+        <copy todir="${basedir}/${meta.inf}/wsdl/EE_SoapReqReplyInDoc">
+            <fileset dir="${basedir}/${meta.inf}/xml-resources/web-services/EE_SoapReqReplyInDoc/wsdl/"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-EE_SoapReqReplyInDoc" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soapreqreplyindoc"/>
+    </target>
+    <target name="wsimport-service-check-EE_SoapReqReplyInRPC" depends="wsimport-init">
+        <condition property="wsimport-service-EE_SoapReqReplyInRPC.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soapreqreplyinrpc" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-EE_SoapReqReplyInRPC" depends="wsimport-init,wsimport-service-check-EE_SoapReqReplyInRPC" unless="wsimport-service-EE_SoapReqReplyInRPC.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/service" extension="true" verbose="true" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/${meta.inf}/xml-resources/web-services/EE_SoapReqReplyInRPC/wsdl/SoapReqReplyInRPC.wsdl" catalog="catalog.xml"/>
+        <copy todir="${basedir}/${meta.inf}/wsdl/EE_SoapReqReplyInRPC">
+            <fileset dir="${basedir}/${meta.inf}/xml-resources/web-services/EE_SoapReqReplyInRPC/wsdl/"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-EE_SoapReqReplyInRPC" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soapreqreplyinrpc"/>
+    </target>
+    <target name="wsimport-service-check-EE_EE_SoapReqReplyInEncoded" depends="wsimport-init">
+        <condition property="wsimport-service-EE_EE_SoapReqReplyInEncoded.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/service/ee_ee_soapreqreplyinencoded" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-EE_EE_SoapReqReplyInEncoded" depends="wsimport-init,wsimport-service-check-EE_EE_SoapReqReplyInEncoded" unless="wsimport-service-EE_EE_SoapReqReplyInEncoded.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/service" extension="true" verbose="true" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/${meta.inf}/xml-resources/web-services/EE_EE_SoapReqReplyInEncoded/wsdl/SoapReqReplyInEncoded.wsdl" catalog="catalog.xml"/>
+        <copy todir="${basedir}/${meta.inf}/wsdl/EE_EE_SoapReqReplyInEncoded">
+            <fileset dir="${basedir}/${meta.inf}/xml-resources/web-services/EE_EE_SoapReqReplyInEncoded/wsdl/"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-EE_EE_SoapReqReplyInEncoded" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/service/ee_ee_soapreqreplyinencoded"/>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-EE_SoapReqReplyInDoc, wsimport-service-EE_SoapReqReplyInRPC, wsimport-service-EE_EE_SoapReqReplyInEncoded"/>
+    <target name="wsimport-service-compile" depends="wsimport-service-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/service" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}"/>
+    </target>
+</project>

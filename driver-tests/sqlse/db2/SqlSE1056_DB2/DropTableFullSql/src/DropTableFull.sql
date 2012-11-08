@@ -1,0 +1,1 @@
+DROP TABLE db2Admin.drivertest_location2

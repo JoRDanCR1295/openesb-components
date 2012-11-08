@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="EventHandler_OnEvent_onProcess3"
+    targetNamespace="http://www.seebeyond.com/eInsight/EventHandler_OnEvent_onProcess3"
+    sbynpxp:end_YLoc="103.0"
+    sbynpxp:start_YLoc="43.0"
+    sbynpxp:linkStyle="angular"
+    sbynpxp:start_XLoc="-11.0"
+    sbynpxp:end_XLoc="688.0"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:tns="http://www.seebeyond.com/eInsight/EventHandler3"
+    xmlns:ns4="EventHandler3"
+    xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+    xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+    xmlns:ns0="urn:jmsservice"
+    xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/"
+    xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+    xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel"
+    xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2"
+    xmlns:ns1="http://webservices.EventHandler3.com/websvc"
+    xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+    xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+    xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns3="https://webservices.EventHandler3.com/websvc"
+    xmlns:ns2="EventHandler3"
+    xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1">
+    
+    <bpel_20:import namespace="EventHandler3"
+        location="EventHandler3.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="EventHandler3NormalServiceLink"
+        partnerLinkType="ns2:EventHandler3NormalServiceLinkType"
+        myRole="Server"/>
+        
+        <bpel_20:partnerLink name="EventHandler3NormalServiceLink2"
+        partnerLinkType="ns2:EventHandler3NormalServiceLinkType2"
+        myRole="Server"/>
+        
+        
+        <bpel_20:partnerLink name="EventHandler3OnEventonProcessServiceLink"
+        partnerLinkType="ns4:EventHandler3OnEventonProcessServiceLinkType"
+        myRole="Server"/>
+        
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="MyRole_EventHandler3Operation_Output"
+            messageType="ns2:EventHandler3Message"
+        sbyncreation:type="auto"></bpel_20:variable>
+        
+        <bpel_20:variable name="MyRole_EventHandler3Operation_Input"
+            messageType="ns2:EventHandler3Message"
+        sbyncreation:type="auto"></bpel_20:variable>
+        
+        <bpel_20:variable name="MyRole_EventHandler3Operation2_Input"
+            messageType="ns2:EventHandler3Message2"
+        sbyncreation:type="auto"></bpel_20:variable>                         
+    </bpel_20:variables>
+    
+    <correlationSets>
+        <correlationSet name="cSet1"
+        properties="ns2:property"/>
+        <!--        
+        <correlationSet name="cSet2"
+        properties="ns2:property1 ns4:Invoke1childProp "/>
+        -->        
+    </correlationSets>
+    
+    <bpel_20:eventHandlers>
+        <onEvent partnerLink="EventHandler3OnEventonProcessServiceLink" 
+            portType="ns4:OnEventOnProcess3PortType"
+            operation="OnEventOnProcess3" 
+            messageType="ns2:OnEventMessage" 
+            variable="OnEventonProcessVar1">
+            <correlations>
+                <correlation set="cSet1"
+                initiate="no"/>
+            </correlations>
+            
+            <scope name="onEvent1Scope">
+                <faultHandlers>
+                    <catchAll>
+                        <sequence name="Sequence1">
+                            <bpel_20:reply name="MyRole.OnEventonProcess4.Reply"
+                                partnerLink="EventHandler3OnEventonProcessServiceLink"
+                                portType="ns4:OnEventOnProcess3PortType"
+                                operation="OnEventOnProcess3"
+                                variable="OnEventonProcessVar1">
+                            </bpel_20:reply>
+                        </sequence>
+                    </catchAll>
+                </faultHandlers>
+                <sequence>
+                    <if name="If1">
+                        <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='1.11'</condition>
+                        <assign name="AssignIf">
+                            <copy>
+                                <from>concat('OnEventIf:  ', $OnEventonProcessVar1.EventHandler3Part2/string2)</from>
+                                <to>$OnEventonProcessVar1.EventHandler3Part2/string2</to>
+                            </copy>
+                        </assign>
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='2.11'</condition>
+                            <assign name="AssignElsif1">                                
+                                <copy>                                    
+                                    <from>concat('OnEventElseIf2:  ', $OnEventonProcessVar1.EventHandler3Part2/string2)</from>
+                                    <to>$OnEventonProcessVar1.EventHandler3Part2/string2</to>
+                                </copy>
+                            </assign>    
+                        </elseif>  
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='3.11'</condition>
+                            <assign name="AssignElsif2">
+                                
+                                <copy>                                    
+                                    <from>concat('OnEventElseIf3:  ', $OnEventonProcessVar1.EventHandler3Part2/string2)</from>
+                                    <to>$OnEventonProcessVar1.EventHandler3Part2/string2</to>
+                                </copy>
+                            </assign>    
+                        </elseif>
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='4.11'</condition>
+                            <assign name="AssignElsif3">
+                                
+                                <copy>
+                                    <from>concat('OnEventElseIf4:  ', $OnEventonProcessVar1.EventHandler3Part2/string2)</from>
+                                    <to>$OnEventonProcessVar1.EventHandler3Part2/string2</to>
+                                </copy>
+                            </assign>    
+                        </elseif>
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='5.11'</condition>                            
+                            <empty name="Empty1"></empty> 
+                        </elseif>
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='6.11'</condition>                            
+                            <sequence>
+                                <bpel_20:reply name="MyRole.OnEventonProcess5.Reply"
+                                    partnerLink="EventHandler3OnEventonProcessServiceLink"
+                                    portType="ns4:OnEventOnProcess3PortType"
+                                    operation="OnEventOnProcess3"
+                                    variable="OnEventonProcessVar1">
+                                </bpel_20:reply>
+                                <exit name="Exit1"/> 
+                            </sequence>
+                        </elseif>
+                        <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='7.11'</condition>                            
+                            <sequence>
+                            <throw
+                                   faultName="tns:FaultName"                                   
+                                   sbynpxp:XLoc="383.0"
+                                   sbynpxp:YLoc="-85.0"></throw>
+                        </sequence>
+                        </elseif>
+                                                <elseif>
+                            <condition>$OnEventonProcessVar1.EventHandler3Part2/string2='8.11'</condition>                            
+                            
+                                <empty name="Empty2"></empty> 
+                            
+                        </elseif>
+                        <else>
+                            <assign name="AssignElse">
+                                <copy>
+                                    <from>concat('OnEventElse:  ', $OnEventonProcessVar1.EventHandler3Part2/string2)</from>
+                                    <to>$OnEventonProcessVar1.EventHandler3Part2/string2</to>
+                                </copy>
+                            </assign>       
+                        </else>
+                    </if>
+                    
+                    <bpel_20:reply name="MyRole.OnEventonProcess3.Reply"
+                        partnerLink="EventHandler3OnEventonProcessServiceLink"
+                        portType="ns4:OnEventOnProcess3PortType"
+                        operation="OnEventOnProcess3"
+                        variable="OnEventonProcessVar1">
+                    </bpel_20:reply>
+                </sequence>
+            </scope>
+        </onEvent>
+    </bpel_20:eventHandlers>
+    
+    <sequence>            
+        <scope name="scope1">      			 
+            <sequence>     	      
+                <bpel_20:receive name="MyRole.NormalOperation3.Receive"
+                    partnerLink="EventHandler3NormalServiceLink"
+                    portType="ns4:NormalOperation3PortType"
+                    operation="NormalOperation"
+                    variable="MyRole_EventHandler3Operation_Input"
+                    createInstance="yes"
+                    sbynpxp:XLoc="22.0"
+                    sbynpxp:YLoc="37.0">
+                    <correlations>
+                        <correlation set="cSet1" initiate="yes"/>
+                    </correlations>
+                </bpel_20:receive>  
+                
+                
+                <bpel_20:assign name="Assign1"
+                    sbynpxp:XLoc="134.0"
+                    sbynpxp:YLoc="77.0">
+                    <copy>
+                        <from>concat('MainReply:  ', $MyRole_EventHandler3Operation_Input.EventHandler3Part/string)</from>
+                        <to>$MyRole_EventHandler3Operation_Output.EventHandler3Part/string</to>
+                    </copy>
+                </bpel_20:assign>
+                
+                <receive name="MyRole.NormalOperation.Receive"
+                    partnerLink="EventHandler3NormalServiceLink2"
+                    portType="ns4:NormalOperation3PortType2"
+                    operation="NormalOperation2"
+                    variable="MyRole_EventHandler3Operation2_Input"
+                    createInstance="no"
+                    sbynpxp:XLoc="446.0"
+                    sbynpxp:YLoc="95.0">
+                    <correlations>
+                        <correlation set="cSet1" initiate="no"/>
+                    </correlations>
+                </receive>    
+                
+                <bpel_20:assign name="Assign2"
+                    sbynpxp:XLoc="134.0"
+                    sbynpxp:YLoc="77.0">
+                    <copy>
+                        <from>concat('2ndReply:  ', $MyRole_EventHandler3Operation2_Input.EventHandler3Part/string)</from>
+                        <to>$MyRole_EventHandler3Operation2_Input.EventHandler3Part/string</to>
+                    </copy>
+                </bpel_20:assign>
+                
+                
+                <bpel_20:reply name="MyRole.NormalOperation2.Reply"
+                    partnerLink="EventHandler3NormalServiceLink2"
+                    portType="ns4:NormalOperation3PortType2"
+                    operation="NormalOperation2"
+                    variable="MyRole_EventHandler3Operation2_Input"
+                    sbynpxp:XLoc="573.0"
+                sbynpxp:YLoc="91.0"></bpel_20:reply> 
+                
+                <bpel_20:wait>
+                    <for>'P0Y0DT0H0M3S'</for>
+                </bpel_20:wait>                      
+                
+                <bpel_20:reply name="MyRole.NormalOperation.Reply"
+                    partnerLink="EventHandler3NormalServiceLink"
+                    portType="ns4:NormalOperation3PortType"
+                    operation="NormalOperation"
+                    variable="MyRole_EventHandler3Operation_Output"
+                    sbynpxp:XLoc="573.0"
+                sbynpxp:YLoc="91.0"></bpel_20:reply>
+            </sequence>
+        </scope>
+    </sequence>
+</bpel_20:process>

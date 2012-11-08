@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" 
+    xmlns:tns="http://www.truebaseline.com/CallMef.wsdl" 
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" 
+    xmlns:s="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.truebaseline.com/CallMef.wsdl" name="CallMef" 
+    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:ns0="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+	<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://www.truebaseline.com/CallMef.wsdl">
+    <s:import namespace="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" schemaLocation="WorkflowInformation.xsd"/>
+</s:schema>
+            
+	</wsdl:types>
+	<wsdl:message name="CallMefRequest">
+	    <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	    <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	    <wsdl:part name="waitForReply" type="s:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="CallMefResponse">
+	    <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	    <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	</wsdl:message>
+    <wsdl:message name="CallMefFault">
+	    <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	    <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	</wsdl:message>
+    <wsdl:message name="ReplyCallMefRequest">
+        <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+        <wsdl:part name="Configuration" element="ns0:Configuration"/>
+    </wsdl:message>
+    <wsdl:message name="ReplyCallMefResponse">
+        <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+            <wsdl:part name="Configuration" element="ns0:Configuration"/>
+    </wsdl:message>
+    <wsdl:message name="ReplyCallMefFault">
+        <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+            <wsdl:part name="Configuration" element="ns0:Configuration"/>
+    </wsdl:message>
+    <wsdl:portType name="CallMefPortType">
+		
+        <wsdl:operation name="CallMef">
+            <wsdl:input message="tns:CallMefRequest" name="CallMefRequest"/>
+            <wsdl:output message="tns:CallMefResponse" name="CallMefResponse"/>
+            <wsdl:fault name="CallMefFault" message="tns:CallMefFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="ReplyCallMef">
+            <wsdl:input name="ReplyCallMefRequest" message="tns:ReplyCallMefRequest"/>
+            <wsdl:output name="ReplyCallMefResponse" message="tns:ReplyCallMefResponse"/>
+            <wsdl:fault name="ReplyCallMefFault" message="tns:ReplyCallMefFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CallMefPortType" type="tns:CallMefPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CallMef">
+            <soap:operation/>
+            <wsdl:input name="CallMefRequest">
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output name="CallMefResponse">
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="CallMefFault">
+                <soap:fault name="CallMefFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="ReplyCallMef">
+            <soap:operation/>
+            <wsdl:input name="ReplyCallMefRequest">
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output name="ReplyCallMefResponse">
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="ReplyCallMefFault">
+                <soap:fault name="ReplyCallMefFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CallMefService">
+        <wsdl:port name="CallMefServiceSoap" binding="tns:CallMefPortType">
+            <soap:address location="http://DHY4LKB1:18181/TestDeployBPEL/CallMef/CallMefServiceSoap"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="CallMefPartnerLinkType">
+        <plink:role name="CallMefRole" portType="tns:CallMefPortType"/>
+    </plink:partnerLinkType>
+    <vprop:property name="CorrelationId" type="s:string"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationId" messageType="tns:CallMefRequest" part="EventMessage">
+        <vprop:query>/ns0:EventMessage/ns0:CorrelationId</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:CorrelationId" messageType="tns:ReplyCallMefRequest" part="EventMessage">
+        <vprop:query>/ns0:EventMessage/ns0:CorrelationId</vprop:query>
+    </vprop:propertyAlias>
+</wsdl:definitions>

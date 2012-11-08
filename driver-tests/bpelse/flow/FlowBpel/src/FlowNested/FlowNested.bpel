@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowNested" 
+    targetNamespace="http://www.mycomp.org/DefaultServiceName"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/DefaultServiceName">
+    <import namespace="http://www.mycomp.org/DefaultServiceName" location="FlowNested.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:FlowNestedPartnerLinkType" myRole="FlowNestedProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch3" type="xsd:string"/>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="Output" messageType="wsdlNS:message1"/>
+        <variable name="Input" messageType="wsdlNS:message1"/>
+    </variables>
+    <sequence>
+      <receive name="Receive1" partnerLink="PartnerLink1" portType="wsdlNS:FlowNestedPortType" operation="FlowNestedOperation" variable="Input" createInstance="yes"/>
+      <flow name="Flow1">
+         <assign name="Assign1">
+             <copy>
+                 <from>'Branch1:'</from>
+                 <to variable="branch1"/>
+             </copy>
+         </assign>
+         <flow name="Flow2">
+            <assign name="Assign2">
+                <copy>
+                    <from>'NestedBranch1:'</from>
+                    <to variable="branch2"/>
+                </copy>
+            </assign>
+            <assign name="Assign3">
+                <copy>
+                    <from>'NestedBranch2:'</from>
+                    <to variable="branch3"/>
+                </copy>
+            </assign>
+         </flow>
+      </flow>
+        <assign name="Assign4">
+            <copy>
+                <from>concat($branch1, $Input.branch1)</from>
+                <to part="branch1" variable="Output"/>
+            </copy>
+            <copy>
+                <from>concat($branch2, $Input.nestedBranch1)</from>
+                <to part="nestedBranch1" variable="Output"/>
+            </copy>
+            <copy>
+                <from>concat($branch3, $Input.nestedBranch2)</from>
+                <to part="nestedBranch2" variable="Output"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowNestedOperation" portType="wsdlNS:FlowNestedPortType" variable="Output"/>
+   </sequence>
+   
+</process>

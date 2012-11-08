@@ -1,0 +1,113 @@
+											---
+											OpenESB - Getting Started
+											---
+											Raffaele Spazzoli, Marco Piraccini, Giancarlo Valeri
+											---
+											02/03/2007
+											
+OpenESB - Getting Started
+
+	This getting started guide shows how to install Jbi4Corba and a sample service assembly in 
+	{{{https://open-esb.dev.java.net/glassfishesb/}GlassFishESB}} environment.
+	
+  {{{openesbGettingStarted.html#Integration Scenario}Integration Scenario}}
+
+	{{{openesbGettingStarted.html#Environment setup}Environment setup}}
+
+	{{{openesbGettingStarted.html#Installing and starting Jbi4Corba Binding Component}Installing and starting Jbi4Corba Binding Component}}
+	
+	{{{openesbGettingStarted.html#Creating a service assembly}Creating a service assembly}}
+	
+	{{{openesbGettingStarted.html#Deploying a service assembly}Deploying a service assembly}}
+	
+{Integration Scenario}
+
+	A binding component using Jbi4Corba exposes on the internal BUS an external service provided by a CORBA servant.
+	To locate the servant, the Jbi4Corba component must use an active CORBA name server 
+  (or other {{{provider/localizationType.html#localization}localization}} mechanism).	
+	
+	Thus the integration scenario is shown in the following figure:
+
+[images/integrationScenario.jpg] Integration Scenario.	
+
+
+{Environment setup}
+
+	Install the {{{https://open-esb.dev.java.net/Downloads.html}GlassFishESB}} (or newer).
+	That contains the IDE (Netbeans 6.1) and GlassFish with the JBI runtime. 
+
+
+{Installing and starting Jbi4Corba Binding Component}
+
+	Download the {{{http://sourceforge.net/projects/jbi4corba}Jbi4Corba}} component.
+    To run jbi4corba it's necessary both a shared library and the component. The shared library contains jacorb's orb and it's named jacorb-library.zip.
+    Install first the shared library.
+	Install and start the component using the contextual menu on the server JBI module. 
+
+[images/installJBI4CorbaComponent.jpg]Install the jbi4corba component  
+  
+ 	After these operations, you can deploy a Service Assembly that uses the Jbi4Corba component.
+
+{Creating a service assembly}
+
+  A service assembly is a deployable item that configures one or more endpoint inside a JBI ESB.
+  We are going set up a configuration that take a Corba service and expose it a SOAP/HTTP Webservice.
+  The configuration is shown in the following figure:
+  
+[images/sampleConfiguration.jpg] A Corba service exposed as a SOAP/HTTP Webservice.
+  
+  The Jbi4Corba component creates an internal (i.e. visible inside the ESB) endpoint. 
+  This internal endpoint is exposed as an external endpoint with the Http-Soap Binding Component. 
+  The http component will proxy the incoming externall calls to the internal endpoint exploiting the JBI routing mechanisms.
+  
+  A Service Assembly (SA)  is a zip file containing one or more Service Unit (SU) file, each Service Unit defining one or more endpoint.
+  We need three Service Unit (SU):
+  
+  * <<JBI4Corba>> containing the definition for the Jbi4Corba endpoint.
+  
+  * <<Http>> containing the definition for the http endpoint.
+  
+  * <<BPEL>> containing the definition for the BPEL.
+  
+  []
+  
+* Jbi4Corba service unit
+
+  To create a Jbi4Corba service unit follow {{{netbeansplugin.html#Netbeans Plugin}The Netbeans Plugin Guide}}
+  
+* Http service unit
+
+  To create a Http service unit follow {{{https://open-esb.dev.java.net/kb/preview3/ep-http-bc.html}HTTP Binding Component User's Guide}} and {{{https://open-esb.dev.java.net/kb/preview3/ep-http-bc-tutorial.html}Understanding the HTTP Binding Component}}
+  
+* BPEL service unit
+  
+  To create a BPEL service engine follow {{{https://open-esb.dev.java.net/kb/preview3/ep-bpel-se.html}BPEL Service engine User's Guide}} and {{{http://www.netbeans.org/kb/55/bpel_gsg_project.html#createnew}Developer Guide to BPEL Designer}}
+  
+  For example the BPEL generated that implement a simple Business procress between a Jbi4corba (SU) and a Http (SU) is:
+
+[images/exampleBPEL.jpg] Example the BPEL generated  
+
+* The service assembly
+
+	The service assembly is unit of deployable configuration in JBI, in our example it has the following layout:
+
+[images/compositeApp.jpg] Composite Application  
+
+{Deploying a service assembly}
+
+  In NetBeans, with the server started, select from "CompositeApp" the "Deploy" option and wait start it.
+  
+[images/deployJBI4CorbaSA.jpg] Deploy the Service Assembly
+
+  
+    
+  If the Service Assembly starts correctly, you should see both the BC running
+  
+[images/JBI4CorbaSACorrectlyStarted.jpg] The Service Assembly correctly started
+  
+  
+  
+  Now you can test the service assembly sending a SOAP message to the HTTP endpoind. 
+  For the component to work, the Corba servant and the name server should be running 
+  when the SOAP message is processed by the Service Assembly.
+  

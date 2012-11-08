@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="JMSBCComplexTypeTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSBCComplexTypeTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSBCComplexTypeTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest" location="JMSBCComplexTypeTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="ReceivePartnerLink" partnerLinkType="ns1:JMSBCComplexTypeTest1" myRole="JMSBCComplexTypeTestPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JMSBCComplexTypeTestOperationOut" messageType="ns1:JMSBCComplexTypeTestOperationReply"/>
+        <bpws:variable name="JMSBCComplexTypeTestOperationIn" messageType="ns1:JMSBCComplexTypeTestOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ReceivePartnerLink" operation="JMSBCComplexTypeTestOperation" portType="ns1:JMSBCComplexTypeTestPortType" variable="JMSBCComplexTypeTestOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JMSBCComplexTypeTestOperationIn.MsgRequestPart/StringElem</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestOperationOut.MsgReplyPart/StringElement</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>1234.56</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestOperationOut.MsgReplyPart/FloatElement</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ReceivePartnerLink" operation="JMSBCComplexTypeTestOperation" portType="ns1:JMSBCComplexTypeTestPortType" variable="JMSBCComplexTypeTestOperationOut"/>
+    </sequence>
+</process>

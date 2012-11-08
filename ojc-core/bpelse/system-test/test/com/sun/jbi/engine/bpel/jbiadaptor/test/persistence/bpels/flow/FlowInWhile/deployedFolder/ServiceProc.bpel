@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ServiceProc"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestFlowInWhile/ServiceProc"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TestFlowInWhile/ServiceProc">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" location="FlowInWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ServicePartner" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" partnerLinkType="tns:invokePLT" myRole="InvokePTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InvokeOperOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:InvokeResponse"/>
+        <variable name="InvokeOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:InvokeRequest"/>
+    </variables>
+    <sequence>
+        <receive name="ServiceRec" createInstance="yes" partnerLink="ServicePartner" operation="InvokeOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" portType="tns:InvokePT" variable="InvokeOperIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="InvokeOperIn" part="part1"/>
+                <to variable="InvokeOperOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="ServiceReply" partnerLink="ServicePartner" operation="InvokeOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" portType="tns:InvokePT" variable="InvokeOperOut"/>
+    </sequence>
+</process>

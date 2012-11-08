@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi version="1.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://java.sun.com/xml/ns/jbi"
+     xmlns:ns1="http://www.example.org/soap/jamocha/definitions"
+     xmlns:ns2="http://www.example.org/rules/jamocha/definitions">
+    
+    <service-assembly>
+        <identification>
+            <name>jamocha-jsr94-tck-sa</name>
+            <description>Service assembly for Jamocha</description>
+        </identification>
+                
+        <service-unit>
+            <identification>
+                <name>jamocha-soap-endpoint</name>
+                <description>Service unit with SOAP inbound endpoint for Jamocha</description>
+            </identification>
+            <target>
+                <artifacts-zip>http-su.zip</artifacts-zip>
+                <component-name>sun-http-binding</component-name>
+            </target>
+        </service-unit>
+        <service-unit>
+            <identification>
+                <name>jamocha-jsr94-tck-rules</name>
+                <description>Service unit containing JSR 94 TCK rules for Jamocha</description>
+            </identification>
+            <target>
+                <artifacts-zip>rule-su.zip</artifacts-zip>
+                <component-name>fort-rules-engine</component-name>
+            </target>
+        </service-unit>
+        <connections>
+            <connection>
+                <consumer service-name="ns1:JamochaService" endpoint-name="JamochaPort"/>
+                <provider service-name="ns2:JamochaServiceType" endpoint-name="JamochaServiceProvider"/>
+            </connection>        
+        </connections>
+    </service-assembly>        
+</jbi>

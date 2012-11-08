@@ -1,0 +1,1 @@
+SELECT DISTINCT HL7DataStructures.data_structure, HL7DataStructures.elementary FROM HL7DataStructures INNER JOIN HL7Versions ON HL7DataStructures.version_id = HL7Versions.version_id WHERE (((HL7DataStructures.data_structure) Not Like 'CE_%') AND ((HL7Versions.hl7_version)= ? )) ORDER BY HL7DataStructures.data_structure

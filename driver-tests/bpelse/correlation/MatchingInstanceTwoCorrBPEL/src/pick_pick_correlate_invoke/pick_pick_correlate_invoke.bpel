@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="pick_pick_correlate_invoke"
+    targetNamespace="http://enterprise.netbeans.org/bpel/pick_pick_correlate_invoke"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/pick_pick_correlate_invoke" xmlns:ns1="http://j2ee.netbeans.org/wsdl/parentWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/subBPWSDL" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/parentWSDL" location="parentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/subBPWSDL" location="subBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns1:parentWSDLPartner1" myRole="parentWSDLPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:subBPWSDLPartner" partnerRole="subBPWSDLPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:parentWSDLPartner" myRole="parentWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="ParentWSDLOperationIn4" messageType="ns1:parentWSDLOperationRequest1"/>
+        <bpws:variable name="ParentWSDLOperationIn3" messageType="ns1:parentWSDLOperationRequest1"/>
+        <bpws:variable name="ParentWSDLOperationIn2" messageType="ns1:parentWSDLOperationRequest1"/>
+        <bpws:variable name="ParentWSDLOperationIn1" messageType="ns1:parentWSDLOperationRequest1"/>
+        <bpws:variable name="SubBPWSDLOperationOut" messageType="ns2:subBPWSDLOperationReply"/>
+        <bpws:variable name="SubBPWSDLOperationIn" messageType="ns2:subBPWSDLOperationRequest"/>
+        <bpws:variable name="ParentWSDLOperationOut" messageType="ns1:parentWSDLOperationReply"/>
+        <bpws:variable name="ParentWSDLOperationIn" messageType="ns1:parentWSDLOperationRequest"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet6" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet5" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet4" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet3" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet2" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:property"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:pick name="Pick1" createInstance="yes">
+            <bpws:onMessage partnerLink="PartnerLink1" operation="parentWSDLOperation" portType="ns1:parentWSDLPortType" variable="ParentWSDLOperationIn">
+                <bpws:correlations>
+                    <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+                    <bpws:correlation set="CorrelationSet3" initiate="yes"/>
+                    <bpws:correlation set="CorrelationSet5" initiate="yes"/>
+                </bpws:correlations>
+                <bpws:sequence name="Sequence1">
+                    <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="ParentWSDLOperationIn" part="part1"/>
+                <bpws:to variable="ParentWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+                    <bpws:assign name="Assign2">
+                        <bpws:copy>
+                            <bpws:from variable="ParentWSDLOperationIn" part="part1"/>
+                            <bpws:to variable="SubBPWSDLOperationIn" part="part1"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="subBPWSDLOperation" portType="ns2:subBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut"/>
+                    <bpws:assign name="Assign3">
+                        <bpws:copy>
+                            <bpws:from>concat($SubBPWSDLOperationOut.part1/ns0:string, ' after first call ')</bpws:from>
+                            <bpws:to>$ParentWSDLOperationOut.part1/ns0:string</bpws:to>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:pick name="Pick2">
+                        <bpws:onMessage partnerLink="PartnerLink3" operation="parentWSDLOperation" portType="ns1:parentWSDLPortType1" variable="ParentWSDLOperationIn1">
+                            <bpws:correlations>
+                                <bpws:correlation set="CorrelationSet2" initiate="yes"/>
+                                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                                <bpws:correlation set="CorrelationSet3" initiate="no"/>
+                                <bpws:correlation set="CorrelationSet6" initiate="yes"/>
+                                <bpws:correlation set="CorrelationSet5" initiate="no"/>
+                                <bpws:correlation set="CorrelationSet4" initiate="yes"/>
+                            </bpws:correlations>
+                            <bpws:sequence name="Sequence2">
+                                    <bpws:assign name="Assign4">
+                                        <bpws:copy>
+                                            <bpws:from variable="ParentWSDLOperationIn1" part="part1"/>
+                                            <bpws:to variable="SubBPWSDLOperationIn" part="part1"/>
+                                        </bpws:copy>
+                                    </bpws:assign>
+                            </bpws:sequence>
+                        </bpws:onMessage>
+                    </bpws:pick>
+                </bpws:sequence>
+            </bpws:onMessage>
+        </bpws:pick>
+        <invoke name="InvokeReqRespPattern" partnerLink="PartnerLink2" operation="subBPWSDLOperation" portType="ns2:subBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no" pattern="request-response"/>
+                                <correlation set="CorrelationSet2" initiate="no" pattern="request-response"/>
+                                <correlation set="CorrelationSet3" initiate="join" pattern="request-response"/>
+                                <correlation set="CorrelationSet4" initiate="join" pattern="request-response"/>
+                                <correlation set="CorrelationSet5" pattern="request-response"/>
+                                <correlation set="CorrelationSet6" pattern="request-response"/>                                
+                            </correlations>
+                        </invoke>
+        <assign name="Assign5">
+                            <copy>
+                                <from>concat($SubBPWSDLOperationOut.part1/ns0:string, ' after reqresp pattern call ', $ParentWSDLOperationOut.part1/ns0:string)</from>
+                                <to>$ParentWSDLOperationOut.part1/ns0:string</to>
+                            </copy>
+                        </assign>
+        <invoke name="InvokeRequestPattern" partnerLink="PartnerLink2" operation="subBPWSDLOperation" portType="ns2:subBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no" pattern="request"/>
+                                <correlation set="CorrelationSet2" initiate="no" pattern="request"/>
+                                <correlation set="CorrelationSet3" initiate="join" pattern="request"/>
+                                <correlation set="CorrelationSet4" initiate="join" pattern="request"/>
+                                <correlation set="CorrelationSet5" pattern="request"/>
+                                <correlation set="CorrelationSet6" pattern="request"/>                                
+                            </correlations>
+                        </invoke>
+        <assign name="Assign6">
+                            <copy>
+                                <from>concat($SubBPWSDLOperationOut.part1/ns0:string, ' after request pattern ', $ParentWSDLOperationOut.part1/ns0:string)</from>
+                                <to>$ParentWSDLOperationOut.part1/ns0:string</to>
+                            </copy>
+                        </assign>
+        <invoke name="InvokeResponsePattern" partnerLink="PartnerLink2" operation="subBPWSDLOperation" portType="ns2:subBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no" pattern="response"/>
+                                <correlation set="CorrelationSet2" initiate="no" pattern="response"/>
+                                <correlation set="CorrelationSet3" initiate="join" pattern="response"/>
+                                <correlation set="CorrelationSet4" initiate="join" pattern="response"/>
+                                <correlation set="CorrelationSet5" pattern="response"/>
+                                <correlation set="CorrelationSet6" pattern="response"/>                                
+                            </correlations>
+                        </invoke>
+        <assign name="Assign7">
+                            <copy>
+                                <from>concat($SubBPWSDLOperationOut.part1/ns0:string, ' after response pattern ', $ParentWSDLOperationOut.part1/ns0:string)</from>
+                                <to>$ParentWSDLOperationOut.part1/ns0:string</to>
+                            </copy>
+                        </assign>                        
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="parentWSDLOperation" portType="ns1:parentWSDLPortType" variable="ParentWSDLOperationOut">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no"/>
+            </bpws:correlations>
+        </bpws:reply>
+    </sequence>
+</process>

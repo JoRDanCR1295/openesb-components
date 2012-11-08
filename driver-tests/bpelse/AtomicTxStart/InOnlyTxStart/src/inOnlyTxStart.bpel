@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="inOnlyTxStart"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOnlyTxStart/inOnlyTxStart"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InOnlyTxStart/inOnlyTxStart" 
+    xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2"
+    xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema"
+    xmlns:sxtx="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Transaction"
+    sxtx:atomic="yes" sxtx:atomicTxType="Required">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/inonly" location="inonly.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/CallService" location="CallService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="servicePL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/CallService" partnerLinkType="tns:CallService" partnerRole="InOnlyPTRole"/>
+        <partnerLink name="inPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/inonly" partnerLinkType="tns:inonly" myRole="inonlyPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="invServiceVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/CallService" messageType="tns:InOnlyOperRequest"/>
+        <variable name="InVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/inonly" messageType="tns:inonlyOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="inRec" createInstance="yes" partnerLink="inPL" operation="inonlyOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/inonly" portType="tns:inonlyPortType" variable="InVar"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$InVar.part1/ns0:DETAIL_Record/ns0:NAME</from>
+                <to>$invServiceVar.part1/ns0:DETAIL_Record/ns0:NAME</to>
+            </copy>
+            <copy>
+                <from>$InVar.part1/ns0:DETAIL_Record/ns0:ID</from>
+                <to>$invServiceVar.part1/ns0:DETAIL_Record/ns0:ID</to>
+            </copy>
+        </assign>
+        <invoke name="InvTxService" partnerLink="servicePL" operation="InOnlyOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOnlyTxStart/CallService" portType="tns:InOnlyPT" inputVariable="invServiceVar"/>
+    </sequence>
+</process>

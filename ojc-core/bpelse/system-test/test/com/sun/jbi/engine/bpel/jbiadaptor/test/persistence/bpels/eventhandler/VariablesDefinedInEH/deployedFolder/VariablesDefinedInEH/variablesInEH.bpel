@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="variablesInEH"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BpelModule2/variablesInEH"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/BpelModule2/variablesInEH" xmlns:ns1="http://j2ee.netbeans.org/wsdl/variablesInEH">
+    <import namespace="http://j2ee.netbeans.org/wsdl/variablesInEH" location="variablesInEH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns1:variablesInEH13" partnerRole="DummyInvokeRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:variablesInEH12" partnerRole="onEventInvokePortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:variablesInEH12" myRole="onEventInvokePortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:variablesInEH1" myRole="variablesInEHPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="VariablesInEHOperationOut" messageType="ns1:variablesInEHOperationReply"/>
+        <variable name="VariablesInEHOperationIn" messageType="ns1:variablesInEHOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="variablesInEHOperation" portType="ns1:variablesInEHPortType" variable="VariablesInEHOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <scope name="Scope1">
+            <eventHandlers>
+                <onEvent partnerLink="PartnerLink2" operation="onEventInvokeOperation" portType="ns1:onEventInvokePortType" variable="onEventVar" messageType="ns1:variablesInEHOperationRequest">
+                    <correlations>
+                        <correlation set="CorrelationSet1" initiate="no"/>
+                    </correlations>
+                    <scope name="Scope2">
+                        <sequence name="Sequence2">
+                            <assign name="Assign1">
+                                <copy>
+                                    <from>concat('  assign onEvent variable =  ', $onEventVar.part1, '; ')</from>
+                                    <to part="part1" variable="VariablesInEHOperationIn"/>
+                                </copy>
+                            </assign>
+                            <scope name="Scope3">
+                                <variables>
+                                    <variable name="InnerScopeMesgVar" messageType="ns1:variablesInEHOperationRequest"/>
+                                    <variable name="InnerScopeSimpleVar" type="xsd:string"/>
+                                </variables>
+                                <sequence name="Sequence3">
+                                    <assign name="Assign2">
+                                        <copy>
+                                            <from>
+                                                <literal>  string literal value  </literal>
+                                            </from>
+                                            <to variable="InnerScopeSimpleVar"/>
+                                        </copy>
+                                        <copy>
+                                            <from>
+                                                <literal>  value of inner scope variable  </literal>
+                                            </from>
+                                            <to part="part1" variable="InnerScopeMesgVar"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="Invoke2" partnerLink="PartnerLink4" operation="variablesInEHOperation" portType="ns1:DummyInvoke" inputVariable="VariablesInEHOperationIn"/>
+                                    <assign name="Assign3">
+                                        <copy>
+                                            <from>concat($VariablesInEHOperationIn.part1, $InnerScopeMesgVar.part1, $InnerScopeSimpleVar)</from>
+                                            <to part="part1" variable="VariablesInEHOperationOut"/>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </scope>
+                </onEvent>
+            </eventHandlers>
+            <sequence name="Sequence1">
+                <invoke name="Invoke1" partnerLink="PartnerLink3" operation="onEventInvokeOperation" portType="ns1:onEventInvokePortType" inputVariable="VariablesInEHOperationIn"/>
+            </sequence>
+        </scope>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="variablesInEHOperation" portType="ns1:variablesInEHPortType" variable="VariablesInEHOperationOut"/>
+    </sequence>
+</process>

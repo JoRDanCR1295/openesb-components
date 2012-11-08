@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SelectTwoColTableFull"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SelectTwoColTableFull"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SelectTwoColTableFull" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SoapWSDL" location="SoapWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="SelectTwoColTableFullSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:SelectTwoColTableFullSql_sqlsePartnerLinkType" partnerRole="SelectTwoColTableFullSql_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:SoapWSDLPartner" myRole="SoapWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="SoapWSDLOperationOut" messageType="ns1:SoapWSDLOperationReply"/>
+        <bpws:variable name="SelectTwoColTableFullOut" messageType="ns2:SelectTwoColTableFullResponse"/>
+        <bpws:variable name="SelectTwoColTableFullIn" messageType="ns2:SelectTwoColTableFullRequest"/>
+        <bpws:variable name="SoapWSDLOperationIn" messageType="ns1:SoapWSDLOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapWSDLOperationIn" part="part1"/>
+                <bpws:to>$SelectTwoColTableFullIn.SelectTwoColTableFullRequestPart/ns2:param1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="SelectTwoColTableFull" portType="ns2:SelectTwoColTableFullSql_sqlsePortType" inputVariable="SelectTwoColTableFullIn" outputVariable="SelectTwoColTableFullOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$SelectTwoColTableFullOut.SelectTwoColTableFullResponsePart/ns2:EMPID</bpws:from>
+                <bpws:to>$SoapWSDLOperationOut.part1/ns0:EMPID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SelectTwoColTableFullOut.SelectTwoColTableFullResponsePart/ns2:ENAME</bpws:from>
+                <bpws:to>$SoapWSDLOperationOut.part1/ns0:ENAME</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationOut"/>
+    </sequence>
+</process>

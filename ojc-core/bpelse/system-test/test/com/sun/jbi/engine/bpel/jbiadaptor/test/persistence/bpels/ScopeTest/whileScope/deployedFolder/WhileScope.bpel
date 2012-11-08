@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="WhileScope" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/WhileScope"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/WhileScope">
+    <import namespace="http://enterprise.netbeans.org/wsdl/WhileScope" 
+            location="WhileScope.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ScopeInvokePLT" 
+                     partnerRole="ScopeInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ScopePartnerLinkType" 
+                     myRole="ScopePLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="inputMsg" messageType="wsdlNS:ScopeMessage"/>
+        <variable name="outputMsg" messageType="wsdlNS:ScopeMessage"/>
+        <variable name="scopeMsg" messageType="wsdlNS:ScopeMessage"/>
+        <variable name="counter" type="xsd:int"/>
+    </variables>
+
+    <sequence>
+      	<receive name="Receive1" partnerLink="PartnerLink1" 
+      	         operation="ScopeOperation" portType="wsdlNS:ScopePortType" 
+         	     variable="inputMsg" createInstance="yes"/>
+		<assign name="Assign1">
+			<copy>
+				<from>'DuckDuckGoose'</from>
+				<to part="data" variable="scopeMsg"/>
+			</copy>
+			<copy><from>0</from><to variable="counter"/></copy>
+			<copy>
+				<from>''</from>
+				<to part="data" variable="outputMsg"/>
+			</copy>
+		</assign>
+		<while name="While1">
+			<condition> ( $counter &lt; 3 ) </condition>
+			<scope name="Scope1">
+				<variables>
+					<variable name="scopeStr" type="xsd:string" />
+					<variable name="scopeInt" type="xsd:int" />
+				</variables>
+				<sequence>
+					<assign name="Assign2">
+						<copy>
+							<from> ($counter + 1) </from><to variable="counter"/>
+						</copy>
+					</assign>
+					<bpws:if name="If1">
+						<bpws:condition> ( $counter &lt; 3 ) </bpws:condition>
+						<bpws:assign name="Assign3a">
+							<copy>
+								<from>'Duck'</from><to variable="scopeStr"/>
+							</copy>
+						</bpws:assign>
+						<bpws:else>
+							<bpws:assign name="Assign3b">
+								<copy>
+									<from>'Goose'</from><to variable="scopeStr"/>
+								</copy>
+							</bpws:assign>
+						</bpws:else>
+					</bpws:if>
+					<assign name="Assign4">
+						<copy>
+							<from>concat($outputMsg.data,$scopeStr)</from>
+							<to part="data" variable="outputMsg"/>
+						</copy>
+					</assign>
+					<invoke name="Invoke1" partnerLink="InvokePLT"
+							operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+							inputVariable="scopeMsg"/>
+					<assign name="AssignNoPersist">
+						<copy><from>$counter</from><to variable="scopeInt"/></copy>
+					</assign>
+				</sequence>
+			</scope>
+		</while>
+      	<invoke name="InvokeEnd" partnerLink="InvokePLT"
+              	operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+              	inputVariable="outputMsg"/>
+   </sequence>
+</process>

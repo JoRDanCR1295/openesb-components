@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/JMSOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOut" name="JMSOut" xmlns:ns="http://xml.netbeans.org/schema/OutToJMSBC" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSOut">
+            <xsd:import namespace="http://xml.netbeans.org/schema/OutToJMSBC" schemaLocation="OutToJMSBC.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="JMSOutOperationRequest">
+        <wsdl:part name="part1" element="ns:OutputElement"/>
+    </wsdl:message>
+    <wsdl:portType name="JMSOutPortType">
+        <wsdl:operation name="jmsOutOperation">
+            <wsdl:input name="input1" message="tns:JMSOutOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="JMSOutBinding" type="tns:JMSOutPortType">
+        <jms:binding/>
+        <wsdl:operation name="jmsOutOperation">
+            <jms:operation destination="TestJavaEESEOutQueue" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="JMSOutService">
+        <wsdl:port name="JMSOutPort" binding="tns:JMSOutBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="JMSOutPartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSOutPortTypeRole" portType="tns:JMSOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="StruvCvtDateTime"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StruvCvtDateTime_BPELM/StruvCvtDateTime"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StruvCvtDateTime_BPELM/StruvCvtDateTime"
+    xmlns:ns1="http://xml.netbeans.org/schema/CvtDateMessages"
+    xmlns:sxxf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">
+        
+   <import namespace="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" location="StruvCvtDateTime.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://xml.netbeans.org/schema/CvtDateMessages" location="StruvCvtDateTime/CvtDateMessages.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" partnerLinkType="tns:StruvCvtDateTime" myRole="StruvCvtDateTimePortTypeRole"/>
+   </partnerLinks>
+<variables>
+    <variable name="Variable2" type="xsd:string"/>
+    <variable name="Variable3" type="xsd:string"/>
+    <variable name="Variable1" element="ns1:elRequest"/>
+    <variable name="vRes" xmlns:tns="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" messageType="tns:StruvCvtDateTimeOperationResponse"/>
+    <variable name="vDTIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" messageType="tns:StruvCvtDateTimeOperationRequest"/>
+</variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="StruvCvtDateTimeOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" portType="tns:StruvCvtDateTimePortType" variable="vDTIn"/>
+             <assign name="Assign2">
+            <copy>
+                <from variable="vDTIn" part="part1"/>
+                <to variable="Variable1"/>
+            </copy>
+        </assign>
+        <assign name="Assign3">
+            <copy>
+                <from>sxxf:doMarshal($vDTIn.part1)</from>
+                <to variable="Variable2"/>
+            </copy>
+        </assign>
+        <assign name="Assign11">
+            <sxt:trace>
+                <sxt:log level="info" location="onComplete">
+                    <from>$vRes.stResp/ns1:elDateString</from>
+                </sxt:log>
+            </sxt:trace>
+             <copy xmlns:doConvert="java://StrucCvtDateTime.StrucCvtDateTime">
+                <from>doConvert:CvtDateTime($vDTIn.part1)</from>
+                <to>$vRes.part1</to>
+            </copy>
+        </assign>
+        <assign name="Assign12">
+            <sxt:trace>
+                <sxt:log level="info" location="onComplete">
+                    <from>$vRes.stResp/ns1:elDateString</from>
+                </sxt:log>
+            </sxt:trace>
+             <copy xmlns:doConvert="java://StrucCvtDateTime.StrucCvtDateTime">
+                <from>doConvert:CvtDateTime($Variable1)</from>
+                <to>$vRes.part1</to>
+            </copy>
+        </assign>
+        <assign name="Assign121">
+            <sxt:trace>
+                <sxt:log level="info" location="onComplete">
+                    <from>concat("Variable 3 is: ", $Variable3)</from>
+                </sxt:log>
+            </sxt:trace>
+             <copy xmlns:doConvert="java://StrucCvtDateTime.StrucCvtDateTime">
+                <from>doConvert:CvtDateTime($Variable2)</from>
+                <to variable="Variable3"/>
+            </copy>
+        </assign>
+        <assign name="Assign122">
+            <sxt:trace>
+                <sxt:log level="info" location="onComplete">
+                    <from>$vRes.stResp/ns1:elDateString</from>
+                </sxt:log>
+            </sxt:trace>
+            <copy>
+                <from>sxxf:doUnMarshal($Variable3)</from>
+                <to>$vRes.part1</to>
+            </copy>
+        </assign>
+     <reply name="Reply1" partnerLink="PartnerLink1" operation="StruvCvtDateTimeOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/StruvCvtDateTime_BPELM/StruvCvtDateTime" portType="tns:StruvCvtDateTimePortType" variable="vRes"/>
+   </sequence>
+</process>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)web.xml 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+
+<web-app version="2.5" 
+        xmlns="http://java.sun.com/xml/ns/javaee" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <context-param>
+        <param-name>com.sun.faces.verifyObjects</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.validateXml</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>com.sun.webui.jsf.DEFAULT_THEME</param-name>
+        <param-value>suntheme</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>supported-types</param-name>
+        <param-value>svg,jpg,png</param-value>
+    </context-param>
+
+    <!-- application registration data-->
+    <listener>
+        <listener-class>com.sun.jbi.cam.manager.framework.core.ApplicationListener</listener-class>
+    </listener>
+    
+    <filter>
+        <filter-name>UploadFilter</filter-name>
+        <filter-class>com.sun.webui.jsf.util.UploadFilter</filter-class>
+        <init-param>
+            <description>
+                The maximum allowed upload size in bytes.  If this is set
+                to a negative value, there is no maximum.  The default
+                value is 1000000.
+            </description>
+            <param-name>maxSize</param-name>
+            <param-value>-1</param-value>
+        </init-param>
+        <init-param>
+            <description>
+                The size (in bytes) of an uploaded file which, if it is
+                exceeded, will cause the file to be written directly to
+                disk instead of stored in memory.  Files smaller than or
+                equal to this size will be stored in memory.  The default
+                value is 4096.
+            </description>
+            <param-name>sizeThreshold</param-name>
+            <param-value>4096</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>UploadFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    
+    
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Theme Servlet -->
+    <servlet>
+        <servlet-name>ThemeServlet</servlet-name>
+        <servlet-class>com.sun.webui.theme.ThemeServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet> 
+
+    <!-- Theme Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>ThemeServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>  
+
+    
+       <!--For displaying svg graphics -->
+    <servlet>
+        <servlet-name>svgservlet</servlet-name>
+        <servlet-class>org.printx.jspsvg.svgservlet</servlet-class>
+    </servlet>
+
+    <!-- SVG Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>svgservlet</servlet-name>
+        <url-pattern>/svgstream.svgz</url-pattern>
+    </servlet-mapping> 
+    
+ 
+    <!--For collecting service unit statistics -->
+    <servlet>
+        <servlet-name>statisticsservlet</servlet-name>
+        <servlet-class>com.sun.jbi.cam.manager.framework.renderers.svg.RealTimeStatisticServlet</servlet-class>
+    </servlet>
+
+    <!-- statistics Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>statisticsservlet</servlet-name>
+        <url-pattern>/stats.jsp</url-pattern>
+    </servlet-mapping> 
+
+     <!--For get latest service unit state -->
+    <servlet>
+        <servlet-name>serviceUnitsStateservlet</servlet-name>
+        <servlet-class>com.sun.jbi.cam.manager.framework.renderers.svg.RealTimeSUStateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>serviceUnitsStateservlet</servlet-name>
+        <url-pattern>/serviceUnitsState.jsp</url-pattern>
+    </servlet-mapping> 
+   
+    <session-config>
+        <session-timeout>
+            180
+        </session-timeout>
+    </session-config>
+    
+    <jsp-config>
+      
+      <taglib>
+       <taglib-uri>/tags/svgembed</taglib-uri>
+       <taglib-location>/WEB-INF/svgembed.tld</taglib-location>
+       </taglib>
+    </jsp-config>
+
+    <welcome-file-list>
+        <welcome-file>
+            index.jsp
+        </welcome-file>
+    </welcome-file-list>
+    
+    <login-config>
+       <auth-method>FORM</auth-method>
+       <realm-name>admin-realm</realm-name>
+        <form-login-config>
+            <form-login-page>/faces/login.jsp</form-login-page>
+            <form-error-page>/faces/error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>protected</web-resource-name>
+            <description>accessible by authorized users</description>
+            <url-pattern>*.jsp</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+            <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <auth-constraint>        
+            <description>These are the roles who have access</description>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+
+</web-app>

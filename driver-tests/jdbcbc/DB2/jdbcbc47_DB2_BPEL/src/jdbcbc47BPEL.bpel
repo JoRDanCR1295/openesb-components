@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="jdbcbc47BPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/jdbcbc47BPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/jdbcbc47BPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/soap47resrep-jdbcpoll" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc47Delete" xmlns:ns3="http://j2ee.netbeans.org/wsdl/jdbcbc47DeleteTarget" xmlns:ns4="http://j2ee.netbeans.org/wsdl/jdbcbc47Insert" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/soap47resrep-jdbcpoll" location="soap47resrep-jdbcpoll.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc47Delete" location="jdbcbc47Delete.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc47DeleteTarget" location="jdbcbc47DeleteTarget.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc47Insert" location="jdbcbc47Insert.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink5" partnerLinkType="ns1:jdbcpartner" myRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink4" partnerLinkType="ns4:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns3:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:soap47resrepPartner" myRole="soap47resrepPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="Soap47resrepOperationOut" messageType="ns1:outputMsg"/>
+      <bpws:variable name="PollrecordsIn" messageType="ns1:inputMsg"/>
+      <bpws:variable name="InsertOut" messageType="ns4:insertRetMsg"/>
+      <bpws:variable name="InsertIn" messageType="ns4:inputMsg"/>
+      <bpws:variable name="DeleteIn1" messageType="ns3:inputMsg"/>
+      <bpws:variable name="DeleteIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="Soap47resrepOperationIn" messageType="ns1:inputMsg"/>
+   </variables>
+   <correlationSets>
+      <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+   </correlationSets>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="soap47resrepOperation" portType="ns1:soap47resrepPortType" variable="Soap47resrepOperationIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+         </bpws:correlations>
+      </bpws:receive>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$DeleteIn1.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$DeleteIn.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:DEPTID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:DEPTID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:MARKCOLUMN</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:MARKCOLUMN</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$Soap47resrepOperationIn.part/ns0:ENAME</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:ENAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="delete" portType="ns2:jdbcPortType" inputVariable="DeleteIn"/>
+      <bpws:invoke name="Invoke2" partnerLink="PartnerLink3" operation="delete" portType="ns3:jdbcPortType" inputVariable="DeleteIn1"/>
+      <bpws:invoke name="Invoke3" partnerLink="PartnerLink4" operation="insert" portType="ns4:jdbcPortType" inputVariable="InsertIn" outputVariable="InsertOut"/>
+      <bpws:receive name="Receive2" createInstance="no" partnerLink="PartnerLink5" operation="pollrecords" portType="ns1:jdbcPortType" variable="PollrecordsIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet1" initiate="no"/>
+         </bpws:correlations>
+      </bpws:receive>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$Soap47resrepOperationOut.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:DEPTID</bpws:from>
+            <bpws:to>$Soap47resrepOperationOut.part/ns0:DEPTID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:MARKCOLUMN</bpws:from>
+            <bpws:to>$Soap47resrepOperationOut.part/ns0:MARKCOLUMN</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:ENAME</bpws:from>
+            <bpws:to>$Soap47resrepOperationOut.part/ns0:ENAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="soap47resrepOperation" portType="ns1:soap47resrepPortType" variable="Soap47resrepOperationOut"/>
+   </sequence>
+</process>

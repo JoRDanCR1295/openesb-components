@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPInsertOraTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns3="http://enterprise.netbeans.org/bpel/OraInsertBpel" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="SOAPInsertOraTriggerPort" interface-name="ns1:SOAPInsertOraTriggerPortType" name="endpoint1" service-name="ns1:SOAPInsertOraTriggerService"/>
+        <endpoint endpoint-name="OraInsertport" interface-name="ns2:jdbcPortType" name="endpoint2" service-name="ns2:OraInsertservice"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="SOAPInsertOraTriggerPortTypeRole_myRole" file-path="OraInsertBpel.bpel" interface-name="ns1:SOAPInsertOraTriggerPortType" name="endpoint3" process-name="OraInsertBpel" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="jdbcPortTypeRole_partnerRole" file-path="OraInsertBpel.bpel" interface-name="ns2:jdbcPortType" name="endpoint4" process-name="OraInsertBpel" service-name="ns3:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="Insert_Ora10g_BPEL.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="Insert_Ora10g_JBI-Insert_Ora10g_BPEL" unit-name="Insert_Ora10g_BPEL" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="Insert_Ora10g_JBI-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="60">
+                    <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/SOAPInsertOraTrigger.wsdl#xpointer(/definitions/service[@name='SOAPInsertOraTriggerService']/port[@name='SOAPInsertOraTriggerPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-database-binding.jar" component-name="sun-database-binding" description="Represents this Service Unit" name="Insert_Ora10g_JBI-sun-database-binding" unit-name="sun-database-binding">
+            <ports>
+                <port x="0" y="150">
+                    <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/JdbcInsertOra.wsdl#xpointer(/definitions/service[@name='OraInsertservice']/port[@name='OraInsertport'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint2" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/JdbcInsertOra.wsdl#xpointer(/definitions/portType[@name='jdbcPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/SOAPInsertOraTrigger.wsdl#xpointer(/definitions/portType[@name='SOAPInsertOraTriggerPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/JdbcInsertOra.wsdl#xpointer(/definitions/binding[@name='binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/SOAPInsertOraTrigger.wsdl#xpointer(/definitions/binding[@name='SOAPInsertOraTriggerBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/JdbcInsertOra.wsdl#xpointer(/definitions/service[@name='OraInsertservice'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Insert_Ora10g_BPEL/SOAPInsertOraTrigger.wsdl#xpointer(/definitions/service[@name='SOAPInsertOraTriggerService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

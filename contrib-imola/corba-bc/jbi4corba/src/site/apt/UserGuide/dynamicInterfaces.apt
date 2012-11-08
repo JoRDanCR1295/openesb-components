@@ -1,0 +1,157 @@
+																			---
+																			Dynamic Interfaces support
+																			---
+																			Marco Piraccini, Luca Acquaviva
+																			---
+																			23/02/2009
+
+Dynamic Interfaces
+
+	The Dynamic Interface support is an extension of the typical CORBA integration scenario. 
+	In this case a Factory servant is used for the generation of a different CORBA object, 
+	pretty much as home interface for an EJB instance.
+	The image below illustrates the scenario. In this image only the factory is bound 
+	to naming server, while the servant objects are dynamically created.
+	
+[../images/dynamic_interface_scenario.jpg]
+	
+	One example of this is the IDL:
+		
++------------------------------------------+
+	interface Echo{
+		string echo(in string msg); 
+	};
+
+	interface Factory {
+		Echo getref(in string name);
+	}
++------------------------------------------+
+
+	In this example, <Factory> is a CORBA Servant (the client requires the binding with the naming server
+	at design time to obtain a Factory reference), while <Echo> is dynamically created by the <Factory>.
+	
+	In the WSDL creation the parameter is converted in:
+
++------------------------------------------+
+<xs:element name="return" type="ns1:EndpointReferenceType"/>
++------------------------------------------+
+
+	The type is an <<EndpointReference>> (EPR). EndpointReferences are defined in 
+	the {{{http://www.w3.org/TR/2006/REC-ws-addr-core-20060509/}Web Services Addressing 1.0}}
+	specifications. 
+
+	The XML messages managed by the component must contain the EPR for the Jbi4Corba
+	Endpoints. In these EPR is set the IOR of the CORBA object (in the <Address> element).  
+	Here there is an example (ws-addressing namespaces are omitted for semplicity):
+
++------------------------------------------+	
+
+<EndpointReference>
+	<Address>jbi4corba:IOR:xxxxxxxxxxxxxxxxxxx</Address>
+	<ReferenceParameters/>
+	<Metadata>
+		<ServiceName EndpointName="EchoCorbaPort"xmlns:ns1="mynamespace">ns1:Echo</wsaw:ServiceName>
+	</Metadata>
+</EndpointReference>
+
++------------------------------------------+         
+	
+	
+Netbeans plugin and Dynamic Interfaces 	
+	
+	Using the  {{{../netbeansplugin.html}Netbeans}} plugin we can create the WSDL from the IDL.
+	Consider this IDL:
+	
++------------------------------------------+
+	interface Echo{
+		string echo(in string msg); 
+	};
+
+	interface Factory {
+		Echo getref(in string name);
+	}
++------------------------------------------+
+		
+	If we right-click on the IDL, the plugin dialog appears.
+	
+[../images/dynamic_interface_plugin_step0.jpg]	
+
+	[[1]]  Select the <Factory> Interface.
+	
+	[[2]]  Check the <Option Connect to CORBA Servant at deploy Time>
+	
+	[]
+	
+	In this case we must specify which interfaces are connected to CORBA servant, in this case
+	is the <Factory>. For the <Echo> interface, instead, the <Option Connect to CORBA Servant at deploy Time>
+	must be unchecked.
+	
+[../images/dynamic_interface_plugin_step1.jpg]		
+	
+	Now we can create the WSDLs. One WSDL for each interface is created (with the needed schemas):
+	
+	[[1]]  Factory.wsdl
+	
+	[[2]]  Echo.wsdl
+	
+	[]
+			
+[../images/dynamic_interface_wsdl.jpg]	
+
+	The difference between these two WSDLs is that the dynamic one has empty <LocalizationType> 
+	and <CorbaServiceName> in the CORBA address: 
+
++------------------------------------------+
+<imolacorba:address name="" localizationType="">
+	<imolacorba:orb>
+		<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+		<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+		<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+	</imolacorba:orb>
+</imolacorba:address>	
++------------------------------------------+
+	
+
+Dynamic Interfaces assignment in BPEL with GlassFishESB
+
+	In a BPEL we can invoke directly only the "connected" Jbi4Corba endpoints.
+	In this example, we have:
+	
+	[[1]]  The <Factory> WSDL that refers to a connected CORBA servant
+	
+	[[2]]  The <Echo> WSDL that represent a dynamic CORBA object (that can be cretated by the <Factory>)	
+
+	[]
+	
+	We should add the WSDL in the BPEL editor as consumed endpoint (actually in this case the Jbi4Corba 
+	role is "provider").
+	
+[../images/dynami_interface_Bpe_step0l.jpg]	
+
+	Now the BPEL can be edited as usual. To obtain a reference to a <Echo> object and to
+	invoke some operation on it, we have to:
+	  
+	[[1]] Obtain an <Echo> reference (<<EPR>>) from the Factory.
+	
+	[[2]] Assign the EPR to the <<PartnerLink>> that represents the CORBA Object
+	
+	[[3]] Invoke the Operation on the Dynamic CORBA Object and Receive the Result
+	 
+	[]
+	
+	The BPEL <<Assign>> operation is used to assign the EPR to Echo Endpoint 
+	using Dynamic PartnerLink Association.
+	For the correct EPR assignment, connect the returned EPR (params return) 
+	with the <Echo> PartnerLink. The BPEL editor changes the assignment as shown below: 
+
+[../images/dynamic_interface_EPR_Assign.jpg]	
+
+	Once assigned the <<PartnerLink>>,  we can invoke it from BPEL as usual.
+
+[../images/dynamic_interface_BpelComplet.jpg]
+
+	
+	
+	
+	
+

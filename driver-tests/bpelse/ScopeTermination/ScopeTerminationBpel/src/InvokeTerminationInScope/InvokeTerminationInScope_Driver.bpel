@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ReceiveTermiationInScope2_Driver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeTerminationInScope_Driver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_PTypes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:ns4="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:tns="http://enterprise.netbeans.org/bpel/InvokeTerminationInScope_Driver">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_Driver" location="InvokeTerminationInScope_Driver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_PTypes" location="InvokeTerminationInScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns2:InvokeTerminationInScope_PTypesPartner2" partnerRole="InvokeTerminationInScope_PTypesPortType2Role"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:InvokeTerminationInScope_PTypesPartner" partnerRole="InvokeTerminationInScope_PTypesPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:InvokeTerminationInScope_DriverPartner" myRole="InvokeTerminationInScope_DriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InvokeTerminationInScope_PTypesOperationOut1" messageType="ns3:message1"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationIn1" messageType="ns3:message1"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationOut" messageType="ns3:message1"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationIn" messageType="ns3:message1"/>
+        <variable name="InvokeTerminationInScope_DriverOperationIn" messageType="ns1:message1"/>
+        <variable name="InvokeTerminationInScope_DriverOperationOut" messageType="ns1:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns3:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InvokeTerminationInScope_DriverOperation" portType="ns1:InvokeTerminationInScope_DriverPortType" variable="InvokeTerminationInScope_DriverOperationIn"></receive>
+        <assign name="Assign1">
+            <copy>
+                <from>
+                    <literal>Id1</literal>
+                </from>
+                <to>$InvokeTerminationInScope_PTypesOperationIn.part1/Id1</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>InitialAssignInDriver</literal>
+                </from>
+                <to>$InvokeTerminationInScope_PTypesOperationOut.part1/Id1</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>Id1</literal>
+                </from>
+                <to>$InvokeTerminationInScope_PTypesOperationIn1.part1/Id1</to>
+            </copy>
+        </assign>
+        <flow name="Flow2">
+            <scope name="Scope1">
+                <faultHandlers>
+                <catch faultName="tns:SomeFault">
+                    <sequence name="Sequence3">
+                        <empty name="Empty1"/>
+                    </sequence>
+                </catch>    
+            </faultHandlers>
+                    <flow name="Flow1">
+                        <sequence name="Sequence2">
+                                <invoke name="Invoke2" partnerLink="PartnerLink3" operation="InvokeTerminationInScope_PTypesOperation" portType="ns2:InvokeTerminationInScope_PTypesPortType2" inputVariable="InvokeTerminationInScope_PTypesOperationIn1" outputVariable="InvokeTerminationInScope_PTypesOperationOut1"/>
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>$InvokeTerminationInScope_PTypesOperationOut1.part1/Id1</from>
+                                    <to variable="InvokeTerminationInScope_DriverOperationOut" part="part1"/>
+                                </copy>
+                            </assign>
+                            <reply name="Reply2" partnerLink="PartnerLink1" operation="InvokeTerminationInScope_DriverOperation" portType="ns1:InvokeTerminationInScope_DriverPortType" variable="InvokeTerminationInScope_DriverOperationOut"/>
+                            </sequence>
+                            <sequence name="Sequence1">
+                                <wait name="Wait1">
+                                        <for>'P0Y0M0DT0H0M1S'</for>
+                                    </wait>
+                                    <throw name="Throw1" faultName="tns:SomeFault"/>
+                            </sequence>
+                    </flow>
+            </scope>
+            <sequence name="Sequence4">
+                <invoke name="Invoke1" partnerLink="PartnerLink2" operation="InvokeTerminationInScope_PTypesOperation" portType="ns2:InvokeTerminationInScope_PTypesPortType" inputVariable="InvokeTerminationInScope_PTypesOperationIn" outputVariable="InvokeTerminationInScope_PTypesOperationOut"/>
+                <assign name="Assign3">
+                    <copy>
+                        <from>$InvokeTerminationInScope_PTypesOperationOut.part1/Id1</from>
+                        <to variable="InvokeTerminationInScope_DriverOperationOut" part="part1"/>
+                    </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="PartnerLink1" operation="InvokeTerminationInScope_DriverOperation" portType="ns1:InvokeTerminationInScope_DriverPortType" variable="InvokeTerminationInScope_DriverOperationOut"/>
+            </sequence>
+        </flow>
+    </sequence>
+</process>

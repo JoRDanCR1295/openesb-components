@@ -1,0 +1,1 @@
+create table "COMPANY"."TEMP2" (1234 integer)

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OnEvtReceiveReplyInProcess_Driver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnEvtReceiveReplyInProcess_Driver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_PTypes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:ns4="http://j2ee.netbeans.org/wsdl/OnEventReplyInAssoScope_PTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_Driver" location="OnEvtReceiveReplyInProcess_Driver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_PTypes" location="OnEvtReceiveReplyInProcess_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEventReplyInAssoScope_PTypes" location="../OnEventReplyInAssoScope/OnEventReplyInAssoScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink4" partnerLinkType="ns4:OnEventReplyInAssoScope_PTypesPartner2" partnerRole="OnEventReplyInAssoScope_PTypesPortType2Role"/>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:OnEvtReceiveReplyInProcess_PTypesPartner1" partnerRole="OnEvtReceiveReplyInProcess_PTypesPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:OnEvtReceiveReplyInProcess_PTypesPartner" partnerRole="OnEvtReceiveReplyInProcess_PTypesPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:OnEvtReceiveReplyInProcess_DriverPartner" myRole="OnEvtReceiveReplyInProcess_DriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OnEvtReceiveReplyInProcess_PTypesOperationIn" messageType="ns3:message1"/>
+        <bpws:variable name="OnEvtReceiveReplyInProcess_DriverOperationIn" messageType="ns1:message1"/>
+        <bpws:variable name="OnEvtReceiveReplyInProcess_DriverOperationOut" messageType="ns1:message1"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns3:property1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="OnEvtReceiveReplyInProcess_DriverOperation" portType="ns1:OnEvtReceiveReplyInProcess_DriverPortType" variable="OnEvtReceiveReplyInProcess_DriverOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="OnEvtReceiveReplyInProcess_DriverOperationIn" part="part1"/>
+                <bpws:to>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Id1 Initialized in OnEvtReceiveReplyInProcess</bpws:literal>
+                </bpws:from>
+                <bpws:to>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Id1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns2:OnEvtReceiveReplyInProcess_PTypesPortType" inputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn" outputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn"></bpws:invoke>
+        <bpws:invoke name="Invoke2" partnerLink="PartnerLink3" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns2:OnEvtReceiveReplyInProcess_PTypesPortType1" inputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn" outputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn"/>
+        <bpws:scope>
+            <bpws:faultHandlers>
+                <bpws:catchAll>
+                    <bpws:assign name="Assign3">
+                        <bpws:copy>
+                            <bpws:from>concat($OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message, '-CaughtFault')</bpws:from>
+                            <bpws:to part="part1" variable="OnEvtReceiveReplyInProcess_DriverOperationOut"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                </bpws:catchAll>
+            </bpws:faultHandlers>
+            <bpws:invoke name="Invoke3" partnerLink="PartnerLink4" operation="OnEventReplyInAssoScope_PTypesOperation" portType="ns4:OnEventReplyInAssoScope_PTypesPortType2" inputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn" outputVariable="OnEvtReceiveReplyInProcess_PTypesOperationIn"/>
+        </bpws:scope>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message</bpws:from>
+                <bpws:to variable="OnEvtReceiveReplyInProcess_DriverOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="OnEvtReceiveReplyInProcess_DriverOperation" portType="ns1:OnEvtReceiveReplyInProcess_DriverPortType" variable="OnEvtReceiveReplyInProcess_DriverOperationOut"/>
+    </sequence>
+</process>

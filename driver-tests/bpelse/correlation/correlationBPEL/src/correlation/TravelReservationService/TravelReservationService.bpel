@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="TravelReservationService"
+         targetNamespace="tres"
+         suppressJoinFailure="no"
+         sbynpxp:end_YLoc="83.0"
+         sbynpxp:start_YLoc="33.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="18.0"
+         sbynpxp:end_XLoc="2360.0"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="tres"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:tres="http://www.sun.com/javaone/05/TravelReservationService"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:hres="http://www.sun.com/javaone/05/HotelReservationService"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel"
+         xmlns:ares="http://www.sun.com/javaone/05/AirlineReservationService"
+         xmlns:vres="http://www.sun.com/javaone/05/VehicleReservationService"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ota="http://www.opentravel.org/OTA/2003/05">
+    <import namespace="http://www.sun.com/javaone/05/TravelReservationService"
+            location="TravelReservationService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://www.sun.com/javaone/05/AirlineReservationService"
+            location="AirlineReservationService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://www.sun.com/javaone/05/HotelReservationService"
+            location="HotelReservationService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://www.sun.com/javaone/05/VehicleReservationService"
+            location="VehicleReservationService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="Travel"
+                     partnerLinkType="tres:TravelReservationPartnerLinkType"
+                     myRole="TravelReservationServiceRole"/>
+        <partnerLink name="Airline"
+                     partnerLinkType="ares:AirlineReservationPartnerLinkType"
+                     myRole="AirlineReservationCallbackServiceRole"
+                     partnerRole="AirlineReservationServiceRole"/>
+        <partnerLink name="Vehicle"
+                     partnerLinkType="vres:VehicleReservationPartnerLinkType"
+                     myRole="VehicleReservationCallbackServiceRole"
+                     partnerRole="VehicleReservationServiceRole"/>
+        <partnerLink name="Hotel"
+                     partnerLinkType="hres:HotelReservationPartnerLinkType"
+                     myRole="HotelReservationCallbackServiceRole"
+                     partnerRole="HotelReservationServiceRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ItineraryIn"
+                  messageType="tres:ItineraryIn"></variable>
+        <variable name="ItineraryOut"
+                  messageType="tres:ItineraryOut"></variable>
+        <variable name="ItineraryFault"
+                  messageType="tres:ItineraryFault"></variable>
+        <variable name="ReserveAirlineIn"
+                  messageType="ares:ReserveAirlineIn"></variable>
+        <variable name="AirlineReservedIn"
+                  messageType="ares:AirlineReservedIn"></variable>
+        <variable name="ReserveVehicleIn"
+                  messageType="vres:ReserveVehicleIn"></variable>
+        <variable name="VehicleReservedIn"
+                  messageType="vres:VehicleReservedIn"></variable>
+        <variable name="ReserveHotelIn"
+                  messageType="hres:ReserveHotelIn"></variable>
+        <variable name="CancelHotelIn"
+                  messageType="hres:CancelHotelIn"></variable>
+        <variable name="CancelHotelOut"
+                  messageType="hres:CancelHotelOut"></variable>
+        <variable name="HotelReservedIn"
+                  messageType="hres:HotelReservedIn"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="ItineraryCorrelator"
+                        properties="tres:ItineraryRefId"/>
+    </correlationSets>
+    <sequence>
+        <receive name="ReceiveItinerary"
+                 partnerLink="Travel"
+                 portType="tres:TravelReservationPortType"
+                 operation="buildItinerary"
+                 variable="ItineraryIn"
+                 createInstance="yes"
+                 sbynpxp:XLoc="90.0"
+                 sbynpxp:YLoc="23.0">
+            <correlations>
+                <correlation set="ItineraryCorrelator"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="CopyItineraryIn"
+                sbynpxp:XLoc="212.0"
+                sbynpxp:YLoc="23.0">
+            <copy>
+                <from variable="ItineraryIn"
+                      part="itinerary"/>
+                <to variable="ItineraryOut"
+                    part="itinerary"/>
+            </copy>
+            <copy>
+                <from variable="ItineraryIn"
+                      part="itinerary"/>
+                <to variable="ReserveAirlineIn"
+                    part="itinerary"/>
+            </copy>
+            <copy>
+                <from variable="ItineraryIn"
+                      part="itinerary"/>
+                <to variable="ReserveVehicleIn"
+                    part="itinerary"/>
+            </copy>
+            <copy>
+                <from variable="ItineraryIn"
+                      part="itinerary"/>
+                <to variable="ReserveHotelIn"
+                    part="itinerary"/>
+            </copy>
+        </assign>
+        <if name="HasAirline"
+                sbynpxp:XLoc="324.0"
+                sbynpxp:YLoc="20.0"
+                sbynpxp:YLoc_MergeNode="33.0"
+                sbynpxp:XLoc_MergeNode="764.0">
+             <condition>not($ItineraryIn.itinerary/ItineraryInfo/ReservationItems/Item/Air)</condition>
+                <sequence>
+                    <invoke name="ReserveAirline"
+                            partnerLink="Airline"
+                            portType="ares:AirlineReservationPortType"
+                            operation="reserveAirline"
+                            inputVariable="ReserveAirlineIn"
+                            sbynpxp:XLoc="414.0"
+                            sbynpxp:YLoc="23.0">
+                        <correlations>
+                            <correlation set="ItineraryCorrelator"
+                                         initiate="no"/>
+                        </correlations>
+                    </invoke>
+                    <receive name="AirlineReserved"
+                             partnerLink="Airline"
+                             portType="ares:AirlineReservationCallbackPortType"
+                             operation="airlineReserved"
+                             variable="AirlineReservedIn"
+                             createInstance="no"
+                             sbynpxp:XLoc="521.0"
+                             sbynpxp:YLoc="23.0">
+                        <correlations>
+                            <correlation set="ItineraryCorrelator"
+                                         initiate="no"/>
+                        </correlations>
+                    </receive>
+                    <assign name="CopyAirlineReservation"
+                            sbynpxp:XLoc="638.0"
+                            sbynpxp:YLoc="26.0">
+                        <copy>
+                            <from variable="AirlineReservedIn"
+                                  part="itinerary"/>
+                            <to variable="ItineraryOut"
+                                part="itinerary"/>
+                        </copy>
+                        <copy>
+                            <from variable="AirlineReservedIn"
+                                  part="itinerary"/>
+                            <to variable="ReserveVehicleIn"
+                                part="itinerary"/>
+                        </copy>
+                    </assign>
+                </sequence>
+        </if>
+        <if name="HasVehicle"
+                sbynpxp:XLoc="872.0"
+                sbynpxp:YLoc="20.0"
+                sbynpxp:YLoc_MergeNode="43.0"
+                sbynpxp:XLoc_MergeNode="1331.0">
+            <condition>not($ItineraryIn.itinerary/ItineraryInfo/ReservationItems/Item/Vehicle)</condition>
+                <sequence>
+                    <invoke name="ReserveVehicle"
+                            partnerLink="Vehicle"
+                            portType="vres:VehicleReservationPortType"
+                            operation="reserveVehicle"
+                            inputVariable="ReserveVehicleIn"
+                            sbynpxp:XLoc="961.0"
+                            sbynpxp:YLoc="23.0">
+                        <correlations>
+                            <correlation set="ItineraryCorrelator"
+                                         initiate="no"/>
+                        </correlations>
+                    </invoke>
+                    <receive name="VehicleReserved"
+                             partnerLink="Vehicle"
+                             portType="vres:VehicleReservationCallbackPortType"
+                             operation="vehicleReserved"
+                             variable="VehicleReservedIn"
+                             createInstance="no"
+                             sbynpxp:XLoc="1078.0"
+                             sbynpxp:YLoc="23.0">
+                        <correlations>
+                            <correlation set="ItineraryCorrelator"
+                                         initiate="no"/>
+                        </correlations>
+                    </receive>
+                    <assign name="CopyVehicleReservation"
+                            sbynpxp:XLoc="1208.0"
+                            sbynpxp:YLoc="19.0">
+                        <copy>
+                            <from variable="VehicleReservedIn"
+                                  part="itinerary"/>
+                            <to variable="ItineraryOut"
+                                part="itinerary"/>
+                        </copy>
+                        <copy>
+                            <from variable="VehicleReservedIn"
+                                  part="itinerary"/>
+                            <to variable="ReserveHotelIn"
+                                part="itinerary"/>
+                        </copy>
+                    </assign>
+                </sequence>
+        </if>
+        <if name="HasHotel"
+                sbynpxp:XLoc="1447.0"
+                sbynpxp:YLoc="40.0"
+                sbynpxp:YLoc_MergeNode="83.0"
+                sbynpxp:XLoc_MergeNode="2106.0">
+            <condition>not($ItineraryIn.itinerary/ItineraryInfo/ReservationItems/Item/Hotel)</condition>
+                <sequence>
+                    <invoke name="ReserveHotel"
+                            partnerLink="Hotel"
+                            portType="hres:HotelReservationPortType"
+                            operation="reserveHotel"
+                            inputVariable="ReserveHotelIn"
+                            sbynpxp:XLoc="1536.0"
+                            sbynpxp:YLoc="50.0">
+                        <correlations>
+                            <correlation set="ItineraryCorrelator"
+                                         initiate="no"/>
+                        </correlations>
+                    </invoke>
+                    <pick name="Timeout"
+                          createInstance="no"
+                          sbynpxp:XLoc="1650.0"
+                          sbynpxp:YLoc="133.0"
+                          sbynpxp:YLoc_MergeNode="83.0"
+                          sbynpxp:XLoc_MergeNode="1999.0">
+                        <onMessage partnerLink="Hotel"
+                                   portType="hres:HotelReservationCallbackPortType"
+                                   operation="hotelReserved"
+                                   variable="HotelReservedIn">
+                            <correlations>
+                                <correlation set="ItineraryCorrelator"
+                                             initiate="no"/>
+                            </correlations>
+                            <sequence>
+                                <assign name="CopyHotelReservation"
+                                        sbynpxp:XLoc="1868.0"
+                                        sbynpxp:YLoc="136.0">
+                                    <copy>
+                                        <from variable="HotelReservedIn"
+                                              part="itinerary"/>
+                                        <to variable="ItineraryOut"
+                                            part="itinerary"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </onMessage>
+                        <onAlarm>
+                            <for>'PT10S'</for>
+                            <sequence>
+                                <assign name="CopyHotelCancellation"
+                                        sbynpxp:XLoc="1738.0"
+                                        sbynpxp:YLoc="46.0">
+                                    <copy>
+                                        <from>$ReserveHotelIn.itinerary/ItineraryRef</from>
+                                        <to variable="CancelHotelIn"
+                                            part="itinerary"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="CancelHotel"
+                                        partnerLink="Hotel"
+                                        portType="hres:HotelReservationPortType"
+                                        operation="cancelHotel"
+                                        inputVariable="CancelHotelIn"
+                                        outputVariable="CancelHotelOut"
+                                        sbynpxp:XLoc="1880.0"
+                                        sbynpxp:YLoc="50.0"></invoke>
+                            </sequence>
+                        </onAlarm>
+                    </pick>
+                </sequence>
+        </if>
+        <reply name="ReturnItinerary"
+               partnerLink="Travel"
+               portType="tres:TravelReservationPortType"
+               operation="buildItinerary"
+               variable="ItineraryOut"
+               sbynpxp:XLoc="2213.0"
+               sbynpxp:YLoc="76.0"></reply>
+    </sequence>
+</process>

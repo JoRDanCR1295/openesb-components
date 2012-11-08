@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UpdateFalseCondBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/UpdateFalseCondBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/UpdateFalseCondBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/UpdateFalseCondBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="UpdateFalseCondSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/UpdateFalseCondBpel" location="UpdateFalseCondBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:UpdateFalseCondBpelPartner" partnerRole="UpdateFalseCondBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:UpdateFalseCondSql_sqlsePartnerLinkType" myRole="UpdateFalseCondSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="UpdateFalseCondOut" messageType="ns1:UpdateFalseCondResponse"/>
+      <bpws:variable name="UpdateFalseCondBpelOperationOut" messageType="ns2:UpdateFalseCondBpelOperationReply"/>
+      <bpws:variable name="UpdateFalseCondBpelOperationIn" messageType="ns2:UpdateFalseCondBpelOperationRequest"/>
+      <bpws:variable name="UpdateFalseCondIn" messageType="ns1:UpdateFalseCondRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="UpdateFalseCond" portType="ns1:UpdateFalseCondSql_sqlsePortType" variable="UpdateFalseCondIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="UpdateFalseCondIn" part="UpdateFalseCondRequestPart"/>
+            <bpws:to variable="UpdateFalseCondBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="UpdateFalseCondBpelOperation" portType="ns2:UpdateFalseCondBpelPortType" inputVariable="UpdateFalseCondBpelOperationIn" outputVariable="UpdateFalseCondBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="UpdateFalseCondBpelOperationOut" part="part1"/>
+            <bpws:to variable="UpdateFalseCondOut" part="UpdateFalseCondResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="UpdateFalseCond" portType="ns1:UpdateFalseCondSql_sqlsePortType" variable="UpdateFalseCondOut"/>
+   </sequence>
+</process>

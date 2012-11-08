@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="dollar1" targetNamespace="http://www.seebeyond.com/eInsight/dollar1" xmlns:tns="http://www.seebeyond.com/eInsight/dollar1" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://stc.com/dollar1" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+	<import namespace="http://stc.com/dollar1" location="dollar1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+	<!-- partnerLinks definition -->
+	<partnerLinks>
+		<partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+	</partnerLinks>
+	<!-- variables definition -->
+	<!-- activities definition -->
+	<variables>
+		<variable name="dollar1_Output" messageType="ns0:dollar1"/>
+		<variable name="dollar1_Input" messageType="ns0:dollar1"/>
+	</variables>
+	<sequence>
+		<receive name="dollar1" partnerLink="Client2BP" portType="ns0:dollar1" operation="dollar1" variable="dollar1_Output" createInstance="yes"/>
+		<assign name="Assign">
+			<copy>
+				<from>$dollar1_Output.part/value</from>
+				<to>$dollar1_Input.part/value</to>
+			</copy>
+		</assign>
+		<reply name="dollar1.Reply" partnerLink="Client2BP" portType="ns0:dollar1" operation="dollar1" variable="dollar1_Input"/>
+	</sequence>
+</process>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BluePrint5/Reservation"
+             name="Reservation"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"             
+             xmlns:tns="http://localhost/BluePrint5/Reservation"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://ReservationSystem.org/xsd/reserve">
+    <types>
+        <xsd:schema targetNamespace="http://localhost/BluePrint5/Reservation">
+            <xsd:import schemaLocation="reservaton.xsd" namespace="http://ReservationSystem.org/xsd/reserve"/>
+            <xsd:element name="faultString" type="xsd:string"/>
+        </xsd:schema>
+    </types>
+    <message name="reserveMesg">
+        <part name="reservePart"
+              element="ns:reserve"></part>              
+    </message>
+    <message name="reservationStatus">
+        <part name="reservationStatusPart"
+              element="ns:reservationStatusOfAll"></part>
+    </message>
+    <message name="reservationFailed">
+        <part name="faultInfo"
+              element="tns:faultString"></part>
+    </message>
+    <portType name="doReservePortType">
+        <operation name="reserve">
+            <input name="reserveMesg"
+                   message="tns:reserveMesg"></input>
+            <output name="reservationStatus"
+                    message="tns:reservationStatus"></output>
+            <fault name="reservationFailed"
+                   message="tns:reservationFailed"></fault>
+        </operation>        
+    </portType>
+    <binding name="reservationBinding"
+             type="tns:doReservePortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="reserve">
+            <input name="reserveMesg">
+                <soap:body parts="reservePart"
+                           use="literal"/>
+            </input>
+            <output name="reservationStatus">
+                <soap:body parts="reservationStatusPart"
+                           use="literal"/>
+            </output>
+            <fault name="reservationFailed">
+                <soap:fault name="reservationFailed"
+                            use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="reservationService">
+        <port name="reservationServicePort"
+              binding="tns:reservationBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wsdl/ReservationService/ServiceLocation"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="reservationPLinkType">
+        <plink:role name="reservationServicing"
+                    portType="tns:doReservePortType"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:property name="reservationID" type="xsd:long"></vprop:property>
+    <vprop:propertyAlias part="reservePart"
+                        propertyName="tns:reservationID"
+                        messageType="tns:reserveMesg">
+        <vprop:query>/reserve/reservationID</vprop:query>                            
+    </vprop:propertyAlias>        
+</definitions>

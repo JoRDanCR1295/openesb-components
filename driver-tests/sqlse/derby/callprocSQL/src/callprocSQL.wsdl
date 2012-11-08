@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="callprocSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="callprocRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="callprocResponse"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="callprocRequest">
+    <part name="callprocRequestPart" element="tns:callprocRequest"/>
+  </message>
+  <message name="callprocResponse">
+    <part name="callprocResponsePart" element="tns:callprocResponse"/>
+  </message>
+  <portType name="callprocSQL_sqlsePortType">
+    <operation name="callproc">
+      <input name="callprocRequest" message="tns:callprocRequest"/>
+      <output name="callprocResponse" message="tns:callprocResponse"/>
+    </operation>
+  </portType>
+  <binding name="callprocSQLBinding" type="tns:callprocSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="callproc">
+      <soap:operation style="document"/>
+      <input name="callprocRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="callprocResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="callprocSQL_sqlseService">
+    <port name="callprocSQL_sqlsePort" binding="tns:callprocSQLBinding">
+      <soap:address location="http://localhost:18181/callprocSQL/callprocSQL/callprocSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="callprocSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="callprocSQL_myrole" portType="tns:callprocSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

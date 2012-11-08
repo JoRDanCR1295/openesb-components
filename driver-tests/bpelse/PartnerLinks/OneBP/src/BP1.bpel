@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BP1"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OneBP/BP1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns1="http://j2ee.netbeans.org/wsdl/PTwithTwoOperationsOneBP"   >
+    <import namespace="http://j2ee.netbeans.org/wsdl/PTwithTwoOperationsOneBP" location="PTwithTwoOperations.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:PTwithTwoOperations1" myRole="PTwithTwoOperationsPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="PTwithTwoOperationsOperation2Out" messageType="ns1:PTwithTwoOperationsOperationReply"/>
+        <bpws:variable name="PTwithTwoOperationsOperation1Out" messageType="ns1:PTwithTwoOperationsOperationReply"/>
+        <bpws:variable name="PTwithTwoOperationsOperation2In" messageType="ns1:PTwithTwoOperationsOperationRequest"/>
+        <bpws:variable name="PTwithTwoOperationsOperation1In" messageType="ns1:PTwithTwoOperationsOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:pick name="Pick1" createInstance="yes">
+            <bpws:onMessage partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation1" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation1In">
+                <bpws:sequence name="Sequence1">
+                    <bpws:assign name="Assign1">
+                        <bpws:copy>
+                            <bpws:from>concat($PTwithTwoOperationsOperation1In.part1, 'Operation1')</bpws:from>
+                            <bpws:to part="part1" variable="PTwithTwoOperationsOperation1Out"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation1" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation1Out"/>
+                </bpws:sequence>
+            </bpws:onMessage>
+            <bpws:onMessage partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation2" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation2In">
+                <bpws:sequence name="Sequence2">
+                    <bpws:assign name="Assign2">
+                        <bpws:copy>
+                            <bpws:from>concat($PTwithTwoOperationsOperation2In.part1, 'Operation2')</bpws:from>
+                            <bpws:to part="part1" variable="PTwithTwoOperationsOperation2Out"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:reply name="Reply2" partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation2" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation2Out"/>
+                </bpws:sequence>
+            </bpws:onMessage>
+        </bpws:pick>
+    </sequence>
+</process>

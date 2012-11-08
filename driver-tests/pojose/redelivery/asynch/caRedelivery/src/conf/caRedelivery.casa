@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" xmlns:ns10="Test" xmlns:ns2="caRedelivery" xmlns:ns3="http://tst.pojose.sun.com/POJOTestRedeliveryThrottlingSvc/" xmlns:ns4="http://enterprise.netbeans.org/bpel/bplThrowError/bplThrowError" xmlns:ns5="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" xmlns:ns6="http://svc.tst.sun.com/RedirectedInOut/" xmlns:ns7="http://svc.tst.sun.com/RedirectedSvc/" xmlns:ns8="http://svc.tst.sun.com/TstInOutSvc/" xmlns:ns9="http://svc.tst.sun.com/TstSvc/" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="NoSvcPort" interface-name="ns1:NoSvcPortType" name="endpoint1" service-name="ns1:NoSvcService"/>
+        <endpoint endpoint-name="testredeliveryPort" interface-name="ns3:POJOTestRedeliveryThrottlingSvcInterface" name="endpoint2" service-name="ns2:casaService1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="throwErrorPortTypeRole_myRole" file-path="bplThrowError.bpel" interface-name="ns5:throwErrorPortType" name="endpoint3" process-name="bplThrowError" service-name="ns4:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="NoSvcPortTypeRole_partnerRole" file-path="bplThrowError.bpel" interface-name="ns1:NoSvcPortType" name="endpoint4" process-name="bplThrowError" service-name="ns4:PartnerLink2"/>
+        <endpoint endpoint-name="POJOTestRedeliveryThrottlingSvc" interface-name="ns3:POJOTestRedeliveryThrottlingSvcInterface" name="endpoint5" service-name="ns3:POJOTestRedeliveryThrottlingSvcService"/>
+        <endpoint endpoint-name="RedirectedInOut" interface-name="ns6:RedirectedInOutInterface" name="endpoint6" service-name="ns6:RedirectedInOutService"/>
+        <endpoint endpoint-name="RedirectedSvc" interface-name="ns7:RedirectedSvcInterface" name="endpoint7" service-name="ns7:RedirectedSvcService"/>
+        <endpoint endpoint-name="TstInOutSvc" interface-name="ns8:TstInOutSvcInterface" name="endpoint8" service-name="ns8:TstInOutSvcService"/>
+        <endpoint endpoint-name="TstSvc" interface-name="ns9:TstSvcInterface" name="endpoint9" service-name="ns9:TstSvcService"/>
+        <endpoint endpoint-name="epThrowErrorPortTyp" interface-name="ns5:throwErrorPortType" name="endpoint10" service-name="ns5:epThrowErrorPortTypService"/>
+        <endpoint endpoint-name="RedirectedBPELSvcConsumer" interface-name="ns5:throwErrorPortType" name="endpoint11" service-name="ns10:RedirectableBPELSvcService"/>
+        <endpoint endpoint-name="TstSvcErrorConsumer" interface-name="ns9:TstSvcInterface" name="endpoint12" service-name="ns10:TstSvcService"/>
+        <endpoint endpoint-name="TstSvcDeleteConsumer" interface-name="ns9:TstSvcInterface" name="endpoint13" service-name="ns10:TstSvcService"/>
+        <endpoint endpoint-name="RedirectedSvcConsumer" interface-name="ns9:TstSvcInterface" name="endpoint14" service-name="ns10:RedirectableSvcService"/>
+        <endpoint endpoint-name="TstInOutSvcErrorConsumer" interface-name="ns8:TstInOutSvcInterface" name="endpoint15" service-name="ns10:TstInOutSvcService"/>
+        <endpoint endpoint-name="RedirectedInOutSvcConsumer" interface-name="ns8:TstInOutSvcInterface" name="endpoint16" service-name="ns10:RedirectableInOutSvcService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="bplThrowError.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="caRedelivery-bplThrowError" unit-name="bplThrowError" unknown="false" x="150" y="99">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="jseDriver.jar" component-name="sun-pojo-engine" defined="true" description="Represents this Service Unit" internal="true" name="caRedelivery-jseDriver" unit-name="jseDriver" unknown="false" x="125" y="292">
+            <provides endpoint="endpoint5"/>
+            <provides endpoint="endpoint6"/>
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+            <provides endpoint="endpoint9"/>
+            <consumes endpoint="endpoint10"/>
+            <consumes endpoint="endpoint11"/>
+            <consumes endpoint="endpoint12"/>
+            <consumes endpoint="endpoint13"/>
+            <consumes endpoint="endpoint14"/>
+            <consumes endpoint="endpoint15"/>
+            <consumes endpoint="endpoint16"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="caRedelivery-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port bindingType="soap" x="67" y="342">
+                    <link xlink:href="../jbiasa/caRedelivery.wsdl#xpointer(/definitions/service[@name='casaService1']/port[@name='testredeliveryPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/bplThrowError/NoSvc.wsdl#xpointer(/definitions/service[@name='NoSvcService']/port[@name='NoSvcPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint15" provider="endpoint8" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <error/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint16" provider="endpoint8" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <redirect endpoint-name="RedirectedInOut" operation="RedirectedInOutOperation" service-name="ns6:RedirectedInOutService"/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint10" provider="endpoint3" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <error/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint11" provider="endpoint3" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <redirect xmlns:ns6="http://svc.tst.sun.com/RedirectedSvc/" endpoint-name="RedirectedSvc" operation="RedirectedSvcOperation" service-name="ns6:RedirectedSvcService"/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint5" state="new"/>
+        <connection consumer="endpoint12" provider="endpoint9" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <error/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint13" provider="endpoint9" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <delete/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint14" provider="endpoint9" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="5">
+                <on-failure>
+                    <redirect xmlns:ns6="http://svc.tst.sun.com/RedirectedSvc/" endpoint-name="RedirectedSvc" operation="RedirectedSvcOperation" service-name="ns6:RedirectedSvcService"/>
+                </on-failure>
+            </redelivery>
+        </connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/caRedelivery.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bplThrowError/NoSvc.wsdl#xpointer(/definitions/portType[@name='NoSvcPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bplThrowError/throwError.wsdl#xpointer(/definitions/portType[@name='throwErrorPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caRedelivery.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseDriver/com/sun/pojose/tst/POJOTestRedeliveryThrottlingSvc.wsdl#xpointer(/definitions/portType[@name='POJOTestRedeliveryThrottlingSvcInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseDriver/com/sun/tst/svc/RedirectedInOut.wsdl#xpointer(/definitions/portType[@name='RedirectedInOutInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseDriver/com/sun/tst/svc/RedirectedSvc.wsdl#xpointer(/definitions/portType[@name='RedirectedSvcInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseDriver/com/sun/tst/svc/TstInOutSvc.wsdl#xpointer(/definitions/portType[@name='TstInOutSvcInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseDriver/com/sun/tst/svc/TstSvc.wsdl#xpointer(/definitions/portType[@name='TstSvcInterface'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/caRedelivery.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bplThrowError/NoSvc.wsdl#xpointer(/definitions/binding[@name='NoSvcBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caRedelivery.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/caRedelivery.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bplThrowError/NoSvc.wsdl#xpointer(/definitions/service[@name='NoSvcService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caRedelivery.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

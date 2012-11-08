@@ -1,0 +1,78 @@
+<process name="correlation"
+         targetNamespace="http://www.seebeyond.com/eInsight/correlation"
+         sbynpxp:end_YLoc="118.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="470.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/correlation"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:correlationTargetNamespace"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:correlationTargetNamespace"
+            location="correlation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="twoWayOperPLink"
+                     partnerLinkType="ns0:correlationServiceLinkType"
+                     myRole="correlationServerRole"/>
+        <partnerLink name="oneWayOperPLink"
+                     partnerLinkType="ns0:correlationServiceLinkType"
+                     myRole="correlationServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="correlationOperation_Output"
+                  messageType="ns0:correlationMessage"></variable>
+        <variable name="correlationOperation_Input"
+                  messageType="ns0:correlationMessage"></variable>
+        <variable name="correlationOperation1_Output"
+                  messageType="ns0:correlationMessage"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns0:propertyName1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="correlationOperation"
+                 partnerLink="twoWayOperPLink"
+                 portType="ns0:correlationPortType"
+                 operation="correlationOperation"
+                 variable="correlationOperation_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="101.0"
+                 sbynpxp:YLoc="113.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="correlationOperation1"
+                 partnerLink="oneWayOperPLink"
+                 portType="ns0:correlationPortType1"
+                 operation="correlationOperation1"
+                 variable="correlationOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="212.0"
+                 sbynpxp:YLoc="113.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <reply name="correlationOperation.Reply"
+               partnerLink="twoWayOperPLink"
+               portType="ns0:correlationPortType"
+               operation="correlationOperation"
+               variable="correlationOperation_Output"
+               sbynpxp:XLoc="325.0"
+               sbynpxp:YLoc="113.0"></reply>
+    </sequence>
+</process>

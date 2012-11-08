@@ -1,0 +1,1 @@
+create table with Full Caps DRIVERTEST_FULLCAPS

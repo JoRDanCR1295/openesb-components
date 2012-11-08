@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>mqbcimpl</artifactId>
+    <name>mqbcimpl</name>
+    <version>${mqbc.artifact.version}</version>
+    <description>mqbcimpl description</description>
+    <properties>
+        <component.name>sun-webspheremq-binding</component.name>
+        <msgs.package>com/sun/jbi/mqbc</msgs.package> 
+    </properties>
+    <build>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <!-- 
+                     ! need to replace the @variables@ in the .wsdl and .xml files
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                    <exclude>**/*.wsdl</exclude>
+                    <exclude>**/*.pom</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-extract-globalized-messages</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="i18n" classname="${I18NTASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n dir="${project.build.outputDirectory}"
+                                    file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                    prefix="MQBC-"
+                                    pattern="([0-9]\d\d\d)(: )(.*)" />
+                                <copy file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                      todir="${project.build.outputDirectory}/${msgs.package}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-substitute-ant-variables</id>
+                        <phase>process-test-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <property name="project.build.directory" value="${project.build.directory}" />
+                                <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                <property name="SRCROOT" value="${SRCROOT}" />
+
+                                <!-- create global filter rules: -->
+                                <echo file="${project.build.directory}/filter" append="false">
+                        SRCROOT=${SRCROOT}
+                        alaska_root=${SRCROOT}/ojc-core
+                        alaska_sharedlibrary=${SRCROOT}/ojc-core/component-common
+                        asadmin_cmd=bin/asadmin
+                        asant_cmd=bin/asant
+                        drivertest_dir=${SRCROOT}/ojc-core/driver-tests
+                        encoder_sharedlibrary=${SRCROOT}/ojc-core/encodersl/encoder-
+                        shell_cmd=sh
+                        jbicomps_home=${SRCROOT}/ojc-core
+                        tempdir=/tmp
+                                </echo>
+                                <filter filtersfile="${project.build.directory}/filter" />
+
+                                <copy todir="${project.build.directory}/test" overwrite="true" filtering="true" verbose="true" failonerror="false" >
+                                     <fileset dir="${project.build.testSourceDirectory}">
+                                         <include name="**/*.xml" />
+                                         <include name="**/*.wsdl" />
+                                         <include name="**/*.properties" />
+                                     </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-run-junit-via-ant</id>
+                        <phase>test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <patternset id="jbicomps.junit.test.patternset" >
+                                    <include name="**/*Test.java"/>
+                                </patternset>
+
+                                <!-- invoke junit via ant -->
+
+                                <ant antfile="${SRCROOT}/global-common/m2.ant"
+                                    dir="${project.build.sourceDirectory}/.." target="run_junit" >
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="maven.repo.local" value="${maven.repo.local}" />
+                                    <property name="project.artifactId" value="${project.artifactId}" />
+                                    <property name="project.build.directory" value="${project.build.directory}" />
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                    <property name="work.dir" value="${project.build.directory}" />
+
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties" />
+
+                                    <reference refid="maven.test.classpath"/>
+                                    <reference refid="jbicomps.junit.sysproperties"/>
+                                    <reference refid="jbicomps.junit.test.patternset"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <archive>  
+                        <manifestEntries>
+                            <Component-Version>${mqbc.artifact.version}</Component-Version>
+                            <Component-Name>${component.name}</Component-Name>
+                        </manifestEntries>
+                    </archive> 
+                </configuration>
+            </plugin>                
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jbicompsplatform</groupId>
+            <artifactId>compileconf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-fw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xsdmodel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.itf</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm</groupId>
+            <artifactId>mq</artifactId>
+            <version>6.0.0.0</version>
+        </dependency>
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

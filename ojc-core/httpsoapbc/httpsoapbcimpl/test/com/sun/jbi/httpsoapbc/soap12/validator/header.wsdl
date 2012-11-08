@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="header" targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/header"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/EchoBP/header" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/header" xmlns:tns="http://j2ee.netbeans.org/wsdl/EchoBP/header">
+            <xsd:element name="header1" type="xsd:string"></xsd:element>
+            <xsd:element name="header2" type="xsd:string"></xsd:element>
+            <xsd:element name="body" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="headerOperationRequest">
+        <part name="body" element="tns:body"/>
+        <part name="header1" element="tns:header1"/>
+        <part name="header2" element="tns:header2"/>
+    </message>
+    <message name="headerOperationResponse">
+        <part name="body" element="tns:body"/>
+        <part name="header1" element="tns:header1"/>
+        <part name="header2" element="tns:header2"/>
+    </message>
+    <message name="headerOperationFault">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+    </message>
+    <portType name="headerPortType">
+        <operation name="headerOperation">
+            <input name="input1" message="tns:headerOperationRequest"/>
+            <output name="output1" message="tns:headerOperationResponse"/>
+            <fault name="fault1" message="tns:headerOperationFault"/>
+        </operation>
+    </portType>
+    <binding name="headerPortTypeBinding" type="tns:headerPortType">
+        <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <operation name="headerOperation">
+            <soap12:operation/>
+            <input name="input1">
+                <soap12:body parts="body" use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/header"/>
+                <soap12:header message="tns:headerOperationRequest" part="header1" use="literal"/>
+                <soap12:header message="tns:headerOperationRequest" part="header2" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap12:body parts="body" use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/header"/>
+                <soap12:header message="tns:headerOperationRequest" part="header1" use="literal"/>
+                <soap12:header message="tns:headerOperationRequest" part="header2" use="literal"/>
+            </output>
+            <fault name="fault1">
+                <soap12:fault use="literal" name="fault1" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/header"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="headerService">
+        <port name="headerPort" binding="tns:headerPortTypeBinding">
+            <soap12:address location="http://localhost:${HttpDefaultPort}/EchoBP/header/headerPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="header">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="headerPortTypeRole" portType="tns:headerPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

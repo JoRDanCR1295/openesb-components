@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SequenceNested" 
+    targetNamespace="http://www.mycomp.org/DefaultServiceName"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/DefaultServiceName">
+    <import namespace="http://www.mycomp.org/DefaultServiceName" location="SequenceNested.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:SequenceNestedPartnerLinkType" myRole="SequenceNestedProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Output" messageType="wsdlNS:message1"/>
+        <variable name="Input" messageType="wsdlNS:message1"/>
+    </variables>
+    <sequence name="OuterSequence">
+      <receive name="Receive1" partnerLink="PartnerLink1" portType="wsdlNS:SequenceNestedPortType" operation="SequenceNestedOperation" variable="Input" createInstance="yes"/>
+         <assign name="Assign1">
+            <copy>
+            <from>concat('OuterSequence:', $Input.parameter1)</from><to part="parameter1" variable="Output"/>
+            </copy>
+         </assign>
+      <sequence name="NestedSequence">
+      	 <empty/>
+         <assign name="Assign2">
+            <copy>
+               <from>concat('NestedSequence:', $Input.parameter2)</from><to part="parameter2" variable="Output"/>
+            </copy>
+         </assign>
+      </sequence>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="SequenceNestedOperation" portType="wsdlNS:SequenceNestedPortType" variable="Output"/>
+   </sequence>
+   
+</process>

@@ -1,0 +1,55 @@
+<definitions targetNamespace="http://stc.com/xsddatatype6" name="xsddatatype6" xmlns:tns="http://stc.com/xsddatatype6" xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:tns0="http://stc.com/xsddatatype6" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+    <types>
+        <xsd:schema targetNamespace="http://stc.com/xsddatatype6" elementFormDefault="qualified" xmlns:tns="http://stc.com/xsddatatype6" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            <xsd:element name="USAddress" type="tns:USAddressType"/>
+            <xsd:element name="person">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="home" type="tns:USAddress"/>
+                        <xsd:element name="work" type="tns:USAddress" minOccurs="0"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xs:string"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="USAddress" >
+                <xsd:sequence>
+                    <xsd:element name="name"   type="xsd:string"/>
+                    <xsd:element name="street" type="xsd:string"/>
+                    <xsd:element name="city"   type="xsd:string"/>
+                    <xsd:element name="state"  type="xsd:string"/>
+                    <xsd:element name="zip"    type="xsd:decimal"/>
+                </xsd:sequence>
+                <xsd:attribute name="country" type="xsd:NMTOKEN" fixed="US"/>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="xsddatatype6">
+        <part name="part" element="tns:person"/>
+    </message>
+    <portType name="xsddatatype6">
+        <operation name="xsddatatype6">
+            <input message="tns:xsddatatype6"/>
+            <output message="tns:xsddatatype6"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:xsddatatype6">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="xsddatatype6">
+            <soap:operation soapAction="xsddatatype6"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="xsddatatype6Service">
+        <port name="port" binding="tns:Binding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/xsddatatype6"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="SLT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server" portType="tns:xsddatatype6"/>
+    </plnk:partnerLinkType>
+</definitions>

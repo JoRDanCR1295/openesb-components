@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SoapIn" targetNamespace="http://j2ee.netbeans.org/wsdl/SoapIn"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SoapIn" xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <types/>
+    <message name="messageSoapInText">
+        <part name="partTextMsgBody" type="xsd:string"/>
+    </message>
+    <message name="messageSoapOutText">
+        <part name="partTextMsgBody2" type="xsd:string"/>
+    </message>
+    <portType name="SoapInPortType">
+        <operation name="SoapInOutOperation">
+            <input name="input1" message="tns:messageSoapInText"/>
+            <output name="output1" message="tns:messageSoapOutText"/>
+        </operation>
+    </portType>
+    <binding name="binding1" type="tns:SoapInPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="SoapInOutOperation">
+            <input name="input1">
+                <soap:body parts="partTextMsgBody" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="partTextMsgBody2" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="serviceSoapInOut">
+        <port name="port1SoapInOut" binding="tns:binding1">
+            <soap:address location="http://localhost:18181/MQBCBpel/SoapIn/port1SoapInOut"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktypeSopaInOut">
+        <plink:role name="partnerlinktyperoleSoapInOut" portType="tns:SoapInPortType"/>
+    </plink:partnerLinkType>
+</definitions>

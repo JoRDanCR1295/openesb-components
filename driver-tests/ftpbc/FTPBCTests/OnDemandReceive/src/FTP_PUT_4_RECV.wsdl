@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP_PUT_4_RECV" targetNamespace="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types/>
+    <message name="OutboundOneWayTransferringOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="OutboundOneWayTransferringPortType">
+        <operation name="OutboundOneWayTransferringOperation">
+            <input name="input1" message="tns:OutboundOneWayTransferringOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="OutboundOneWayTransferringBinding" type="tns:OutboundOneWayTransferringPortType">
+        <ftp:binding/>
+        <operation name="OutboundOneWayTransferringOperation">
+            <ftp:operation/>
+            <input name="input1">
+                <ftp:transfer sendTo="ON_DEMAND_RECEIVE/STAGE_AREA/%u.msg" sendToHasPatterns="true" append="false" preSendCommand="NONE" preSendLocation="" preSendLocationHasPatterns="false" postSendCommand="RENAME" postSendLocation="ON_DEMAND_RECEIVE/EXCHANGE_AREA/%f" postSendLocationHasPatterns="true" use="literal" messageCorrelate="false" part="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutboundOneWayTransferringService">
+        <port name="FTP_PUT_4_RECV_OutboundOneWayTransferringPort" binding="tns:OutboundOneWayTransferringBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" securedFTP="None" enableCCC="false" cmdChannelTimeout="45000" dataChannelTimeout="45000" controlChannelEncoding=""/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FTP_PUT_4_RECV">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="OutboundOneWayTransferringPortTypeRole" portType="tns:OutboundOneWayTransferringPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SimpleForEach"
+    targetNamespace="http://enterprise.netbeans.org/bpel/IterativeScopes/SimpleForEach"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/IterativeScopes/SimpleForEach" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/interfaceSimpleForEach"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/interfaceSimpleForEach" location="interfaceSimpleForEach.wsdl" 
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="SimpleForEachPL" partnerLinkType="ns1:initSimpleForEachPLT" myRole="SimpleForEachPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="GIter1State" type="xsd:string"/>
+        <variable name="GIter2State" type="xsd:string"/>
+        <variable name="GlobalFaultVar" type="xsd:string"/>
+        <variable name="InitReplyVar" messageType="ns1:ReplyMsg"/>
+        <variable name="InitRecVar" messageType="ns1:InMsg"/>
+    </variables>
+    <sequence>
+        <receive name="InitRec" createInstance="yes" partnerLink="SimpleForEachPL" operation="SimpleForEachOper" portType="ns1:SimpleForEachPT" variable="InitRecVar"/>
+        <assign name="ProcessInit">
+            <copy>
+                <from>$InitRecVar.InPart/input</from>
+                <to variable="GlobalFaultVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catch faultName="ns2:uninitializedVariable">
+                    <sequence name="FaultHandlerSeq">
+                        <assign name="AssignInFault">
+                            <copy>
+                                <from>concat($GlobalFaultVar, ' S1 Fault Handled:')</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                        <compensate/>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence name="Sequence1">
+                <assign name="S1Start">
+                    <copy>
+                        <from>concat($GlobalFaultVar, ' Scope1 Start:')</from>
+                        <to variable="GlobalFaultVar"/>
+                    </copy>
+                </assign>
+                <forEach name="ForEach1" parallel="no" counterName="ForEachCountVar">
+                    <startCounterValue>1</startCounterValue>
+                    <finalCounterValue>$InitRecVar.InPart/iterCount</finalCounterValue>
+                    <scope name="Scope2">
+                        <variables>
+                            <variable name="Scope2Var" type="xsd:string"/>
+                        </variables>
+                        <compensationHandler>
+                            <sequence name="Scope2CHSeq">
+                                <assign name="Scope2CHAssign">
+                                    <copy>
+                                        <from>concat($GlobalFaultVar, ' In S2 CH with state:', $Scope2Var)</from>
+                                        <to variable="GlobalFaultVar"/>
+                                    </copy>
+                                </assign>
+                                <compensate/>
+                            </sequence>
+                        </compensationHandler>
+                        <sequence name="Sequence2">
+                            <assign name="FES2Start">
+                                <copy>
+                                    <from>concat(' Scope2 start for iter:', $ForEachCountVar)</from>
+                                    <to variable="Scope2Var"/>
+                                </copy>
+                            </assign>
+                            <assign name="FES2End">
+                                <copy>
+                                    <from>concat($Scope2Var, ' scope2 End:')</from>
+                                    <to variable="Scope2Var"/>
+                                </copy>
+                                <copy>
+                                    <from>concat($GlobalFaultVar, $Scope2Var)</from>
+                                    <to variable="GlobalFaultVar"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </scope>
+                </forEach>
+                <assign name="S1BeforeFault">
+                    <copy>
+                        <from>concat($GlobalFaultVar, ' Scope1 Before Fault:')</from>
+                        <to variable="GlobalFaultVar"/>
+                    </copy>
+                </assign>
+                <ns2:throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+        <assign name="ReplyAssign">
+            <copy>
+                <from variable="GlobalFaultVar"/>
+                <to>$InitReplyVar.ReplyPart/OutVar</to>
+            </copy>
+        </assign>
+        <reply name="InitReplyVar" partnerLink="SimpleForEachPL" operation="SimpleForEachOper" portType="ns1:SimpleForEachPT" variable="InitReplyVar"/>
+    </sequence>
+</process>

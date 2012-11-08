@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/CorrSubBPBpel/SubProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/CorrSubBPBpel/SubProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ParentProcess2PartnerLink" partnerLinkType="ns1:SubBPWSDLRIT3966312" myRole="SubBPWSDLPortType1Role"/>
+        <partnerLink name="ParentProcess1PartnerLink" partnerLinkType="ns1:SubBPWSDLRIT396631" myRole="SubBPWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SubBPWSDLOperationOut1" messageType="ns1:SubBPWSDLOperationReply"/>
+        <variable name="SubBPWSDLOperationIn1" messageType="ns1:SubBPWSDLOperationRequest"/>
+        <variable name="SubBPWSDLOperationOut" messageType="ns1:SubBPWSDLOperationReply"/>
+        <variable name="SubBPWSDLOperationIn" messageType="ns1:SubBPWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ParentProcess1PartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType" variable="SubBPWSDLOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="Receive2" partnerLink="ParentProcess2PartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType1" createInstance="no" variable="SubBPWSDLOperationIn1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from variable="SubBPWSDLOperationIn1" part="part1"/>
+                <to variable="SubBPWSDLOperationOut1" part="part1"/>
+            </copy>
+            <copy>
+                <from variable="SubBPWSDLOperationIn" part="part1"/>
+                <to variable="SubBPWSDLOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply2" partnerLink="ParentProcess2PartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType1" variable="SubBPWSDLOperationOut1"/>
+        <reply name="Reply1" partnerLink="ParentProcess1PartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType" variable="SubBPWSDLOperationOut"/>
+    </sequence>
+</process>

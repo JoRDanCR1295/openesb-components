@@ -1,0 +1,32 @@
+<task xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns="http://jbi.com.sun/wfse"  xmlns:po="http://wlmse.sample/po"
+        xmlns:cur="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions"
+        targetNamespace="http://localhost/PurchaseOrderWorklistApp/ApprovePurchase" name="ApprovePurchaseTask" xmlns:ns0="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL" portType="ns0:ApprovePurchasePT" operation="ApprovePurchase">
+    <import location="ApprovePurchase_TM_BPEL.wsdl" namespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL"/>
+    <priority>$TaskInput.part1/po:priority</priority>
+    <title>concat($TaskInput.part1/po:purchaserName, concat(' Purchase Order for ', $TaskInput.part1/po:productId))</title>
+    <assignment>
+        <user></user>
+        <group>$TaskInput.part1/po:users</group>
+    </assignment>
+    <action type="Completed" name="Complete">
+            <changeVariables>
+                <copy>
+                    <from>cur:current-dateTime()</from>
+                    <to>$TaskOutput.part1/po:replyDate</to>
+                </copy> 
+            </changeVariables>
+            <changeVariables>
+                <copy>
+                    <from>$TaskInput.part1/po:orderId</from>
+                    <to>$TaskOutput.part1/po:orderId</to>
+                </copy>
+        </changeVariables>
+    </action>
+	<keywords>
+		<keyword>$TaskInput.part1/po:orderId</keyword>
+		<keyword>$TaskInput.part1/po:purchaserName</keyword>
+		<keyword>$TaskInput.part1/po:productId</keyword>
+	</keywords>
+</task>
+ 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="clientProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/clientProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/clientProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/triggerWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/smtpWSDL">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/triggerWSDL" location="triggerWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/smtpWSDL" location="smtpWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:smtpWSDLPartner" partnerRole="smtpWSDLPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:triggerWSDLPartner" myRole="triggerWSDLPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="TriggerWSDLOperationOut" messageType="ns1:triggerWSDLOperationReply"/>
+      <bpws:variable name="SmtpWSDLOperationIn" messageType="ns2:smtpWSDLOperationRequest"/>
+      <bpws:variable name="TriggerWSDLOperationIn" messageType="ns1:triggerWSDLOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="triggerWSDLOperation" portType="ns1:triggerWSDLPortType" variable="TriggerWSDLOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="TriggerWSDLOperationIn" part="part1"/>
+            <bpws:to variable="SmtpWSDLOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="smtpWSDLOperation" portType="ns2:smtpWSDLPortType" inputVariable="SmtpWSDLOperationIn"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="TriggerWSDLOperationIn" part="part1"/>
+            <bpws:to variable="TriggerWSDLOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="triggerWSDLOperation" portType="ns1:triggerWSDLPortType" variable="TriggerWSDLOperationOut"/>
+   </sequence>
+</process>

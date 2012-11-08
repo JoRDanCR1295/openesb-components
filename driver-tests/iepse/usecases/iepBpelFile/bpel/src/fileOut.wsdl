@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="FileOut" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+name="FileOutService" 
+targetNamespace="FileOut">
+    <types>
+        <xsd:schema xmlns:ns1="FileOut" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="FileOut">
+            <xsd:element name="outMessageObj" type="tns:outMessageObjType">
+            </xsd:element>
+            <xsd:complexType name="outMessageObjType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="int" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="OF_Input">
+        <part element="tns:outMessageObj" name="body"/>
+    </message>
+    <portType name="OF">
+        <operation name="Output">
+            <input message="tns:OF_Input"/>
+        </operation>
+    </portType>
+    
+    <binding name="OFBinding" type="tns:OF">
+        <file:binding/>
+        <operation name="Output">
+            <file:operation/>
+            <input>
+                <file:message recordDelimiter=";" fileName="actual.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    
+    <service name="OFService">
+        <port binding="tns:OFBinding" name="OFPort">
+            <file:address fileDirectory="${ojc-root}/driver-tests/iepse/usecases/iepBpelFile/jbi/test/iepBpelFile/"/>
+        </port>
+    </service>
+    
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OFServiceLink">
+	<plnk:role name="OFRole" portType="tns:OF"/>
+   </plnk:partnerLinkType>
+
+</definitions>

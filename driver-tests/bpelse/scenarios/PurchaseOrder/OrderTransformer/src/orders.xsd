@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://xml.netbeans.org/schema/orders"
+            xmlns:tns="http://xml.netbeans.org/schema/orders"
+            elementFormDefault="qualified">
+  <xsd:element name="Orders" type="tns:OrdersType"/>
+  <xsd:element name="Order" type="tns:OrderType"/>
+  <xsd:complexType name="OrdersType">
+    <xsd:sequence>
+      <xsd:element ref="tns:Order" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="OrderType">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-US">A Customer Order</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="OrderKey">
+        <xsd:annotation>
+          <xsd:documentation>
+Unique Sales Document Identifier
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="OrderHeader" type="tns:BUSOBJ_HEADER">
+        <xsd:annotation>
+          <xsd:documentation>
+Order Header referencing customer, payment, sale organization information.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="OrderItems">
+        <xsd:annotation>
+          <xsd:documentation>Items in the Order</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="item" type="tns:BUSOBJ_ITEM"
+              maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+<!--! </xsd:example> -->
+      <xsd:element name="OrderCcard" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Credit Card Data</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="ccard" type="tns:BUSOBJ_CCARD" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="OrderText" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Short description of Order.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="255"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BUSOBJ_HEADER">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-US">Sales and Distribution Document Header</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="SALES_ORG" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Sales organization</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="PURCH_DATE">
+        <xsd:annotation>
+          <xsd:documentation>Date that customer placed the order</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="....-..-.."/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CUST_NO">
+        <xsd:annotation>
+          <xsd:documentation>Unique customer identifier</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="PYMT_METH">
+        <xsd:annotation>
+          <xsd:documentation>Payment method</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="PO"/>
+            <xsd:enumeration value="CC"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="PURCH_ORD_NO" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Customer purchase order number</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="35"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="WAR_DEL_DATE" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Guarantee delivery date</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="....-..-.."/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BUSOBJ_ITEM">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-US">Sales and Distribution Document Item</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ITM_NUMBER">
+        <xsd:annotation>
+          <xsd:documentation>Unique identifier for an item.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="6"/>
+            <xsd:pattern value="\d+"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="STORAGE_LOC" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Storage location</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="TARGET_QTY">
+        <xsd:annotation>
+          <xsd:documentation>Target quantity in sales units</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal">
+            <xsd:totalDigits value="13"/>
+            <xsd:fractionDigits value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="TARGET_UOM">
+        <xsd:annotation>
+          <xsd:documentation>Target quantity Unit of Measure</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="PRICE_PER_UOM">
+        <xsd:annotation>
+          <xsd:documentation>Price per unit of measure in US dollars</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal">
+            <xsd:totalDigits value="10"/>
+            <xsd:fractionDigits value="2"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="SHORT_TEXT" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Short text describing sales order item</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="BUSOBJ_CCARD">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en-US">Credit Card Information</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="CC_TYPE">
+        <xsd:annotation>
+          <xsd:documentation>Payment cards: Card type</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CC_NUMBER">
+        <xsd:annotation>
+          <xsd:documentation>Payment cards: Card number</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="25"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CC_EXPIRE_DATE">
+        <xsd:annotation>
+          <xsd:documentation>Payment cards: Expiration date</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="....-..-.."/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CC_NAME">
+        <xsd:annotation>
+          <xsd:documentation>Payment cards: Name of cardholder</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="BILLAMOUNT" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Value to be billed on the date specified in billing plan</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal">
+            <xsd:totalDigits value="12"/>
+            <xsd:fractionDigits value="2"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="CHARGE_DATE" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Date that card is charged</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="....-..-.."/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

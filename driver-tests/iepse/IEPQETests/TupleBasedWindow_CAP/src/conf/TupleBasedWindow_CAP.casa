@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="TupleBasedWindow_2Outs_iep" xmlns:ns2="TupleBasedWindow_Size2_iep" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="InputPort" interface-name="ns1:InputPt" name="endpoint1" service-name="ns1:InputService"/>
+        <endpoint endpoint-name="InputPort" interface-name="ns2:InputPt" name="endpoint2" service-name="ns2:InputService"/>
+        <endpoint endpoint-name="OutputPort_RelationOutput_noTimestamp" interface-name="ns1:OutputPt_RelationOutput_noTimestamp" name="endpoint3" service-name="ns1:OutputService_RelationOutput_noTimestamp"/>
+        <endpoint endpoint-name="OutputPort_RelationOutput_noTimestamp" interface-name="ns2:OutputPt_RelationOutput_noTimestamp" name="endpoint4" service-name="ns2:OutputService_RelationOutput_noTimestamp"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="TupleBasedWindow_2Outs.iep" interface-name="ns1:InputPt" name="endpoint5" process-name="TupleBasedWindow_2Outs" service-name="ns1:InputPl"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="TupleBasedWindow_Size2.iep" interface-name="ns2:InputPt" name="endpoint6" process-name="TupleBasedWindow_Size2" service-name="ns2:InputPl"/>
+        <endpoint display-name="OutputRn_RelationOutput_noTimestamp" endpoint-name="OutputRn_RelationOutput_noTimestamp" file-path="TupleBasedWindow_2Outs.iep" interface-name="ns1:OutputPt_RelationOutput_noTimestamp" name="endpoint7" process-name="TupleBasedWindow_2Outs" service-name="ns1:OutputPl_RelationOutput_noTimestamp"/>
+        <endpoint display-name="OutputRn_RelationOutput_noTimestamp" endpoint-name="OutputRn_RelationOutput_noTimestamp" file-path="TupleBasedWindow_Size2.iep" interface-name="ns2:OutputPt_RelationOutput_noTimestamp" name="endpoint8" process-name="TupleBasedWindow_Size2" service-name="ns2:OutputPl_RelationOutput_noTimestamp"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="TupleBasedWindow.jar" component-name="sun-iep-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="TupleBasedWindow_CAP-TupleBasedWindow" unit-name="TupleBasedWindow" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint5"/>
+            <provides endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+            <consumes endpoint="endpoint8"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="TupleBasedWindow_CAP-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/service[@name='OutputService_RelationOutput_noTimestamp']/port[@name='OutputPort_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/service[@name='OutputService_RelationOutput_noTimestamp']/port[@name='OutputPort_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="TupleBasedWindow_CAP-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint5" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint2" provider="endpoint6" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint7" provider="endpoint3" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint8" provider="endpoint4" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/portType[@name='OutputPt_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/portType[@name='OutputPt_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/binding[@name='OutputBinding_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/binding[@name='OutputBinding_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_2Outs.wsdl#xpointer(/definitions/service[@name='OutputService_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TupleBasedWindow/TupleBasedWindow_Size2.wsdl#xpointer(/definitions/service[@name='OutputService_RelationOutput_noTimestamp'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BluePrint5/AirLineReservation"
+             name="AirLineReservation"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="http://localhost/BluePrint5/AirLineReservation"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns="http://ReservationSystem.org/xsd/reserve"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:res="http://localhost/BluePrint5/Reservation">
+    <import location="Reservation.wsdl" namespace="http://localhost/BluePrint5/Reservation"/>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/BluePrint5/AirLineReservation">
+            <xsd:import schemaLocation="reservaton.xsd" namespace="http://ReservationSystem.org/xsd/reserve"/>
+        </xsd:schema>
+    </types>    
+    <message name="AirlineReservation">
+        <part name="reserveAirlinePart"
+              element="ns:reserve"></part>
+    </message>
+    <message name="AirlineReservationStatus">
+        <part name="status"
+              element="ns:reserveStatus"></part>
+    </message>
+    <portType name="AirlineReservationPortType">
+        <operation name="reserveAirline">
+            <input name="reserveMesg"
+                   message="tns:AirlineReservation"></input>
+        </operation>
+    </portType>
+    <portType name="AirlineStatusPortType">
+        <operation name="sendAirlineStatus">
+            <input name="statusMesg"
+                   message="tns:AirlineReservationStatus"></input>
+        </operation>
+    </portType>
+    <binding name="AirlineReservationBinding"
+             type="tns:AirlineReservationPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="reserveAirline">
+            <soap:operation style="document"/>
+            <input name="reserveMesg">
+                <soap:body parts="reserveAirlinePart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="AirlineReservationStatusBinding"
+             type="tns:AirlineStatusPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sendAirlineStatus">
+            <soap:operation style="document"/>
+            <input name="statusMesg">
+                <soap:body parts="status"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="AirlineService">
+        <port name="AirlineServicePort"
+              binding="tns:AirlineReservationBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wsdl/AirlineService/ServiceLocation"/>
+        </port>
+    </service>
+    <service name="AirlineStatusService">
+        <port name="AirlineStatusServicePort"
+              binding="tns:AirlineReservationStatusBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wsdl/AirlineStatusService/ServiceLocation"/>
+        </port>
+    </service>    
+    <plink:partnerLinkType name="AirlineReservationPLinkType">
+        <plink:role portType="tns:AirlineReservationPortType"
+                    name="reservingRole"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="AirLineReservStatusPLinkType">
+        <plink:role portType="tns:AirlineStatusPortType"
+                    name="statusReceivingRole"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:propertyAlias part="status"
+                        propertyName="res:reservationID"
+                        messageType="tns:AirlineReservationStatus">
+        <vprop:query>/reserveStatus/reservationID</vprop:query>
+    </vprop:propertyAlias>  
+</definitions>

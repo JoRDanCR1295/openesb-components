@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)build.xml
+ # Copyright 2004-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+
+
+<!--
+# This ant script is responsible for installing JBI files in the appserver area
+# This file copies the common contents to appserver area and then copies
+# the configurator jar to the AS_INSTALL/lib/addons dir
+# USAGE:  ant -Dappserver.install.dir=<appserver_install_location> 
+# Optionally, the following two properties can be set 
+# -Dappserver.jbi.home.dir=location for common jbi contents 
+#                            default is appserver.install.dir/jbi
+# -Dappserver.lib.addons.dir=location where the configurator goes 
+#                            default is appserver.install.dir/lib/addons
+
+-->
+
+<project name="install_jbi_on_appsrv" default="install_jbi" basedir=".">
+
+    <target name="install_jbi" depends="init">
+        <antcall target="unzip-jbi-component-contents"/>
+        <antcall target="copy-jbi-components-configurator"/> 
+        <antcall target="copy-install-util"/> 
+        <antcall target="cleanup"/> 
+    </target>
+    
+    <target name="unzip-jbi-component-contents">
+        <unzip src="JBI_COMPONENTS.zip"
+                dest="${appserver.jbi.home.dir}/jbi-components"/>
+    </target>
+    
+    <target name="copy-jbi-components-configurator">
+        <copy file="jbi_components_configurator.jar"
+                todir="${appserver.addons.dir}"
+                overwrite="true" verbose="true"/>
+    </target>
+    
+    <target name="copy-install-util">
+        <copy file="install-util.jar"
+                todir="${appserver.addons.dir}"
+                overwrite="true" verbose="true"/>
+    </target>
+    
+    <target name="cleanup">    
+    </target>    
+    
+    <target name="init"
+        depends="check-settings, set-jbi-home, set-addons-dir">
+        <echo message="appserver.install.dir is ${appserver.install.dir}"/>
+        <fail message="One or more required properties are not set - ABORT." unless="env-okay"/>
+    </target>
+
+    <target name="check-settings" >
+        <condition property="env-okay">
+            <and>
+                <isset property="appserver.install.dir"/>
+            </and>
+        </condition>
+    </target>
+
+    <!-- only when appserver.jbi.home.dir is not set use the default-->
+    <target name="set-jbi-home" unless="appserver.jbi.home.dir">
+        <property name="appserver.jbi.home.dir" value="${appserver.install.dir}/addons"/>
+    </target>  
+
+    <!-- only when appserver.addons.dir is not set use the default-->
+    <target name="set-addons-dir" unless="appserver.addons.dir">
+        <property name="appserver.addons.dir" value="${appserver.install.dir}/lib/addons"/>
+    </target>  
+    
+
+</project>

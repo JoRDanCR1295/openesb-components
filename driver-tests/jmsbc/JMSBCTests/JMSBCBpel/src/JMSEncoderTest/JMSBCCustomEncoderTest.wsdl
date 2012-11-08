@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/jmsbcEncoderTest/JMSBCCustomEncoderTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsbcEncoderTest/JMSBCCustomEncoderTest" name="JMSBCCustomEncoderTest" xmlns:ns="http://xml.netbeans.org/schema/jmsbcEncoderTest/CustomEncoderTest" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/jmsbcEncoderTest/JMSBCCustomEncoderTest">
+            <xsd:import namespace="http://xml.netbeans.org/schema/jmsbcEncoderTest/CustomEncoderTest" schemaLocation="CustomEncoderTest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="JMSBCCustomEncoderTestMessage">
+        <part name="corrId" type="xsd:string"/>
+        <part name="encodedPayload" element="ns:root"/>
+    </message>
+    <portType name="JMSBCCustomEncoderTestOutPortType">
+        <wsdl:operation name="JMSBCCustomEncoderTestOperationSend">
+            <wsdl:input name="input1" message="tns:JMSBCCustomEncoderTestMessage"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCCustomEncoderTestInPortType">
+        <wsdl:operation name="JMSBCCustomEncoderTestOperationRecv">
+            <wsdl:input name="input1" message="tns:JMSBCCustomEncoderTestMessage"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCCustomEncoderTestDriverPortType">
+        <wsdl:operation name="JMSBCCustomEncoderTestOperation">
+            <wsdl:input name="input1" message="tns:JMSBCCustomEncoderTestMessage"/>
+            <wsdl:output name="output1" message="tns:JMSBCCustomEncoderTestMessage"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSBCCustomEncoderTestBindingOut" type="tns:JMSBCCustomEncoderTestOutPortType">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCCustomEncoderTestOperationSend">
+            <jms:operation destination="JMSCustomEncoderTest" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="encodedPayload" correlationIdPart="corrId" use="encoded" encodingStyle="customencoder-1.0"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCCustomEncoderTestBindingIn" type="tns:JMSBCCustomEncoderTestInPortType">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCCustomEncoderTestOperationRecv">
+            <jms:operation destination="JMSCustomEncoderTest" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="encodedPayload" correlationIdPart="corrId" use="encoded" encodingStyle="customencoder-1.0"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCCustomEncoderTestDriverBinding" type="tns:JMSBCCustomEncoderTestDriverPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="JMSBCCustomEncoderTestOperation">
+            <soap:operation style="rpc"/>
+            <wsdl:input name="input1">
+                <soap:body parts="corrId encodedPayload" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="corrId encodedPayload" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSBCCustomEncoderTestService">
+        <wsdl:port name="JMSBCCustomEncoderTestPortOut" binding="tns:JMSBCCustomEncoderTestBindingOut">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCCustomEncoderTestPortIn" binding="tns:JMSBCCustomEncoderTestBindingIn">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSCusomEncoderTestPortDriver" binding="tns:JMSBCCustomEncoderTestDriverBinding">
+            <soap:address location="http://localhost:18181/EncoderTestBpel/JMSBCCustomEncoderTest/JMSCusomEncoderTestPortDriver"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="JMSBCCustomEncoderTestOutRole">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCCustomEncoderTestOutPortTypeRole" portType="tns:JMSBCCustomEncoderTestOutPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCCustomEncoderTestInRole">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCCustomEncoderTestInPortTypeRole" portType="tns:JMSBCCustomEncoderTestInPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="prop1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:prop1" messageType="tns:JMSBCCustomEncoderTestMessage" part="corrId">
+        <vprop:query/>
+    </vprop:propertyAlias>
+    <plnk:partnerLinkType name="JMSBCCustomEncoderTestDriverRole">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCCustomEncoderTestDriverPortTypeRole" portType="tns:JMSBCCustomEncoderTestDriverPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

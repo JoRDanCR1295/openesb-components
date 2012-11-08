@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.0</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>bpelcore</artifactId>
+    <name>bpelcore</name>
+    <version>${jbicomps.currentVersion}</version>
+    <description>bpelcore description</description>
+    <build>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <!--
+                     ! need to replace the @variables@ in the .wsdl and .xml files
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                    <exclude>**/*.wsdl</exclude>
+                    <exclude>**/*.pom</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${artifactId}-extract-globalized-messages</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="i18n" classname="${I18NTASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n dir="${project.build.outputDirectory}"
+                                    file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                    prefix=""
+                                    pattern="(BPCOR-[4-7]\d\d\d)(: )(.*)" />
+                                <!-- copy file to classes dir: -->
+                                <copy file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                     todir="${project.build.outputDirectory}/${msgs.package}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-substitute-ant-variables</id>
+                        <phase>process-test-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <property name="project.build.directory" value="${project.build.directory}" />
+                                <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                <property name="SRCROOT" value="${SRCROOT}" />
+                                <!-- create global filter rules: -->
+                                <echo file="${project.build.directory}/filter" append="false">
+                        SRCROOT=${SRCROOT}
+                        alaska_root=${SRCROOT}/ojc-core
+                        alaska_sharedlibrary=${SRCROOT}/ojc-core/component-common
+                        asadmin_cmd=bin/asadmin
+                        asant_cmd=bin/asant
+                        drivertest_dir=${SRCROOT}/ojc-core/driver-tests
+                        encoder_sharedlibrary=${SRCROOT}/ojc-core/encodersl/encoder-
+                        shell_cmd=sh
+                        jbicomps_home=${SRCROOT}/ojc-core
+                        tempdir=/tmp
+                                </echo>
+                                <filter filtersfile="${project.build.directory}/filter" />
+
+                                <copy todir="${project.build.directory}/test"
+                                    overwrite="true" filtering="true" verbose="true" failonerror="false" >
+                                    <fileset dir="${project.build.testSourceDirectory}">
+                                        <include name="**/*.xml" />
+                                        <include name="**/*.wsdl" />
+                                        <include name="**/*.properties" />
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-run-junit-and-derby-via-ant</id>
+                        <phase>test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <property name="derbylibs" value="${JV_GFBASE}/javadb/lib" />
+                                <property name="derbydb" value="${project.build.directory}/javadb" />
+
+                                <patternset id="jbicomps.junit.test.patternset" >
+                                    <include name="**/*Test.java"/>
+                                </patternset>
+
+                                <!-- invoke derby and junit via ant -->
+
+                                <ant antfile="${SRCROOT}/global-common/m2.ant"
+                                    dir="${project.build.sourceDirectory}/.." target="run_junit_and_derby" >
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="maven.repo.local" value="${maven.repo.local}" />
+                                    <property name="project.artifactId" value="${project.artifactId}" />
+                                    <property name="project.build.directory" value="${project.build.directory}" />
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                    <property name="work.dir" value="${project.build.directory}" />
+
+                                    <property name="derbylibs" value="${derbylibs}" />
+                                    <property name="derbydb" value="${derbydb}" />
+
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties" />
+
+                                    <reference refid="maven.test.classpath"/>
+                                    <reference refid="jbicomps.junit.sysproperties"/>
+                                    <reference refid="jbicomps.junit.test.patternset"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>jbicompsplatform</groupId>
+            <artifactId>compileconf</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>debuggerbdi</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>bpelmodel</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xpathmodel</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xmltransformer</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>jxpath</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4jext</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>customized-xmlbeans</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>jsr173_api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>saxon</artifactId>
+            <version>${jbicomps.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-s9api</artifactId>
+        </dependency>
+
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.jdbc</groupId>
+            <artifactId>ojdbc14</artifactId>
+            <version>10.1.0.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.sf.hulp.meas</groupId>
+          <artifactId>net.sf.hulp.meas.itf</artifactId>
+          <version>2.0</version>
+        </dependency>
+    </dependencies>
+    <properties>
+        <msgs.package>com/sun/jbi/engine/bpel/core/bpel/util</msgs.package>
+    </properties>
+</project>

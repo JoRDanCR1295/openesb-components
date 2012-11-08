@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInRepeatUntilProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInRepeatUntilProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInRepeatUntilProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ExitInRepeatUntil" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/ExitInRepeatUntil1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ExitInRepeatUntil" location="ExitInRepeatUntil.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:ExitInRepeatUntilPlink" myRole="ExitInRepeatUntilPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="UntilCntr" type="xsd:int"/>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="ExitInRepeatUntilOperationIn" messageType="ns1:ExitInRepeatUntilOperationRequest"/>
+        <variable name="ExitInRepeatUntilOperationOut" messageType="ns1:ExitInRepeatUntilOperationReply"/>        
+    </variables>    
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence10">
+                <assign name="Assign10">
+                        <copy>
+                                <from>concat($outputString, ' \n Caught someFault. Sending Output from FH')</from>
+                                    <to part="OutputPart" variable="ExitInRepeatUntilOperationOut"/>
+                            </copy>
+                    </assign>
+                    <reply name="Reply10" partnerLink="PartnerLinkInOut" operation="ExitInRepeatUntilOperation" portType="ns1:ExitInRepeatUntilPortType" variable="ExitInRepeatUntilOperationOut"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="ExitInRepeatUntilOperation" portType="ns1:ExitInRepeatUntilPortType" variable="ExitInRepeatUntilOperationIn"/>
+        <assign name="Assign">
+            <copy>
+                <from>concat('1. Input is -  ', $ExitInRepeatUntilOperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to variable="UntilCntr"/>
+            </copy>
+        </assign>
+        <scope name="ExitInRepeatUntil_Scope">
+            <sequence name="MainSequence">
+                <flow name="MainFlow">
+                    <sequence name="Sequence1_Branch1">
+                            <wait name="Wait_35Secs">
+                                    <for>'P0Y0M0DT0H0M35S'</for>
+                                </wait>
+                                <assign name="Assign1_3">
+                                    <copy>
+                                            <from>concat($outputString, ' \n 8. In Flow Branch1: Fault occurs here ')</from>
+                                                <to variable="outputString"/>
+                                        </copy>
+                                </assign>
+                                <throw name="Throws_SomeFault1" faultName="ns2:someFault"/>
+                    </sequence>
+                    <repeatUntil name="RepeatUntil1">
+                        <scope name="OuterScope2">
+                                <variables>
+                                        <variable name="UntilLocalVariable" type="xsd:int"/>
+                                    </variables>
+                                    <scope name="CompletedScope2">
+                                        <terminationHandler>
+                                            <sequence name="Sequence12">
+                                                <assign name="Assign2_4">
+                                                    <copy>
+                                                        <from>concat($outputString, ' \n 10.', $UntilLocalVariable, ' In TH of CompletedScope2 in RepeatUntil Loop ')</from>
+                                                        <to variable="outputString"/>
+                                                    </copy>
+                                                </assign>
+                                                <compensate name="Compensate3"/>
+                                            </sequence>
+                                        </terminationHandler>
+                                            <sequence name="CompletedScope2_Sequence">
+                                                <assign name="Assign2_1">
+                                                        <copy>
+                                                                <from>concat($outputString, '  \n 4.', $UntilCntr, ' In Flow Branch3 Assign : In Completed Scope2 of RepeatUntil Loop ')</from>
+                                                                    <to variable="outputString"/>
+                                                            </copy>
+                                                            <copy>
+                                                                <from>$UntilCntr</from>
+                                                                    <to variable="UntilLocalVariable" />
+                                                            </copy>
+                                                    </assign>
+                                                    <scope name="InnerScope2">
+                                                        <compensationHandler>
+                                                                <assign name="Assign2_5">
+                                                                        <copy>
+                                                                                <from>concat($outputString, ' \n RepeatUntil:', $UntilLocalVariable, ' In CH of InnerScope2 in RepeatUntil Loop ')</from>
+                                                                                    <to variable="outputString"/>
+                                                                            </copy>
+                                                                    </assign>
+                                                            </compensationHandler>
+                                                            <assign name="Assign2_2">
+                                                                <copy>
+                                                                        <from>concat($outputString, '  \n 5.', $UntilCntr, ' In Flow Branch3 Assign : In InnerScope2 of RepeatUntil Loop ')</from>
+                                                                            <to variable="outputString"/>
+                                                                    </copy>
+                                                            </assign>
+                                                    </scope>
+                                                    <exit name="Exit1"/>
+                                                    <assign name="IncrementCounter2">
+                                                    <copy>
+                                                        <from>                $UntilCntr + 1                </from>
+                                                        <to variable="UntilCntr"/>
+                                                    </copy>
+                                                </assign>
+                                            </sequence>
+                                    </scope>
+                            </scope>
+                            <condition>               $UntilCntr = 2               </condition>
+                    </repeatUntil>
+                </flow>
+                <assign name="Assign_ShouldNotExecute">
+                    <copy>
+                            <from>
+                                    <literal>This assign should not have executed. </literal>
+                                </from>
+                                <to part="OutputPart" variable="ExitInRepeatUntilOperationOut"/>
+                        </copy>
+                </assign>
+                <reply name="Reply_ShouldNotExecute" partnerLink="PartnerLinkInOut" operation="ExitInRepeatUntilOperation" portType="ns1:ExitInRepeatUntilPortType" variable="ExitInRepeatUntilOperationOut"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

@@ -1,0 +1,88 @@
+<process name="bpelImportingWsdlFromSubDirectory"
+         targetNamespace="http://www.seebeyond.com/eInsight/bpelImportingWsdlFromSubDirectory"
+         sbynpxp:end_YLoc="249.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="614.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/bpelImportingWsdlFromSubDirectory"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:bank"
+         xmlns:ns1="urn:Foo"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:bank"
+            location="projectA/bank/bank.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:Foo"
+            location="projectB/echo/echo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="bankPartner"
+                     partnerLinkType="ns0:BankServiceLink"
+                     myRole="BankRole"/>
+        <partnerLink name="echoPartner"
+                     partnerLinkType="ns1:HelloIFServiceLink"
+                     partnerRole="HelloIFRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="withdraw_Output"
+                  messageType="ns0:withdrawRequest"></variable>
+        <variable name="withdraw_Input"
+                  messageType="ns0:withdrawResponse"></variable>
+        <variable name="withdraw_Fault"
+                  messageType="ns0:InsufficientFundFaultMessage"></variable>
+        <variable name="withdraw_Fault1"
+                  messageType="ns0:AccountNotExistFaultMessage"></variable>
+        <variable name="sayHello_Input"
+                  messageType="ns1:HelloIF_sayHello"></variable>
+        <variable name="sayHello_Output"
+                  messageType="ns1:HelloIF_sayHelloResponse"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <sequence>
+        <receive name="withdraw"
+                 partnerLink="bankPartner"
+                 portType="ns0:Bank"
+                 operation="withdraw"
+                 variable="withdraw_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="142.0"
+                 sbynpxp:YLoc="70.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="196.0"
+                sbynpxp:YLoc="36.0">
+            <copy>
+                <from>$withdraw_Output.parameters/account</from>
+                <to>$sayHello_Input.body/string</to>
+            </copy>
+            <copy>
+                <from variable="withdraw_Output"
+                      part="parameters"/>
+                <to variable="withdraw_Input"
+                    part="return"/>
+            </copy>
+        </assign>
+        <invoke name="activity"
+                partnerLink="echoPartner"
+                portType="ns1:HelloIF"
+                operation="sayHello"
+                inputVariable="sayHello_Input"
+                outputVariable="sayHello_Output"
+                sbynpxp:XLoc="290.0"
+                sbynpxp:YLoc="40.0"></invoke>
+        <reply name="withdraw.Reply"
+               partnerLink="bankPartner"
+               portType="ns0:Bank"
+               operation="withdraw"
+               variable="withdraw_Input"
+               sbynpxp:XLoc="344.0"
+               sbynpxp:YLoc="71.0"></reply>
+    </sequence>
+</process>

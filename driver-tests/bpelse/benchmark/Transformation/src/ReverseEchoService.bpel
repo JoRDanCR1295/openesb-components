@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ReverseEchoService"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Transformation/ReverseEchoService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Transformation/ReverseEchoService" xmlns:ns0="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://services.samples/xsd" location="EchoWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://services.samples/xsd/reverse" location="ReverseWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://services.samples/xsd/reverse" partnerLinkType="tns:EchoWSDL" myRole="EchoWSDLPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://services.samples/xsd" partnerLinkType="tns:EchoWSDL" partnerRole="EchoWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="BuyStocksOperationOut" xmlns:tns="http://services.samples/xsd" messageType="tns:EchoOperationResponse"/>
+        <variable name="BuyStocksOperationIn" xmlns:tns="http://services.samples/xsd" messageType="tns:EchoOperationRequest"/>
+        <variable name="SkcotSyubOperationOut" xmlns:tns="http://services.samples/xsd/reverse" messageType="tns:EchoOperationResponse"/>
+        <variable name="SkcotSyubOperationIn" xmlns:tns="http://services.samples/xsd/reverse" messageType="tns:EchoOperationRequest"/>
+    </variables>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink2" operation="skcotSyubOperation1K" xmlns:tns="http://services.samples/xsd/reverse" portType="tns:skcotSyubPortType" variable="SkcotSyubOperationIn">
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>ns0:doXslTransform('urn:stylesheets:transform.xsl', $SkcotSyubOperationIn.parameters)</from>
+                            <to variable="BuyStocksOperationIn" part="buyStocks"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke1" partnerLink="PartnerLink1" operation="buyStocksOperation1K" xmlns:tns="http://services.samples/xsd" portType="tns:buyStocksPortType" inputVariable="BuyStocksOperationIn" outputVariable="BuyStocksOperationOut"/>
+                    <assign name="Assign2">
+                        <copy>
+                            <from>ns0:doXslTransform('urn:stylesheets:transform_back.xsl', $BuyStocksOperationOut.buyStocks)</from>
+                            <to variable="SkcotSyubOperationOut" part="parameters"/>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="PartnerLink2" operation="skcotSyubOperation1K" portType="tns:skcotSyubPortType" variable="SkcotSyubOperationOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink2" operation="skcotSyubOperation10K" xmlns:tns="http://services.samples/xsd/reverse" portType="tns:skcotSyubPortType" variable="SkcotSyubOperationIn">
+                <sequence name="Sequence2">
+                    <assign name="Assign21">
+                        <copy>
+                            <from>ns0:doXslTransform('urn:stylesheets:transform.xsl', $SkcotSyubOperationIn.parameters)</from>
+                            <to variable="BuyStocksOperationIn" part="buyStocks"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke2" partnerLink="PartnerLink1" operation="buyStocksOperation10K" xmlns:tns="http://services.samples/xsd" portType="tns:buyStocksPortType" inputVariable="BuyStocksOperationIn" outputVariable="BuyStocksOperationOut"/>
+                    <assign name="Assign22">
+                        <copy>
+                            <from>ns0:doXslTransform('urn:stylesheets:transform_back.xsl', $BuyStocksOperationOut.buyStocks)</from>
+                            <to variable="SkcotSyubOperationOut" part="parameters"/>
+                        </copy>
+                    </assign>
+                    <reply name="Reply21" partnerLink="PartnerLink2" operation="skcotSyubOperation10K" portType="tns:skcotSyubPortType" variable="SkcotSyubOperationOut"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

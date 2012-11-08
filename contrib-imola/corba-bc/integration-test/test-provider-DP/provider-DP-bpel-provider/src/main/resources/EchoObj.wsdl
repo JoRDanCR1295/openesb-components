@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoObj" targetNamespace="http://it.imolinfo.jbi4corba.test.EchoObj" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://it.imolinfo.jbi4corba.test.EchoObj" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.EchoObj" xmlns="http://it.imolinfo.jbi4corba.test.EchoObj" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="echoObj">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="msg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoObjResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echoObjResponse">
+    <wsdl:part name="parameters" element="tns:echoObjResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoObj">
+    <wsdl:part name="parameters" element="tns:echoObj">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoObj">
+    <wsdl:operation name="echoObj">
+      <wsdl:input name="echoObj" message="tns:echoObj">
+    </wsdl:input>
+      <wsdl:output name="echoObjResponse" message="tns:echoObjResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoObjCorbaBinding" type="tns:EchoObj">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="Test_Object_DP.idl" relativepath=".">
+//IDL
+module it{
+  module imolinfo{
+    module jbi4corba{
+      module test{
+	 
+               interface ObjRef {
+
+                Object getobjRef(in string msg);
+
+                };
+
+
+               interface EchoObj{
+    			   string echoObj(in string msg);
+                };
+
+
+               interface EchoObj2:EchoObj {
+
+                  string echo2(in string msg2);
+               };
+
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echoObj">
+      <wsdl:input name="echoObj">
+      </wsdl:input>
+      <wsdl:output name="echoObjResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoObj">
+    <wsdl:port name="EchoObjCorbaPort" binding="tns:EchoObjCorbaBinding">
+<imolacorba:address name=" " localizationType=" ">
+<imolacorba:orb>
+            <imolacorba:property name="org.omg.CORBA.ORBClass" value="org.jacorb.orb.ORB"/>
+            <imolacorba:property name="org.omg.CORBA.ORBSingletonClass" value="org.jacorb.orb.ORBSingleton"/>
+            <imolacorba:property name="ORBInitRef.NameService" value="corbaloc::localhost:1050/NameService"/>
+            <imolacorba:property name="orbd.port" value="1050"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoObj">
+<plnk:role name="EchoObjPortTypeRole" portType="tns:EchoObj"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

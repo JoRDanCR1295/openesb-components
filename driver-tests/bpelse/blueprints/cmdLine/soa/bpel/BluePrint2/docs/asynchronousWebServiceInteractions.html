@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Asynchronous Web Service Interactions Using BPEL</title>
+</head>
+<body>
+<h1><small>BPEL BluePrint 2</small><br>
+<small style="font-style: italic; font-weight: bold;"><span
+ style="font-weight: normal;"></span></small></h1>
+<h1>Asynchronous Web Service Interactions Using BPEL </h1>
+<p>Kiran Bhumana, Ryan Kennedy, Shauna Pickett-Gordon </p>
+<h2>Problem Description</h2>
+<p>Supporting asynchronous interactions between web services can be a
+tedious task. Since many real-world business processes often perform
+long-lived operations in the course of their workflow, developers have
+had to implement complex synchronization requirements to support these
+types of interactions. The common usage pattern is to match the
+asynchronous response with the corresponding request that was sent
+earlier. </p>
+<p>This document focuses on implementing asynchronous interactions
+between web services by leveraging key aspects of the Business Process
+Execution Language (BPEL).</p>
+<h2>Solution</h2>
+<p>Using BPEL to describe long-running business interactions between
+partner web services, a developer can more easily support the
+asynchronous characteristics of a business process.</p>
+<p>This solution demonstrates the following aspects:</p>
+<ul>
+  <li>A BPEL process that provisions a synchronous operation </li>
+  <li>A BPEL process that provisions an asynchronous operation</li>
+  <li>A BPEL process that consumes an asynchronous operation on a
+partner web service </li>
+  <li>Declarative coordination constructs that BPEL requires for the
+asynchronous request and response</li>
+  <li>General design aspects to be considered when using asynchronous
+patterns, and how they are achieved in BPEL</li>
+</ul>
+<h3>Provisioning a Synchronous Operation </h3>
+<p>See BluePrint 1, Synchronous
+Web Services Interactions Using BPEL.</p>
+<h3>Provisioning an Asynchronous Operation</h3>
+<p>An asynchronous operation involves two in-only WSDL operations,
+which together make a request-response combination. BPEL defines an <code>invoke</code>
+activity to consume an in-only service. To enable provisioning of the
+in-only service, BPEL defines the <code>receive</code> and <code>pick-onMessage</code>
+constructs.</p>
+<p>BPEL defines <code>correlation</code> constructs that declaratively
+provide the matching capability. Also, WSDL extension elements <code>propertyAlias</code>
+and <code>property</code> are used to define the correlation values.</p>
+<p>Business processes are usually long-running, and the orchestration
+of web services is primarily asynchronous. It is important to combine
+the asynchronous consumption of services with timer-based constructs so
+that a consumer of a web service doesn't wait indefinitely for a
+response. The <code>pick-onAlarm</code> construct defined in BPEL
+helps the developer achieve this functionality.</p>
+<p>From defining relationships and specific roles between partner
+services, to handling the asynchronous response associated with a
+request, using BPEL to describe a business process alleviates the need
+to implement many of the complex synchronization requirements involved
+when supporting asynchronous interactions.</p>
+<p>You'll need to consider certain design
+details when you use the Business Process Execution Language (BPEL) to
+describe the following:
+</p>
+<ul>
+  <li>An executable business process that provisions one or more
+synchronous operations</li>
+  <li>An executable business process that provisions one or more
+asynchronous operations</li>
+  <li>An executable business process that consumes one or more
+asynchronous operations</li>
+</ul>
+<p>Provisioning synchronous operations (also called request-response or
+in-out operations) involves receiving a message and replying with a
+message defined by the web service. </p>
+<p>Provisioning and consuming asynchronous operations involves two
+in-only WSDL operations: a request-response combination. BPEL defines
+the <code>invoke</code> activity to consume an in-only operation, and
+defines <code>receive</code> and <code>pick-onMessage</code> as
+provisioning the in-only operation.<br>
+</p>
+<h2>Design Details</h2>
+<p>When designing a business process that incorporates asynchronous web
+service interactions, the following constructs are needed.</p>
+<ul>
+  <li><code>partnerLinks</code> representing partner web services</li>
+  <li><code>variables</code> that store data exchanged between web
+services</li>
+  <li>An <code>invoke</code> activity to consume a service</li>
+  <li>A <code>receive</code> activity to provide a service</li>
+  <li>A <code>pick-OnMessage</code> construct to provide the service
+for the asynchronous response</li>
+  <li>A <code>pick-OnAlarm</code> construct to provide for the
+alternative timer path </li>
+  <li>Input and output data mapping to achieve some meaningful business
+logic</li>
+</ul>
+<p>The following solution shows how to create and use the BPEL
+artifacts to both provision and consume synchronous and asynchronous
+web service operations. First, an external client consumes a
+synchronous operation provided by a BPEL process. Then, this BPEL
+process consumes an asynchronous operation provided by another BPEL
+process. The solution is depicted here.</p>
+<p><img alt="" src="images/bp2-fig1.PNG"
+ style="width: 554px; height: 219px;"><br>
+<b>Figure 1: Asynchronous Message Exchanges in a BPEL Process</b></p>
+<h3>Business Logic of the Services</h3>
+<p>Two web services are involved here: a purchase order service, <code>POService</code>,
+which is consumed by an external client through SOAP over HTTP; and an
+inventory check service, <code>InventoryService</code>, consumed by
+the BPEL process that provisions the purchase order service. Both <code>POService</code>
+and <code>InventoryService</code> are implemented as BPEL services.</p>
+<p>The business process that provisions the purchase order service,
+upon receiving the request, checks with the inventory by calling <code>InventoryService</code>.
+The business process that provisions the inventory check service
+verifies whether the requested order is available and sends a status of
+the inventory asynchronously. Based on the asynchronous status returned
+by <code>InventoryService</code>, <code>POService</code> returns
+either a fault or a valid response to the HTTP client. </p>
+<p>Correlation is used to route the messages from <code>InventoryService</code>
+to the proper executing instances of <code>POService</code>. The value
+of <code>orderID</code> in the <code>purchaseOrder</code> message is
+used as the correlation identifier.</p>
+<h3>Design of Correlation Values</h3>
+<p>A response that is sent back asynchronously to the requester must be
+routed to the correct business process instance. To make this match,
+BPEL uses unique, embedded <em>correlation tokens</em> within the
+application data (<em>application-level routing</em>), instead of
+enforcing additional routing information. The location and type of
+correlation tokens are statically declared in the business process. The
+developer must enforce unique constraints and make sure that, at
+execution, unique values are maintained for the life of the business
+process.</p>
+<p>An instance of correlation in BPEL is defined on a property, and, in
+turn, on a property alias. <code>propertyAlias</code> points to a
+unique ID in the received message. See <a
+ href="../../../BluePrint2/Web/BP2_DesignDetails.html#artifacts">Important
+Artifacts Defined in BPEL and WSDL</a> for details.</p>
+<p>Correlation tokens are defined in the BPEL process <code>POservice</code>.
+A unique correlation ID is associated with every instance of <code>POService</code>
+that is created in the execution environment. The correlation token is
+initialized when the <code>POService</code> BPEL process invokes the <code>inventoryService</code>
+process; the token is associated with the instance of <code>POService</code>.
+</p>
+<p>The callback from <code>inventoryService</code> is received by the <code>onMessage</code>
+branch of the <code>pick</code> activity. When the asynchronous <code>inventoryStatus</code>
+message is received, BPEL uses <code>xpath</code> to evaluate the <code>propertyAlias</code>
+defined on the <code>inventoryStatus</code> message, obtains the <code>correlationSet</code>
+value, and routes the message to the appropriate instance of the
+business process.</p>
+<h3>Aspects of BPEL Design for Consuming Asynchronous Operations </h3>
+<p>Provisioning asynchronous operations requires a timer-based
+alternative execution path. If the inventory status is not received
+within a specified period of time, the purchase order service goes
+ahead with its timer execution path, and returns a fault to its
+consumer. Here are some possible reasons for a callback's failure:</p>
+<ul>
+  <li>The partner implementation failed</li>
+  <li>It took too long for the partner to execute the service</li>
+  <li>There were not enough resources for the partner to execute the
+service on time</li>
+</ul>
+<p>These failures can't be propagated to a <code>POService</code>
+process instance that is waiting for a callback from the <code>inventoryService</code>
+BPEL process instance: Hence, the necessity of a timer-based path.
+After a timeout in the <code>POService</code> process, if messages
+messages with the old correlation token ID arrive from the inventory
+service, these late messages are not consumed by the <code>POService</code>
+process instance, and a fault is sent to the consumer of the
+service--that is, the <code>inventoryService</code> process. </p>
+<!--           I M P O R T A N T    A R T I F A C T S           -->
+<h3><a name="artifacts"></a>Important Artifacts Defined in BPEL and WSDL</h3>
+<p>The <code>InventoryService</code> WSDL file defines a <code>partnerLinkType</code>
+with two roles: <code>inventoryService</code> and <code>inventoryServiceRequester</code>.</p>
+<ul>
+  <li>The <code>inventoryService</code> role refers to the <code>inventoryService</code>
+operation through the <code>portType</code> called <code>inventoryPortType</code>.
+  </li>
+  <li>The <code>inventoryServiceRequester</code> role refers to the <code>inventoryServiceResponse</code>
+operation through <code>inventoryServiceCallbackPortType</code>. </li>
+</ul>
+<p>The <code>inventoryService</code> operation expects a <code>purchaseOrder</code>
+message, and <code>inventoryServiceResponse</code> expects an <code>InventoryMessage</code>.</p>
+<pre>    &lt;plink:partnerLinkType name="inventoryRequestingLT"&gt;<br><br>        &lt;plink:role portType=tns:"inventoryPortType"<br>                    name="inventoryService"&gt;&lt;/plink:role&gt;<br>        &lt;plink:role portType="tns:inventoryServiceCallbackPortType"<br>                    name="inventoryServiceRequester"&gt;&lt;/plink:role&gt;<br>    &lt;/plink:partnerLinkType&gt;<br><br>    &lt;portType name="inventoryPortType"&gt;<br>        &lt;operation name="inventoryService"&gt;<br><br>            &lt;input name="purchaseOrder"<br>                   message="tns:POMessage"&gt;&lt;/input&gt;<br>        &lt;/operation&gt;<br>    &lt;/portType&gt;<br><br>    &lt;portType name="inventoryServiceCallbackPortType"&gt;<br>        &lt;operation name="inventoryServiceResponse"&gt;<br><br>            &lt;input name="inventoryResponse"<br>                   message="tns:InventoryMessage"&gt;&lt;/input&gt;<br>        &lt;/operation&gt;<br>    &lt;/portType&gt;</pre>
+<p>The <code>POService</code> BPEL process defines a <code>partnerLink</code>
+called
+<code>inventoryRequesting</code>. This partnerlink's role is to consume
+the service <code>inventoryService. I</code>ts partner's role is to
+consume the service <code>inventoryServiceResponse</code>.</p>
+<pre>        &lt;partnerLink name="inventoryRequesting"<br>                     partnerLinkType="invs:inventoryRequestingLT"<br>                     myRole="inventoryServiceRequester"<br>                     partnerRole="inventoryService"/&gt;<br></pre>
+<p>On the other hand, the <code>inventoryService</code> BPEL process
+defines a <code>partnerLink</code> called <code>inventoryServicing</code>
+, whose role is to provide the service <code>inventoryService</code>.
+Its partner's role is to provide <code>inventoryServiceResponse</code>.</p>
+<pre>        &lt;partnerLink name="inventoryServicing"<br>                     partnerLinkType="invs:inventoryRequestingLT"<br>                     myRole="inventoryService"<br>                     partnerRole="inventoryServiceRequester"/&gt;<br></pre>
+<p>The <code>inventoryService</code> WSDL file declares the properties
+<code>orderID</code> and <code>propertyAlias</code> on <code>POMessage</code>
+and <code>InventoryMessage</code>, which are defined, respectively, on
+the operations <code>inventoryService</code> and <code>inventoryServiceResponse</code>.
+The value of <code>orderID</code> is designed to be of <code>xsd:int</code>
+value. Property is an abstract concept, while <code>propertyAlias</code>
+is the corresponding concrete aspect. The property aliases tie the
+property to a value defined in the web service message using an <code>xpath</code>
+query or a similar technology. This much-needed indirection decouples
+the abstract from the concrete.</p>
+<pre>    &lt;bpws:property name="orderID"<br>                   type="xsd:int"/&gt;<br><br>    &lt;bpws:propertyAlias propertyName="tns:orderID"<br>                        messageType="tns:POMessage"<br>                        part="purchaseOrder"&gt;<br>        &lt;bpws:query&gt;/purchaseOrder/orderId&lt;/bpws:query&gt;                        <br>    &lt;/bpws:propertyAlias&gt;<br><br>    &lt;bpws:propertyAlias propertyName="tns:orderID"<br>                        messageType="tns:InventoryMessage"<br>                        part="inventoryPart"&gt;<br>        &lt;bpws:query&gt;/inventory/orderId&lt;/bpws:query&gt;                            <br>    &lt;/bpws:propertyAlias&gt;<br></pre>
+<p>The <code>POService</code> process defines a correlation set on
+this property. </p>
+<pre>    &lt;correlationSets&gt;<br>        &lt;correlationSet name="POCorrelationSet"<br>                        properties="invs:orderID"/&gt;<br>    &lt;/correlationSets&gt;<br></pre>
+<p>The <code>POService</code> process uses a one-way <code>invoke</code>
+operation--signaled by the fact that there is no <code>outputVariable</code>
+for this invoke activity. Correlation is also initialized here, and
+when the <code>invoke</code> is executed, a unique ID is associated
+with the <code>POService</code> process instance. </p>
+<pre>        &lt;invoke name="inventoryService"<br>                partnerLink="inventoryRequesting"<br>                portType="invs:inventoryPortType"<br>                operation="inventoryService"<br>                inputVariable="inventoryServiceRequest"&gt;<br>            &lt;correlations&gt;<br>                &lt;correlation set="POCorrelationSet"<br>                             initiate="yes"/&gt;<br>            &lt;/correlations&gt;<br>        &lt;/invoke&gt;<br><br></pre>
+<p><code>POService</code> also defines a <code>pick</code> activity.
+This activity has an <code>OnMessage</code> branch to consume the
+asynchronous response from the inventory, and it has an <code>onAlarm</code>
+to fall back in some unforeseen conditions.</p>
+<pre>        &lt;onMessage partnerLink="inventoryRequesting"<br>                       portType="invs:inventoryServiceCallbackPortType"<br>                       operation="inventoryServiceResponse"<br>                       variable="inventoryServiceReply"&gt;<br><br>                &lt;correlations&gt;<br>                    &lt;correlation set="POCorrelationSet"<br>                                 initiate="no"/&gt;<br>                &lt;/correlations&gt;<br>        &lt;/onMessage&gt;<br><br>        &lt;onAlarm&gt;<br>                &lt;for&gt;'P0Y0DT300S'&lt;/for&gt;<br>	&lt;/onAlarm&gt;<br></pre>
+<p>Notice the usage of the correlation on <code>onMessage</code>. The
+initiate value gives a hint either to associate the correlation ID with
+the instance, or that a message with the correlation ID should be
+routed to the instance. In this situation, when a message arrives that
+is to be consumed by the <code>pick-onMessage</code>construct, the
+message needs to be routed to the appropriate <code>POService</code>
+process instance.</p>
+<p>The <code>inventoryService</code> BPEL process uses a <code>receive</code>
+activity construct to provide a one-way inventory service. It uses a
+one-way <code>invoke</code> for the call-back functionality, and sends
+the <code>inventoryService</code> response to the <code>POService</code>.</p>
+<pre>        &lt;receive name="inventoryService"<br>                 partnerLink="inventoryServicing"<br>                 portType="invs:inventoryPortType"<br>                 operation="inventoryService"<br>                 variable="inventoryServiceVar"<br>                 createInstance="yes"&gt;<br>        &lt;/receive&gt;<br><br>        &lt;invoke name="inventoryServiceResponse"<br>                partnerLink="inventoryServicing"<br>                portType="invs:inventoryServiceCallbackPortType"<br>                operation="inventoryServiceResponse"<br>                inputVariable="inventoryServiceResponseVar"&gt;<br>        &lt;/invoke&gt;<br></pre>
+<p>The visual form of the <code>InventoryService</code> BPEL process
+is shown next. For implementation details,
+see the <a
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+files</a>. </p>
+<p><img alt="Figure2" src="images/bp2-fig2.PNG"
+ style="width: 558px; height: 583px;"><br>
+<b>Figure 2: The InventoryService BPEL Process<br>
+<br>
+</b></p>
+<p>The POService BPEL process is illustrated below.</p>
+<p><img alt="Figure3" src="images/bp2-fig3.PNG"
+ style="width: 755px; height: 885px;"><br>
+<b>Figure 3: The POService BPEL Process</b></p>
+<h3>Schema</h3>
+<p>The code for <code></code><code>purchaseorder.schema</code> is as
+follows.</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br><br>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" <br>&nbsp;&nbsp;   targetNamespace="http://manufacturing.org/xsd/purchase"<br>&nbsp;&nbsp;   xmlns:tns ="http://manufacturing.org/xsd/purchase"<br>&nbsp;&nbsp;   elementFormDefault="qualified" attributeFormDefault="unqualified"&gt;<br><br>  &lt;xs:element name="purchaseOrder" type="tns:purchaseOrderType"&gt;<br>  &lt;/xs:element&gt;<br>  &lt;xs:complexType&nbsp; name="purchaseOrderType"&gt;<br>&nbsp;&nbsp;&nbsp;  &lt;xs:sequence&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="orderId" type="xs:int"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="customerId" type="xs:int" /&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="orderDescription" type="xs:string" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="price" type="xs:double" /&gt;<br><br>&nbsp;&nbsp;&nbsp;  &lt;/xs:sequence&gt;<br>&nbsp;&nbsp;&lt;/xs:complexType&gt;<br>&lt;/xs:schema&gt;<br></pre>
+<p>Next is the <code>inventoryservice.schema</code> code. </p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"<br><br>&nbsp;&nbsp;   targetNamespace="http://manufacturing.org/xsd/inventory"<br>&nbsp;&nbsp;   xmlns:tns ="http://manufacturing.org/xsd/inventory"<br>&nbsp;&nbsp;   elementFormDefault="qualified" attributeFormDefault="unqualified"&gt;<br>&nbsp; &lt;xs:element name="inventory" type="tns:inventoryType"&gt;<br><br>&nbsp; &lt;/xs:element&gt;<br>&nbsp;&nbsp;&lt;xs:complexType&nbsp; name="inventoryType"&gt;<br>&nbsp;&nbsp;&nbsp;  &lt;xs:sequence&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="orderId" type="xs:int"/&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="inventoryStatus" type="xs:boolean"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;    &lt;xs:element name="inventoryStatusMessage" type="xs:string" /&gt;<br><br>&nbsp;&nbsp;&nbsp;  &lt;/xs:sequence&gt;<br>&nbsp; &lt;/xs:complexType&gt;<br>&lt;/xs:schema&gt;<br></pre>
+<p>The <code>orderId</code> element in the <code>purchaseOrderType</code>
+and <code>inventoryType</code> is an important part of the message
+data. The value of this element provides the unique ID for the
+correlations used in the BPEL processes. See the definitions of
+correlations, <code>property</code>, and <code>propertyAlias</code>.</p>
+<h3>Input Data XML</h3>
+<p>The following input XML instance gives a valid response.<br>
+</p>
+<div class="e">
+<div>
+<pre>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;sendPurchaseOrder&gt;<br>      &lt;purchaseOrder&gt;<br>        &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>          &lt;orderId&gt;0012341&lt;/orderId&gt;<br>	  &lt;customerId&gt;9876&lt;/customerId&gt;<br>	  &lt;orderDescription&gt;OrderVal_Any_Description&lt;/orderDescription&gt;<br>	  &lt;price&gt;&lt;/price&gt;<br>        &lt;/purchaseOrder&gt;<br>     &lt;/purchaseOrder&gt;<br>    &lt;/sendPurchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<span class="m"><small><span style="font-family: courier new;"><br>
+</span></small></span>
+<p>The following input XML instance causes a <code>cannotCompleteOrder</code>
+fault to be thrown to the client.</p>
+<pre>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>&nbsp; &lt;soapenv:Body&gt;<br>&nbsp;&nbsp;&nbsp; &lt;sendPurchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;orderId&gt;0012342&lt;/orderId&gt;<br>&nbsp;&nbsp;&nbsp; &nbsp;     &lt;customerId&gt;9876&lt;/customerId&gt;<br>&nbsp;&nbsp;&nbsp; &nbsp;     &lt;orderDescription&gt;SomeVal_OrderVal_Any_Description&lt;/orderDescription&gt;<br>&nbsp;&nbsp;&nbsp; &nbsp;     &lt;price&gt;&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/sendPurchaseOrder&gt;<br>&nbsp; &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<span class="m"></span></div>
+</div>
+<h2>References</h2>
+<ul>
+  <li>Browse the <a target="_blank"
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+code</a> for this BluePrint, including the
+BPEL process files and WSDL files.</li>
+  <li>See the BPEL BluePrint sample projects included in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a>.</li>
+  <li>For details on correlation, refer to the <a
+ href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsbpel">BPEL
+specification</a>. </li>
+</ul>
+<hr> <small> &copy; Sun Microsystems 2006. All of the material in The
+Java BluePrints Solutions Catalog is <a
+ href="https://bpcatalog.dev.java.net/nonav/COPYRIGHT.html">copyright</a>-protected
+and may not be published in other works without express written
+permission from Sun Microsystems. </small>
+</body>
+</html>

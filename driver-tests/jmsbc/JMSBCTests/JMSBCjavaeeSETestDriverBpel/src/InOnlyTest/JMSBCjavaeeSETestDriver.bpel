@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="JMSBCjavaeeSETestDriver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSBCjavaeeSETestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSBCjavaeeSETestDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBCjavaeeSETestDriver" xmlns:ns0="http://xml.netbeans.org/schema/InFromJMSBC" xmlns:ns2="http://xml.netbeans.org/schema/OutToJMSBC">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSBCjavaeeSETestDriver" location="JMSBCjavaeeSETestDriver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="JMSReceivePartnerLink" partnerLinkType="ns1:JMSBCjavaeeSETestDriverReceivePartner" myRole="JMSBCjavaeeSETestDriverReceivePortTypeRole"/>
+        <bpws:partnerLink name="JMSSendPartnerLink" partnerLinkType="ns1:JMSBCjavaeeSETestDriverSendPartner" partnerRole="JMSBCjavaeeSETestDriverSendPortTypeRole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:JMSBCjavaeeSETestDriverPartner" myRole="JMSBCjavaeeSETestDriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JMSBCjavaeeSETestDriverOperationOut" messageType="ns1:JMSBCjavaeeSETestDriverOperationReply"/>
+        <bpws:variable name="JMSBCjavaeeSETestDriverReceiveIn" messageType="ns1:JMSBCjavaeeSETestDriverOperationRequest12"/>
+        <bpws:variable name="JMSBCjavaeeSETestDriverSendIn" messageType="ns1:JMSBCjavaeeSETestDriverOperationRequest1"/>
+        <bpws:variable name="JMSBCjavaeeSETestDriverOperationIn" messageType="ns1:JMSBCjavaeeSETestDriverOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:prop1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="JMSBCjavaeeSETestDriverOperation" portType="ns1:JMSBCjavaeeSETestDriverPortType" variable="JMSBCjavaeeSETestDriverOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JMSBCjavaeeSETestDriverOperationIn.part1/ns0:msg</bpws:from>
+                <bpws:to>$JMSBCjavaeeSETestDriverSendIn.part1/ns0:msg</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCjavaeeSETestDriverOperationIn.part1/ns0:id</bpws:from>
+                <bpws:to>$JMSBCjavaeeSETestDriverSendIn.part1/ns0:id</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="JMSSendPartnerLink" operation="JMSBCjavaeeSETestDriverSend" portType="ns1:JMSBCjavaeeSETestDriverSendPortType" inputVariable="JMSBCjavaeeSETestDriverSendIn"/>
+        <bpws:receive name="Receive2" createInstance="no" partnerLink="JMSReceivePartnerLink" operation="JMSBCjavaeeSETestDriverReceive" portType="ns1:JMSBCjavaeeSETestDriverReceivePortType" variable="JMSBCjavaeeSETestDriverReceiveIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$JMSBCjavaeeSETestDriverReceiveIn.part1/ns2:msg</bpws:from>
+                <bpws:to>$JMSBCjavaeeSETestDriverOperationOut.part1/ns2:msg</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCjavaeeSETestDriverReceiveIn.part1/ns2:id</bpws:from>
+                <bpws:to>$JMSBCjavaeeSETestDriverOperationOut.part1/ns2:id</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="JMSBCjavaeeSETestDriverOperation" portType="ns1:JMSBCjavaeeSETestDriverPortType" variable="JMSBCjavaeeSETestDriverOperationOut"/>
+    </sequence>
+</process>

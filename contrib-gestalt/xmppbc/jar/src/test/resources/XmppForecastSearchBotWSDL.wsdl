@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="XmppForecastSearchBotWSDL" targetNamespace="http://j2ee.netbeans.org/wsdl/XmppForecastSearchBotWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/XmppForecastSearchBotWSDL" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xmpp="http://schemas.sun.com/jbi/wsdl-extensions/xmpp/">
+    <types/>
+    <message name="XmppForecastSearchBotWSDLOperationRequest">
+        <part name="frompart" type="xsd:string"/>
+        <part name="idpart" type="xsd:string"/>
+        <part name="messagepart" type="xsd:string"/>
+    </message>
+    <message name="XmppForecastSearchBotWSDLOperationReply">
+        <part name="topart" type="xsd:string"/>
+        <part name="idpart" type="xsd:string"/>
+        <part name="messagepart" type="xsd:string"/>
+    </message>
+    <portType name="XmppForecastSearchBotWSDLPortType">
+        <wsdl:operation name="XmppForecastSearchBotWSDLOperation">
+            <wsdl:input name="input1" message="tns:XmppForecastSearchBotWSDLOperationRequest"/>
+            <wsdl:output name="output1" message="tns:XmppForecastSearchBotWSDLOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="XmppForecastSearchBotWSDLBinding" type="tns:XmppForecastSearchBotWSDLPortType">
+        <xmpp:binding/>
+        <wsdl:operation name="XmppForecastSearchBotWSDLOperation">
+            <xmpp:operation name="sendMessage"/>
+            <wsdl:input name="input1">
+                <xmpp:input from="frompart" id="idpart" message="messagepart"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <xmpp:output to="topart" id="idpart" message="messagepart"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="XmppForecastSearchBotWSDLService">
+        <wsdl:port name="XmppForecastSearchBotWSDLPort" binding="tns:XmppForecastSearchBotWSDLBinding">
+            <xmpp:address domain="foo.com" username="forecastbot" password="pass" resource="resource" port="5222"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="XmppForecastSearchBotWSDL1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="XmppForecastSearchBotWSDLPortTypeRole" portType="tns:XmppForecastSearchBotWSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

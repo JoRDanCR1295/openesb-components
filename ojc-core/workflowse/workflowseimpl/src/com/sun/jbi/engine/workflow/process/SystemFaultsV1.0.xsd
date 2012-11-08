@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://java.sun.com/xml/ns/jbi/systemfaults"
+            xmlns:tns="http://java.sun.com/xml/ns/jbi/systemfaults"
+            elementFormDefault="qualified">
+
+ <xsd:element name="SystemFault" type="tns:SystemFaultType"/>
+
+
+ <xsd:complexType name="SystemFaultType" final="extension">
+  <xsd:sequence>
+   
+   <xsd:element name="code" type="tns:CodeType" minOccurs="0">
+    <xsd:annotation>
+     <xsd:documentation>
+         This would be specify either sender/receiver. 
+         sender indicates that component who is setting this error wants to convey that error is due to something wrong at 
+         the sender of a message exchange.Example sender has sent wrong message. 
+         
+         receiver indicates that component who is setting this error wants to convey that error is due to something wrong at 
+         this component of a message exchange. Example: receiver can not process message due to some internal error. 
+         
+     </xsd:documentation>
+    </xsd:annotation>
+   </xsd:element> 
+    <xsd:element name="subcode" type="xsd:string" minOccurs="0">
+     <xsd:annotation>
+      <xsd:documentation>This would be specify system fault identifer string. Example: "Timed Out" for s time out system fault.</xsd:documentation>
+     </xsd:annotation>
+    </xsd:element> 
+    
+    <xsd:element name="reason" type="xsd:string" minOccurs="0">
+     <xsd:annotation>
+      <xsd:documentation>This would human readable description of system fault. Example:This task is not complete within 2 days and timed out</xsd:documentation>
+     </xsd:annotation>
+    </xsd:element> 
+    
+     <xsd:element name="node" type="xsd:string" minOccurs="0">
+     <xsd:annotation>
+      <xsd:documentation>
+          Which component caused the error. This could be an intermediary component.
+          A node (component) is identified by a URI.
+      </xsd:documentation>
+     </xsd:annotation>
+    </xsd:element> 
+    
+     <xsd:element name="role" type="tns:RoleType" minOccurs="0">
+     <xsd:annotation>
+      <xsd:documentation>This is optional. identifies the role the node was operating in at the point the fault occurred. 
+      Valid values are: 
+        next
+        none
+        ultimateReceiver
+     </xsd:documentation>
+     </xsd:annotation>
+    </xsd:element> 
+    
+   <xsd:element name="detail" type="tns:DetailType" minOccurs="0">
+    <xsd:annotation>
+     <xsd:documentation>This would be extra details if any for a fault.</xsd:documentation>
+    </xsd:annotation>
+   </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="version" type="xsd:string" >
+      <xsd:annotation>
+     <xsd:documentation>Version is helpful in evolution of the structure of the system faults. If there is a change in system fault, it will have a new version.</xsd:documentation>
+    </xsd:annotation>
+   
+  </xsd:attribute>
+ </xsd:complexType>
+
+<xsd:complexType name="DetailType">
+  <xsd:sequence>
+   <xsd:any namespace="##any" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+  </xsd:sequence>
+  <xsd:anyAttribute namespace="##any" processContents="lax"/>
+ </xsd:complexType>
+ <xsd:simpleType name="CodeType">
+  <xsd:restriction base="xsd:string">
+   <xsd:enumeration value="sender">
+    <xsd:annotation>
+     <xsd:documentation>sender specifies a fault at sender</xsd:documentation>
+    </xsd:annotation>
+   </xsd:enumeration>
+   <xsd:enumeration value="receiver">
+    <xsd:annotation>
+     <xsd:documentation>receiver specifies a fault at receiver</xsd:documentation>
+    </xsd:annotation>
+   </xsd:enumeration>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="RoleType">
+  <xsd:restriction base="xsd:string">
+   <xsd:enumeration value="next">
+    <xsd:annotation>
+     <xsd:documentation>This is next node</xsd:documentation>
+    </xsd:annotation>
+   </xsd:enumeration>
+   <xsd:enumeration value="none">
+    <xsd:annotation>
+     <xsd:documentation>no node</xsd:documentation>
+    </xsd:annotation>
+   </xsd:enumeration>
+   <xsd:enumeration value="ultimateReceiver">
+    <xsd:annotation>
+     <xsd:documentation>This is ultimate Receiver</xsd:documentation>
+    </xsd:annotation>
+   </xsd:enumeration>
+  </xsd:restriction>
+ </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="exitInSysFault"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ExitInSysFault/exitInSysFault"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ExitInSysFault/exitInSysFault" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2" xmlns:ns0="http://xml.netbeans.org/schema/FaultSchema" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" location="ExitFault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ExtCallPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" partnerLinkType="tns:ExtPLT" partnerRole="ExtCallPortRole"/>
+        <partnerLink name="TriggerPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" partnerLinkType="tns:TriggerPLT" myRole="TriggerPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TriggerOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" messageType="tns:TriggerOperResponse"/>
+        <variable name="TrigIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" messageType="tns:TriggerOperRequest"/>
+    </variables>
+    <sequence>
+        <receive name="TrigRec" createInstance="yes" partnerLink="TriggerPL" operation="TriggerOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" portType="tns:TriggerPT" variable="TrigIn"/>
+        <scope name="Scope1">
+            <variables>
+                <variable name="ExtCallOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" messageType="tns:TriggerOperResponse"/>
+                <variable name="ExtCallIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" messageType="tns:TriggerOperRequest"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="sxeh:systemFault" faultVariable="ExtFaultVar" faultMessageType="sxeh:faultMessage">
+                    <sequence name="CatchSeq">
+                        <wait name="WaitInFH">
+                            <for>'P0Y0M0DT0H0M1.0S'</for>
+                        </wait>
+                        <if name="If1">
+                            <condition>$TrigIn.part1/ns0:id = 1</condition>
+                            <rethrow name="RethrowInFH"/>
+                            <else>
+                                <exit name="ExitInFH"/>
+                            </else>
+                        </if>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <eventHandlers>
+                <onAlarm>
+                    <for>'P0Y0M0DT0H10M0.0S'</for>
+                    <scope name="EHDoesNotStart">
+                        <variables>
+                            <variable name="EHReplyVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" messageType="tns:TriggerOperResponse"/>
+                        </variables>
+                        <sequence name="EHSeqOnAlamr">
+                            <assign name="EHAssign">
+                                <copy>
+                                    <from>$TrigIn.part1/ns0:id</from>
+                                    <to>$EHReplyVar.part1/ns0:id</to>
+                                </copy>
+                                <copy>
+                                    <from>'Reply in EH'</from>
+                                    <to>$EHReplyVar.part1/ns0:name</to>
+                                </copy>
+                            </assign>
+                            <reply name="EHReply" partnerLink="TriggerPL" operation="TriggerOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" portType="tns:TriggerPT" variable="EHReplyVar"/>
+                            <exit name="EHExit"/>
+                        </sequence>
+                    </scope>
+                </onAlarm>
+            </eventHandlers>
+            <sequence name="ExtSeq">
+                <assign name="ExtAssign">
+                    <copy>
+                        <from variable="TrigIn" part="part1"/>
+                        <to variable="ExtCallIn" part="part1"/>
+                    </copy>
+                </assign>
+                <invoke name="ExtCallInv" partnerLink="ExtCallPL" operation="ExtCallOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" portType="tns:ExtCallPort" inputVariable="ExtCallIn" outputVariable="ExtCallOut"/>
+                <assign name="ReplyAssign">
+                    <copy>
+                        <from variable="ExtCallOut" part="part1"/>
+                        <to variable="TriggerOut" part="part1"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <reply name="ReplyNotReached" partnerLink="TriggerPL" operation="TriggerOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" portType="tns:TriggerPT" variable="TriggerOut"/>
+    </sequence>
+</process>

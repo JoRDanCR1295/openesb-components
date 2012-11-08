@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="bplCreditReport"
+    targetNamespace="http://enterprise.netbeans.org/bpel/bpelCreditReport/bplCreditReport"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/bpelCreditReport/bplCreditReport" xmlns:ns0="http://xml.netbeans.org/schema/CreditReport">
+    <import namespace="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" location="creditReport.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" partnerLinkType="tns:creditReport" myRole="creditReportPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CreditReportOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" messageType="tns:creditReportOperationResponse"/>
+        <variable name="CreditReportOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" messageType="tns:creditReportOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="creditReportOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" portType="tns:creditReportPortType" variable="CreditReportOperationIn"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$CreditReportOperationIn.part1/ns0:firstName</from>
+                <to>$CreditReportOperationOut.part1/ns0:firstName</to>
+            </copy>
+            <copy>
+                <from>$CreditReportOperationIn.part1/ns0:lastName</from>
+                <to>$CreditReportOperationOut.part1/ns0:lastName</to>
+            </copy>
+            <copy>
+                <from>$CreditReportOperationIn.part1/ns0:ssn</from>
+                <to>$CreditReportOperationOut.part1/ns0:ssn</to>
+            </copy>
+            <copy>
+                <from>500</from>
+                <to>$CreditReportOperationOut.part1/ns0:score</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>'John' = $CreditReportOperationIn.part1/ns0:firstName</condition>
+            <assign name="Assign1">
+                <copy>
+                        <from>$CreditReportOperationIn.part1/ns0:ssn</from>
+                            <to>$CreditReportOperationOut.part1/ns0:ssn</to>
+                    </copy>
+                    <copy>
+                        <from>$CreditReportOperationIn.part1/ns0:firstName</from>
+                            <to>$CreditReportOperationOut.part1/ns0:firstName</to>
+                    </copy>
+                    <copy>
+                        <from>$CreditReportOperationIn.part1/ns0:lastName</from>
+                            <to>$CreditReportOperationOut.part1/ns0:lastName</to>
+                    </copy>
+                    <copy>
+                        <from>900</from>
+                            <to>$CreditReportOperationOut.part1/ns0:score</to>
+                    </copy>
+            </assign>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="creditReportOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelCreditReport/creditReport" portType="tns:creditReportPortType" variable="CreditReportOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ExitFault" targetNamespace="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault" xmlns:ns="http://xml.netbeans.org/schema/FaultSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/ExitInSysFault/ExitFault">
+            <xsd:import namespace="http://xml.netbeans.org/schema/FaultSchema" schemaLocation="FaultSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TriggerOperRequest">
+        <part name="part1" element="ns:msgElem"/>
+    </message>
+    <message name="TriggerOperResponse">
+        <part name="part1" element="ns:msgElem"/>
+    </message>
+    <message name="faultMsg">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="TriggerPT">
+        <operation name="TriggerOper">
+            <input name="input1" message="tns:TriggerOperRequest"/>
+            <output name="output1" message="tns:TriggerOperResponse"/>
+        </operation>
+    </portType>
+    <portType name="ExtCallPort">
+        <operation name="ExtCallOper">
+            <input name="input1" message="tns:TriggerOperRequest"/>
+            <output name="output1" message="tns:TriggerOperResponse"/>
+        </operation>
+    </portType>
+    <binding name="TriggerPTBinding" type="tns:TriggerPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="TriggerOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="ExtCallPortBinding" type="tns:ExtCallPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ExtCallOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TriggerService">
+        <port name="TriggerServicePort" binding="tns:TriggerPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Trigger/service"/>
+        </port>
+    </service>
+    <service name="ExtService">
+        <port name="ExtServicePort" binding="tns:ExtCallPortBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Ext/service"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="TriggerPLT">
+        <plnk:role name="TriggerPTRole" portType="tns:TriggerPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="ExtPLT">
+        <plnk:role name="ExtCallPortRole" portType="tns:ExtCallPort"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"
+                  xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding"
+                  xmlns:tns="it.imolinfo.Jbi4Corba.test.webservice.generator"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator">
+
+  <!--
+  Types
+
+    3.2 Primitive datatypes
+        3.2.1 string            ok
+        3.2.2 boolean           ok
+        3.2.3 decimal               UNSUPPORTED -> java/math/BigDecimal.idl -> unsupported by IDLJ
+        3.2.4 float             ok
+        3.2.5 double            ok
+        3.2.6 duration              UNSUPPORTED -> NO
+
+        3.2.7 dateTime              UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  SI
+        3.2.8 time                  UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  SI
+        3.2.9 date                  UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  SI
+        
+        3.2.10 gYearMonth           UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  NO
+        3.2.11 gYear                UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  NO
+        3.2.12 gMonthDay            UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  NO
+        3.2.13 gDay                 UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  NO
+        3.2.14 gMonth               UNSUPPORTED -> javax/xml/datatype/XMLGregorianCalendar.idl  NO
+
+        3.2.15 hexBinary            UNSUPPORTED -> org/omg/boxedRMI/seq1_octet is an undeclared type. SI
+        3.2.16 base64Binary         UNSUPPORTED -> org/omg/boxedRMI/seq1_octet is an undeclared type. SI
+
+        3.2.17 anyURI           ok
+        3.2.18 QName                UNSUPPORTED -> javax/xml/namespace/QName.idl    NO
+        3.2.19 NOTATION             UNSUPPORTED -> javax/xml/namespace/QName.idl    NO
+
+
+        Derived data types:
+            - long
+            - int
+            
+  -->
+  
+  <wsdl:types>
+    <xsd:schema targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator"
+                elementFormDefault="qualified"
+                attributeFormDefault="qualified">
+
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <!--
+  Message - base64Binary
+  -->
+  <wsdl:message name="echoBase64BinaryRequest">
+    <wsdl:part type="xsd:base64Binary" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:message name="echoBase64BinaryResponse">
+    <wsdl:part type="xsd:base64Binary" name="parameters" />
+  </wsdl:message>
+
+  <!--
+  PortType
+  -->
+  <wsdl:portType name="EchoServicePortType">
+
+
+    <!--
+    PortType - base64Binary
+    -->
+    <wsdl:operation name="echoBase64Binary">
+      <wsdl:input  message="tns:echoBase64BinaryRequest"  name="echoBase64BinaryRequest"  />
+      <wsdl:output message="tns:echoBase64BinaryResponse" name="echoBase64BinaryResponse" />
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+
+
+  <!--
+  Binding
+  -->
+  <wsdl:binding name="EchoServiceHttpBinding"
+                type="tns:EchoServicePortType">
+
+    <!--
+    Style
+    -->
+    <wsdlsoap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http" />
+
+    <!--
+    Operation - base64Binary
+	-->
+    <wsdl:operation name="echoBase64Binary">
+        <wsdlsoap:operation soapAction="fooAction" />
+
+        <wsdl:input name="echoBase64BinaryRequest">
+            <wsdlsoap:body use="literal" />
+        </wsdl:input>
+
+        <wsdl:output name="echoBase64BinaryResponse">
+            <wsdlsoap:body use="literal" />
+        </wsdl:output>
+    </wsdl:operation>
+
+  </wsdl:binding>
+
+  <!--
+  Service
+  -->
+  <wsdl:service name="EchoService">
+    <wsdl:port binding="tns:EchoServiceHttpBinding"
+               name="EchoServiceHttpPort">
+
+      <wsdlsoap:address location="http://localhost/services/EchoService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

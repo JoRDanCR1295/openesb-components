@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onEventBPWithWait"
+    targetNamespace="http://enterprise.netbeans.org/bpel/PersistenceTest/onEventBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/PersistenceTest/onEventBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onEventBP">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onEventBP" location="onEventBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink6" partnerLinkType="ns1:onEventBP13" partnerRole="onEventBPPortTypeNestedRole"/>
+        <partnerLink name="PartnerLink5" partnerLinkType="ns1:onEventBP13" myRole="onEventBPPortTypeNestedRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:onEventBP12" partnerRole="onEventBPPortType2Role"/>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns1:onEventBP12" partnerRole="onEventBPPortType2Role"/>        
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:onEventBP12" myRole="onEventBPPortType2Role"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:onEventBP1" myRole="onEventPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OnEventBPOperation2In" messageType="ns1:onEventBPOperationRequest"/>
+        <variable name="OnEventOperationOut" messageType="ns1:onEventOperationReply"/>
+        <variable name="OnEventOperationIn" messageType="ns1:onEventOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <eventHandlers>
+        <onEvent partnerLink="PartnerLink2" operation="onEventBPOperation2" portType="ns1:onEventBPPortType2" variable="OnEventVar" messageType="ns1:onEventBPOperationRequest">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+            <scope name="Scope1">
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                                <from>
+                                        <literal>In the event handler</literal>
+                                    </from>
+                                    <to part="part1" variable="OnEventOperationOut"/>
+                            </copy>
+                    </assign>
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M3S'</for>
+                    </wait>
+                    <scope name="Scope2">
+                        <eventHandlers>
+                            <onEvent partnerLink="PartnerLink5" operation="onEventBPOperationNested" portType="ns1:onEventBPPortTypeNested" variable="NestedEventVar" messageType="ns1:onEventOperationRequest">
+                                <correlations>
+                                    <correlation set="CorrelationSet1" initiate="no"/>
+                                </correlations>
+                                <scope name="Scope3">
+                                    <sequence name="Sequence3">
+                                        <wait name="Wait2">
+                                            <for>'P0Y0M0DT0H0M3S'</for>
+                                        </wait>
+                                        <assign name="Assign3">
+                                            <copy>
+                                                <from>concat($OnEventOperationOut.part1, '         ', 'In the nested Event handler')</from>
+                                                <to part="part1" variable="OnEventOperationOut"/>
+                                            </copy>
+                                        </assign>
+                                    </sequence>
+                                </scope>
+                            </onEvent>
+                        </eventHandlers>
+                        <sequence name="Sequence2">
+                            <invoke name="Invoke3" partnerLink="PartnerLink6" operation="onEventBPOperationNested" portType="ns1:onEventBPPortTypeNested" inputVariable="OnEventOperationIn"/>
+                            <invoke name="Invoke4" partnerLink="PartnerLink4" operation="onEventBPOperation2" portType="ns1:onEventBPPortType2" inputVariable="OnEventBPOperation2In"/>
+                        </sequence>
+                    </scope>
+                </sequence>
+            </scope>
+        </onEvent>
+    </eventHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onEventOperation" portType="ns1:onEventPortType" variable="OnEventOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from variable="OnEventOperationIn" part="part1"/>
+                <to variable="OnEventBPOperation2In" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink3" operation="onEventBPOperation2" portType="ns1:onEventBPPortType2" inputVariable="OnEventBPOperation2In"/>
+        <invoke name="Invoke2" partnerLink="PartnerLink4" operation="onEventBPOperation2" portType="ns1:onEventBPPortType2" inputVariable="OnEventBPOperation2In"/>
+        <invoke name="Invoke5" partnerLink="PartnerLink4" operation="onEventBPOperation2" portType="ns1:onEventBPPortType2" inputVariable="OnEventBPOperation2In"/>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="onEventOperation" portType="ns1:onEventPortType" variable="OnEventOperationOut"/>
+    </sequence>
+</process>

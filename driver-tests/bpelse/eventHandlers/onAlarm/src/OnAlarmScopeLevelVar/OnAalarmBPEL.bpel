@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="OnAalarmBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarm/OnAalarmBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/onAlarm/OnAalarmBPEL" xmlns:ns0="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" xmlns:ns1="http://j2ee.netbeans.org/wsdl/subBP">
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" location="OnAlarmWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/subBP" location="subBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" location="WizardCorrelationProperties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="createSubBP" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" partnerLinkType="tns:subBP" partnerRole="subBPPortTypeRole"/>
+        <partnerLink name="correlateSubBP" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" partnerLinkType="tns:subBP2" partnerRole="correlatesubBPPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" partnerLinkType="tns:OnAlarmWSDL" myRole="OnAlarmWSDLPortTypeRole"/>
+        <partnerLink name="callBackPLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" partnerLinkType="tns:subBP3" myRole="callbackPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CallbackOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" messageType="tns:callbackOperationRequest"/>
+        <variable name="SubBPOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" messageType="tns:subBPOperationRequest"/>
+        <variable name="OnAlarmWSDLOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" messageType="tns:OnAlarmWSDLOperationResponse"/>
+        <variable name="OnAlarmWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" messageType="tns:OnAlarmWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="wzrd_set_Receive1_Receive2" properties="ns0:wzrd_prop_string_string"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="OnAlarmWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" portType="tns:OnAlarmWSDLPortType" variable="OnAlarmWSDLOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_Receive1_Receive2" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                    <from>concat($OnAlarmWSDLOperationIn.ID, 'subBP')</from>
+                        <to variable="SubBPOperationIn" part="part1"/>
+                </copy>
+                <copy>
+                    <from variable="OnAlarmWSDLOperationIn" part="ID"/>
+                        <to variable="SubBPOperationIn" part="CallBackcorrelatingVal"/>
+                </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="createSubBP" operation="subBPOperation" portType="ns1:subBPPortType" inputVariable="SubBPOperationIn"/>
+        <scope name="Scope2">
+            <eventHandlers>
+                <onAlarm>
+                    <!-- <repeatEvery>$OnAlarmWSDLOperationIn.duration</repeatEvery> -->
+                    <documentation>ver0.3</documentation>
+                    <repeatEvery>'P0Y0M0DT0H0M5S'</repeatEvery>
+                    <scope name="Scope1">
+                            <variables>
+                                <variable name="CorrelatesubBPOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" messageType="tns:correlatesubBPOperationRequest"/>
+                            </variables>
+                        <sequence name="Sequence1">
+                            <assign name="Assign3">
+                                    <copy>
+                                            <from>concat($OnAlarmWSDLOperationIn.ID, 'subBP')</from>
+                                                <to variable="CorrelatesubBPOperationIn" part="part1"/>
+                                        </copy>
+                                </assign>
+                                <invoke name="Invoke2" partnerLink="correlateSubBP" operation="correlatesubBPOperation" portType="ns1:correlatesubBPPortType" inputVariable="CorrelatesubBPOperationIn"/>
+                        </sequence>
+                    </scope>
+                </onAlarm>
+            </eventHandlers>
+            <sequence name="Sequence2">
+                <receive name="Receive2" createInstance="no" partnerLink="callBackPLink" operation="callbackOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBP" portType="tns:callbackPortType" variable="CallbackOperationIn">
+                    <correlations>
+                            <correlation set="wzrd_set_Receive1_Receive2" initiate="no"/>
+                        </correlations>
+                </receive>
+            </sequence>
+        </scope>
+        <assign name="Assign2">
+            <copy>
+                <from>concat('No of Iterations = ', $CallbackOperationIn.part2)</from>
+                <to variable="OnAlarmWSDLOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="OnAlarmWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnAlarmWSDL" portType="tns:OnAlarmWSDLPortType" variable="OnAlarmWSDLOperationOut"/>
+    </sequence>
+</process>

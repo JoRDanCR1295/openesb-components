@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="testProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/testProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/testProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Corrtest" xmlns:ns2="http://j2ee.netbeans.org/wsdl/InvWsdl" xmlns:ns3="http://j2ee.netbeans.org/wsdl/SubBPWsdl">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Corrtest" location="Corrtest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvWsdl" location="InvWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWsdl" location="SubBPWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="JMSInvokeMessagePartnerLink" partnerLinkType="ns1:JMSInvokeMessagePLT" partnerRole="CorrtestPortType1Role"/>
+        <bpws:partnerLink name="SubBPPartnerLink" partnerLinkType="ns3:SubBPWsdl1" partnerRole="SubBPWsdlPortTypeRole"/>
+        <bpws:partnerLink name="FilePartnerLink" partnerLinkType="ns2:InvWsdl1" partnerRole="InvWsdlPortTypeRole"/>
+        <bpws:partnerLink name="JMSCorrelatedMessagePartnerLink" partnerLinkType="ns1:CorrelatedMessagePLT" myRole="CorrtestPortType1Role"/>
+        <bpws:partnerLink name="JMSFirstMessagePartnerLink" partnerLinkType="ns1:FirstMessagePLT" myRole="CorrtestPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OutputVariable" type="xsd:string"/>
+        <bpws:variable name="JMSInvokeMessageVariable" messageType="ns1:JMSInvokeMessage"/>
+        <bpws:variable name="SubBPOutputVariable" messageType="ns3:SubBPWsdlOperationReply"/>
+        <bpws:variable name="SubBPInputVariable" messageType="ns3:SubBPWsdlOperationRequest"/>
+        <bpws:variable name="FileInvokeMessageVariable" messageType="ns2:InvWsdlOperationRequest"/>
+        <bpws:variable name="CorrelatedMessageInputVariable" messageType="ns1:CorrelatedMessage"/>
+        <bpws:variable name="FirstMessageInputVariable" messageType="ns1:FirstMessage"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:prop2"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive_JMS1" createInstance="yes" partnerLink="JMSFirstMessagePartnerLink" operation="CorrtestOperation" portType="ns1:FirstMessagePortType" variable="FirstMessageInputVariable">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>[ Input to Sub BP ]</bpws:literal>
+                </bpws:from>
+                <bpws:to part="part1" variable="SubBPInputVariable"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke2" partnerLink="SubBPPartnerLink" operation="SubBPWsdlOperation" portType="ns3:SubBPWsdlPortType" inputVariable="SubBPInputVariable" outputVariable="SubBPOutputVariable"/>
+        <bpws:receive name="Receive_JMS2" createInstance="no" partnerLink="JMSCorrelatedMessagePartnerLink" operation="CorrtestOperation" portType="ns1:CorrelatedMessagePortType" variable="CorrelatedMessageInputVariable">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:wait name="Wait1">
+            <bpws:for>'P0Y0M0DT0H1M0S'</bpws:for>
+        </bpws:wait>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat(' Instance Correlation ID [', $FirstMessageInputVariable.MessageCorrelationID, '] Input Message [', $FirstMessageInputVariable.MessageText, '] Response from Sub BP [', $SubBPOutputVariable.part1, '] Correlated Message ID [', $CorrelatedMessageInputVariable.MessageCorrelationID, '] Correlated Message [', $CorrelatedMessageInputVariable.MessageText, ']')</bpws:from>
+                <bpws:to variable="OutputVariable"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from variable="OutputVariable"/>
+                <bpws:to variable="JMSInvokeMessageVariable" part="MessageText"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="OutputVariable"/>
+                <bpws:to variable="FileInvokeMessageVariable" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke_JMS" partnerLink="JMSInvokeMessagePartnerLink" operation="CorrtestOperation" portType="ns1:JMSInvokeMessagePortType" inputVariable="JMSInvokeMessageVariable"/>
+        <bpws:invoke name="Invoke_File" partnerLink="FilePartnerLink" operation="InvWsdlOperation" portType="ns2:InvWsdlPortType" inputVariable="FileInvokeMessageVariable"/>
+    </sequence>
+</process>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ControlledAccess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AuthorizedBPEL/ControlledAccessBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AuthorizedBPEL/ControlledAccessBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess" location="XACMLAccess4BPEL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InternalService" partnerLinkType="ns1:XACMLAccess" partnerRole="interfaceRole"/>
+        <partnerLink name="ExternalRequester" partnerLinkType="ns1:BPELAccess" myRole="BPELInterfaceRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ControlledAccessOut" messageType="ns1:authorizeReply"/>
+        <variable name="XACMLOut" messageType="ns1:authorizeReply"/>
+        <variable name="AuthorizeIn" messageType="ns1:authorizeRequest"/>
+        <variable name="dataOut" type="xsd:string"/>
+        <variable name="dataIn" type="xsd:string"/>
+    </variables>
+    <sequence>
+        <receive name="ReceiveAuthorizationRequest" createInstance="yes" partnerLink="ExternalRequester" operation="authorize" portType="ns1:interface" variable="AuthorizeIn">
+        </receive>
+        <invoke name="InvokeXACML" partnerLink="InternalService" operation="authorize" portType="ns1:interface" inputVariable="AuthorizeIn" outputVariable="XACMLOut"/>
+        <assign name="AssignReturnValues">
+            <copy>
+                <from variable="XACMLOut" part="part1"/>
+                <to variable="ControlledAccessOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply2Requester" partnerLink="ExternalRequester" operation="authorize" portType="ns1:interface" variable="ControlledAccessOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="MQrecvFilOutBpl"
+    targetNamespace="http://enterprise.netbeans.org/bpel/MQrecvFilOutBpl"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MQrecvFilOutBpl"  xmlns:ns2="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv" location="FileInOutMqPutrecv.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1FielOut" partnerLinkType="ns2:partnerlinktypeFileOut" partnerRole="partnerlinktyperoleFileOut"/>
+        <bpws:partnerLink name="PartnerLink1MqRecv" partnerLinkType="ns2:partnerlinktype2MqRecv" myRole="partnerlinktyperole1MqRecv"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FileOutOperationIn" messageType="ns2:message1Reply"/>
+        <bpws:variable name="MqRecvPortOperationIn" messageType="ns2:messageReq"/>
+    </bpws:variables>
+    <bpws:sequence name="Sequence1">
+        <bpws:receive name="Receive1Mq" createInstance="yes" partnerLink="PartnerLink1MqRecv" operation="MqRecvPortOperation" portType="ns2:MqRecvPortType" variable="MqRecvPortOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$MqRecvPortOperationIn.part1Req/HexBinary</bpws:from>
+                <bpws:to>$FileOutOperationIn.part1Reply/HexBinary</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$MqRecvPortOperationIn.part1Req/StringMsg</bpws:from>
+                <bpws:to>$FileOutOperationIn.part1Reply/StringMsg</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink1FielOut" operation="FileOutOperation" portType="ns2:FileOutPortType" inputVariable="FileOutOperationIn"/>
+    </bpws:sequence>
+</process>

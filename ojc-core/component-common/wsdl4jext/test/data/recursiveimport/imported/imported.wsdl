@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Simple" targetNamespace="http://ojc.java.net/wsdl4jext/unittest/Imported"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ojc.java.net/wsdl4jext/unittest/Imported" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:ns0="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD" xmlns:ns1="http://ojc.java.net/wsdl4jext/unittest/simpleimport">
+    <import location="../../recursiveimport/top.wsdl" namespace="http://ojc.java.net/wsdl4jext/unittest/simpleimport"/>
+    <types>
+        <xsd:schema targetNamespace="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD" xmlns:tns1="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD">
+            <xsd:element name="inlinedRoot">
+                <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                    <xsd:sequence>
+                        <xsd:element name="elem1" type="tns1:inlinedStateCode"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:simpleType name="inlinedStateCode">
+                <xsd:restriction base="xsd:string">
+                    <xsd:length value="2"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:complexType name="inlinedComplexType1">
+                <xsd:sequence>
+                    <xsd:element name="stateCode" type="tns1:inlinedStateCode"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="SimpleOperationRequest">
+        <part name="part1" element="ns0:inlinedRoot"/>
+    </message>
+    <message name="SimpleOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="SimplePortType">
+        <wsdl:operation name="SimpleOperation">
+            <wsdl:input name="input1" message="tns:SimpleOperationRequest"/>
+            <wsdl:output name="output1" message="tns:SimpleOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="SimpleBinding" type="tns:SimplePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SimpleOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://ojc.java.net/wsdl4jext/unittest/Simple"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://ojc.java.net/wsdl4jext/unittest/Simple"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="SimpleService">
+        <wsdl:port name="SimplePort" binding="tns:SimpleBinding">
+            <soap:address location="http://localhost:18181/SimpleService/SimplePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="Simple1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SimplePortTypeRole" portType="tns:SimplePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1">
+        <plnk:role name="role1" portType="tns:SimplePortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="stateCodeProp" type="ns0:inlinedStateCode"/>
+    <vprop:property name="dummyProp" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:stateCodeProp" type="ns0:inlinedComplexType1">
+        <vprop:query>stateCode</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:stateCodeProp" element="ns0:inlinedRoot">
+        <vprop:query queryLanguage="xpath">stateCode</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:stateCodeProp" messageType="tns:SimpleOperationRequest" part="part1">
+        <vprop:query>elem1</vprop:query>
+    </vprop:propertyAlias>
+    <plnk:partnerLinkType name="partnerlinktype2">
+        <plnk:role name="role1" portType="ns1:topPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

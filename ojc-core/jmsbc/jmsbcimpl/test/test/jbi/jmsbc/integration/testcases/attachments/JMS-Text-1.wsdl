@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMS" targetNamespace="http://j2ee.netbeans.org/wsdl/JMS"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMS" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types/>
+     <message name="SolicitedReadInputMessage">
+    </message>
+     <message name="JMSOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="JMSOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="JMSPortType1">
+        <operation name="JMSSend">
+            <input name="input1" message="tns:JMSOperationRequest"/>
+        </operation>
+        <operation name="JMSRead">
+            <input name="input1" message="tns:SolicitedReadInputMessage"/>
+            <output name="output1" message="tns:JMSOperationReply"/>
+        </operation>
+        <operation name="JMSRequestReply">
+            <input name="input1" message="tns:JMSOperationRequest"/>
+            <output name="output1" message="tns:JMSOperationReply"/>
+        </operation>
+    </portType>
+    <portType name="JMSPortType2">
+        <operation name="JMSRequestReply">
+            <input name="input1" message="tns:JMSOperationRequest"/>
+            <output name="output1" message="tns:JMSOperationReply"/>
+        </operation>
+    </portType>
+    <binding name="JMSBinding1" type="tns:JMSPortType1">
+        <jms:binding/>
+        <operation name="JMSSend">
+            <jms:operation destination="TestAttachmentsQueue" destinationType="Queue"/>
+            <input name="input1">
+                <jms:message  messageType="TextMessage" textPart="part1"/>
+            </input>
+        </operation>
+        <operation name="JMSRead">
+            <jms:operation verb="read" destination="TestAttachmentsQueue" destinationType="Queue" transaction="XATransaction" timeout="30000"/>
+            <input name="input1">
+                <jms:message/>
+            </input>
+            <output name="output1">
+                <jms:message  messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+        <operation name="JMSRequestReply">
+            <jms:operation destination="TestAttachmentsQueue" destinationType="Queue"/>
+            <input name="input1">
+                <jms:message forwardAsAttachment="true" messageType="TextMessage" textPart="part1"/>
+            </input>
+            <output name="output1">
+                <jms:message forwardAsAttachment="true" messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="JMSBinding2" type="tns:JMSPortType2">
+        <jms:binding/>
+        <operation name="JMSRequestReply">
+            <jms:operation destination="TestAttachmentsQueue" destinationType="Queue" transaction="XATransaction"/>
+            <input name="input1">
+                <jms:message forwardAsAttachment="true" messageType="TextMessage" textPart="part1"/>
+            </input>
+            <output name="output1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="JMSService">
+        <port name="JMSPort1" binding="tns:JMSBinding1">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+    </service>
+    <service name="JMSService2">
+        <port name="JMSPort2" binding="tns:JMSBinding2">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+    </service>
+</definitions>

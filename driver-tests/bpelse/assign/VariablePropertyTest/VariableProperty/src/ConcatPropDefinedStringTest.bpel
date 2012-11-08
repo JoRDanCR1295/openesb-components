@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ConcatPropDefinedStringTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/VariableProperty/ConcatPropDefinedStringTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/VariableProperty/ConcatPropDefinedStringTest" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/properties" 
+    xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/properties" location="properties.wsdl" 
+    importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="concatPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" 
+        partnerLinkType="tns:concatPLT" myRole="concatTestPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ConcatTestOperationOut" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" messageType="tns:concatMsg"/>
+        <variable name="ConcatTestOperationIn" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" messageType="tns:concatMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:str1Prop"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="concatPL" 
+        operation="concatTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" 
+        portType="tns:concatTestPT" variable="ConcatTestOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$ConcatTestOperationIn.concatPart/str1</from>
+                <to>$ConcatTestOperationOut.concatPart/str1</to>
+            </copy>
+            <copy>
+                <from>$ConcatTestOperationIn.concatPart/str2</from>
+                <to>$ConcatTestOperationOut.concatPart/str2</to>
+            </copy>
+            <copy>
+                <from>$ConcatTestOperationIn.concatPart/str3</from>
+                <to>$ConcatTestOperationOut.concatPart/str3</to>
+            </copy>
+            <copy>
+                <!--from>concat($ConcatTestOperationIn.concatPart/str1, $ConcatTestOperationIn.concatPart/str2, $ConcatTestOperationIn.concatPart/str3)</from-->
+                <from>concat(ns1:getVariableProperty('ConcatTestOperationIn','ns0:str1Prop'), ns1:getVariableProperty('ConcatTestOperationIn','ns0:str2Prop'), ns1:getVariableProperty('ConcatTestOperationIn','ns0:str3Prop'))</from>
+                <to>$ConcatTestOperationOut.concatPart/concatedStr</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="concatPL" operation="concatTestOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" portType="tns:concatTestPT" 
+        variable="ConcatTestOperationOut"/>
+    </sequence>
+</process>

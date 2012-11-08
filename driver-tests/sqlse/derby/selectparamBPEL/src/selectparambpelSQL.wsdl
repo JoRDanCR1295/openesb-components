@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="selectparambpelSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="selectparambpelRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="selectparambpelResponse"><xsd:complexType><xsd:sequence><xsd:element name="CUSTOMER_NUM" type="xsd:int"/><xsd:element name="ZIP" type="xsd:string"/><xsd:element name="NAME" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="selectparambpelResponse">
+    <part name="selectparambpelResponsePart" element="tns:selectparambpelResponse"/>
+  </message>
+  <message name="selectparambpelRequest">
+    <part name="selectparambpelRequestPart" element="tns:selectparambpelRequest"/>
+  </message>
+  <portType name="selectparambpelSQL_sqlsePortType">
+    <operation name="selectparambpel">
+      <input name="selectparambpelRequest" message="tns:selectparambpelRequest"/>
+      <output name="selectparambpelResponse" message="tns:selectparambpelResponse"/>
+    </operation>
+  </portType>
+  <binding name="selectparambpelSQLBinding" type="tns:selectparambpelSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="selectparambpel">
+      <soap:operation style="document"/>
+      <input name="selectparambpelRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="selectparambpelResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="selectparambpelSQL_sqlseService">
+    <port name="selectparambpelSQL_sqlsePort" binding="tns:selectparambpelSQLBinding">
+      <soap:address location="http://localhost:18181/selectparambpelSQL/selectparambpelSQL/selectparambpelSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="selectparambpelSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="selectparambpelSQL_myrole" portType="tns:selectparambpelSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

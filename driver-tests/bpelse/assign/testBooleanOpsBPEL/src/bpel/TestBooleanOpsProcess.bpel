@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TestBooleanOpsProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/testBooleanOpsBPEL/TestBooleanOpsProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/testBooleanOpsBPEL/TestBooleanOpsProcess" xmlns:ns0="http://xml.netbeans.org/schema/wsdefs">
+    <import namespace="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" location="../wsdl/tbo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="TBOPartner" xmlns:tns="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" partnerLinkType="tns:tboLink" myRole="tboRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="DoTBOOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" messageType="tns:ReplyOut"/>
+        <variable name="DoTBOIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" messageType="tns:RequestIn"/>
+    </variables>
+    <sequence>
+        <receive name="ReceiveRequest" createInstance="yes" partnerLink="TBOPartner" operation="doTBO" xmlns:tns="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" portType="tns:tboPort" variable="DoTBOIn"/>
+        <if name="If1">
+            <condition>$DoTBOIn.request/@booleanValue1 = false()</condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>'equalsFalse'</from>
+                    <to>$DoTBOOut.reply/ns0:test1Result/@name</to>
+                </copy>
+                <copy>
+                    <from>true()</from>
+                    <to>$DoTBOOut.reply/ns0:test1Result/@expected</to>
+                </copy>
+                <copy>
+                    <from>true()</from>
+                    <to>$DoTBOOut.reply/ns0:test1Result/@actual</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>'equalsFalse'</from>
+                        <to>$DoTBOOut.reply/ns0:test1Result/@name</to>
+                    </copy>
+                    <copy>
+                        <from>true()</from>
+                        <to>$DoTBOOut.reply/ns0:test1Result/@expected</to>
+                    </copy>
+                    <copy>
+                        <from>false()</from>
+                        <to>$DoTBOOut.reply/ns0:test1Result/@actual</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <if name="If2">
+            <condition>not($DoTBOIn.request/@booleanValue1)</condition>
+                <assign name="Assign3">
+                <copy>
+                    <from>'notTrue'</from>
+                    <to>$DoTBOOut.reply/ns0:test2Result/@name</to>
+                </copy>
+                <copy>
+                    <from>true()</from>
+                    <to>$DoTBOOut.reply/ns0:test2Result/@expected</to>
+                </copy>
+                <copy>
+                    <from>true()</from>
+                    <to>$DoTBOOut.reply/ns0:test2Result/@actual</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign4">
+                    <copy>
+                        <from>'notTrue'</from>
+                        <to>$DoTBOOut.reply/ns0:test2Result/@name</to>
+                    </copy>
+                    <copy>
+                        <from>true()</from>
+                        <to>$DoTBOOut.reply/ns0:test2Result/@expected</to>
+                    </copy>
+                    <copy>
+                        <from>false()</from>
+                        <to>$DoTBOOut.reply/ns0:test2Result/@actual</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="SendReply" partnerLink="TBOPartner" operation="doTBO" xmlns:tns="http://j2ee.netbeans.org/wsdl/testBooleanOps/tbo" portType="tns:tboPort" variable="DoTBOOut"/>
+    </sequence>
+</process>

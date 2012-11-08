@@ -1,0 +1,74 @@
+#############################################################
+#
+# The contents of this file are subject to the terms
+# of the Common Development and Distribution License
+# (the "License").  You may not use this file except
+# in compliance with the License.
+#
+# You can obtain a copy of the license at
+# https://glassfish.dev.java.net/public/CDDLv1.0.html.
+# See the License for the specific language governing
+# permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL
+# HEADER in each file and include the License file at
+# https://glassfish.dev.java.net/public/CDDLv1.0.html.  
+#
+# If applicable add the following below this CDDL HEADER,
+# with the fields enclosed by brackets "[]" replaced with 
+# your own identifying information: 
+# "Portions Copyrighted [year] [name of copyright owner]"
+#
+# Copyright 2006 Sun Microsystems, Inc.  All Rights Reserved.
+#
+# @(#)config.properties.pointbase	1.5 08/01/06
+# 
+#############################################################
+#
+# This file contains example properties for plugging a PointBase
+# Embedded database.
+#
+
+###########################################################################
+# Persistence Settings
+###########################################################################
+
+# Type of data store
+# To plug in a database, set the value to "jdbc".
+imq.persist.store=jdbc
+
+# An identifier to make database table names unique per broker.
+# The specified value should contain alphanumeric characters only.
+# The length of the identifier should not exceed the maximum length
+# of a table name allowed in the database minus 12.
+imq.brokerid=<alphanumeric id>
+
+# PointBase Embedded database settings
+######################################
+
+# PointBase JDBC drvier
+imq.persist.jdbc.pointbase.driver=com.pointbase.jdbc.jdbcUniversalDriver
+
+# For an embedded database specific to each broker instance,
+# you would create the database using the imqdbmgr utility.
+# To do that, specify the database connection URL with the 'new' flag.
+# The example URL creates an embedded database called 'imqdb' under the
+# broker's instance directory, (we recommend that the database be created
+# under a directory called 'dbstore':
+#   ${imq.instanceshome}${/}${imq.instancename}${/}dbstore
+imq.persist.jdbc.pointbase.createdburl=jdbc:pointbase:embedded:imqdb;new,database.home=${imq.instanceshome}${/}${imq.instancename}${/}dbstore
+
+# The URL to connect to the PointBase Embedded database called 'imqdb' under
+# the broker's instance directory:
+#   ${imq.instanceshome}${/}${imq.instancename}${/}dbstore
+imq.persist.jdbc.pointbase.opendburl=jdbc:pointbase:embedded:imqdb;database.home=${imq.instanceshome}${/}${imq.instancename}${/}dbstore
+
+# User name used to access the database.
+# This can also be specified by command line option for imqbrokerd and
+# imqdbmgr.
+imq.persist.jdbc.pointbase.user=<username>
+
+# Specify whether the broker should prompt the user for a password for
+# database access.
+# It should be set to true if the password is not provided by other means
+#imq.persist.jdbc.pointbase.needpassword=[true|false]

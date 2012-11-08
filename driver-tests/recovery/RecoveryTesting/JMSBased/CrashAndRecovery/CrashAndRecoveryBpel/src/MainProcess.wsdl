@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/MainProcess"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/MainProcess" name="MainProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <import location="MessageTypes.wsdl" namespace="http://j2ee.netbeans.org/wsdl/MessageTypes"/>
+    <types/>
+    <message name="MainProcessJmsReqRes">
+        <wsdl:part name="Counter" type="xsd:long"/>
+        <wsdl:part name="Text" type="xsd:string"/>
+    </message>
+    <portType name="MainProcessJmsRequestPortType">
+        <wsdl:operation name="MainProcessJmsRequestOperation">
+            <wsdl:input name="input1" message="tns:MainProcessJmsReqRes"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="MainProcessJmsResponsePortType">
+        <wsdl:operation name="MainProcessJmsResponseOperation">
+            <wsdl:input name="input1" message="tns:MainProcessJmsReqRes"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="MainProcessPortType1">
+        <wsdl:operation name="MainProcessOperation1">
+            <wsdl:input name="input1" message="ns1:message1"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="binding1" type="tns:MainProcessPortType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="MainProcessOperation1">
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="binding2" type="tns:MainProcessJmsRequestPortType">
+        <jms:binding/>
+        <wsdl:operation name="MainProcessJmsRequestOperation">
+            <jms:operation destination="CrashAndRecoveryBpel_JmsRequest" destinationType="Queue" transaction="XATransaction" maxConcurrentConsumers="32"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="Text">
+                    <jms:properties>
+                        <jms:property name="counter" part="Counter" type="long"/>
+                    </jms:properties>
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="binding3" type="tns:MainProcessJmsResponsePortType">
+        <jms:binding/>
+        <wsdl:operation name="MainProcessJmsResponseOperation">
+            <jms:operation destination="CrashAndRecoveryBpel_JmsResponse" destinationType="Queue" transaction="XATransaction" disableMessageID="true" disableMessageTimeStamp="true" deliveryMode="PERSISTENT"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="Text">
+                    <jms:properties>
+                        <jms:property name="counter" part="Counter" type="long"/>
+                    </jms:properties>
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="service1">
+        <wsdl:port name="port1" binding="tns:binding1">
+            <soap:address location="http://localhost:18181/CrashAndRecoveryBpel/MainProcess/port1"/>
+        </wsdl:port>
+    </service>
+    <service name="service2">
+        <wsdl:port name="port1" binding="tns:binding2">
+            <jms:address connectionURL="mq://localhost:20000" username="admin" password="admin"/>
+        </wsdl:port>
+    </service>
+    <service name="service3">
+        <wsdl:port name="port1" binding="tns:binding3">
+            <jms:address connectionURL="mq://localhost:20000" username="admin" password="admin"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="MainProcessJmsRequestResponsePLT">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="provider" portType="tns:MainProcessJmsRequestPortType"/>
+        <plnk:role name="requester" portType="tns:MainProcessJmsResponsePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="MainProcessPLT1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="provider" portType="tns:MainProcessPortType1"/>
+    </plnk:partnerLinkType>
+</definitions>

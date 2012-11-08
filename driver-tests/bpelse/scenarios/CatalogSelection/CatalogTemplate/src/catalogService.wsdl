@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="catalogService" targetNamespace="http://j2ee.netbeans.org/wsdl/catalogService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/catalogService" 
+    xmlns:ns1="http://xml.netbeans.org/schema/cdcatalog" 
+    xmlns:ns0="http://xml.netbeans.org/schema/artistCollection" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/catalogService">
+            <xsd:import schemaLocation="cdcatalog.xsd" namespace="http://xml.netbeans.org/schema/cdcatalog"/>
+            <xsd:import schemaLocation="artistCollection.xsd" namespace="http://xml.netbeans.org/schema/artistCollection"/>
+        </xsd:schema>
+    </types>
+    <message name="inputMesg">
+        <wsdl:part name="inputPart" element="ns1:cdcatalog"/>
+    </message>
+    <message name="outputMesg">
+        <wsdl:part name="outputPart" element="ns0:artistinfo"/>
+    </message>
+    <portType name="catalogServicePortType">
+        <wsdl:operation name="catalogServiceOperation">
+            <wsdl:input name="input1" message="tns:inputMesg"/>
+            <wsdl:output name="output1" message="tns:outputMesg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="catalogBinding" type="tns:catalogServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="catalogServiceOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="inputPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="outputPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="cdService">
+        <wsdl:port name="cdServicePort" binding="tns:catalogBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/CDCatalog/catalogService/cdServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="catalogService1">
+        <plnk:role name="catalogServicePortTypeRole" portType="tns:catalogServicePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

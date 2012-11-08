@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="newProcess" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/newProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/newProcess" xmlns:ns1="http://stc.com/trigger" xmlns:ns2="http://www.examplesApp.inquireSingle.com" xmlns:ns0="http://www.exampleApp.inquireSingleResponse.com">
+    <import namespace="http://stc.com/trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.examplesApp.inquireSingle.com" location="inquireSingleWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TriggerOut1" messageType="ns1:triggerResponse"/>
+        <variable name="InquireSingleOut1" messageType="ns2:inquireSingleResponse"/>
+        <variable name="InquireSingleIn1" messageType="ns2:inquireSingleRequest"/>
+        <variable name="TriggerIn1" messageType="ns1:trigger"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="trigger" portType="ns1:trigger" variable="TriggerIn1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$TriggerIn1.part/ns1:request</from>
+                <to>$InquireSingleIn1.RequestPart/ns0:itemRequiredReference</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="inquireSingle" portType="ns2:inquireSinglePort" inputVariable="InquireSingleIn1" outputVariable="InquireSingleOut1"/>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($InquireSingleOut1.ResponsePart/ns0:singleItem/ns0:itemReferenceNumber, ',', $InquireSingleOut1.ResponsePart/ns0:singleItem/ns0:itemDescription, ',', $InquireSingleOut1.ResponsePart/ns0:singleItem/ns0:department, ',', $InquireSingleOut1.ResponsePart/ns0:singleItem/ns0:unitCost)</from>
+                <to>$TriggerOut1.part/ns1:response</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="trigger" portType="ns1:trigger" variable="TriggerOut1"/>
+    </sequence>
+   
+</process>

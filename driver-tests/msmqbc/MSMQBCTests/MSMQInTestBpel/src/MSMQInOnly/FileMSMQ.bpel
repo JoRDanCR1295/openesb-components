@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FileMSMQ" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/FileMSMQ"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FileMSMQ" xmlns:ns1="urn:MSMQ">
+    <import namespace="urn:MSMQ" location="MSMQ.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:MSMQReceivePartner" myRole="MSMQReceivePortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:MSMQSendPartner" partnerRole="MSMQSendPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:MSMQSoapPartner" myRole="SoapPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SoapOperationOut1" messageType="ns1:message1"/>
+        <variable name="MSMQReceiveOperationIn1" messageType="ns1:message1"/>
+        <variable name="MSMQSendOperationIn1" messageType="ns1:message1"/>
+        <variable name="SoapOperationIn1" messageType="ns1:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="SoapOperation" portType="ns1:SoapPortType" variable="SoapOperationIn1" createInstance="yes">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from variable="SoapOperationIn1" part="part1"/>
+                <to variable="MSMQSendOperationIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="MSMQSendOperation" portType="ns1:MSMQSendPortType" inputVariable="MSMQSendOperationIn1"/>
+        <receive name="Receive2" createInstance="no" partnerLink="PartnerLink3" operation="MSMQReceiveOperation" portType="ns1:MSMQReceivePortType" variable="MSMQReceiveOperationIn1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from variable="MSMQReceiveOperationIn1" part="part1"/>
+                <to variable="SoapOperationOut1" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="SoapOperation" portType="ns1:SoapPortType" variable="SoapOperationOut1"/>
+    </sequence>
+   
+</process>

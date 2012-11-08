@@ -1,0 +1,206 @@
+<definitions targetNamespace="RfidTheftDetection_iep"
+             xmlns:tns="RfidTheftDetection_iep"
+             xmlns:typens="RfidTheftDetection_iep"
+             xmlns:defns="RfidTheftDetection_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="RfidTheftDetection_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="Location_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="eventId" type="xsd:int"/>
+                    <xsd:element name="productId" type="xsd:string"/>
+                    <xsd:element name="location" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="LocationBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Location_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="eventId" type="xsd:int"/>
+                                <xsd:element name="productId" type="xsd:string"/>
+                                <xsd:element name="location" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Payment_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="productId" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="PaymentBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Payment_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="productId" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="AlertSecutiry_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="productId" type="xsd:string"/>
+                   <xsd:element name="location" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="ExitAlarm_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="productId" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="Location_Msg">
+    <part name="input" element="typens:Location_MsgObj"/>
+</message>
+<message name="LocationBatch_Msg">
+    <part name="input" element="typens:LocationBatch_MsgObj"/>
+</message>
+<message name="Payment_Msg">
+    <part name="input" element="typens:Payment_MsgObj"/>
+</message>
+<message name="PaymentBatch_Msg">
+    <part name="input" element="typens:PaymentBatch_MsgObj"/>
+</message>
+<message name="AlertSecutiry_Msg">
+    <part name="output" element="typens:AlertSecutiry_MsgObj"/>
+</message>
+<message name="ExitAlarm_Msg">
+    <part name="output" element="typens:ExitAlarm_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="Location">
+        <input message="tns:Location_Msg"/>
+    </operation>
+    <operation name="LocationBatch">
+        <input message="tns:LocationBatch_Msg"/>
+    </operation>
+    <operation name="Payment">
+        <input message="tns:Payment_Msg"/>
+    </operation>
+    <operation name="PaymentBatch">
+        <input message="tns:PaymentBatch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_AlertSecutiry">
+    <operation name="AlertSecutiry">
+        <input message="tns:AlertSecutiry_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_ExitAlarm">
+    <operation name="ExitAlarm">
+        <input message="tns:ExitAlarm_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_AlertSecutiry" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_AlertSecutiry" portType="tns:OutputPt_AlertSecutiry"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_ExitAlarm" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_ExitAlarm" portType="tns:OutputPt_ExitAlarm"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="Location">
+        <soap:operation soapAction="Location"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="LocationBatch">
+        <soap:operation soapAction="LocationBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="Payment">
+        <soap:operation soapAction="Payment"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="PaymentBatch">
+        <soap:operation soapAction="PaymentBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- output binding -->
+<binding name="OutputBinding_AlertSecutiry" type="defns:OutputPt_AlertSecutiry">
+    <file:binding/>
+    <operation name="AlertSecutiry">
+        <file:operation/>
+        <input>
+            <file:message fileName="actualAlertSecurity.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+            </file:message>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_ExitAlarm" type="defns:OutputPt_ExitAlarm">
+    <file:binding/>
+    <operation name="ExitAlarm">
+        <file:operation/>
+        <input>
+            <file:message fileName="actualExitAlarm.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+            </file:message>
+        </input>
+    </operation>
+</binding>
+
+<!-- The service name and the tns represent my service ID QName -->
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/RfidTheftDetection_iep"/>
+    </port>
+</service>
+<!-- output service -->
+<service name="OutputService_AlertSecutiry">
+    <port name="OutputPort_AlertSecutiry" binding="tns:OutputBinding_AlertSecutiry">
+        <!--  <soap:address location="YOUR_SERVICE_HERE"/> -->
+        <!--  <soap:address location="http://localhost:${HttpDefaultPort}/service/RfidTheftDetection_iep_AlertSecutiry_callee"/> -->
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/usecases/RfidTheftDetection/jbi/test/RfidTheftDetection"/>
+    </port>
+</service>
+<service name="OutputService_ExitAlarm">
+    <port name="OutputPort_ExitAlarm" binding="tns:OutputBinding_ExitAlarm">
+        <!--  <soap:address location="YOUR_SERVICE_HERE"/> -->
+        <!--  <soap:address location="http://localhost:${HttpDefaultPort}/service/RfidTheftDetection_iep_ExitAlarm_callee"/> -->
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/usecases/RfidTheftDetection/jbi/test/RfidTheftDetection"/>
+    </port>
+</service>
+</definitions>

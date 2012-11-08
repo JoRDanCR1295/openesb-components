@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*** GENERATED FROM project.xml - DO NOT EDIT  ***
+***         EDIT ../build.xml INSTEAD         ***
+
+For the purpose of easier reading the script
+is divided into following sections:
+
+  - initialization
+  - compilation
+  - jar
+  - cleanup
+
+-->
+<project name="File2FileCamelJBIModule-impl" default="default" basedir=".." xmlns:jbiproject="http://www.netbeans.org/ns/jbimodules/camel-jbi-se/1">
+    <target name="default" depends="jar" description="Build whole project."/>
+    <!-- 
+    ======================
+    INITIALIZATION SECTION 
+    ======================
+    -->
+    <target name="-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-init-private" depends="-pre-init">
+        <property file="nbproject/private/private.properties"/>
+    </target>
+    <target name="-init-user" depends="-pre-init,-init-private">
+        <property file="${user.properties.file}"/>
+    </target>
+    <target name="-init-project" depends="-pre-init,-init-private,-init-user">
+        <property file="nbproject/project.properties"/>
+    </target>
+    <target name="-do-init" depends="-pre-init,-init-private,-init-user,-init-project">
+        <property name="build.jbi.su.dir" location="${build.dir}/${jbi.su.name}"/>
+    </target>
+    <target name="-post-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-init-check" depends="-pre-init,-init-private,-init-user,-init-project,-do-init">
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="jbi.su.name">Must set jbi.su.name</fail>
+        <fail unless="jbi.su.zip">Must set jbi.su.zip</fail>
+    </target>
+    <target name="init" depends="-pre-init,-init-private,-init-user,-init-project,-do-init,-post-init,-init-check"/>
+    <!--
+    ===================
+    COMPILATION SECTION
+    ===================
+    -->
+    <target name="-pre-pre-compile" depends="init">
+        <mkdir dir="${build.jbi.su.dir}"/>
+    </target>
+    <target name="-pre-compile">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-do-compile" depends="init,-pre-pre-compile,-pre-compile">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpath="${javac.classpath}" debug="true" source="${javac.source}" target="${javac.target}" encoding="${source.encoding}"/>
+        <!-- copy resources from source dir to build dir -->
+        <copy todir="${build.classes.dir}" overwrite="true">
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
+        </copy>
+    </target>
+    <target name="-post-compile">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="compile" depends="init,-pre-pre-compile,-pre-compile,-do-compile,-post-compile" description="Compile project."/>
+    <!--
+    ====================
+    JAR BUILDING SECTION
+    ====================
+    -->
+    <target name="-pre-pre-jar" depends="init">
+        <mkdir dir="${build.dir}"/>
+    </target>
+    <target name="-pre-jar">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="-do-jar" depends="init,compile,-pre-pre-jar,-pre-jar">
+        <jar destfile="${jbi.su.zip}" basedir="${build.classes.dir}"/>
+    </target>
+    <target name="-post-jar">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="jar" depends="init,compile,-pre-jar,-do-jar,-post-jar" description="Build JAR."/>
+    <target name="dist" depends="init,jar"/>
+    <target name="dist_se" depends="init,jar"/>
+    <!--
+    ===============
+    CLEANUP SECTION
+    ===============
+    -->
+    <target name="-do-clean" depends="init">
+        <delete dir="${build.dir}"/>
+    </target>
+    <target name="-post-clean">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+    </target>
+    <target name="clean" depends="init,-do-clean,-post-clean" description="Clean build products."/>
+    <!--
+    ===============
+    CLEANUP SECTION
+    ===============
+    -->
+    <target name="mock-test" depends="init,jar" description="Runs the camel jbi module using Java SE without JBI environment.">
+        <java fork="true" classname="org.apache.camel.spring.Main">
+            <classpath>
+                <pathelement location="${jbi.su.zip}"/>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+        </java>
+    </target>
+</project>

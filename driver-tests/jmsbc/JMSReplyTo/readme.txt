@@ -1,0 +1,1 @@
+this test checks if the JMSCorrelationID is sent back to the client, in case of Receive and Reply sceanrio

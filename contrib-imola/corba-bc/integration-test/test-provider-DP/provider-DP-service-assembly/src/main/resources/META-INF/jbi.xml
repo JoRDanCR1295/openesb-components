@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:bpel="http://enterprise.netbeans.org/bpel/BpelObjectDP/bpelObjectDP" xmlns:objref="http://it.imolinfo.jbi4corba.test.ObjRef" xmlns:echo="http://it.imolinfo.jbi4corba.test.webservice.generator.complexintTypecons" xmlns:echoobj="http://it.imolinfo.jbi4corba.test.EchoObj" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+  <service-assembly>
+    <identification>
+      <name>provider-DP-service-assembly</name>
+      <description>it.imolinfo.jbi4corba.test-provider-DP.provider-DP-service-assembly-1.0-SNAPSHOT # jbi-service-assembly</description>
+    </identification>
+    <service-unit>
+      <identification>
+        <name>provider-DP-jbi4corba-provider</name>
+        <description>su connection to corba servant</description>
+      </identification>
+      <target>
+        <artifacts-zip>provider-DP-jbi4corba-provider-1.0-SNAPSHOT.zip</artifacts-zip>
+        <component-name>jbi4corba</component-name>
+      </target>
+    </service-unit>
+    <service-unit>
+      <identification>
+        <name>provider-DP-http-consumer</name>
+        <description>su exposing http service</description>
+      </identification>
+      <target>
+        <artifacts-zip>provider-DP-http-consumer-1.0-SNAPSHOT.zip</artifacts-zip>
+        <component-name>sun-http-binding</component-name>
+      </target>
+    </service-unit>
+    <service-unit>
+      <identification>
+        <name>provider-DP-bpel-provider</name>
+        <description>BPEL (SE)</description>
+      </identification>
+      <target>
+        <artifacts-zip>provider-DP-bpel-provider-1.0-SNAPSHOT.zip</artifacts-zip>
+        <component-name>sun-bpel-engine</component-name>
+      </target>
+    </service-unit>
+		<connections>
+            <connection>
+                <consumer endpoint-name="EchoCorbaPort" service-name="echo:Echo"/>
+                <provider endpoint-name="EchoPortTypeRole" service-name="bpel:EchoPortTypeRole"/>
+            </connection>
+        
+            <connection>   
+                <consumer endpoint-name="ObjRefPortTypeRole_partnerRole" service-name="bpel:ObjRefPortTypeRole"/>
+				<provider endpoint-name="ObjRefCorbaPort" service-name="objref:ObjRef"/>
+            </connection>
+        
+			<connection>
+                 <consumer endpoint-name="EchoObjPortTypeRole" service-name="bpel:EchoObjPortTypeRole"/>
+				<provider endpoint-name="EchoObjCorbaPort" service-name="echoobj:EchoObj"/>
+            </connection>
+        </connections>
+        
+  </service-assembly>
+</jbi>

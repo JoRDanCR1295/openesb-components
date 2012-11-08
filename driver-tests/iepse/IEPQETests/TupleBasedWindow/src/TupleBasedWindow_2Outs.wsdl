@@ -1,0 +1,138 @@
+<definitions targetNamespace="TupleBasedWindow_2Outs_iep"
+             xmlns:tns="TupleBasedWindow_2Outs_iep"
+             xmlns:typens="TupleBasedWindow_2Outs_iep"
+             xmlns:defns="TupleBasedWindow_2Outs_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="TupleBasedWindow_2Outs_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_3attr_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="attr1" type="xsd:int"/>
+                    <xsd:element name="attr2" type="xsd:double"/>
+                    <xsd:element name="attr3" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0_3attrBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_3attr_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="attr1" type="xsd:int"/>
+                                <xsd:element name="attr2" type="xsd:double"/>
+                                <xsd:element name="attr3" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="RelationOutput_noTimestamp_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="attr1" type="xsd:int"/>
+                   <xsd:element name="attr2" type="xsd:double"/>
+                   <xsd:element name="attr3" type="xsd:string"/>
+                   <xsd:element name="SeqId" type="xsd:string"/>
+                   <xsd:element name="Tag" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_3attr_Msg">
+    <part name="input" element="typens:StreamInput0_3attr_MsgObj"/>
+</message>
+<message name="StreamInput0_3attrBatch_Msg">
+    <part name="input" element="typens:StreamInput0_3attrBatch_MsgObj"/>
+</message>
+<message name="RelationOutput_noTimestamp_Msg">
+    <part name="output" element="typens:RelationOutput_noTimestamp_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0_3attr">
+        <input message="tns:StreamInput0_3attr_Msg"/>
+    </operation>
+    <operation name="StreamInput0_3attrBatch">
+        <input message="tns:StreamInput0_3attrBatch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_RelationOutput_noTimestamp">
+    <operation name="RelationOutput_noTimestamp">
+        <input message="tns:RelationOutput_noTimestamp_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_RelationOutput_noTimestamp" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_RelationOutput_noTimestamp" portType="tns:OutputPt_RelationOutput_noTimestamp"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="StreamInput0_3attr">
+        <soap:operation soapAction="StreamInput0_3attr"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="StreamInput0_3attrBatch">
+        <soap:operation soapAction="StreamInput0_3attrBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/TupleBasedWindow_2Outs_iep"/>
+    </port>
+</service>
+
+<!-- http output binding and service
+<binding name="OutputBinding_RelationOutput_noTimestamp" type="defns:OutputPt_RelationOutput_noTimestamp">
+    <operation name="RelationOutput_noTimestamp">
+        <soap:operation soapAction="RelationOutput_noTimestamp"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_RelationOutput_noTimestamp">
+    <port name="OutputPort_RelationOutput_noTimestamp" binding="tns:OutputBinding_RelationOutput_noTimestamp">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/TupleBasedWindow_2Outs_iep_RelationOutput_noTimestamp_callee"/>
+    </port>
+</service>
+ end of http output binding and service -->
+
+<!-- file output binding and service -->
+<binding name="OutputBinding_RelationOutput_noTimestamp" type="defns:OutputPt_RelationOutput_noTimestamp">
+    <file:binding/>
+    <operation name="RelationOutput_noTimestamp">
+        <file:operation/>
+        <input>
+            <file:message fileName="actual.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_RelationOutput_noTimestamp">
+    <port name="OutputPort_RelationOutput_noTimestamp" binding="tns:OutputBinding_RelationOutput_noTimestamp">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/IEPQETests/TupleBasedWindow_CAP/test/TupleBasedWindow_2Out_Basic"/>
+    </port>
+</service>
+<!-- end of file output binding and service -->
+</definitions>

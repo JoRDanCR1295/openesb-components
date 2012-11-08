@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="wsdl" targetNamespace="http://openesb.org/jbi2camel/${su_name}"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:tns="http://openesb.org/jbi2camel/${su_name}"
+    xmlns:msg="http://openesb.org/jbi2camel/message/${su_name}">
+    <types>
+        <xsd:schema targetNamespace="http://openesb.org/jbi2camel/${su_name}">
+            <xsd:import schemaLocation="jbi2camel.xsd"
+                namespace="http://openesb.org/jbi2camel/message/${su_name}"/>
+        </xsd:schema>
+    </types>
+    <message name="anyMsg">
+        <part name="part1" element="msg:AnyMessage"/>
+    </message>
+    <portType name="${su_name}_interface">
+        <operation name="oneWay">
+            <input name="oneWayIn" message="tns:anyMsg"/>
+        </operation>
+    </portType>
+    
+    <binding name="ServiceBinding" type="tns:${su_name}_interface"/>
+    <service name="${su_name}_service">
+        <port name="jbi2camel_endpoint" binding="tns:ServiceBinding"/>
+    </service>
+    
+    <plnk:partnerLinkType name="${su_name}_partnerLnk">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="${su_name}_interface_role" portType="tns:${su_name}_interface"/>
+    </plnk:partnerLinkType>
+    
+    
+</definitions>

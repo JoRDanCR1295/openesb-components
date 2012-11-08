@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP_ON_DEMAND_RECV_MSG" targetNamespace="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types/>
+    <message name="ReceiveTransferringOperationRequest">
+    </message>
+    <message name="ReceiveTransferringOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="ReceiveTransferringPortType">
+        <operation name="ReceiveTransferringOperation">
+            <input name="input1" message="tns:ReceiveTransferringOperationRequest"/>
+            <output name="output1" message="tns:ReceiveTransferringOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="ReceiveTransferringPortTypeBinding" type="tns:ReceiveTransferringPortType">
+        <ftp:binding/>
+        <operation name="ReceiveTransferringOperation">
+            <ftp:operation/>
+            <input name="input1">
+            </input>
+            <output name="output1">
+                <ftp:transfer receiveFrom="ON_DEMAND_RECEIVE/EXCHANGE_AREA/[0-9[abcdef]]{8}-[0-9[abcdef]]{4}-[0-9[abcdef]]{4}-[0-9[abcdef]]{4}-[0-9[abcdef]]{12}\.msg" receiveFromHasRegexs="true" preReceiveLocation="" preReceiveLocationHasPatterns="false" postReceiveCommand="RENAME" postReceiveLocation="ON_DEMAND_RECEIVE/ACHIVE_AREA/%f.bak" postReceiveLocationHasPatterns="true" messageCorrelate="false" use="literal" part="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ReceiveTransferringService">
+        <port name="FTP_ON_DEMAND_RECV_MSG_ReceiveTransferringPort" binding="tns:ReceiveTransferringPortTypeBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" securedFTP="None" enableCCC="false" cmdChannelTimeout="45000" dataChannelTimeout="45000" controlChannelEncoding=""/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FTP_ON_DEMAND_RECV_MSG">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ReceiveTransferringPortTypeRole" portType="tns:ReceiveTransferringPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilBasicTest" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilBasicTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilBasicTest" xmlns:ns1="http://localhost/RepeatUntilBPEL/RepeatUntilBasicTest">
+    <import namespace="http://localhost/RepeatUntilBPEL/RepeatUntilBasicTest" location="RepeatUntilBasicTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="RepeatUntilBasicTestProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="RepeatOperation1Out1" messageType="ns1:RepeatMsg"/>
+        <variable name="RepeatOperation1In1" messageType="ns1:RepeatMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="RepeatOperation1" portType="ns1:MyPortType1" variable="RepeatOperation1In1"/>
+        <assign name="Assign1">
+            <copy>
+            <from>0</from><to part="Count" variable="RepeatOperation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                    <from> ( $RepeatOperation1In1.Count + 1 ) </from><to part="Count" variable="RepeatOperation1In1"/>
+                    </copy>
+                </assign>
+                <assign name="Assign4">
+                    <copy>
+                    <from>concat($RepeatOperation1In1.Name, '**Repeat**', $RepeatOperation1In1.Count)</from><to part="Name" variable="RepeatOperation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $RepeatOperation1In1.Count >= 5 ) </condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+            <from variable="RepeatOperation1In1" part="Name"/><to variable="RepeatOperation1Out1" part="Name"/>
+            </copy>
+            <copy>
+            <from variable="RepeatOperation1In1" part="Count"/><to variable="RepeatOperation1Out1" part="Count"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="RepeatOperation1" portType="ns1:MyPortType1" variable="RepeatOperation1Out1"/>
+    </sequence>
+   
+</process>

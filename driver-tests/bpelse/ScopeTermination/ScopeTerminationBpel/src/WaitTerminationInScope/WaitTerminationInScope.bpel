@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="WaitTerminationInScope" 
+         targetNamespace="http://localhost/bpel/WaitTerminationInScope"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="http://localhost/bpel/WaitTerminationInScope"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns1="http://localhost/wsdl/WaitTerminationInScope">
+    
+    <import namespace="http://localhost/wsdl/WaitTerminationInScope" 
+            location="WaitTerminationInScope.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+    <partnerLinks>
+        <partnerLink name="WaitTerminationInScope" 
+                     partnerLinkType="ns1:partnerlinktype1" 
+                     myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    
+    <sequence>
+        <receive name="start" 
+                 partnerLink="WaitTerminationInScope" 
+                 operation="operation1" 
+                 portType="ns1:portType1" 
+                 variable="inputVar" 
+                 createInstance="yes">
+        </receive>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence3">
+                        <wait name="Wait3">
+                            <for>'P0Y0M0DT0H0M6S'</for>
+                        </wait>
+                        <assign name="Assign2">
+                            <copy>
+                                <from>
+                                    <literal>replyFromCatchAll</literal>
+                                </from>
+                                <to>$outputVar.resultType/ns1:paramA</to>
+                            </copy>
+                        </assign>
+                        <reply name="replyFromFH" 
+                               partnerLink="WaitTerminationInScope" 
+                               operation="operation1" 
+                               portType="ns1:portType1" 
+                               variable="outputVar"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <flow name="Flow1">
+                <sequence name="Sequence1">
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M5S'</for>
+                    </wait>
+                    <assign name="Assign1">
+                        <copy>
+                            <from>
+                                <literal>replyFromBranch</literal>
+                            </from>
+                            <to>$outputVar.resultType/ns1:paramA</to>
+                        </copy>
+                    </assign>
+                    <reply name="replyFromBranch" 
+                           partnerLink="WaitTerminationInScope" 
+                           operation="operation1" 
+                           portType="ns1:portType1" 
+                           variable="outputVar"/>
+                </sequence>
+                <sequence name="Sequence2">
+                    <wait name="Wait2">
+                        <for>'P0Y0M0DT0H0M1S'</for>
+                    </wait>
+                    <throw name="Throw1" faultName="tns:SomeFault"/>
+                </sequence>
+            </flow>
+        </scope>
+    </sequence>
+</process>

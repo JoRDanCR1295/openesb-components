@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InsertWrongValBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InsertWrongValBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InsertWrongValBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/InsertWrongValBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="InsertWrongValSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InsertWrongValBpel" location="InsertWrongValBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:InsertWrongValBpelPartner" partnerRole="InsertWrongValBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:InsertWrongValSql_sqlsePartnerLinkType" myRole="InsertWrongValSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="InsertWrongValOut" messageType="ns1:InsertWrongValResponse"/>
+      <bpws:variable name="InsertWrongValBpelOperationOut" messageType="ns2:InsertWrongValBpelOperationReply"/>
+      <bpws:variable name="InsertWrongValBpelOperationIn" messageType="ns2:InsertWrongValBpelOperationRequest"/>
+      <bpws:variable name="InsertWrongValIn" messageType="ns1:InsertWrongValRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InsertWrongVal" portType="ns1:InsertWrongValSql_sqlsePortType" variable="InsertWrongValIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="InsertWrongValIn" part="InsertWrongValRequestPart"/>
+            <bpws:to variable="InsertWrongValBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="InsertWrongValBpelOperation" portType="ns2:InsertWrongValBpelPortType" inputVariable="InsertWrongValBpelOperationIn" outputVariable="InsertWrongValBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="InsertWrongValBpelOperationOut" part="part1"/>
+            <bpws:to variable="InsertWrongValOut" part="InsertWrongValResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="InsertWrongVal" portType="ns1:InsertWrongValSql_sqlsePortType" variable="InsertWrongValOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="flowTreeService" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/flowTreeService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/flowTreeService" xmlns:ns1="http://j2ee.netbeans.org/wsdl/flowTree">
+    <import namespace="http://j2ee.netbeans.org/wsdl/flowTree" location="flowTree.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:flowTreePartner" myRole="service" partnerRole="client"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1" messageType="ns1:Message"/>
+        <variable name="var2" type="xsd:string"/>
+        <variable name="var3" type="xsd:string"/>
+    </variables>
+    <sequence>
+        <flow name="Flow1">
+            <sequence name="Sequence1">
+                <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="flowTreeOperation" portType="ns1:flowTreePortType" variable="var1"/>
+                <flow name="Flow2">
+                    <sequence name="Sequence2">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($var1.part1, " ", 'Assign1')</from>
+                                <to part="part1" variable="var1"/>
+                            </copy>
+                        </assign>
+                        <flow name="Flow3">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($var1.part1, " ", 'Assign2')</from>
+                                     <to part="part1" variable="var1"/>
+                                </copy>
+                            </assign>
+                            <assign name="Assign3">
+                                <copy>
+                                    <from>'Assign3'</from>
+                                     <to variable="var2"/>
+                                </copy>
+                            </assign>
+                        </flow>
+                    </sequence>
+                    <sequence name="Sequence3">
+                        <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M3S'</for>
+                    </wait>
+                        <flow name="Flow4">
+                            <sequence name="Sequence4">
+                                <assign name="Assign4">
+                                <copy>
+                                    <from>'Assign4'</from>
+                                     <to variable="var3"/>
+                                </copy>
+                                </assign>
+                                <flow name="Flow5">
+                                    <flow name="Flow6">
+                                        <wait name="Wait2">
+                                            <for>'P0Y0M0DT0H0M3S'</for>
+                                        </wait>
+                                        <wait name="Wait3">
+                                            <for>'P0Y0M0DT0H0M3S'</for>
+                                        </wait>
+                                    </flow>
+                                </flow>
+                            </sequence>
+                        </flow>
+                    </sequence>
+                </flow>
+            </sequence>
+        </flow>
+        <assign name="Assign5">
+            <copy>
+                <from>concat($var1.part1, " ", $var2, " ", $var3)</from>
+                <to part="part1" variable="var1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink1" operation="flowTreeOperation" portType="ns1:flowTreePortTypeResponse" inputVariable="var1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SelectFalseCondBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SelectFalseCondBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SelectFalseCondBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SelectFalseCondBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="SelectFalseCondSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SelectFalseCondBpel" location="SelectFalseCondBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:SelectFalseCondBpelPartner" partnerRole="SelectFalseCondBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SelectFalseCondSql_sqlsePartnerLinkType" myRole="SelectFalseCondSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="SelectFalseCondOut" messageType="ns1:SelectFalseCondResponse"/>
+      <bpws:variable name="SelectFalseCondBpelOperationOut" messageType="ns2:SelectFalseCondBpelOperationReply"/>
+      <bpws:variable name="SelectFalseCondBpelOperationIn" messageType="ns2:SelectFalseCondBpelOperationRequest"/>
+      <bpws:variable name="SelectFalseCondIn" messageType="ns1:SelectFalseCondRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SelectFalseCond" portType="ns1:SelectFalseCondSql_sqlsePortType" variable="SelectFalseCondIn"/>
+      <bpws:assign name="Assign1"/>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="SelectFalseCondBpelOperation" portType="ns2:SelectFalseCondBpelPortType" inputVariable="SelectFalseCondBpelOperationIn" outputVariable="SelectFalseCondBpelOperationOut"/>
+      <bpws:assign name="Assign2"/>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SelectFalseCond" portType="ns1:SelectFalseCondSql_sqlsePortType" variable="SelectFalseCondOut"/>
+   </sequence>
+</process>

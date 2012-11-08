@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" xmlns:ns2="http://enterprise.netbeans.org/bpel/AsynchronousClient/asynchronousClient" xmlns:ns3="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncResponse" xmlns:ns4="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncRequest" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="AsynchronousClientWSPort" interface-name="ns1:AsynchronousClientWSPortType" name="endpoint1" service-name="ns1:AsynchronousClientWSService"/>
+        <endpoint display-name="synchronous" endpoint-name="AsynchronousClientWSPortTypeRole_myRole" file-path="AsynchronousClient.bpel" interface-name="ns1:AsynchronousClientWSPortType" name="endpoint2" process-name="AsynchronousClient" service-name="ns2:synchronous"/>
+        <endpoint display-name="asynch.callback" endpoint-name="asyncResponsePortTypeRole_myRole" file-path="AsynchronousClient.bpel" interface-name="ns3:asyncResponsePortType" name="endpoint3" process-name="AsynchronousClient" service-name="ns2:asynch.callback"/>
+        <endpoint display-name="asynch.request" endpoint-name="asyncRequestPortTypeRole_partnerRole" file-path="AsynchronousClient.bpel" interface-name="ns4:asyncRequestPortType" name="endpoint4" process-name="AsynchronousClient" service-name="ns2:asynch.request"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="AsynchronousClient.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="AsynchronousClientApp-AsynchronousClient" unit-name="AsynchronousClient" unknown="false" x="134" y="99">
+            <provides endpoint="endpoint2"/>
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="AsynchronousClientApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/AsynchronousClient/AsynchronousClientWS.wsdl#xpointer(/definitions/service[@name='AsynchronousClientWSService']/port[@name='AsynchronousClientWSPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint2" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/AsynchronousClient/AsynchronousClientWS.wsdl#xpointer(/definitions/portType[@name='AsynchronousClientWSPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AsynchronousClient/asyncRequest.wsdl#xpointer(/definitions/portType[@name='asyncRequestPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AsynchronousClient/asyncResponse.wsdl#xpointer(/definitions/portType[@name='asyncResponsePortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/AsynchronousClient/AsynchronousClientWS.wsdl#xpointer(/definitions/binding[@name='AsynchronousClientWSBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/AsynchronousClient/AsynchronousClientWS.wsdl#xpointer(/definitions/service[@name='AsynchronousClientWSService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

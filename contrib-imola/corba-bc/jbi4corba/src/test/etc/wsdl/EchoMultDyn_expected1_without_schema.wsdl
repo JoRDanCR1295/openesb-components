@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Echo2" targetNamespace="http://it.imolinfo.jbi4corba.test.testechoMultdyn" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://it.imolinfo.jbi4corba.test.testechoMultdyn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.testechoMultdyn" xmlns="http://it.imolinfo.jbi4corba.test.testechoMultdyn" xmlns:ns1="http://testechoMultdyn.test.jbi4corba.imolinfo.it/" xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://testechoMultdyn.test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_testechoMultdyn.test.jbi4corba.imolinfo.it.xsd"/>
+<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="ws-addr.xsd"/>
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="msg" type="ns1:echoStruct"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="ns2:EndpointReferenceType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Echo2">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Echo2CorbaBinding" type="tns:Echo2">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoMultipleWithDynInt.idl" relativepath=".">
+//IDL
+module it{
+  module imolinfo{
+    module jbi4corba{
+      module test{
+		module testechoMultdyn{
+
+	
+
+		interface Echo {
+    		
+			string echo(in string msg);
+
+                 };
+	
+                // struct
+                struct Persona {
+                Echo            echopersona;
+                string          nome;
+                string          cognome;		
+    
+                };
+
+
+                // struct
+                struct EchoStruct {
+                Echo            fieldEcho2;
+                Persona         persona;	
+        
+                };
+
+
+                interface Echo2{
+    			Echo echo(in EchoStruct msg);
+                };
+
+
+};
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo2">
+    <wsdl:port name="Echo2CorbaPort" binding="tns:Echo2CorbaBinding">
+<imolacorba:address name="Echo2" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

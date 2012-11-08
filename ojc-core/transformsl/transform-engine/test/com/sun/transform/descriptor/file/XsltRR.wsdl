@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://sun.com/XsltRRTest"
+             name="XsltRRTest"
+             xmlns:tns="http://sun.com/XsltRRTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:nsInput="http://sun.com/EmplInput"
+             xmlns:nsOutput="http://sun.com/EmplOutput"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <xsd:schema targetNamespace="http://sun.com/XsltRRTest" xmlns:ns2="http://sun.com/EmplOutput">
+            <xsd:import namespace="http://sun.com/EmplInput" schemaLocation="EmployeeInput.xsd"/>
+            <xsd:import namespace="http://sun.com/EmplOutput" schemaLocation="EmployeeOutput.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="input-msg">
+        <part name="empl-in" element="nsInput:EmployeeInput" />
+    </message>
+    <message name="output-msg">
+        <part name="empl-out" element="nsOutput:EmployeeOutput" />
+    </message>
+    <portType name="xsltRRPort">
+        <operation name="copyEmpl">
+            <input message="tns:input-msg"/>
+            <output message="tns:output-msg"/>
+        </operation>
+    </portType>
+    <binding name="XsltRRBinding" type="tns:xsltRRPort">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="copyEmpl">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+    <service name="XsltRRService">
+        <port binding="tns:XsltRRBinding" name="port">
+            <soap:address location="http://localhost:13011/xsltRRPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+                          name="pltRRTest">
+        <plnk:role name="server" portType="tns:xsltRRPort"/>
+    </plnk:partnerLinkType>
+</definitions>

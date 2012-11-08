@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowFirstActivity" 
+    targetNamespace="http://www.mycomp.org/DefaultServiceName"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/DefaultServiceName">
+    <import namespace="http://www.mycomp.org/DefaultServiceName" location="FlowFirstActivity.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:FlowFirstActivityPartnerLinkType" myRole="FlowFirstActivityProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="Output" messageType="wsdlNS:message1"/>
+        <variable name="Input" messageType="wsdlNS:message1"/>
+    </variables>
+    <sequence>
+      <flow name="Flow1">
+         <sequence name="Sequence1">
+            <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowFirstActivityOperation" portType="wsdlNS:FlowFirstActivityPortType" variable="Input" createInstance="yes"/>
+            <assign name="Assign1">
+                <copy>
+                    <from>'Inside Branch1:'</from>
+                    <to variable="branch1"/>
+                </copy>
+            </assign>
+         </sequence>
+      </flow>
+        <assign name="Assign3">
+            <copy>
+                <from>concat($branch1, $Input.branch1)</from>
+                <to part="branch1" variable="Output"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowFirstActivityOperation" portType="wsdlNS:FlowFirstActivityPortType" variable="Output"/>
+   </sequence>
+   
+</process>

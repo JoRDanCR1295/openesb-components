@@ -1,0 +1,111 @@
+<process name="createOrCorrelateReceive"
+         targetNamespace="http://www.seebeyond.com/eInsight/createOrCorrelateReceive"
+         sbynpxp:end_YLoc="122.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="691.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/createOrCorrelateReceive"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:createOrCorrelateReceiveTargetNamespace"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:createOrCorrelateReceiveTargetNamespace"
+            location="createOrCorrelateReceive.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="twoWayOperPLink"
+                     partnerLinkType="ns0:twoWayOperPLinkType"
+                     myRole="createOrCorrelateReceiveServerRole"/>
+        <partnerLink name="oneWayOperPLink"
+                     partnerLinkType="ns0:oneWayOperPLinkType"
+                     myRole="createOrCorrelateReceiveServerRole1"/>
+        <partnerLink name="ThirdPLink"
+                     partnerLinkType="ns0:ThirdPLinkType"
+                     myRole="ThirdRole"/>
+ 
+    </partnerLinks>
+    <variables>
+        <variable name="createOrCorrelateReceiveOperation_Output"
+                  messageType="ns0:createOrCorrelateReceiveMessage"></variable>
+        <variable name="createOrCorrelateReceiveOperation_Input"
+                  messageType="ns0:createOrCorrelateReceiveMessage"></variable>
+        <variable name="createOrCorrelateReceiveOperation1_Output"
+                  messageType="ns0:createOrCorrelateReceiveMessage"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns0:propertyName1"/>
+        <correlationSet name="cSet2"
+                        properties="ns0:propertyName1"/>                      
+	</correlationSets>
+    <sequence>
+        <flow name="Flow"
+              sbynpxp:XLoc="104.0"
+              sbynpxp:YLoc="111.0"
+              sbynpxp:YLoc_MergeNode="114.0"
+              sbynpxp:XLoc_MergeNode="444.0">
+            <sequence>
+                <receive name="createOrCorrelateReceiveOperation"
+                         partnerLink="twoWayOperPLink"
+                         portType="ns0:createOrCorrelateReceivePortType"
+                         operation="createOrCorrelateReceiveOperation"
+                         variable="createOrCorrelateReceiveOperation_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="217.0"
+                         sbynpxp:YLoc="48.0">
+                    <correlations>
+                        <correlation set="cSet1"
+                                     initiate="join"/>
+                    </correlations>
+                </receive>
+            </sequence>
+            <sequence>
+                <receive name="createOrCorrelateReceiveOperation1"
+                         partnerLink="oneWayOperPLink"
+                         portType="ns0:createOrCorrelateReceivePortType1"
+                         operation="createOrCorrelateReceiveOperation1"
+                         variable="createOrCorrelateReceiveOperation1_Output"   
+                         createInstance="yes"                                             
+                         sbynpxp:XLoc="224.0"
+                         sbynpxp:YLoc="195.0">
+                    <correlations>
+                        <correlation set="cSet1"
+                                     initiate="join"/>
+                    </correlations>
+                </receive>
+            </sequence>
+            <sequence>
+                <receive name="ThirdReceive"
+                         partnerLink="ThirdPLink"
+                         portType="ns0:ThirdPortType"
+                         operation="ThirdPortTypeOperation"
+                         variable="createOrCorrelateReceiveOperation1_Output"
+                         createInstance="yes"                                                
+                         sbynpxp:XLoc="224.0"
+                         sbynpxp:YLoc="195.0">
+                    <correlations>
+                        <correlation set="cSet2"
+                                     initiate="join"/>
+                        <correlation set="cSet1"
+                                     initiate="join"/>                                     
+                    </correlations>
+                </receive>
+            </sequence>  
+        </flow>
+        <reply name="createOrCorrelateReceiveOperation.Reply"
+               partnerLink="twoWayOperPLink"
+               portType="ns0:createOrCorrelateReceivePortType"
+               operation="createOrCorrelateReceiveOperation"
+               variable="createOrCorrelateReceiveOperation_Output"
+               sbynpxp:XLoc="548.0"
+               sbynpxp:YLoc="114.0"></reply>
+    </sequence>
+</process>

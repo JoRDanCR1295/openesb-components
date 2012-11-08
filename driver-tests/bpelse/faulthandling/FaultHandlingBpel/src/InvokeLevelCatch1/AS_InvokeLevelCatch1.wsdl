@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:AdditionService/AS_InvokeLevelCatch1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:AdditionService/AS_InvokeLevelCatch1" name="AS_InvokeLevelCatch1">
+	<types>
+		<xsd:schema xmlns:ns1="urn:AdditionService/AS_InvokeLevelCatch1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:AdditionService/AS_InvokeLevelCatch1">
+      			<xsd:element name="NumberPair">
+        			<xsd:complexType>
+          				<xsd:sequence>
+            					<xsd:element minOccurs="1" maxOccurs="1" name="Number1" type="xsd:double" />
+            					<xsd:element minOccurs="1" maxOccurs="1" name="Number2" type="xsd:double" />
+          				</xsd:sequence>
+        			</xsd:complexType>
+      			</xsd:element>			
+			<xsd:element name="NumberElement" type="xsd:double">
+            		</xsd:element>
+			<xsd:element name="StringElement" type="xsd:string">
+            		</xsd:element>
+		</xsd:schema>
+	</types>
+	<message name="AdditionServiceRequest">
+		<part name="parameters" element="tns:NumberPair"/>
+	</message>
+	<message name="AdditionServiceResponse">
+		<part name="result" element="tns:NumberElement"/>
+	</message>
+	<message name="AdditionServiceFaultResponse">
+		<part name="result" element="tns:StringElement"/>
+	</message>
+	<portType name="AdditionPortType">
+		<operation name="Add">
+			<input message="tns:AdditionServiceRequest"/>
+			<output message="tns:AdditionServiceResponse"/>
+			<fault name="InvalidInput" message="tns:AdditionServiceFaultResponse"/>
+		</operation>
+	</portType>
+	<binding name="AdditionBinding" type="tns:AdditionPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<operation name="Add">
+			<soap:operation soapAction="Add" style="document"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="InvalidInput">
+				<soap:fault name="InvalidInput" use="literal"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="AS_InvokeLevelCatch1">
+		<port name="AdditionPort" binding="tns:AdditionBinding">
+			<soap:address location="http://localhost:${HttpDefaultPort}/service/AS_InvokeLevelCatch1"/>
+		</port>
+	</service>
+	<plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="AdditionServiceLT">
+		<plnk:role name="AdditionServiceProvider" portType="tns:AdditionPortType"/>
+	</plnk:partnerLinkType>
+</definitions>

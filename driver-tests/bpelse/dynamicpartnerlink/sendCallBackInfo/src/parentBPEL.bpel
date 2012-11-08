@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process name="parentBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/sendCallBackInfo/parentBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/sendCallBackInfo/parentBPEL" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/parentWSDL"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace"
+    xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/serviceref"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+    <import namespace="http://j2ee.netbeans.org/wsdl/parentWSDL" location="parentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref" location="http://docs.oasis-open.org/wsbpel/2.0/OS/serviceref/ws-bpel_serviceref.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" location="http://schemas.xmlsoap.org/ws/2004/08/addressing" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns1:parentWSDL14" partnerRole="subBPPortTypeRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:parentWSDL13" myRole="DynamicInvokePortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:parentWSDL12" myRole="StaticInvokePortTypeRole"/>
+        <partnerLink name="partnerLink1" partnerLinkType="ns1:parentWSDL1" myRole="parentWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="generated_PartnerLink3_myRole" element="ns2:service-ref">
+            <sxed2:editor>
+                <sxed2:pseudoComp source="from" parentPath="$generated_PartnerLink3_myRole" type="wsa:EndpointReferenceType" qName="wsa:EndpointReference"/>
+            </sxed2:editor>
+        </variable>
+        <variable name="serviceRefVar" type="ns1:serviceRef"/>
+        <variable name="ParentWSDLOperationIn1" messageType="ns1:parentWSDLOperationRequest12"/>
+        <variable name="DynamicCallBackOperationIn" messageType="ns1:parentWSDLOperationRequest1"/>
+        <variable name="StaticCallBackOperationIn" messageType="ns1:parentWSDLOperationRequest1"/>
+        <variable name="ParentWSDLOperationOut" messageType="ns1:parentWSDLOperationReply"/>
+        <variable name="ParentWSDLOperationIn" messageType="ns1:parentWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="partnerLink1" operation="parentWSDLOperation" portType="ns1:parentWSDLPortType" variable="ParentWSDLOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign3">
+            <copy>
+                <from variable="ParentWSDLOperationIn" part="part1"/>
+                <to variable="ParentWSDLOperationIn1" part="part1"/>
+            </copy>
+            <copy>
+                <from partnerLink="PartnerLink3" endpointReference="myRole"/>
+                <to variable="generated_PartnerLink3_myRole"/>
+            </copy>
+            <!--copy>
+                <from partnerLink="PartnerLink3" endpointReference="myRole"/>
+                <to variable="ParentWSDLOperationIn1" part="part2"/>
+            </copy-->
+            <copy>
+                <from>$generated_PartnerLink3_myRole/wsa:EndpointReference
+                    <sxed2:editor>
+                        <sxed2:pseudoComp source="from" parentPath="$generated_PartnerLink3_myRole" type="wsa:EndpointReferenceType" qName="wsa:EndpointReference"/>
+                    </sxed2:editor>
+                </from>
+                <to>$ParentWSDLOperationIn1.part2/ns1:EndpointReference</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink4" operation="subBPOperation" portType="ns1:subBPPortType" inputVariable="ParentWSDLOperationIn1"/>
+        <pick name="Pick1">
+            <onMessage partnerLink="PartnerLink2" operation="CallBackOperation" portType="ns1:StaticInvokePortType" variable="StaticCallBackOperationIn">
+                <correlations>
+                    <correlation set="CorrelationSet1" initiate="no"/>
+                </correlations>
+                <sequence name="IncorrectPath">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>
+                                <literal>Static callback operation is called</literal>
+                            </from>
+                            <to part="part1" variable="ParentWSDLOperationOut"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink3" operation="CallBackOperation" portType="ns1:DynamicInvokePortType" variable="DynamicCallBackOperationIn">
+                <correlations>
+                    <correlation set="CorrelationSet1" initiate="no"/>
+                </correlations>
+                <sequence name="CorrectPath">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>
+                                <literal>Correct path. Callback is on a dynamic operation</literal>
+                            </from>
+                            <to part="part1" variable="ParentWSDLOperationOut"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+        </pick>
+        <reply name="Reply1" partnerLink="partnerLink1" operation="parentWSDLOperation" portType="ns1:parentWSDLPortType" variable="ParentWSDLOperationOut"/>
+    </sequence>
+</process>

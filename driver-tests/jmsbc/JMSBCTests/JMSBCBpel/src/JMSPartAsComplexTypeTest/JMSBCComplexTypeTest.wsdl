@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSBCComplexTypeTest" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest">
+            <xsd:complexType name="RequestComplexType">
+                <xsd:sequence>
+                    <xsd:element name="StringElem" type="xsd:string"></xsd:element>
+                    <xsd:element name="IntElem" type="xsd:int"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ReplyComplexType">
+                <xsd:sequence>
+                    <xsd:element name="StringElement" type="xsd:string"></xsd:element>
+                    <xsd:element name="FloatElement" type="xsd:float"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="JMSBCComplexTypeTestOperationRequest">
+        <part name="MsgRequestPart" type="tns:RequestComplexType"/>
+    </message>
+    <message name="JMSBCComplexTypeTestOperationReply">
+        <part name="MsgReplyPart" type="tns:ReplyComplexType"/>
+    </message>
+    <portType name="JMSBCComplexTypeTestPortType">
+        <wsdl:operation name="JMSBCComplexTypeTestOperation">
+            <wsdl:input name="input1" message="tns:JMSBCComplexTypeTestOperationRequest"/>
+            <wsdl:output name="output1" message="tns:JMSBCComplexTypeTestOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCComplexTypeTestDriverPortType">
+        <wsdl:operation name="JMSBCComplexTypeTestDriverOperation">
+            <wsdl:input name="input1" message="tns:JMSBCComplexTypeTestOperationRequest"/>
+            <wsdl:output name="output1" message="tns:JMSBCComplexTypeTestOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSBCComplexTypeTestBinding" type="tns:JMSBCComplexTypeTestPortType">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCComplexTypeTestOperation">
+            <jms:operation destination="JMSTypeComplexTypeTestDest" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="MsgRequestPart"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <jms:message messageType="TextMessage" textPart="MsgReplyPart"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCComplexTypeTestDriverBinding" type="tns:JMSBCComplexTypeTestDriverPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="JMSBCComplexTypeTestDriverOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body parts="MsgRequestPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="MsgReplyPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSBCComplexTypeTestService">
+        <wsdl:port name="JMSBCComplexTypeTestPort" binding="tns:JMSBCComplexTypeTestBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCComplexTypeTestDriverPort" binding="tns:JMSBCComplexTypeTestDriverBinding">
+            <soap:address location="http://localhost:18181/JMSBCComplexTypeTestBP/JMSBCComplexTypeTest/JMSBCComplexTypeTestDriverPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="JMSBCComplexTypeTest1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCComplexTypeTestPortTypeRole" portType="tns:JMSBCComplexTypeTestPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCComplexTypeTestDriverPLT">
+        <plnk:role name="JMSBCComplexTypeTestDriverRole" portType="tns:JMSBCComplexTypeTestDriverPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

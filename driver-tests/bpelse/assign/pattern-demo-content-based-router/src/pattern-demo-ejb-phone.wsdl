@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="pattern-demo-ejb-phone" targetNamespace="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" 
+    xmlns:p="http://xml.netbeans.org/schema/pattern-demo-ejb-phone" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone">
+            <xsd:import namespace="http://xml.netbeans.org/schema/pattern-demo-ejb-phone" schemaLocation="pattern-demo-ejb-phone.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="get-phoneRequest">
+        <part name="part1" element="p:get-phone-request"/>
+    </message>
+    <message name="get-phoneResponse">
+        <part name="part1" element="p:get-phone-response"/>
+    </message>
+    <message name="get-phoneFault">
+        <part name="fault" element="p:phone-fault"/>
+    </message>
+    <portType name="pattern-demo-ejb-phonePortType">
+        <operation name="get-phone">
+            <input name="input1" message="tns:get-phoneRequest"/>
+            <output name="output1" message="tns:get-phoneResponse"/>
+            <fault name="fault1" message="tns:get-phoneFault"/>
+        </operation>
+    </portType>
+    <binding name="pattern-demo-ejb-phoneBinding" type="tns:pattern-demo-ejb-phonePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="get-phone">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="pattern-demo-ejb-phoneService">
+        <port name="pattern-demo-ejb-phonePort" binding="tns:pattern-demo-ejb-phoneBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/pattern-demo-ejb-phoneService/pattern-demo-ejb-phonePort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="pattern-demo-ejb-phone">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="pattern-demo-ejb-phonePortTypeRole" portType="tns:pattern-demo-ejb-phonePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

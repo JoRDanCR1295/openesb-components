@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="EchoService" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/EchoService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/EchoService" xmlns:ns1="http://j2ee.netbeans.org/wsdl/EchoService">
+    <import namespace="http://j2ee.netbeans.org/wsdl/EchoService" location="EchoService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:EchoMessage1"/>
+        <variable name="Operation1In1" messageType="ns1:EchoMessage1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="Operation1In1" part="part2"/>
+                <to variable="Operation1Out1" part="part2"/>
+            </copy>
+            <copy>
+                <from>concat($Operation1In1.part1, ' in Echo service..')</from>
+                <to part="part1" variable="Operation1Out1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

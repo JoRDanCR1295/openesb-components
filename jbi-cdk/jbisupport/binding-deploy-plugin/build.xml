@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="org.netbeans.modules.wsdlextensions.sample.jmxbinding" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project org.netbeans.modules.wsdlextensions.sample.jmxbinding.</description>
+    <import file="nbproject/build-impl.xml"/>
+        
+    <target name="-init-gen-template" depends="init" >
+        
+        <property name="plugin.zip.build.dir" location="build/pre-dist/plugin-zip" />
+        <property name="dist.dir" location="build" />
+        <property name="binding-plugin.zip" location="${dist.dir}/binding-plugin.zip" />
+        
+        <filterset id="temp_bc_package_filterset" 
+                   begintoken="org.netbeans.modules.wsdlextensions." 
+                   endtoken=".binding" 
+                   recurse="false" >
+            <filter token="sample" value="__BASE_PACKAGE__"/>
+        </filterset>
+
+        <filterset id="package_filterset" 
+                   begintoken="org.netbeans.modules.wsdlextensions." 
+                   endtoken=".jmxbinding" 
+                   recurse="false" >
+            <filter token="sample" value="__BASE_PACKAGE__"/>
+        </filterset>
+        
+        <filterset id="model_package_filterset" 
+                   begintoken="org.netbeans.modules.wsdlextensions." 
+                   endtoken=".jmxbinding.model" 
+                   recurse="false" >
+            <filter token="sample" value="__MODEL_PACKAGE__"/>
+        </filterset>
+                
+        <filterset id="package_path_filterset" 
+                   begintoken="org/netbeans/modules/wsdlextensions/" 
+                   endtoken="/jmxbinding" 
+                   recurse="false" >
+            <filter token="sample" value="__PACKAGE_PATH__"/>
+        </filterset>
+
+        <filterset id="ext_xsd_path_filterset" 
+                   begintoken="/org/netbeans/modules/wsdlextensions/" 
+                   endtoken="/JMXBindingWsdlExt.xsd" 
+                   recurse="false" >
+            <filter token="sample/jmxbinding" value="__WSDL_EXT_XSD_PATH__"/>
+        </filterset>
+        
+        <filterset id="ext_namespace_filterset" 
+                   begintoken="http://java.sun.com/jbi/" 
+                   endtoken="/sample/jmx-bc/" 
+                   recurse="false" >
+            <filter token="wsdl-extensions" value="__WSDL_EXT_NAMESPACE__"/>
+        </filterset>
+        
+    </target>
+    
+    <target name="gen-template" depends="init, -init-gen-template" >
+               
+        <mkdir dir="${plugin.zip.build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <!-- copy manifest -->
+        <copy file="manifest.mf" todir="${plugin.zip.build.dir}" >
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        <!-- copy nbproject -->
+        <copy todir="${plugin.zip.build.dir}/nbproject" >
+            <fileset dir="nbproject"  >
+                <exclude name="private" />
+                <exclude name="private/**/*" />
+                <exclude name="build-impl.xml" />
+                <exclude name="genfiles.properties" />                
+            </fileset>
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        
+        <!-- copy src -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+            </fileset>
+        </copy>
+        
+        <!-- copy metainf -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="META-INF/**/*" />
+            </fileset>
+            <filterset refid="package_filterset"/>
+        </copy>
+
+        <!-- copy temp model -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="**/sample/binding/model/**/*" />
+            </fileset>
+            <filterset refid="temp_bc_package_filterset"/>
+        </copy>
+        
+        <!-- copy validator -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="**/validator/**/*" />
+            </fileset>
+            <filterset refid="model_package_filterset"/>
+            <filterset refid="ext_xsd_path_filterset"/>
+            <filterset refid="ext_namespace_filterset"/>
+        </copy>
+
+        <!-- copy template 
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="**/template/**/*" />
+            </fileset>
+        </copy>
+        -->
+        <copy todir="${plugin.zip.build.dir}/test" >
+            <fileset dir="test"  >
+            </fileset>
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+                
+        <zip destfile="${binding-plugin.zip}" basedir="${plugin.zip.build.dir}" />                    
+        <!--
+        <unzip src=${binding-plugin.zip}  dest="../../../temp/my-binding-plugin" />
+        -->
+        
+    </target>
+    
+    <target name="copy-gen-template" depends="init, -init-gen-template, gen-template" >
+        <copy overwrite="true" file="${binding-plugin.zip}" todir="../jbicomponentsupport/src/org/netbeans/modules/jbi/apisupport/resources/templates/binding/plugin" />
+    </target>
+</project>

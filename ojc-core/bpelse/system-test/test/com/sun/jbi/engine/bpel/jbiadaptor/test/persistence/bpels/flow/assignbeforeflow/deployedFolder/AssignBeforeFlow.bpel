@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AssignBeforeFlow"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignBeforeFlow"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AssignBeforeFlow" xmlns:ns1="http://j2ee.netbeans.org/wsdl/AssignBeforeFlow">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AssignBeforeFlow" location="AssignBeforeFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:AssignBeforeFlow2" partnerRole="AssignBeforeFlow2PortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:AssignBeforeFlow" myRole="AssignBeforeFlowPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="AssignBeforeFlow2OperationIn" messageType="ns1:AssignBeforeFlowOperationRequest"/>
+        <bpws:variable name="AssignBeforeFlowOperationIn" messageType="ns1:AssignBeforeFlowOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AssignBeforeFlowOperation" portType="ns1:AssignBeforeFlowPortType" variable="AssignBeforeFlowOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="AssignBeforeFlowOperationIn" part="part1"/>
+                <bpws:to variable="AssignBeforeFlow2OperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:flow name="Flow1">
+            <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="AssignBeforeFlow2Operation" portType="ns1:AssignBeforeFlow2PortType" inputVariable="AssignBeforeFlow2OperationIn"/>
+        </bpws:flow>
+    </sequence>
+</process>

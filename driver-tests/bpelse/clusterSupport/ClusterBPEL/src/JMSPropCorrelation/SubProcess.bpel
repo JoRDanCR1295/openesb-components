@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SubProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SubProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWsdl" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Sub2Wsdl">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWsdl" location="SubBPWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/Sub2Wsdl" location="Sub2Wsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:Sub2Wsdl1" partnerRole="Sub2WsdlPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SubBPWsdl1" myRole="SubBPWsdlPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="Sub2WsdlOperationOut" messageType="ns2:Sub2WsdlOperationReply"/>
+        <bpws:variable name="Sub2WsdlOperationIn" messageType="ns2:Sub2WsdlOperationRequest"/>
+        <bpws:variable name="SubBPWsdlOperationOut" messageType="ns1:SubBPWsdlOperationReply"/>
+        <bpws:variable name="SubBPWsdlOperationIn" messageType="ns1:SubBPWsdlOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SubBPWsdlOperation" portType="ns1:SubBPWsdlPortType" variable="SubBPWsdlOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($SubBPWsdlOperationIn.part1, '[ Inside SubBP1 ]')</bpws:from>
+                <bpws:to part="part1" variable="Sub2WsdlOperationIn"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="Sub2WsdlOperation" portType="ns2:Sub2WsdlPortType" inputVariable="Sub2WsdlOperationIn" outputVariable="Sub2WsdlOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="Sub2WsdlOperationOut" part="part1"/>
+                <bpws:to variable="SubBPWsdlOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SubBPWsdlOperation" portType="ns1:SubBPWsdlPortType" variable="SubBPWsdlOperationOut"/>
+    </sequence>
+</process>

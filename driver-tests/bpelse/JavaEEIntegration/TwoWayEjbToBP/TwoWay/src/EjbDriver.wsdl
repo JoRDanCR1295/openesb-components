@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="EjbDriver" targetNamespace="http://j2ee.netbeans.org/wsdl/EjbDriver"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/EjbDriver" xmlns:ns0="http://xml.netbeans.org/schema/EjbDriverSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/EjbDriverSchema" xmlns:tns1="http://xml.netbeans.org/schema/EjbDriverSchema">
+            <xsd:complexType name="mtype">
+                <xsd:sequence>
+                    <xsd:element name="str" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="mElem" type="tns1:mtype"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="msg">
+        <wsdl:part name="msgPart" element="ns0:mElem"/>
+    </message>
+    <portType name="EjbPT">
+        <wsdl:operation name="EjbOper">
+            <wsdl:input name="input1" message="tns:msg"/>
+            <wsdl:output name="output1" message="tns:msg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="ejbBinding" type="tns:EjbPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="EjbOper">
+            <wsdl:input name="input1">
+                <soap:body parts="msgPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="msgPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="ejbSrv">
+        <wsdl:port name="ejbSrvPort" binding="tns:ejbBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/TwoWay/EjbDriver/ejbSrvPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="EjbPLT">
+        <plnk:role name="EjbPTRole" portType="tns:EjbPT"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/filewrite"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/filewrite" name="filewrite" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types/>
+    <wsdl:message name="filewriteOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="filewritePortType">
+        <wsdl:operation name="filewriteOperation">
+            <wsdl:input name="input1" message="tns:filewriteOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="filewriteBinding" type="tns:filewritePortType">
+        <file:binding/>
+        <wsdl:operation name="filewriteOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="test.xml" pollingInterval="1000"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="filewriteService">
+        <wsdl:port name="filewritePort" binding="tns:filewriteBinding">
+            <file:address fileDirectory="C:/Alaska/open-jbi-components/driver-tests/smtpbc/SMTPBCTests/"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="filewritePartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="filewritePortTypeRole" portType="tns:filewritePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

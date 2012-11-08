@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns2="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL" xmlns:ns3="ApprovePurchase_BPEL" xmlns:ns4="PurchaseOrderCompositeApp" xmlns:ns5="http://enterprise.netbeans.org/bpel/wlmseSample1PurchaseOrder" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="TaskCommonPort" interface-name="ns1:TaskCommonPortType" name="endpoint1" service-name="ns1:TaskCommonService"/>
+<endpoint endpoint-name="TaskApprovePurchasePort" interface-name="ns2:ApprovePurchasePT" name="endpoint2" service-name="ns2:TaskApprovePurchaseService"/>
+<endpoint endpoint-name="purchaseOrderPort" interface-name="ns3:purcharseOrderPT" name="endpoint3" service-name="ns3:purchaseOrderService"/>
+<endpoint endpoint-name="purchaseOrderFileOutPort" interface-name="ns3:purcharseOrderFileOutPT" name="endpoint4" service-name="ns3:purchaseOrderFileOutService"/>
+<endpoint endpoint-name="casaPort_Basic_User_Group" interface-name="ns1:TaskCommonPortType" name="endpoint5" service-name="ns4:casaService1"/>
+<endpoint endpoint-name="ApprovePurchase" interface-name="ns2:ApprovePurchasePT" name="endpoint6" service-name="ns2:ApprovePurchasePT"/>
+<endpoint display-name="purchasing" endpoint-name="purchaseOrderService_myRole" file-path="wlmseSample1PurchaseOrder.bpel" interface-name="ns3:purcharseOrderPT" name="endpoint7" process-name="wlmseSample1PurchaseOrder" service-name="ns5:purchasing"/>
+<endpoint display-name="approveOrder" endpoint-name="ApprovePurchase_Server_partnerRole" file-path="wlmseSample1PurchaseOrder.bpel" interface-name="ns2:ApprovePurchasePT" name="endpoint8" process-name="wlmseSample1PurchaseOrder" service-name="ns5:approveOrder"/>
+<endpoint display-name="FileoutPTL" endpoint-name="fileOut_partnerRole" file-path="wlmseSample1PurchaseOrder.bpel" interface-name="ns3:purcharseOrderFileOutPT" name="endpoint9" process-name="wlmseSample1PurchaseOrder" service-name="ns5:FileoutPTL"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="PurchaseOrderWorklistApp.jar" component-name="sun-wlm-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="PurchaseOrderCompositeApp-PurchaseOrderWorklistApp" unit-name="PurchaseOrderWorklistApp" unknown="false" x="105" y="278">
+<provides endpoint="endpoint6"/>
+<provides endpoint="endpoint1"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="PurchaseOrderBpelModule.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="PurchaseOrderCompositeApp-PurchaseOrderBpelModule" unit-name="PurchaseOrderBpelModule" unknown="false" x="92" y="95">
+<provides endpoint="endpoint7"/>
+<consumes endpoint="endpoint8"/>
+<consumes endpoint="endpoint9"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="PurchaseOrderCompositeApp-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="115">
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderFileOutService']/port[@name='purchaseOrderFileOutPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="PurchaseOrderCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port bindingType="soap" x="67" y="38">
+<link xlink:href="../jbiasa/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/service[@name='casaService1']/port[@name='casaPort_Basic_User_Group'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+<provides endpoint="endpoint5"/>
+</port>
+<port x="67" y="192">
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+<port state="deleted" x="67" y="38">
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/service[@name='TaskApprovePurchaseService']/port[@name='TaskApprovePurchasePort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint3" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint9" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint1" state="new"/>
+<connection consumer="endpoint8" provider="endpoint6" state="new"/>
+<connection consumer="endpoint8" provider="endpoint2" state="deleted"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiasa/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/portType[@name='purcharseOrderPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/portType[@name='purcharseOrderFileOutPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/portType[@name='ApprovePurchasePT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/TaskCommon.wsdl#xpointer(/definitions/portType[@name='TaskCommonPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/portType[@name='ApprovePurchasePT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiasa/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/binding[@name='purchaseOrderFileOutBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/binding[@name='ApprovePurchaseBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/TaskCommon.wsdl#xpointer(/definitions/binding[@name='TaskCommonBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/binding[@name='ApprovePurchaseBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiasa/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderFileOutService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModule/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/service[@name='TaskApprovePurchaseService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/TaskCommon.wsdl#xpointer(/definitions/service[@name='TaskCommonService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistApp/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/service[@name='TaskApprovePurchaseService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/PurchaseOrderCompositeApp.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FileReqReplyOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileReqReplyOut" name="FileReqReplyOut" xmlns:ns="http://xml.netbeans.org/schema/SimpleSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/FileReqReplyOut">
+            <xsd:import namespace="http://xml.netbeans.org/schema/SimpleSchema" schemaLocation="SimpleSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="FileReqReplyOutOperationRequest">
+        <part name="part1" type="ns:requestType"/>
+    </message>
+    <message name="FileReqReplyOutOperationReply">
+        <part name="part1" type="ns:responseType"/>
+    </message>
+    <portType name="FileReqReplyOutPortType">
+        <wsdl:operation name="FileReqReplyOutOperation">
+            <wsdl:input name="input1" message="tns:FileReqReplyOutOperationRequest"/>
+            <wsdl:output name="output1" message="tns:FileReqReplyOutOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="FileReqReplyOutBinding" type="tns:FileReqReplyOutPortType">
+        <file:binding/>
+        <wsdl:operation name="FileReqReplyOutOperation">
+            <file:operation verb="read"/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="FileReqReplyOut_Output%t.xml" pollingInterval="1000" fileNameIsPattern="true"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <file:message use="literal" fileName="FileReqReplyOut_Ignored%t.xml" fileNameIsPattern="true"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="FileReqReplyOutService">
+        <wsdl:port name="FileReqReplyOutPort" binding="tns:FileReqReplyOutBinding">
+            <file:address fileDirectory="JavaEE_vs_BC" relativePath="true" pathRelativeTo="User Home"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="FileReqReplyOutPartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FileReqReplyOutPortTypeRole" portType="tns:FileReqReplyOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

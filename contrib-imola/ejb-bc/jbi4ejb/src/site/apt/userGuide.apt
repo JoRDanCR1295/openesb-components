@@ -1,0 +1,135 @@
+																			---
+																			Documentation
+																			---
+																			Raffaele Spazzoli
+																			---
+																			31/07/2007
+
+User Guide
+
+	The Jbi4Ejb component can be used to integrate Stateless Session Enterprise Java Bean (SLS EJB) 
+	using a JBI-compliant Enterprise Service Bus.
+	There is no need to modify or move the EJB from the Application servers where they are deployed to integrate 
+	themo into the Bus, is the component that it's able to connect with the EJB and can "publish" the EJB logic
+	into the ESB.
+	
+[images/jbi4ejbIntegration.jpg]
+
+	To  integrate an EJB into the Bus, a JBI service unit must be created.
+	Following the "configure, don't code" paradigma, the service units are "only" containers of configuration logic, no coding is
+	needed.
+	For the jbi4Ejb component, the configuration logic is expressed by an extended WSDL, that contains both the
+	EJB interface and the connection configuration data. 
+
+[images/jbi4ejbServiceUnit.jpg]
+
+	How this WSDL can be generated? Starting from a J2EE ejb-jar or ear (the standard deployments archives for the EJB) this WSDL can be produced 
+	using the {{{wsdlCommandLineTool.html} command-line tool}} or the {{{netbeansplugin.html} Netbeans plug-in}}.
+		
+	Once generated, the WSDL can be used to {{{userGuide.html#Service Unit Configuration}create a JBI Service Unit}}.
+	
+	This service unit can be included into a JBI Service Assembly: a composite application that can manage a flow of data 
+	into the ESB. Take a look to the {{{openesbGettingStarted.html} OpenESB Getting Started}} and the {{{servicemixGettingStarted.html} Servicemix Getting Started}} 
+	guides to see two examples of a simple SA in both the supported ESB.
+	
+	The Jbi4Ejb binding component, due to the nature of the objects integrated (that cannot live ouside a J2EE container), can act only as a <<Service Provider>>.
+	This means that EJB can be exposed using the component as JBI endpoints, but the internal endpoints cannot be exposed as EJB.
+	 
+
+{Service Unit Configuration}
+
+	  A Jbi4Ejb service unit must have the layout:
+  
++----------------------------------------------------------+
+
++- <SERVICE_WSDL.wsdl>
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+  
+  * The <<SERVICE_WSDL.wsdl>> contains the interface declaration. For this component, is the EJB remote interface expressed using WSDL.
+  
+  * The <<jbi.xml>> contains the provided endpoint declaration.   
+  
+  []
+    
+  This WSDL is extended using the Jbi4Ejb extensions  (see the {{{wsdlExtensions.html} WSDL Extensions guide}} for the details) which express:
+  
+  * The <<ORB parameters>> to use to connect with the EJB
+  
+  * The EJB <<corbaname>> (that depends from the Application server where the beans are deployed, see the {{{applicationServerConfiguration.html} configuration guide for the supported Application Servers}}).
+  
+  * The <<serialization UID>> for the value objects, return type and exceptions. Using the {{{netbeansplugin.html}Netbeans plug-in}} or the
+   {{{wsdlCommandLineTool.html}command-line tool}} the UID are automatically generated in the WSDL. 
+ 
+  For example, the WSDL can have this form: 
+  
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://complex.test14.imolinfo.it" 
+	xmlns:tns="http://complex.test14.imolinfo.it" 
+	xmlns:imolaejb="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/" 
+	(...)
+  <wsdl:types>
+  	(...)
+  </wsdl:types>
+  <wsdl:message name="getUserProfileResponse">
+    	(...)
+  </wsdl:message>
+
+  <wsdl:portType name="<SERVICE_INTERFACE>">
+		(...)
+  </wsdl:portType>
+  <wsdl:binding name="TestComplexSessionRemoteBinding" type="tns:TestComplexSessionRemote">
+	<imolaejb:binding>
+		<imolaejb:orb>    
+    		<imolaejb:property name="org.omg.CORBA.ORBClass" value="com.ibm.CORBA.iiop.ORB"/>
+		</imolaejb:orb>
+	</imolaejb:binding>
+	(...)
+  </wsdl:binding>
+  <wsdl:service name="<SERVICE_NAME>">
+    <wsdl:port name="<ENDPOINT_NAME>" binding="tns:TestComplexSessionRemoteBinding">
+		<imolaejb:address name="corbaname:iiop:127.0.0.1:2809/NameServiceServerRoot#ejb/TestComplexSessionBean" 
+			localizationType="corbaname"/>    
+	</wsdl:port>
+  </wsdl:service>
+  
+  <imolaejb:types>
+	<imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfile" UID="8891581763048162223"/>
+	<imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfileException" UID="-5706164759540452783"/>
+  </imolaejb:types>
+  
+</wsdl:definitions>
+
++-----------------------------------------------------------+
+  
+  The jbi.xml must have the following content:
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?><jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+
+  <services xmlns:jbi4corba-test="<SERVICE_NAMESPACE>"
+    <provides 
+    	endpoint-name="<ENDPOINT_NAME>" 
+    	interface-name="ns1:<SERVICE_INTERFACE>" 
+    	service-name="ns1:<SERVICE_NAME>"/>
+  </services>
+
+</jbi>
+
++-----------------------------------------------------------+  
+
+  This configuration specify that the Service Unit is a Binding Component.
+  
+  Zip all the files in the specified layout and name the archive Jbi4EjbSU.zip.
+  The archive can now be included in a Service Assembly ad deployed into a JBI-compliant Entarprise Service Bus 		
+
+	
+

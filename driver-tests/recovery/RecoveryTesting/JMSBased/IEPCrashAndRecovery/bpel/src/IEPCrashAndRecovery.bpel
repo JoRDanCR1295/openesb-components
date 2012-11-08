@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="IEPCrashAndRecovery"
+         targetNamespace="http://www.seebeyond.com/eInsight/IEPCrashAndRecovery"
+         xmlns:tns="http://www.seebeyond.com/eInsight/IEPCrashAndRecovery"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BPELProject/JMSIn/IEPCrashAndRecovery"
+         xmlns:ns1="http://localhost/BPELProject/JMSOut/IEPCrashAndRecovery"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns2="test_iep">
+    <import namespace="http://localhost/BPELProject/JMSIn/IEPCrashAndRecovery"
+            location="JMSIn.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BPELProject/JMSOut/IEPCrashAndRecovery"
+            location="JMSOut.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="test_iep" location="test.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="fromIepLink" partnerLinkType="ns2:OutputPlt_StreamOutput0" myRole="OutputRn_StreamOutput0"/>
+        <bpws:partnerLink name="toIepLink" partnerLinkType="ns2:InputPlt" partnerRole="InputRn"/>
+        <partnerLink name="jmsInLink"
+                     partnerLinkType="ns0:JMSInLinkType"
+                     myRole="Server"/>
+        <partnerLink name="jmsOutLink"
+                     partnerLinkType="ns1:JMSOutLinkType"
+                     partnerRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="StreamOutput0In" messageType="ns2:StreamOutput0_Msg"/>
+        <bpws:variable name="StreamInput0In" messageType="ns2:StreamInput0_Msg"/>
+        <variable name="operation_JMSIn_Output"
+                  messageType="ns0:message_JMSIn"></variable>
+        <variable name="operation_JMSOut_Input"
+                  messageType="ns1:message_JMSOut"></variable>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns2:prop1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="operation_JMSIn"
+                 partnerLink="jmsInLink"
+                 portType="ns0:portType_JMSIn"
+                 operation="operation_JMSIn"
+                 variable="operation_JMSIn_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <bpws:copy>
+                <bpws:from variable="operation_JMSIn_Output" part="part_JMSIn"/>
+                <bpws:to>$StreamInput0In.input/message</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="operation_JMSIn_Output" part="IdProperty"/>
+                <bpws:to>$StreamInput0In.input/id</bpws:to>
+            </bpws:copy>
+        </assign>
+        <bpws:invoke name="Invoke1" partnerLink="toIepLink" operation="StreamInput0" portType="ns2:InputPt" inputVariable="StreamInput0In">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="join"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:receive name="Receive1" createInstance="no" partnerLink="fromIepLink" operation="StreamOutput0" portType="ns2:OutputPt_StreamOutput0" variable="StreamOutput0In">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$StreamOutput0In.output/message</bpws:from>
+                <bpws:to variable="operation_JMSOut_Input" part="part_JMSOut"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$StreamOutput0In.output/id</bpws:from>
+                <bpws:to variable="operation_JMSOut_Input" part="IdProperty"/>
+            </bpws:copy>
+        </bpws:assign>
+        <invoke name="operation_JMSOut"
+                partnerLink="jmsOutLink"
+                portType="ns1:portType_JMSOut"
+                operation="operation_JMSOut"
+                inputVariable="operation_JMSOut_Input"></invoke>
+    </sequence>
+</process>

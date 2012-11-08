@@ -1,0 +1,1 @@
+the test contain wsdl which need to accessed via a loadbalancer, one has to verify, that the content of the wsdl as expected reflect the host port of the loadbalancer instead of the node on httpbc is running

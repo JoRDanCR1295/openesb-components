@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="FlowInWhileProc"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestFlowInWhile/FlowInWhileProc"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TestFlowInWhile/FlowInWhileProc" xmlns:ns0="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhileSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" location="FlowInWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePartner" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" partnerLinkType="tns:invokePLT" partnerRole="InvokePTRole"/>
+        <partnerLink name="StartPartner" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" partnerLinkType="tns:StartPLT" myRole="FlowInWhilePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Inv2Rets" type="ns1:StringArray">
+            <sxed:editor>
+                <sxed:predicate path="$Inv2Rets/RetVal[$whileCounter]" source="to"/>
+            </sxed:editor>
+        </variable>
+        <variable name="InvBranch2Out" messageType="ns0:InvokeResponse"/>
+        <variable name="InvBranch2In" messageType="ns0:InvokeRequest"/>
+        <variable name="Inv1Rets" type="ns1:StringArray">
+            <sxed:editor>
+                <sxed:predicate path="$Inv1Rets/RetVal[$whileCounter]" source="to"/>
+            </sxed:editor>
+        </variable>
+        <variable name="InvokeOperOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:InvokeResponse"/>
+        <variable name="InvokeOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:InvokeRequest"/>
+        <variable name="whileCounter" type="xsd:int"/>
+        <variable name="FlowInWhileOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:FlowInWhileOperationResponse"/>
+        <variable name="FlowInWhileOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" messageType="tns:FlowInWhileOperationRequest"/>
+        <variable name="InvBranch21Out" messageType="ns0:InvokeResponse"/>
+        <variable name="InvBranch21In" messageType="ns0:InvokeRequest"/>
+        <variable name="Inv21Rets" type="ns1:StringArray">
+            <sxed:editor>
+                <sxed:predicate path="$Inv21Rets/RetVal[$whileCounter]" source="to"/>
+            </sxed:editor>
+        </variable>
+    </variables>
+    <sequence>
+        <receive name="StartRec" createInstance="yes" partnerLink="StartPartner" operation="FlowInWhileOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" portType="tns:FlowInWhilePortType" variable="FlowInWhileOperationIn"/>
+        <assign name="initCounter">
+            <copy>
+                <from>1</from>
+                <to variable="whileCounter"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition>$whileCounter &lt;= 2</condition>
+            <sequence name="Sequence1">
+                <flow name="Flow1">
+                    <sequence name="FlowSequence1">
+                            <assign name="AssignInv">
+                                    <copy>
+                                            <from>concat('Inv1 count:', $whileCounter)</from>
+                                                <to variable="InvokeOperIn" part="part1"/>
+                                        </copy>
+                                </assign>
+                                <invoke name="InvBranch1" partnerLink="InvokePartner" operation="InvokeOper" portType="ns0:InvokePT" inputVariable="InvokeOperIn" outputVariable="InvokeOperOut"/>
+                        <assign name="Inv1Rets">
+                            <copy>
+                                <from variable="InvokeOperOut" part="part1"/>
+                                <to>$Inv1Rets/RetVal[$whileCounter]
+                                    <sxed:editor>
+                                        <sxed:predicate path="$Inv1Rets/RetVal[$whileCounter]" source="to"/>
+                                    </sxed:editor>
+                                </to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                    <sequence name="FlowSequence2">
+                        <assign name="InvBranch2Assign">
+                            <copy>
+                                <from>concat('Inv2 count:', $whileCounter)</from>
+                                <to variable="InvBranch2In" part="part1"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvBranch2" partnerLink="InvokePartner" operation="InvokeOper" portType="ns0:InvokePT" inputVariable="InvBranch2In" outputVariable="InvBranch2Out"/>
+                        <assign name="InvBranch21Assign">
+                            <copy>
+                                <from>concat('Inv21 count:', $whileCounter)</from>
+                                <to variable="InvBranch21In" part="part1"/>
+                            </copy>
+                        </assign>
+                        <invoke name="InvBranch21" partnerLink="InvokePartner" operation="InvokeOper" portType="ns0:InvokePT" inputVariable="InvBranch21In" outputVariable="InvBranch21Out"/>
+                        <assign name="Inv2Rets">
+                            <copy>
+                                <from variable="InvBranch2Out" part="part1"/>
+                                <to>$Inv2Rets/RetVal[$whileCounter]
+                                    <sxed:editor>
+                                        <sxed:predicate path="$Inv2Rets/RetVal[$whileCounter]" source="to"/>
+                                    </sxed:editor>
+                                </to>
+                            </copy>
+                        </assign>
+                        <assign name="Inv21Rets">
+                            <copy>
+                                <from variable="InvBranch21Out" part="part1"/>
+                                <to>$Inv21Rets/RetVal[$whileCounter]
+                                    <sxed:editor>
+                                        <sxed:predicate path="$Inv21Rets/RetVal[$whileCounter]" source="to"/>
+                                    </sxed:editor>
+                                </to>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </flow>
+                <assign name="Assign1">
+                    <copy>
+                            <from>$whileCounter + 1</from>
+                                <to variable="whileCounter"/>
+                        </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="AssignReply">
+            <copy>
+                <from>$Inv1Rets/RetVal</from>
+                <to>$FlowInWhileOperationOut.part1/inv1output</to>
+            </copy>
+            <copy>
+                <from>$Inv2Rets/RetVal</from>
+                <to>$FlowInWhileOperationOut.part1/inv2output</to>
+            </copy>
+            <copy>
+                <from>$Inv21Rets/RetVal</from>
+                <to>$FlowInWhileOperationOut.part1/inv21output</to>
+            </copy>
+        </assign>
+        <reply name="StartReply" partnerLink="StartPartner" operation="FlowInWhileOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" portType="tns:FlowInWhilePortType" variable="FlowInWhileOperationOut"/>
+    </sequence>
+</process>

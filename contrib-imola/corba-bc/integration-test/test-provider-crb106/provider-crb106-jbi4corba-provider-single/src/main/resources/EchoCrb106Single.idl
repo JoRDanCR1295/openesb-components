@@ -1,0 +1,149 @@
+//IDL
+// CRB-106 : add test with complex situations (type recusion, methods omonimia)
+//
+// add the following test (unit and integration) in both consumer mode and provider mode
+//
+// type recursion test: complex type A (all simple type as usual) refernce complex type B (like A), 
+//                      complex type B reference complex type A.
+//
+// method omonimia: interface with the following method signature
+// methodA (complexA)
+// methodA(complexA,complexB)
+// methodB(complexA)
+// methodB(complexA,complexB)
+//
+
+
+#ifndef __it_imolinfo_jbi4corba_test_testprovidercrb106_ValueTypeA__
+
+module it {
+module imolinfo {
+module jbi4corba {
+module test{
+module testprovidercrb106{
+
+    // forward declaration
+    valuetype ValueTypeB;
+
+	// value type
+	valuetype ValueTypeA {
+        public boolean            fieldBoolean;
+        public char               fieldChar;
+        public wchar              fieldWChar;
+
+        // http://jira.codehaus.org/browse/XFIRE-462
+        public octet              fieldOctet;
+
+        public string             fieldString;
+        public wstring            fieldWString;
+        public short              fieldShort;
+        public unsigned short     fieldUnsignedShort;
+        public long               fieldLong;
+        public unsigned long      fieldUnsignedLong;
+        public long long          fieldLongLong;
+        public unsigned long long fieldUnsignedLongLong;
+        public float              fieldFloat;
+        public double             fieldDouble;
+
+        public ValueTypeB         typeB; // type recursion
+    };
+
+
+};
+};
+};
+};
+};
+
+#endif
+
+#ifndef __it_imolinfo_jbi4corba_test_testprovidercrb106_ValueTypeB__
+
+module it {
+module imolinfo {
+module jbi4corba {
+module test{
+module testprovidercrb106{
+
+	// value type
+	valuetype ValueTypeB {
+        public boolean            fieldBoolean;
+        public char               fieldChar;
+        public wchar              fieldWChar;
+
+        // http://jira.codehaus.org/browse/XFIRE-462
+        public octet              fieldOctet;
+
+        public string             fieldString;
+        public wstring            fieldWString;
+        public short              fieldShort;
+        public unsigned short     fieldUnsignedShort;
+        public long               fieldLong;
+        public unsigned long      fieldUnsignedLong;
+        public long long          fieldLongLong;
+        public unsigned long long fieldUnsignedLongLong;
+        public float              fieldFloat;
+        public double             fieldDouble;
+
+        public ValueTypeA         typeA; // type recursion
+    };
+
+
+};
+};
+};
+};
+};
+
+#endif
+
+
+
+// TYPES
+module it{
+	module imolinfo{
+            module jbi4corba{
+                module test{
+                    module testprovidercrb106{
+
+                        // struct
+				struct StructAB {
+    				ValueTypeA a;
+    				ValueTypeB b;
+   				};
+
+   				module singleparam{
+    			    //==================================================
+    			    //                                         INTERFACE
+    			    //==================================================
+    			    interface InterfaceSingleParam {
+
+    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodA(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a);
+    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodB(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a);
+
+    			    }; // end interface
+   			    };
+
+//   				module doubleparam{
+//
+//    			    //==================================================
+//    			    //                                         INTERFACE
+//    			    //==================================================
+//    			    interface InterfaceDoubleParam {
+//
+//    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodA(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a,
+//    				                                                            in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeB b);
+//
+//    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodB(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a,
+//    				                                                            in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeB b);
+//    
+//    			    }; // end interface
+//   			    };
+
+                };
+            };
+	};
+    };
+};
+
+

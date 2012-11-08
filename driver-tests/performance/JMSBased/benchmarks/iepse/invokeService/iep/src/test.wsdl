@@ -1,0 +1,189 @@
+<definitions targetNamespace="test_iep"
+             xmlns:tns="test_iep"
+             xmlns:typens="test_iep"
+             xmlns:defns="test_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="test_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0Batch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamOutput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="message" type="xsd:string"/>
+                   <xsd:element name="id" type="xsd:int"/>
+                   <xsd:element name="msgNid" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="InvokeService0_RequestObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="InvokeService0_ResponseObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="InvokeService0_ResponseItem" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="msgNid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamInput0Batch_Msg">
+    <part name="input" element="typens:StreamInput0Batch_MsgObj"/>
+</message>
+<message name="StreamOutput0_Msg">
+    <part name="output" element="typens:StreamOutput0_MsgObj"/>
+</message>
+<message name="InvokeService0_Request">
+    <part name="request" element="typens:InvokeService0_RequestObj"/>
+</message>
+<message name="InvokeService0_Response">
+    <part name="response" element="typens:InvokeService0_ResponseObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <input message="tns:StreamInput0Batch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_StreamOutput0">
+    <operation name="StreamOutput0">
+        <input message="tns:StreamOutput0_Msg"/>
+    </operation>
+</portType>
+<portType name="RequestReplyPt_InvokeService0">
+    <operation name="InvokeService0">
+        <input message="tns:InvokeService0_Request"/>
+        <output message="tns:InvokeService0_Response"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_StreamOutput0" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_StreamOutput0" portType="tns:OutputPt_StreamOutput0"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="RequestReplyPlt_InvokeService0" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "RequestReplyRn_InvokeService0" portType="tns:RequestReplyPt_InvokeService0"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <jms:binding></jms:binding>
+    <operation name="StreamInput0">
+        <jms:operation destinationType="Queue"
+                       maxConcurrentConsumers="32"
+                       destination="iep_is_benchmark_publish" 
+                       transaction="NoTransaction">
+        </jms:operation>
+        <input>
+            <jms:message textPart="input"
+                         messageType="TextMessage">
+            </jms:message>
+        </input>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <jms:operation destinationType="Queue"
+                       maxConcurrentConsumers="32"
+                       destination="iep_is_batch_benchmark_publish" 
+                       transaction="NoTransaction">
+        </jms:operation>
+        <input>
+            <jms:message textPart="input"
+                         messageType="TextMessage">
+            </jms:message>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <jms:address password="admin"
+                     username="admin"
+                     connectionURL="mq://localhost:7676" />
+    </port>
+</service>
+
+<!-- http output binding and service
+<binding name="OutputBinding_StreamOutput0" type="defns:OutputPt_StreamOutput0">
+    <operation name="StreamOutput0">
+        <soap:operation soapAction="StreamOutput0"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutput0">
+    <port name="OutputPort_StreamOutput0" binding="tns:OutputBinding_StreamOutput0">
+        <soap:address location="http://localhost:12100/service/test_iep_StreamOutput0_callee"/>
+    </port>
+</service>
+ end of http output binding and service -->
+
+<!-- file output binding and service -->
+<!-- output binding and service -->
+<binding name="OutputBinding_StreamOutput0" type="defns:OutputPt_StreamOutput0">
+    <jms:binding></jms:binding>
+    <operation name="StreamOutput0">
+        <jms:operation deliveryMode="NON_PERSISTENT"
+                       disableMessageTimeStamp="true"
+                       disableMessageID="true"
+                       transaction="NoTransaction"
+                       destinationType="Queue"
+                       destination="iep_is_benchmark_consume"/>
+        <input>
+            <jms:message messageType="TextMessage"
+                         textPart="output">
+            </jms:message>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutput0">
+    <port name="OutputPort_StreamOutput0" binding="tns:OutputBinding_StreamOutput0">
+        <jms:address password="admin"
+                     username="admin"
+                     connectionURL="mq://localhost:7676" />
+    </port>
+</service>
+<!-- end of file output binding and service -->
+</definitions>

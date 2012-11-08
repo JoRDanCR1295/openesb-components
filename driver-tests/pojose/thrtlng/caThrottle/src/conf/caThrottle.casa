@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="caThrottle" xmlns:ns2="http://tst.sun.com/POJOThrottler/" xmlns:ns3="http://svc.sun.com/ThrottledSvc/" xmlns:ns4="ts" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="pojoThrottleSvc" interface-name="ns2:POJOThrottlerInterface" name="endpoint1" service-name="ns1:casaService1"/>
+        <endpoint endpoint-name="ThrottledSvc" interface-name="ns3:ThrottledSvcInterface" name="endpoint2" service-name="ns3:ThrottledSvcService"/>
+        <endpoint endpoint-name="POJOThrottler" interface-name="ns2:POJOThrottlerInterface" name="endpoint3" service-name="ns2:POJOThrottlerService"/>
+        <endpoint endpoint-name="ThrottledSvcConsumer" interface-name="ns3:ThrottledSvcInterface" name="endpoint4" service-name="ns4:ThrottledSvc"/>
+        <endpoint endpoint-name="ConcurrentlyThrottledSvcConsumer" interface-name="ns3:ThrottledSvcInterface" name="endpoint5" service-name="ns4:ConcurrentlyThrottledSvc"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="jseThrottle.jar" component-name="sun-pojo-engine" defined="true" description="Represents this Service Unit" internal="true" name="caThrottle-jseThrottle" unit-name="jseThrottle" unknown="false" x="122" y="99">
+            <provides endpoint="endpoint2"/>
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="caThrottle-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiasa/caThrottle.wsdl#xpointer(/definitions/service[@name='casaService1']/port[@name='pojoThrottleSvc'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint2" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint5" provider="endpoint2" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="5"/>
+        </connection>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/caThrottle.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caThrottle.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseThrottle/com/sun/svc/ThrottledSvc.wsdl#xpointer(/definitions/portType[@name='ThrottledSvcInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseThrottle/com/sun/tst/POJOThrottler.wsdl#xpointer(/definitions/portType[@name='POJOThrottlerInterface'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/caThrottle.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caThrottle.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/caThrottle.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caThrottle.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

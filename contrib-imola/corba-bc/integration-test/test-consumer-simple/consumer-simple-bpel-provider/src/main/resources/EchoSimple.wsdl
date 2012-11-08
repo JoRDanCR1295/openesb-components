@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions targetNamespace="urn:jbi4corba/test-consumer-simple" 
+             xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="urn:jbi4corba/test-consumer-simple" 
+             xmlns:ns="urn:jbi4corba/test-consumer-simple">
+    <types>
+        <xsd:schema targetNamespace="urn:jbi4corba/test-consumer-simple" 
+                    elementFormDefault="qualified" attributeFormDefault="qualified" 
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="echo"><xsd:complexType><xsd:sequence><xsd:element name="in0" type="xsd:string" nillable="true" minOccurs="1" maxOccurs="1"/></xsd:sequence></xsd:complexType></xsd:element>
+            <xsd:element name="echoResponse"><xsd:complexType><xsd:sequence><xsd:element name="out" type="xsd:string" nillable="true" minOccurs="1" maxOccurs="1"/></xsd:sequence></xsd:complexType></xsd:element>
+        </xsd:schema>
+    </types>
+    
+    
+    <wsdl:message name="echoRequest">
+        <wsdl:part element="tns:echo" name="parameters" />
+    </wsdl:message>
+    
+    <message name="echoResponse">
+        <part element="tns:echoResponse" name="parameters"/>
+    </message>
+    <portType name="EchoSimplePortType">
+        <operation name="echo">
+            <input message="tns:echoRequest" name="echoRequest"/>
+            <output message="tns:echoResponse" name="echoResponse"/>
+        </operation>
+    </portType>
+    
+    <binding name="EchoSimpleBinding" type="tns:EchoSimplePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        
+        <operation name="echo">
+            <soap:operation soapAction="" />
+            <input name="echoRequest">
+                <soap:body use="literal" />
+            </input>
+            <output name="echoResponse">
+                <soap:body use="literal" />
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="EchoSimple">
+        <port binding="tns:EchoSimpleBinding" name="EchoSimplePort">
+            <soap:address location="http://localhost:8192/services/EchoSimple" />
+        </port>
+    </service>
+</definitions>
+

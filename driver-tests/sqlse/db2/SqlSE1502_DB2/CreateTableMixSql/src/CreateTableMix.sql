@@ -1,0 +1,1 @@
+CREATE TABLE DRIVERTEST_mixtable (mixid integer not null primary key)

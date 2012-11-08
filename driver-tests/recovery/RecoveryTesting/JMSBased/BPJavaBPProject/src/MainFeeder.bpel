@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="MainFeeder"
+    targetNamespace="http://enterprise.netbeans.org/bpel/MainFeeder"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MainFeeder" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MainFeeder" xmlns:ns2="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP" xmlns:ns0="http://xml.netbeans.org/schema/CorrelationSample">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/MainFeeder" location="MainFeeder.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP" location="CorrelatedJavaBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="CallBackPartnerLink" partnerLinkType="ns2:CallBackBPPartner" myRole="CallBackPortTypeRole"/>
+        <bpws:partnerLink name="JavaPartnerLink" partnerLinkType="ns2:CorrelatedJavaBPPartner" partnerRole="CallJavaInPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkC" partnerLinkType="ns1:PostReplyToJMSPartner" partnerRole="PostReplyToJMSPartner"/>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:JMSReceiverPartner" myRole="JMSReceiverRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="CallBackBPMessage" messageType="ns2:CallBackOperationRequest"/>
+        <bpws:variable name="CallJavaInMessage" messageType="ns2:CallInOperationRequest"/>
+        <bpws:variable name="JMSOutMessage" messageType="ns1:TextMessage"/>
+        <bpws:variable name="JMSInMessage" messageType="ns1:TextMessage"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet" properties="ns2:correlationId"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="FeederBpelStart" createInstance="yes" partnerLink="PartnerLinkA" 
+                      operation="MessageInOperation" portType="ns1:JMSReceiverPortType" variable="JMSInMessage"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>0</bpws:from>
+                <bpws:to>$CallJavaInMessage.InMessage/ns0:Counter</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>999</bpws:from>
+                <bpws:to>$CallJavaInMessage.InMessage/ns0:Id</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:repeatUntil name="RepeatUntil1">
+            <bpws:sequence name="Sequence1">
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from> ( $CallJavaInMessage.InMessage/ns0:Counter + 1 ) </bpws:from>
+                        <bpws:to>$CallJavaInMessage.InMessage/ns0:Counter</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:invoke name="CallJavaEEInvoke" partnerLink="JavaPartnerLink" operation="CallJavaInOperation" 
+                             portType="ns2:CallJavaInPortType" inputVariable="CallJavaInMessage">
+                    <bpws:correlations>
+                        <bpws:correlation set="CorrelationSet" initiate="join"/>
+                    </bpws:correlations>
+                </bpws:invoke>
+                <bpws:receive name="CallBackBPReceive" createInstance="no" partnerLink="CallBackPartnerLink" 
+                              operation="CallBackOperation" portType="ns2:CallBackPortType" variable="CallBackBPMessage">
+                    <bpws:correlations>
+                        <bpws:correlation set="CorrelationSet" initiate="no"/>
+                    </bpws:correlations>
+                </bpws:receive>
+            </bpws:sequence>
+            <bpws:condition> ( $CallJavaInMessage.InMessage/ns0:Counter != $CallBackBPMessage.OutMessage/ns0:Counter ) </bpws:condition>
+        </bpws:repeatUntil>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>concat('Test failed. ', 'Expected counter: ', $CallJavaInMessage.InMessage/ns0:Counter, '; received counter: ', $CallBackBPMessage.OutMessage/ns0:Counter)</bpws:from>
+                <bpws:to part="TextPart" variable="JMSOutMessage"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="FeederBpelEnd" partnerLink="PartnerLinkC" 
+                     operation="PostReplyToJMSOperation" portType="ns1:PostReplyToJMSPortType" 
+                     inputVariable="JMSOutMessage"/>
+    </sequence>
+</process>

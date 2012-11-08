@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="SubBP2BPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SubBP2BPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SubBP2BPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Sub2Wsdl">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Sub2Wsdl" location="Sub2Wsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:Sub2Wsdl1" myRole="Sub2WsdlPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="Sub2WsdlOperationOut" messageType="ns1:Sub2WsdlOperationReply"/>
+        <bpws:variable name="Sub2WsdlOperationIn" messageType="ns1:Sub2WsdlOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="Sub2WsdlOperation" portType="ns1:Sub2WsdlPortType" variable="Sub2WsdlOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($Sub2WsdlOperationIn.part1, '[ Inside last Sub BP ]')</bpws:from>
+                <bpws:to part="part1" variable="Sub2WsdlOperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:wait name="Wait1">
+            <bpws:for>'P0Y0M0DT0H1M0S'</bpws:for>
+        </bpws:wait>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="Sub2WsdlOperation" portType="ns1:Sub2WsdlPortType" variable="Sub2WsdlOperationOut"/>
+    </sequence>
+</process>

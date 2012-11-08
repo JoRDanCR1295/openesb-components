@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="" default="default" basedir=".">
+
+    <import file="build.xml"/>
+    <target name="-check-private-exist">
+    	<property environment="env"/>
+	<property name="wsapp" value="../WLMConsoleWeb"/>
+	<available file="${wsapp}/nbproject/private/private.properties" property="wsapp.props.exists" value="true"/>
+	<available file="${basedir}/nbproject/private/private.properties" property="wscomp.props.exists" value="true"/> 	
+    </target>
+    
+    <target name="-create-private-wsapp" unless="wsapp.props.exists" depends="-check-private-exist">
+    	<touch file="${wsapp}/nbproject/private/private.properties" mkdirs="true"/>
+    	<propertyfile file="${wsapp}/nbproject/private/private.properties">
+            <entry key="esb.netbeans.home" 
+            	default="${env.NB_HOME}"/>
+            <entry key="enterprise.module.install.dir"
+                default="${env.NB_HOME}/enterprise5/modules"/>
+            <entry key="ide.module.install.dir"
+                default="${env.NB_HOME}/ide11/modules"/>
+            <entry key="java.module.install.dir"
+                default="${env.NB_HOME}/java2/modules"/>
+            <entry key="soa.module.install.dir"
+                default="${env.NB_HOME}/soa2/modules"/>
+            <entry key="xml.module.install.dir"
+                default="${env.NB_HOME}/xml2/modules"/>
+            <entry key="j2ee.platform.classpath"
+                default="${env.JV_GFBASE}/lib/javaee.jar"/>
+            <entry key="libs.CopyLibs.classpath"
+                default="${env.NB_HOME}/java2/ant/extra/org-netbeans-modules-java-j2seproject-copylibstask.jar"/> 
+            <entry key="j2ee.platform.wsimport.classpath"
+                default="${env.NB_HOME}/java2/modules/ext/jaxws21/jaxws-tools.jar:${env.NB_HOME}/ide11/modules/ext/jaxb/jaxb-xjc.jar:${env.JV_GFBASE}/lib/javaee.jar"/>                 
+            <entry key="jspcompilation.classpath"            
+                default="${env.NB_HOME}/java2/ant/lib/ant.jar:${j2ee.platform.classpath}:${j2ee.platform.wsimport.classpath}:${env.NB_HOME}/enterprise5/modules/ext/servlet2.5-jsp2.1-api.jar:${env.NB_HOME}/enterprise5/ant/extra/jspcompile.jar:${env.NB_HOME}/enterprise5/modules/ext/glassfish-jspparser-2.0.jar:${env.NB_HOME}/enterprise5/modules/ext/glassfish-logging-2.0.jar:${env.NB_HOME}/ide11/modules/ext/commons-logging-1.1.jar:${env.NB_HOME}/java2/ant/lib/ant-launcher.jar:${env.JV_GFBASE}/lib/appserv-jstl.jar:${env.JV_GFBASE}/lib/appserv-tags.jar:${env.JV_GFBASE}/lib/jsf-impl.jar"/>                 
+    	    <entry key="jspctask.classpath"        
+    		default="${env.NB_HOME}/enterprise5/ant/extra/jspcompile.jar" />
+     	</propertyfile>
+    </target>
+    
+     	<target name="-create-private-wscomp" unless="wscomp.props.exists" depends="-check-private-exist">
+        	<touch file="${basedir}/nbproject/private/private.properties" mkdirs="true"/>
+        	<propertyfile file="${basedir}/nbproject/private/private.properties">
+                <entry key="esb.netbeans.home" 
+                	default="${env.NB_HOME}"/>
+                <entry key="enterprise.module.install.dir"
+                    default="${env.NB_HOME}/enterprise5/modules"/>
+                <entry key="ide.module.install.dir"
+                    default="${env.NB_HOME}/ide11/modules"/>
+                <entry key="java.module.install.dir"
+                    default="${env.NB_HOME}/java2/modules"/>
+                <entry key="soa.module.install.dir"
+                    default="${env.NB_HOME}/soa2/modules"/>
+                <entry key="xml.module.install.dir"
+                    default="${env.NB_HOME}/xml2/modules"/>
+                <entry key="j2ee.platform.classpath"
+                    default="${env.JV_GFBASE}/lib/javaee.jar"/>
+                <entry key="libs.CopyLibs.classpath"
+                    default="${env.NB_HOME}/java2/ant/extra/org-netbeans-modules-java-j2seproject-copylibstask.jar"/> 
+                <entry key="j2ee.platform.wsimport.classpath"
+                    default="${env.NB_HOME}/java2/modules/ext/jaxws21/jaxws-tools.jar:${env.NB_HOME}/ide11/modules/ext/jaxb/jaxb-xjc.jar:${env.JV_GFBASE}/lib/javaee.jar"/>                 
+        
+         	</propertyfile>
+    	</target>
+    
+    <target name="build-comp" depends="-create-private-wsapp, -create-private-wscomp, dist">
+    </target>
+</project>

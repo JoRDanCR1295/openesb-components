@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="JMSDeadLetterQTestDriver" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSDeadLetterQTestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSDeadLetterQTestDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSDeadLetterQTest">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/JMSDeadLetterQTest" location="JMSDeadLetterQTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkDLQCollector" partnerLinkType="ns1:JMSDeadLetterQTestCollecotrPartner" myRole="JMSDeadLetterQCollectorPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkSender" partnerLinkType="ns1:JMSDeadLetterQTestSenderPartner" partnerRole="JMSDeadLetterQTestPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkSoapDriver" partnerLinkType="ns1:JMSDeadLetterQTestTriggerPartner" myRole="JMSDeadLetterQTestSoapTriggerPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="JMSDeadLetterQTestTriggerOperationOut" messageType="ns1:JMSDeadLetterQTestOperationTriggerReply"/>
+        <bpws:variable name="JMSDeadLetterQTestOperationIn2" messageType="ns1:JMSDeadLetterQTestCollectorRequest"/>
+        <bpws:variable name="JMSDeadLetterQTestOperationIn1" messageType="ns1:JMSDeadLetterQTestOperationRequest"/>
+        <bpws:variable name="JMSDeadLetterQTestOperationIn" messageType="ns1:JMSDeadLetterQTestOperationRequest"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="ReceiveSoap" createInstance="yes" partnerLink="PartnerLinkSoapDriver" operation="JMSDeadLetterQTestTriggerOperation" portType="ns1:JMSDeadLetterQTestSoapTriggerPortType" variable="JMSDeadLetterQTestOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="JMSDeadLetterQTestOperationIn" part="part1"/>
+                <bpws:to variable="JMSDeadLetterQTestOperationIn1" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLinkSender" operation="JMSDeadLetterQTestOperation" portType="ns1:JMSDeadLetterQTestSenderPortType" inputVariable="JMSDeadLetterQTestOperationIn1"/>
+        <bpws:receive name="ReceiveFromDLQ" createInstance="no" partnerLink="PartnerLinkDLQCollector" operation="JMSDeadLetterQTestOperation" portType="ns1:JMSDeadLetterQCollectorPortType" variable="JMSDeadLetterQTestOperationIn2">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="JMSDeadLetterQTestOperationIn2" part="part1"/>
+                <bpws:to variable="JMSDeadLetterQTestTriggerOperationOut" part="part1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="JMSDeadLetterQTestOperationIn2" part="originalDestNamePart"/>
+                <bpws:to variable="JMSDeadLetterQTestTriggerOperationOut" part="part2"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLinkSoapDriver" operation="JMSDeadLetterQTestTriggerOperation" portType="ns1:JMSDeadLetterQTestSoapTriggerPortType" variable="JMSDeadLetterQTestTriggerOperationOut"/>
+    </sequence>
+   
+</process>

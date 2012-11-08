@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="joinsquerySQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="joinsqueryRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="joinsqueryResponse"><xsd:complexType><xsd:sequence><xsd:element name="NAME" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="joinsqueryResponse">
+    <part name="joinsqueryResponsePart" element="tns:joinsqueryResponse"/>
+  </message>
+  <message name="joinsqueryRequest">
+    <part name="joinsqueryRequestPart" element="tns:joinsqueryRequest"/>
+  </message>
+  <portType name="joinsquerySQL_sqlsePortType">
+    <operation name="joinsquery">
+      <input name="joinsqueryRequest" message="tns:joinsqueryRequest"/>
+      <output name="joinsqueryResponse" message="tns:joinsqueryResponse"/>
+    </operation>
+  </portType>
+  <binding name="joinsquerySQLBinding" type="tns:joinsquerySQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="joinsquery">
+      <soap:operation style="document"/>
+      <input name="joinsqueryRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="joinsqueryResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="joinsquerySQL_sqlseService">
+    <port name="joinsquerySQL_sqlsePort" binding="tns:joinsquerySQLBinding">
+      <soap:address location="http://localhost:18181/joinsquerySQL/joinsquerySQL/joinsquerySQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="joinsquerySQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="joinsquerySQL_myrole" portType="tns:joinsquerySQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Parent2Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/CorrSubBPBpel/Parent2Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/CorrSubBPBpel/Parent2Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/DriverWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SubBPWSDL" xmlns:ns3="http://j2ee.netbeans.org/wsdl/Parent2WSDL">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/Parent2WSDL" location="Parent2WSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/DriverWSDL" location="DriverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/Parent1WSDL" location="Parent1WSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="DriverReplyPartnerLink" partnerLinkType="ns1:DriverWSDLRIT3966713" partnerRole="Parent2ReplyPortTypeRole"/>
+      <partnerLink name="SubProcessPartnerLink" partnerLinkType="ns2:SubBPWSDLRIT3966312" partnerRole="SubBPWSDLPortType1Role"/>
+      <partnerLink name="DriverPartnerLink" partnerLinkType="ns3:Parent2WSDLRIT396661" myRole="Parent2WSDLPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="TempVariable1" type="xsd:string"/>
+      <variable name="Parent2ReplyOperationIn" messageType="ns1:DriverWSDLOperationRequest"/>
+      <variable name="SubBPWSDLOperationOut" messageType="ns2:SubBPWSDLOperationReply"/>
+      <variable name="SubBPWSDLOperationIn" messageType="ns2:SubBPWSDLOperationRequest"/>
+      <variable name="Parent2WSDLOperationOut" messageType="ns3:Parent2WSDLOperationReply"/>
+      <variable name="Parent2WSDLOperationIn" messageType="ns3:Parent2WSDLOperationRequest"/>
+   </variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="DriverPartnerLink" operation="Parent2WSDLOperation" portType="ns3:Parent2WSDLPortType" variable="Parent2WSDLOperationIn"/>
+      <assign name="Assign1">
+         <copy>
+            <from variable="Parent2WSDLOperationIn" part="part1"/>
+            <to variable="TempVariable1"/>
+         </copy>
+         <copy>
+            <from>
+               <literal>subbp-input</literal>
+            </from>
+            <to part="part1" variable="SubBPWSDLOperationIn"/>
+         </copy>
+      </assign>
+      <invoke name="Invoke1" partnerLink="SubProcessPartnerLink" operation="SubBPWSDLOperation" portType="ns2:SubBPWSDLPortType1" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut"/>
+      <assign name="Assign2">
+         <copy>
+            <from variable="TempVariable1"/>
+            <to variable="Parent2ReplyOperationIn" part="part1"/>
+         </copy>
+      </assign>
+      <invoke name="Invoke2" partnerLink="DriverReplyPartnerLink" operation="Parent2ReplyOperation" portType="ns1:Parent2ReplyPortType" inputVariable="Parent2ReplyOperationIn"/>
+   </sequence>
+</process>

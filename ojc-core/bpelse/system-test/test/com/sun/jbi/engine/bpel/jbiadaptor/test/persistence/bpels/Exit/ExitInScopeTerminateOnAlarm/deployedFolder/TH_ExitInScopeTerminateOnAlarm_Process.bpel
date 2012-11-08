@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInScopeTerminateOnAlarm_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitInScopeTerminateOnAlarm_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitInScopeTerminateOnAlarm_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL18" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL181" xmlns:ns4="http://j2ee.netbeans.org/wsdl/IOWSDL4">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL18" location="IOWSDL18.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="OneWayPartnerLink" partnerLinkType="ns1:MainBPOneWayPLink" myRole="MainBPOneWayWSDLPortTypeRole"/>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:MainBPIOPLink" myRole="IOWSDL18PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IOWSDL18OperationIn" messageType="ns1:IOWSDL18OperationRequest"/>
+        <variable name="IOWSDL18OperationOut" messageType="ns1:IOWSDL18OperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL18Operation" portType="ns1:IOWSDL18PortType" variable="IOWSDL18OperationIn">
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL18OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <eventHandlers>
+                <onAlarm>
+                    <for>'P0Y0M0DT1H0M0S'</for>
+                    <scope name="Scope2">
+                        <empty name="Empty1"/>
+                    </scope>
+                </onAlarm>
+            </eventHandlers>
+            <sequence name="Sequence3">
+                <exit name="Exit1"/>
+            </sequence>
+        </scope>
+        <assign name="Assign8">
+            <copy>
+                    <from variable="outputString"/>
+                        <to variable="IOWSDL18OperationOut" part="OutputPart"/>
+                </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL18Operation" portType="ns1:IOWSDL18PortType" variable="IOWSDL18OperationOut"/>
+    </sequence>
+</process>

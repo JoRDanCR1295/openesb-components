@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="client" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/client"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/client" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FILE" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FTP">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FILE" location="FILE.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/FTP" location="FTP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:FTPPartner" partnerRole="FTPPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FILEPartner" myRole="FILEPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="requesterName" type="xsd:string"/>
+        <variable name="FILEOperationOut1" messageType="ns1:FILEOperationReply"/>
+        <variable name="FTPOperationOut1" messageType="ns2:FTPOperationReply"/>
+        <variable name="FTPOperationIn1" messageType="ns2:FTPOperationRequest"/>
+        <variable name="FILEOperationIn1" messageType="ns1:FILEOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FILEOperation" portType="ns1:FILEPortType" variable="FILEOperationIn1"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="FILEOperationIn1" part="part1"/>
+                <to variable="FTPOperationIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="FTPOperation" portType="ns2:FTPPortType" inputVariable="FTPOperationIn1" outputVariable="FTPOperationOut1"/>
+        <if name="If1">
+            <condition>starts-with($FTPOperationOut1.part1, 'Hello ')</condition>
+            <sequence name="Sequence1">
+                <assign name="Assign3">
+                    <copy>
+                        <from>substring-after($FTPOperationIn1.part1, 'Hello Duke, this is ')</from>
+                        <to variable="requesterName"/>
+                    </copy>
+                </assign>
+                <if name="If2">
+                    <condition>contains($FTPOperationOut1.part1, $requesterName)</condition>
+                    <assign name="Assign4">
+                        <copy>
+                            <from>concat($FTPOperationOut1.part1, '==&gt;Response for Request')</from>
+                            <to part="part1" variable="FILEOperationOut1"/>
+                        </copy>
+                    </assign>
+                    <else>
+                        <assign name="Assign5">
+                            <copy>
+                                <from>concat($FTPOperationOut1.part1, '==&gt; Response does not mention ', $requesterName)</from>
+                                <to part="part1" variable="FILEOperationOut1"/>
+                            </copy>
+                        </assign>
+                    </else>
+                </if>
+            </sequence>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>concat($FTPOperationOut1.part1, '=&gt; Not A Hello Back')</from>
+                        <to part="part1" variable="FILEOperationOut1"/>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FILEOperation" portType="ns1:FILEPortType" variable="FILEOperationOut1"/>
+    </sequence>
+   
+</process>

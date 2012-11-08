@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ForEachSimple" 
+             targetNamespace="http://enterprise.netbeans.org/wsdl/ForEachSimple"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://enterprise.netbeans.org/wsdl/ForEachSimple" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    
+    <message name="ForEachInputMsg">
+        <part name="data" type="xsd:string"/>
+        <part name="count" type="xsd:int"/>
+    </message>
+    <message name="ForEachOutputMsg">
+        <part name="data" type="xsd:string"/>
+    </message>
+    <portType name="ForEachPortType">
+        <operation name="ForEachOperation">
+            <input name="input1" message="tns:ForEachInputMsg"/>
+        </operation>
+    </portType>
+    <portType name="ForEachLoopPortType">
+        <operation name="ForEachLoopOperation">
+            <input name="input2" message="tns:ForEachInputMsg"/>
+        </operation>
+    </portType>
+    <portType name="InvokePortType">
+        <operation name="ForEachInvokeOp">
+            <input name="input1" message="tns:ForEachOutputMsg"/>
+        </operation>
+    </portType>
+    <binding name="ForEachBinding" type="tns:ForEachPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ForEachOperation">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="ForEachLoopBinding" type="tns:ForEachLoopPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ForEachLoopOperation">
+            <input name="input2"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ForEachInvokeOp">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <service name="ForEachService">
+        <port name="ForEachPort" binding="tns:ForEachBinding">
+            <soap:address location="http://localhost:20000/ForEach"/>
+        </port>
+        <port name="ForEachLoopPort" binding="tns:ForEachLoopBinding">
+            <soap:address location="http://localhost:20001/ForEachLoop"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:20002/ForEachInvoke"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="ForEachPartnerLinkType">
+        <plink:role name="ForEachPLinkTypeRole" portType="tns:ForEachPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="ForEachLoopPartnerLinkType">
+        <plink:role name="ForEachLoopPLinkTypeRole" portType="tns:ForEachLoopPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="ForEachInvokePLT">
+        <plink:role name="ForEachInvokeRole" portType="tns:InvokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

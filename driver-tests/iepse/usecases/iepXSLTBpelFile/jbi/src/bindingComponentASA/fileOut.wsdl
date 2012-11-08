@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="urn:FileOut" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+name="FileOutService" targetNamespace="urn:FileOut">
+    <types>
+        <xsd:schema xmlns:ns1="urn:FileOut" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:FileOut">
+            <xsd:element name="outMessageObj" type="tns:outMessageObjType">
+            </xsd:element>
+            <xsd:element name="status" type="xsd:string">
+            </xsd:element>            
+            <xsd:complexType name="outMessageObjType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="int" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <wsdl:message name="OF_Input">
+        <wsdl:part element="tns:outMessageObj" name="body"/>
+    </wsdl:message>
+    <wsdl:message name="OF_InputResponse">
+        <wsdl:part element="tns:status" name="result"/>
+    </wsdl:message>
+    <wsdl:portType name="OF">
+        <wsdl:operation name="Output">
+            <wsdl:input message="tns:OF_Input"/>
+            <wsdl:output message="tns:OF_InputResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="OFBinding" type="tns:OF">
+        <file:binding/>
+        <operation name="Output">
+            <file:operation inputName="bpelfileOut.txt" inputNameIsPattern="false"/> 
+            <input>
+                <file:input addEOL="false" multipleRecordsPerFile="true">
+                </file:input>
+            </input>
+        </operation>
+    </binding>
+    
+    <wsdl:service name="OFService">
+        <wsdl:port binding="tns:OFBinding" name="OFPort">
+            <file:address inputDir="@drivertest_dir@/iepse/usecases/iepXSLTBpelFile/jbi/test/iepXSLTBpelFile/" inputDirIsPattern="false"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OFServiceLink">
+	<plnk:role name="OFRole" portType="tns:OF"/>
+   </plnk:partnerLinkType>
+
+</definitions>

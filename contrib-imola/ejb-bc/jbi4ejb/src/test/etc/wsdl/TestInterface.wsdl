@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://interfaces.wsdlgeneration.test.jbi4ejb.imolinfo.it" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://interfaces.wsdlgeneration.test.jbi4ejb.imolinfo.it" xmlns:imolaejb="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://interfaces.wsdlgeneration.test.jbi4ejb.imolinfo.it" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:complexType name="ComplexParameter">
+<xsd:sequence>
+<xsd:element name="code" type="xsd:int"/>
+<xsd:element name="longCode" nillable="true" type="xsd:long"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="complexMethod">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="tns:ComplexParameter"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="in1" type="xsd:int"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="in2" nillable="true" type="xsd:string"/>
+<xsd:element maxOccurs="1" minOccurs="1" name="in3" nillable="true" type="xsd:boolean"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="ComplexReturnType">
+<xsd:sequence>
+<xsd:element name="address" nillable="true" type="tns:ComplexReturnTypeAddress"/>
+<xsd:element name="age" type="xsd:int"/>
+<xsd:element name="name" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ComplexReturnTypeAddress">
+<xsd:sequence>
+<xsd:element name="city" nillable="true" type="xsd:string"/>
+<xsd:element name="street" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="complexMethodResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="tns:ComplexReturnType"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="ComplexException">
+<xsd:sequence>
+<xsd:element name="code" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="ComplexException" type="tns:ComplexException"/>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="complexMethodResponse">
+    <wsdl:part name="parameters" element="tns:complexMethodResponse"/>
+  </wsdl:message>
+  <wsdl:message name="ComplexException">
+    <wsdl:part name="ComplexException" element="tns:ComplexException"/>
+  </wsdl:message>
+  <wsdl:message name="complexMethodRequest">
+    <wsdl:part name="parameters" element="tns:complexMethod"/>
+  </wsdl:message>
+  <wsdl:portType name="TestInterface">
+    <wsdl:operation name="complexMethod">
+      <wsdl:input name="complexMethodRequest" message="tns:complexMethodRequest"/>
+      <wsdl:output name="complexMethodResponse" message="tns:complexMethodResponse"/>
+      <wsdl:fault name="ComplexException" message="tns:ComplexException"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TestInterfaceBinding" type="tns:TestInterface">
+<imolaejb:binding>
+<imolaejb:orb>
+<imolaejb:property name="org.omg.CORBA.ORBClass" value="org.jacorb.orb.ORB"/>
+<imolaejb:property name="org.omg.CORBA.ORBSingletonClass" value="org.jacorb.orb.ORBSingleton"/>
+</imolaejb:orb>
+</imolaejb:binding>
+    <wsdl:operation name="complexMethod">
+      <wsdl:input name="complexMethodRequest">
+      </wsdl:input>
+      <wsdl:output name="complexMethodResponse">
+      </wsdl:output>
+      <wsdl:fault name="ComplexException">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TestInterface">
+    <wsdl:port name="TestInterfacePort" binding="tns:TestInterfaceBinding">
+<imolaejb:address name="corbaname" localizationType="corbaname"/>    </wsdl:port>
+  </wsdl:service>
+<imolaejb:types>
+<imolaejb:serialVersionUID className="it.imolinfo.jbi4ejb.test.wsdlgeneration.interfaces.ComplexParameter" UID="3351048771920133599"/>
+<imolaejb:serialVersionUID className="it.imolinfo.jbi4ejb.test.wsdlgeneration.interfaces.ComplexReturnTypeAddress" UID="-2577061313040651228"/>
+<imolaejb:serialVersionUID className="it.imolinfo.jbi4ejb.test.wsdlgeneration.interfaces.ComplexException" UID="656669036556334875"/>
+<imolaejb:serialVersionUID className="it.imolinfo.jbi4ejb.test.wsdlgeneration.interfaces.ComplexReturnType" UID="-4360988899859724735"/>
+</imolaejb:types>
+</wsdl:definitions>

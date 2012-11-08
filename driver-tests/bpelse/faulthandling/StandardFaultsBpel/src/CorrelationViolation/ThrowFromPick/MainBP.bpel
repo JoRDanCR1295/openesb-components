@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="MainBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromPick/MainBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromPick/MainBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromPick/StandardFaultWSDL" xmlns:ns0="http://xml.netbeans.org/schema/StandardFaultsBpel/src/CorrelationViolation/XmlSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromPick/StandardFaultWSDL" location="StandardFaultWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink5" partnerLinkType="ns1:MainBPOneWay2" myRole="MainBPOneWay2TypeRole"/>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns1:MainBPOneWay" myRole="MainBPOneWayPortTypeRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:SFBP" partnerRole="SFBPPortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:SFBPOneWay" partnerRole="SFBPOneWayPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:MainBP" myRole="MainBPPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SFBPOperationOut2" messageType="ns1:MessageReply"/>
+        <variable name="SFBPOperationOut1" messageType="ns1:MessageReply"/>
+        <variable name="MainBPOneWayOperationIn" messageType="ns1:MessageReply"/>
+        <variable name="MainBPOneWay2OperationIn" messageType="ns1:MessageReply"/>
+        <variable name="SFBPOneWayOperationIn2" messageType="ns1:MessageRequest"/>
+        <variable name="SFBPOneWayOperationIn1" messageType="ns1:MessageRequest"/>
+        <variable name="MainBPOperationOut" messageType="ns1:MessageReply"/>
+        <variable name="MainBPOperationIn" messageType="ns1:MessageRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:correlation1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="MainBPOperation" portType="ns1:MainBPPortType" variable="MainBPOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Id1</from>
+                <to>$SFBPOneWayOperationIn1.Input/ns0:Id1</to>
+            </copy>
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Data</from>
+                <to>$SFBPOneWayOperationIn1.Input/ns0:Data</to>
+            </copy>
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Id1</from>
+                <to>$SFBPOneWayOperationIn2.Input/ns0:Id1</to>
+            </copy>
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Data</from>
+                <to>$SFBPOneWayOperationIn2.Input/ns0:Data</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>sf1</literal>
+                </from>
+                <to>$SFBPOneWayOperationIn1.Input/ns0:Id2</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>sf2</literal>
+                </from>
+                <to>$SFBPOneWayOperationIn2.Input/ns0:Id2</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="SFBPOneWayOperation" portType="ns1:SFBPOneWayPortType" inputVariable="SFBPOneWayOperationIn1"/>
+        <invoke name="Invoke2" partnerLink="PartnerLink2" operation="SFBPOneWayOperation" portType="ns1:SFBPOneWayPortType" inputVariable="SFBPOneWayOperationIn2"/>
+        <invoke name="Invoke3" partnerLink="PartnerLink3" operation="SFBPOperation" portType="ns1:SFBPPortType" inputVariable="SFBPOneWayOperationIn1" outputVariable="SFBPOperationOut1"/>
+        <invoke name="Invoke4" partnerLink="PartnerLink3" operation="SFBPOperation" portType="ns1:SFBPPortType" inputVariable="SFBPOneWayOperationIn2" outputVariable="SFBPOperationOut2"/>
+        <receive name="Receive2" partnerLink="PartnerLink5" operation="MainBPOneWay2Operation" portType="ns1:MainBPOneWay2Type" createInstance="no" variable="MainBPOneWay2OperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <receive name="Receive3" partnerLink="PartnerLink4" operation="MainBPOneWayOperation" portType="ns1:MainBPOneWayPortType" createInstance="no" variable="MainBPOneWayOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Id1</from>
+                <to>$MainBPOperationOut.Output/ns0:Id1</to>
+            </copy>
+            <copy>
+                <from>$MainBPOperationIn.Input/ns0:Id2</from>
+                <to>$MainBPOperationOut.Output/ns0:Id2</to>
+            </copy>
+            <copy>
+                <from>concat($MainBPOneWayOperationIn.Output/ns0:Data, $MainBPOneWay2OperationIn.Output/ns0:Data, $SFBPOperationOut1.Output/ns0:Data, $SFBPOperationOut2.Output/ns0:Data)</from>
+                <to>$MainBPOperationOut.Output/ns0:Data</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="MainBPOperation" portType="ns1:MainBPPortType" variable="MainBPOperationOut"/>
+    </sequence>
+</process>

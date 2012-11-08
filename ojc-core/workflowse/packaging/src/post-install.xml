@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Post Installation task for WLM SE component -->
+<project name="post-install" default="install" basedir=".">
+
+    <!-- Property file containing authentication info -->
+    <property file="post-install.properties"/> 
+    <property name="displayname" value="Workflow SE Component and Console"/>   
+
+    <target name="install">
+	<!-- sets the classpath needed to build/run this installer -->
+        <path id="project.classpath">
+	    <fileset dir=".">
+                <include name="ant-contrib-1.0b3.jar" />
+            </fileset>
+        </path>
+
+	<!-- defined the extra ant features -->
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="project.classpath" />
+        
+        <!-- Create a connection pool  -->
+	<exec executable="${glassfish.asadmin}">
+		<arg line="create-jdbc-connection-pool"/> 
+		<arg line="--user ${admin.user}"/>
+		<arg line="--passwordfile ${admin.password.file}"/>
+		<arg line="--port ${admin.port}"/>
+		<arg line="--host ${glassfish.host.name}"/>
+		<arg line="--allownoncomponentcallers=true"/>
+		<arg line="--idletimeout 300"/>
+		<arg line="--maxpoolsize 32"/>
+		<arg line="--maxwait 60000"/>
+		<arg line="--poolresize 2"/>
+		<arg line="--steadypoolsize 8"/>
+		<arg line="--validationmethod auto-commit"/>
+		<arg line="--datasourceclassname org.apache.derby.jdbc.ClientDataSource"/>
+		<arg line="--restype javax.sql.DataSource"/>
+		<arg line="--property portNumber=1527:password=WORKFLOW:user=WORKFLOW:serverName=localhost:databaseName=WORKFLOWDB:connectionAttributes=;create\=true"/>
+		<arg line="WorkflowPool"/>
+	</exec>
+
+        <!-- Create a JDBC resource -->
+	<exec executable="${glassfish.asadmin}">
+		<arg line="create-jdbc-resource"/>
+		<arg line="--user ${admin.user}"/>
+		<arg line="--passwordfile  ${admin.password.file}"/>
+		<arg line="--port ${admin.port}"/>
+		<arg line="--host ${glassfish.host.name}"/>
+		<arg line="--connectionpoolid  WorkflowPool"/>
+		<arg line="jdbc/__workflow"/>
+	</exec>
+
+        <!-- create the users/group -->
+        <antcall target="create-users"/>
+	
+	<!-- deploy the console jar -->
+        <antcall target="process-deployment"/>
+
+        <!-- extract saxon library to <GF>\domains\<domain>\jbi\libext\sun-wlm-engine -->
+        <unzip src="${saxonlibwlse.jar}"
+            dest="${glassfish.location}">
+        </unzip>
+    </target>
+
+    <target name="create-users">
+        <antcall target="create-user">
+            <param name="userName" value="WLMUser"/>
+            <param name="groupName" value="WLMGroup"/>
+            <param name="userPasswordKey" value="${WLMUser_USERPASSWORD}"/>
+        </antcall>
+
+        <antcall target="create-user">
+            <param name="userName" value="staff1"/>
+            <param name="groupName" value="staff"/>
+            <param name="userPasswordKey" value="${staff1_USERPASSWORD}"/>
+        </antcall>
+
+        <antcall target="create-user">
+            <param name="userName" value="staff2"/>
+            <param name="groupName" value="staff"/>
+            <param name="userPasswordKey" value="${staff2_USERPASSWORD}"/>
+        </antcall>
+
+        <antcall target="create-user">
+            <param name="userName" value="manager1"/>
+            <param name="groupName" value="manager"/>
+            <param name="userPasswordKey" value="${manager1_USERPASSWORD}"/>
+        </antcall>
+    </target>
+
+    <target name="create-user">
+        <echo>User = ${userName}</echo>
+        <echo>Group Name = ${groupName}</echo>
+        
+        <!-- create password file with user password -->
+	<echo file="${admin.password.file}" append="false">
+AS_ADMIN_PASSWORD=${GF_AS_ADMIN_PASSWORD}
+AS_ADMIN_MASTERPASSWORD=${GF_AS_ADMIN_MASTERPASSWORD}
+AS_ADMIN_USERPASSWORD=${userPasswordKey}
+        </echo>
+
+        <exec executable="${glassfish.asadmin}" outputproperty="listuseroutput">
+            <arg line="list-file-users"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+        </exec>
+
+        <condition property="isUserExists">
+            <contains string="${listuseroutput}" substring="${userName}" casesensitive="true" />
+        </condition>
+
+        <if>
+            <equals arg1="${isUserExists}" arg2="$${isUserExists}"/>
+            <then>
+                <echo>User ${userName} does not exists</echo>
+                <exec executable="${glassfish.asadmin}">
+                    <arg line="create-file-user"/>
+                    <arg line="--user ${admin.user}"/>
+                    <arg line="--port ${admin.port}"/>
+                    <arg line="--host ${glassfish.host.name}"/>
+                    <arg line="--passwordfile ${admin.password.file}"/>
+                    <arg line="--groups ${groupName}"/>
+                    <arg line="${userName}"/>
+                </exec>
+            </then>
+            <else>
+                <echo>User ${userName} already exists</echo>
+                <exec executable="${glassfish.asadmin}">
+                    <arg line="update-file-user"/>
+                    <arg line="--user ${admin.user}"/>
+                    <arg line="--port ${admin.port}"/>
+                    <arg line="--host ${glassfish.host.name}"/>
+                    <arg line="--passwordfile ${admin.password.file}"/>
+                    <arg line="--groups ${groupName}"/>
+                    <arg line="${userName}"/>
+                </exec>
+            </else>
+        </if>
+     </target>
+
+     <target name="process-deployment">
+	<!--  query status of wlm service assembly -->
+        <exec executable="${glassfish.asadmin}" outputproperty="output">
+            <arg line="show-jbi-service-assembly"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+            <arg line="WLMConsoleCompApp"/>
+        </exec>
+
+        <!-- save status if exists -->
+        <condition property="notDeployed">
+            <contains string="${output}" substring="WLMConsoleCompApp does not exist" casesensitive="true" />
+        </condition>
+
+        <!-- save status started mode -->
+        <condition property="started">
+            <contains string="${output}" substring="Started" casesensitive="true" />
+        </condition>
+
+       <!-- save status stopped mode -->
+        <condition property="stopped">
+            <contains string="${output}" substring="Stopped" casesensitive="true" />
+       </condition>
+
+        <!-- check if wlm service assembly already is deployed -->
+        <if>
+            <equals arg1="${notDeployed}" arg2="$${notDeployed}"/>
+            <then>
+                <echo>WLMConsoleCompApp is aready installed so need to undeploy</echo>
+
+                <!-- shutdown if it is in a Started mode -->
+                <antcall target="test-if-needs-shutdown"/>
+		
+                <!-- undeploy -->
+                <antcall target="undeploy"/>
+
+                <!-- deploy again -->
+                <antcall target="deploy"/>
+
+                <!-- start the service assembly -->
+                <antcall target="start"/>
+            </then>
+            <else>
+                <!-- shutdown if it is in a Started mode -->
+                <antcall target="test-if-needs-shutdown"/>
+
+                <echo>WLMConsoleCompApp is not deployed yet</echo>
+                <antcall target="deploy"/>
+
+                <!-- start the service assembly -->
+                <antcall target="start"/>
+            </else>
+        </if>
+     </target>
+
+    <target name="deploy">
+        <exec executable="${glassfish.asadmin}">
+            <arg line="deploy-jbi-service-assembly"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="--enabled=true"/>
+            <arg line="${wlm.console.jar}"/>
+        </exec>
+    </target>
+    
+    <target name="undeploy">
+
+	<!-- undeploy the service assembly -->
+        <exec executable="${glassfish.asadmin}">
+            <arg line="undeploy-jbi-service-assembly"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+            <arg line="WLMConsoleCompApp"/>
+        </exec>
+    </target>
+
+    <target name="start">
+        <exec executable="${glassfish.asadmin}">
+            <arg line="start-jbi-service-assembly"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="WLMConsoleCompApp"/>
+        </exec>
+   </target>
+
+   <target name="test-if-needs-shutdown">
+        <if>
+            <equals arg1="${started}" arg2="$${started}"/>
+            <then>
+		<!-- have not started yet -->
+		<echo>In Started Mode? false</echo>
+
+		<!-- check if in stop mode -->
+                <if>
+                    <equals arg1="${stopped}" arg2="$${stopped}"/>
+                    <then>
+		        <echo>In Stopped Mode? false</echo>
+                    </then>
+                    <else>
+                        <!-- in a stop mode so need to shutdown first -->
+                        <antcall target="shutdown"/>
+		    </else>
+                </if>
+            </then>
+            <else>
+                <!-- in a start mode so need to shutdown first -->
+		<echo>In a Started mode; need to shutdown</echo>
+                <antcall target="shutdown"/>
+            </else>
+        </if>
+   </target>
+
+   <target name="shutdown">
+        <exec executable="${glassfish.asadmin}">
+            <arg line="shut-down-jbi-service-assembly"/>
+            <arg line="--user ${admin.user}"/>
+            <arg line="--passwordfile ${admin.password.file}"/>
+            <arg line="--port ${admin.port}"/>
+            <arg line="--host ${glassfish.host.name}"/>
+            <arg line="WLMConsoleCompApp"/>
+        </exec>
+   </target>
+
+</project>
+

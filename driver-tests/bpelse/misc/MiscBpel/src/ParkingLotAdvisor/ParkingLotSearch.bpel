@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="ParkingLotSearch"
+         targetNamespace="http://www.seebeyond.com/eInsight/ParkingLotSearch"
+         sbynpxp:end_YLoc="249.0"
+         sbynpxp:start_YLoc="126.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="27.0"
+         sbynpxp:end_XLoc="614.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/ParkingLotSearch"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:ns0="stc:ParkingLotAdvisor/wsdl"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="stc:ParkingLotAdvisor/wsdl"
+            location="ParkingLotAdvisor.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="SearchLink"
+                     partnerLinkType="ns0:ParkingPartner"
+                     myRole="ParkingSearchrole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="reserveParkingSpot_Output"
+                  messageType="ns0:ParkingLotAdvisorSEI_reserveParkingSpot"></variable>
+        <variable name="reserveParkingSpot_Input"
+                  messageType="ns0:ParkingLotAdvisorSEI_reserveParkingSpotResponse"></variable>
+        <variable name="reserveParkingSpot_Fault"
+                  messageType="ns0:SpotNotAvailableException"></variable>
+    </variables>
+    <sequence>
+        <receive name="reserveParkingSpot"
+                 partnerLink="SearchLink"
+                 portType="ns0:ParkingLotAdvisorSEI_1"
+                 operation="reserveParkingSpot"
+                 variable="reserveParkingSpot_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="90.0"
+                 sbynpxp:YLoc="153.0"></receive>
+        <if name="Decision"
+                sbynpxp:XLoc="188.0"
+                sbynpxp:YLoc="151.0"
+                sbynpxp:YLoc_MergeNode="110.0"
+                sbynpxp:XLoc_MergeNode="431.0">
+            <condition>number($reserveParkingSpot_Output.parameters/int_1) = 5</condition>
+                <sequence>
+                    <assign name="Assign"
+                            sbynpxp:XLoc="294.0"
+                            sbynpxp:YLoc="84.0">
+                        <copy>
+                            <from>&apos;Lot is free&apos;</from>
+                            <to>$reserveParkingSpot_Input.result/stringoutput</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            <else sbynpx:lineLabel="Case 2">
+                <sequence>
+                    <throw name="Throw"
+                           faultName="tns:SpotNotAvailableException"
+                           faultVariable="reserveParkingSpot_Fault"
+                           sbynpxp:XLoc="278.0"
+                           sbynpxp:YLoc="238.0"></throw>
+                </sequence>
+            </else>
+        </if>
+        <reply name="reserveParkingSpot.Reply"
+               partnerLink="SearchLink"
+               portType="ns0:ParkingLotAdvisorSEI_1"
+               operation="reserveParkingSpot"
+               variable="reserveParkingSpot_Input"
+               sbynpxp:XLoc="509.0"
+               sbynpxp:YLoc="154.0"></reply>
+    </sequence>
+</process>

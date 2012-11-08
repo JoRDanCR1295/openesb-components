@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)build.xml - ver 1.1 - 01/04/2006
+ #
+ # Copyright 2004-2008 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+
+
+<!--
+# This ant script is responsible for making configuration changes in a domain
+# This ant scrpt adds JBI framework lifecycle module and does other needed
+# configurations. 
+# USAGE:  ant -Dappserver.install.dirL=<appserver_install_location> 
+#             -Dappserver.jbi.domain.root=<domain_root>
+# Optionally, the following properties can be specified
+#             -Dappserver.jbi.home.dir=<jbi home dir default is appserver.install.dir/jbi>
+#             -Djbi.lifecycle.module.enabled=<true>
+#
+-->
+
+<project name="configure_domain" default="configure-components" basedir=".">
+
+    <target name="configure-components" depends="init">
+        <!--antcall target="check-user-home-db-dir"/-->
+        <antcall target="make-jbi-components-dir"/>    
+        <antcall target="copy-files-to-domain-jbi"/>    
+        <antcall target="unjar-components-jars"/> 
+        <antcall target="edit-jbi-registry"/>
+    
+        <echo message="Configured JBI"/>
+    </target>
+    
+    <target name="make-jbi-components-dir" >
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${bpelse.name}/install_root/workspace" />        
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${xsltse.name}/install_root/workspace" />        
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${filebc.name}/install_root/workspace" />        
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${jmsbc.name}/install_root/workspace" />        
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${sqlse.name}/install_root/workspace" />
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${encoderlib.name}/install_root" />
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${saxonlib.name}/install_root" />
+        <mkdir dir="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${wsdlextlib.name}/install_root" />
+        <!--mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root/workspace" /-->
+        <!--mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${jdbcbc.name}/install_root/workspace" /-->
+        <!--mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${smtpbc.name}/install_root/workspace" /-->
+        <!--mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${ftpbc.name}/install_root/workspace" /-->
+        <!--mkdir dir="${JBI_DOMAIN_ROOT}/jbi/components/${mqbc.name}/install_root/workspace" /-->
+        <!--mkdir dir="${appserver.install.dir}/databases" /-->
+        <!--mkdir dir="${user.home}/.netbeans-derby" /-->
+    </target>
+    
+    <!--
+    <target name="check-user-home-db-dir">
+        <available file="${user.home}/.netbeans-derby" property="user.home.db.exists"/>
+        <antcall target="move-user-home-db-dir"/>
+    </target>
+    
+    <target name="move-user-home-db-dir" if="user.home.db.exists">
+        <move file="${user.home}/.netbeans-derby" todir="${user.home}/.netbeans-derby.bak"/>
+    </target>
+    -->
+    
+    <target name="copy-files-to-domain-jbi" >
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/xsltse/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${xsltse.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/sqlse/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${sqlse.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/bpelse/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${bpelse.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/filebc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${filebc.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/jmsbc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${jmsbc.name}/install_root/workspace/config.properties"
+        />
+        
+        
+        <!--
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/iepse/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root/workspace/config.properties"
+        />
+        <replace file="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root/workspace/config.properties" token="JBI_DOMAIN_ROOT" value="${JBI_DOMAIN_ROOT}"/>
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/iepse/updatedConfig.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root/workspace/updatedConfig.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/iepse/bootstrap.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root/workspace/bootstrap.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/iepse/iepseDB.zip"
+            tofile="${appserver.install.dir}/databases/iepseDB.zip"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/iepse/iepseDB.zip"
+            tofile="${user.home}/.netbeans-derby/iepseDB.zip"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/jdbcbc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${jdbcbc.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/smtpbc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${smtpbc.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/ftpbc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${ftpbc.name}/install_root/workspace/config.properties"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="templates/mqbc/config.properties"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${mqbc.name}/install_root/workspace/config.properties"
+        />
+        -->
+        
+        
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/bpelserviceengine.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${bpelse.name}/bpelserviceengine.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/encoderlib.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${encoderlib.name}/encoderlib.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/wsdlextlib.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${wsdlextlib.name}/wsdlextlib.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/saxonlib.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${saxonlib.name}/saxonlib.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/filebc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${filebc.name}/filebc.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/xsltserviceengine.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${xsltse.name}/xsltserviceengine.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/jmsbc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${jmsbc.name}/jmsbc.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/sqlse.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${sqlse.name}/sqlse.jar"
+        />
+        
+        <!--
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/iepserviceengine.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/iepserviceengine.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/jdbcbc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${jdbcbc.name}/jdbcbc.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/smtpbc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${smtpbc.name}/smtpbc.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/ftpbc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${ftpbc.name}/ftpbc.jar"
+        />
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${appserver.install.dir}/addons/jbi-components/mqbc.jar"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/components/${mqbc.name}/mqbc.jar"
+        />
+        -->
+    </target>
+    
+    <target name="unjar-components-jars" >
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${encoderlib.name}/encoderlib.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${encoderlib.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${wsdlextlib.name}/wsdlextlib.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${wsdlextlib.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${saxonlib.name}/saxonlib.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/shared-libraries/${saxonlib.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${bpelse.name}/bpelserviceengine.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${bpelse.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${xsltse.name}/xsltserviceengine.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${xsltse.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${filebc.name}/filebc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${filebc.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${jmsbc.name}/jmsbc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${jmsbc.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${sqlse.name}/sqlse.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${sqlse.name}/install_root" />
+        <!--        
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/iepserviceengine.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${iepse.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${jdbcbc.name}/jdbcbc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${jdbcbc.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${smtpbc.name}/smtpbc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${smtpbc.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${ftpbc.name}/ftpbc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${ftpbc.name}/install_root" />
+        <unjar src="${JBI_DOMAIN_ROOT}/jbi/components/${mqbc.name}/mqbc.jar" 
+                dest="${JBI_DOMAIN_ROOT}/jbi/components/${mqbc.name}/install_root" />
+        <unzip src="${appserver.install.dir}/databases/iepseDB.zip" dest="${appserver.install.dir}/databases"/>
+        <unzip src="${user.home}/.netbeans-derby/iepseDB.zip" dest="${user.home}/.netbeans-derby"/>
+        -->
+    </target>
+    
+    <target name="edit-jbi-registry">
+        <copy overwrite="false" preservelastmodified="true" verbose="true" 
+            file="${JBI_DOMAIN_ROOT}/jbi/config/jbi-registry.xml"
+            tofile="${JBI_DOMAIN_ROOT}/jbi/config/jbi-registry-backup.xml"
+        />
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${bpelse.name}"/>
+            <arg value="${bpelse.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${xsltse.name}"/>
+            <arg value="${xsltse.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${filebc.name}"/>
+            <arg value="${filebc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${jmsbc.name}"/>
+            <arg value="${jmsbc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${sqlse.name}"/>
+            <arg value="${sqlse.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${encoderlib.name}"/>
+            <arg value="${encoderlib.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${wsdlextlib.name}"/>
+            <arg value="${wsdlextlib.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${saxonlib.name}"/>
+            <arg value="${saxonlib.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        
+        <!--
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${iepse.name}"/>
+            <arg value="${iepse.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+       
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${jdbcbc.name}"/>
+            <arg value="${jdbcbc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+        
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${smtpbc.name}"/>
+            <arg value="${smtpbc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${ftpbc.name}"/>
+            <arg value="${ftpbc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+
+        <java failonerror="true"
+                fork="yes"
+                classname="com.sun.jbi.installer.utilities.JBIConfigUtil">
+            <arg value="-EditJBIRegistry"/>
+            <arg value="${JBI_DOMAIN_ROOT}"/>            
+            <arg value="${mqbc.name}"/>
+            <arg value="${mqbc.jar.name}"/>
+            <arg value="${isDAS}"/>
+
+            <classpath>
+                <pathelement location="${appserver.install.dir}/lib/addons/install-util.jar"/>
+            </classpath>
+        </java>
+				-->
+        
+    </target>
+    
+    
+    <target name="init"
+        depends="check-settings,
+             set-platform,
+             set-file-separator-windows,
+             set-file-separator-unix,
+             set-jbi-home,set-jbi-domain-root,
+             set-esb-name,set-jbi-domain-name">
+        <echo message="appserver.install.dir is ${appserver.install.dir}"/>
+        <echo message="appserver.jbi.domain.root is ${appserver.jbi.domain.root}"/>
+        <fail message="One or more required properties are not set - ABORT." unless="env-okay"/>
+    </target>
+
+    
+    <target name="set-platform">
+        <condition property="isWindows">
+          <os family="windows"/>
+        </condition>
+    </target>
+    
+    <target name="check-settings" >
+        <condition property="env-okay">
+            <and>
+                <isset property="appserver.install.dir"/>
+                <isset property="appserver.jbi.domain.root"/>                
+            </and>
+        </condition>
+    </target>
+
+    <target name="set-file-separator-windows" if="isWindows">
+        <property name="FILE_SEPARATOR" value="\"/>
+    </target>  
+
+    <target name="set-file-separator-unix" unless="isWindows">
+        <property name="FILE_SEPARATOR" value="/"/>
+    </target>  
+    
+    <target name="set-jbi-home" unless="appserver.jbi.home.dir" 
+                                depends="set-file-separator-windows,
+                                         set-file-separator-unix">
+        <property name="appserver.jbi.home.dir" value="${appserver.install.dir}${FILE_SEPARATOR}addons${FILE_SEPARATOR}jbi"/>
+        <property name="JBI_HOME" value="${appserver.jbi.home.dir}"/>
+    </target>  
+        
+    <target name="set-jbi-domain-root">
+        <property name="JBI_DOMAIN_ROOT" value="${appserver.jbi.domain.root}"/>            
+    </target>
+    
+    <target name="set-esb-name" unless="ESB_NAME">
+        <property name="ESB_NAME" value="SunESB"/>
+    </target>  
+
+    <target name="set-jbi-domain-name">
+        <basename property="jbi.domain.name" file="${JBI_DOMAIN_ROOT}"/>
+    </target>  
+
+</project>

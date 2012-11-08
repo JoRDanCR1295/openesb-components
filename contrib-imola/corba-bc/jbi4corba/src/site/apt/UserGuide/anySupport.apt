@@ -1,0 +1,74 @@
+																			---
+																			Any support
+																			---
+																			Marco Piraccini, Luca Acquaviva
+																			---
+																			23/02/2009
+
+Any Type
+
+	The component supports the CORBA Any type.
+	The <Any> objects are mapped as <<xs:anyType>>, for example if we have
+	a CORBA method declared in the IDL as:
+	
++------------------------------------------+	
+string echo(in any msg) 
++------------------------------------------+	
+
+	The parameter is converted in:
+
++------------------------------------------+
+<xs:element minOccurs="0" name="msg" type="xs:anyType"/>
++------------------------------------------+
+	
+	We can put into Anys only types that are defined in the IDL used to 
+	generate the WSDL (or defined in imported IDLs). The XML messages managed by 
+	the component must specify, in XML elements that represents <Any> objects, 
+	the <<xsi:type>>. For example:
+	
+
++------------------------------------------+	
+<arg0 xsi:type="ser:echo1">
+	<name>Marco</name>
+	<address>Imola</address>
+</arg0>
++------------------------------------------+         
+	
+
+Any types in a BPEL with GlassFishESB
+
+	We can create the WSDL form an IDL containing an Any as usual using with the {{{../netbeansplugin.html}Netbeans Plugin}}:
+	
+[../images/any_idl_creation.jpg]
+	
+	Now we can use this WSDL in a BPEL. If we need to invoke an operation that uses
+	a <Any> we have to assign the value to a element in a BPEL variable 
+	(the one that is then used to invoke the service).
+	
+	To do so, we have we have to <<cast>> the <Any> to the needed type. 
+	In this example we cast the "people" parameter to "persona". 
+	To do that in the <Assign> BPEL activity we have to choice the "people"
+	parameter on the variable and then right-click:
+
+[../images/image_any_cast.jpg]
+
+	Than the editor shows a dialog box to choice the type to be used for the cast:
+
+[../images/anycast6.jpg]
+	
+	Click Ok to complete the cast. The image belows shows the result of casting the Any type 
+	to a "persona" type. 
+
+[../images/anycast7.jpg]
+
+	Now the variable can be assigned using the mapper dialog as usual:
+	
+[../images/anycast8.jpg]	
+
+Notes
+	
+	Due to {{{http://www.netbeans.org/issues/show_bug.cgi?id=153422}this bug}}, it's possible 
+	that in older versions of GlassFishESB the cast to anyType doesn't work. 
+	If so, please update to a more recent version.
+				
+	

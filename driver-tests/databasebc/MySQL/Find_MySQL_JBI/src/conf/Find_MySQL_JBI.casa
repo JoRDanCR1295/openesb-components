@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPFindMySQL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns3="http://enterprise.netbeans.org/bpel/MySQLFindBpel" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="SOAPFindMySQLPort" interface-name="ns1:SOAPFindMySQLPortType" name="endpoint1" service-name="ns1:SOAPFindMySQLService"/>
+        <endpoint endpoint-name="MySQLFindport" interface-name="ns2:jdbcPortType" name="endpoint2" service-name="ns2:MySQLFindservice"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="SOAPFindMySQLPortTypeRole_myRole" file-path="MySQLFindBpel.bpel" interface-name="ns1:SOAPFindMySQLPortType" name="endpoint3" process-name="MySQLFindBpel" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="jdbcPortTypeRole_partnerRole" file-path="MySQLFindBpel.bpel" interface-name="ns2:jdbcPortType" name="endpoint4" process-name="MySQLFindBpel" service-name="ns3:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="Find_MySQL_BPEL.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="Find_MySQL_JBI-Find_MySQL_BPEL" unit-name="Find_MySQL_BPEL" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="Find_MySQL_JBI-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/SOAPFindMySQL.wsdl#xpointer(/definitions/service[@name='SOAPFindMySQLService']/port[@name='SOAPFindMySQLPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-database-binding.jar" component-name="sun-database-binding" description="Represents this Service Unit" name="Find_MySQL_JBI-sun-database-binding" unit-name="sun-database-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/JdbcFindMySQL.wsdl#xpointer(/definitions/service[@name='MySQLFindservice']/port[@name='MySQLFindport'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint2" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/JdbcFindMySQL.wsdl#xpointer(/definitions/portType[@name='jdbcPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/SOAPFindMySQL.wsdl#xpointer(/definitions/portType[@name='SOAPFindMySQLPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/JdbcFindMySQL.wsdl#xpointer(/definitions/binding[@name='binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/SOAPFindMySQL.wsdl#xpointer(/definitions/binding[@name='SOAPFindMySQLBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/JdbcFindMySQL.wsdl#xpointer(/definitions/service[@name='MySQLFindservice'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Find_MySQL_BPEL/SOAPFindMySQL.wsdl#xpointer(/definitions/service[@name='SOAPFindMySQLService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

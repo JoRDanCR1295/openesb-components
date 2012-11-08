@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Trace"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SimpleTest/Trace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sunext="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/SimpleTest/Trace" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Trace" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://xml.netbeans.org/schema/Trace">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Trace" location="Trace.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:Trace1" myRole="TracePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TraceOperationIn" messageType="ns1:TraceOperationRequest"/>
+        <variable name="count" type="xsd:int"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="TraceOperation" portType="ns1:TracePortType" variable="TraceOperationIn">
+            <sunext:trace>
+                <sunext:log level="info" location="onStart">
+                    <from>
+                        <literal>Receive started.</literal>
+                    </from>
+                </sunext:log>
+                <sunext:log level="info" location="onComplete">
+                    <from variable="TraceOperationIn"/>
+                </sunext:log>
+                <sunext:log level="info" location="onComplete">
+                    <from>
+                        <literal>Receive completed.</literal>
+                    </from>
+                </sunext:log>
+            </sunext:trace>
+        </receive>
+        <scope name="Scope1">
+            <sequence name="Sequence1">
+                <sunext:trace>
+                    <sunext:log level="info" location="onStart">
+                        <from>
+                            <literal>The sequence has started.</literal>
+                        </from>
+                    </sunext:log>
+                    <sunext:log level="info" location="onComplete">
+                        <from>
+                            <literal>The sequence is complete.</literal>
+                        </from>
+                    </sunext:log>
+                </sunext:trace>
+                <assign name="Assign1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>
+                                <literal>Assign started.</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>concat('Assign completed. count = ', $count)</from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <copy>
+                        <from>0</from>
+                        <to variable="count"/>
+                    </copy>
+                </assign>
+                <if name="If1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>
+                                <literal>If started.</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>If completed.</literal>
+                            </from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <condition>$count = 0</condition>
+                    <sequence name="Sequence2">
+                        <empty name="Empty2">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <from>
+                                        <literal>Empty started.</literal>
+                                    </from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <from>
+                                        <literal>Empty completed.</literal>
+                                    </from>
+                                </sunext:log>
+                            </sunext:trace>
+                        </empty>
+                        <wait name="Wait1">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <ns2:from>'Wait started.'</ns2:from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <ns2:from>'Wait completed.'</ns2:from>
+                                </sunext:log>
+                            </sunext:trace>
+                            <for>'P0Y0M0DT0H0M2S'</for>
+                        </wait>
+                    </sequence>
+                </if>
+                <while name="While1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>concat('While started. count = ', $count)</from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>concat('While completed. count = ', $count)</from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <condition> ( $count &lt; 2 ) </condition>
+                    <sequence name="Sequence3">
+                        <assign name="Assign2">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <from>concat('Assign started. count = ', $count)</from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <from>concat('Assign completed. count = ', $count)</from>
+                                </sunext:log>
+                            </sunext:trace>
+                            <copy>
+                                <from> ( $count + 1 ) </from>
+                                <to variable="count"/>
+                            </copy>
+                        </assign>
+                        <wait name="Wait2">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <ns2:from>'Wait started.'</ns2:from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <ns2:from>'Wait completed.'</ns2:from>
+                                </sunext:log>
+                            </sunext:trace>
+                            <for>'P0Y0M0DT0H0M2S'</for>
+                        </wait>
+                    </sequence>
+                </while>
+                <repeatUntil name="RepeatUntil1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>concat('RepeatUntil started. count = ', $count)</from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>concat('RepeatUntil completed. count = ', $count)</from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <sequence name="Sequence4">
+                        <assign name="Assign3">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <from>concat('Assign started. count = ', $count)</from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <from>concat('Assign completed. count = ', $count)</from>
+                                </sunext:log>
+                            </sunext:trace>
+                            <copy>
+                                <from> ( $count - 1 ) </from>
+                                <to variable="count"/>
+                            </copy>
+                        </assign>
+                        <wait name="Wait3">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onStart">
+                                    <ns2:from>'Wait started.'</ns2:from>
+                                </sunext:log>
+                                <sunext:log level="info" location="onComplete">
+                                    <ns2:from>'Wait completed.'</ns2:from>
+                                </sunext:log>
+                            </sunext:trace>
+                            <for>'P0Y0M0DT0H0M2S'</for>
+                        </wait>
+                    </sequence>
+                    <condition> ( $count &lt;= 0 ) </condition>
+                </repeatUntil>
+                <forEach name="ForEach1" parallel="no" counterName="fecounter">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>
+                                <literal>ForEach started.</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>ForEach completed.</literal>
+                            </from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <startCounterValue>1</startCounterValue>
+                    <finalCounterValue>2</finalCounterValue>
+                    <scope name="Scope3">
+                        <sequence name="Sequence5">
+                            <assign name="Assign4">
+                                <sunext:trace>
+                                    <sunext:log level="info" location="onStart">
+                                        <from>concat('Assign started. fe counter = ', $fecounter)</from>
+                                    </sunext:log>
+                                    <sunext:log level="info" location="onComplete">
+                                        <from>concat('Assign completed. fe counter = ', $fecounter)</from>
+                                    </sunext:log>
+                                </sunext:trace>
+                                <copy>
+                                    <from>0</from>
+                                    <to variable="count"/>
+                                </copy>
+                            </assign>
+                            <wait name="Wait4">
+                                <sunext:trace>
+                                    <sunext:log level="info" location="onStart">
+                                        <ns2:from>'Wait started.'</ns2:from>
+                                    </sunext:log>
+                                    <sunext:log level="info" location="onComplete">
+                                        <ns2:from>'Wait completed.'</ns2:from>
+                                    </sunext:log>
+                                </sunext:trace>
+                                <for>'P0Y0M0DT0H0M2S'</for>
+                            </wait>
+                        </sequence>
+                    </scope>
+                </forEach>
+                <wait name="Wait5">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <ns2:from>'Wait started.'</ns2:from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <ns2:from>'Wait completed.'</ns2:from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <for>'P0Y0M0DT0H0M2S'</for>
+                </wait>
+            </sequence>
+        </scope>
+        <scope name="Scope2">
+            <faultHandlers>
+                <catchAll>
+                    <sunext:trace>
+                        <sunext:log level="info" location="onStart">
+                            <from>
+                                <literal>CatchAll started.</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>CatchAll completed.</literal>
+                            </from>
+                        </sunext:log>
+                    </sunext:trace>
+                    <empty name="Empty1"/>
+                </catchAll>
+            </faultHandlers>
+            <throw name="Throw1" faultName="ns2:invalidVariables">
+                <sunext:trace>
+                    <sunext:log level="info" location="onStart">
+                        <from>
+                            <literal>Throw started.</literal>
+                        </from>
+                    </sunext:log>
+                    <sunext:log level="info" location="onComplete">
+                        <from>
+                            <literal>Throw completed.</literal>
+                        </from>
+                    </sunext:log>
+                </sunext:trace>
+            </throw>
+        </scope>
+        <scope name="Scope4">
+            <sunext:trace>
+                <sunext:log level="info" location="onStart">
+                    <ns2:from>'Scope started.'</ns2:from>
+                </sunext:log>
+                <sunext:log level="info" location="onComplete">
+                    <ns2:from>'Scope Completed.'</ns2:from>
+                </sunext:log>
+            </sunext:trace>
+            <wait name="Wait6">
+                <sunext:trace>
+                    <sunext:log level="info" location="onStart">
+                        <ns2:from>'Wait started.'</ns2:from>
+                    </sunext:log>
+                    <sunext:log level="info" location="onComplete">
+                        <ns2:from>'Wait completed.'</ns2:from>
+                    </sunext:log>
+                </sunext:trace>
+                <for>'P0Y0M0DT0H0M2S'</for>
+            </wait>
+        </scope>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="TraceOperation" portType="ns1:TracePortType" variable="TraceOperationIn">
+            <sunext:trace>
+                <sunext:log level="info" location="onStart">
+                    <from>
+                        <literal>Reply started.</literal>
+                    </from>
+                </sunext:log>
+                <sunext:log level="info" location="onComplete">
+                    <from>
+                        <literal>Reply completed.</literal>
+                    </from>
+                </sunext:log>
+            </sunext:trace>
+        </reply>
+    </sequence>
+</process>

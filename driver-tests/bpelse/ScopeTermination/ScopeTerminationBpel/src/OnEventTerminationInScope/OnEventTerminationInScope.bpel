@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OnEventTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnEventTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/OnEventTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope" xmlns:ns3="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_PTypes" xmlns:ns4="http://xml.netbeans.org/schema/DataTypes" xmlns:ns5="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_PTypes" location="OnEventTerminationInScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns3:OnEventTerminationInScope_PTypesPartner2" myRole="OnEventTerminationInScope_PTypesPortType2Role"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns3:OnEventTerminationInScope_PTypesPartner1" myRole="OnEventTerminationInScope_PTypesPortType1Role"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns3:OnEventTerminationInScope_PTypesPartner" myRole="OnEventTerminationInScope_PTypesPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" type="xsd:string"/>
+        <variable name="OnEventTerminationInScope_PTypesOperationOut1" messageType="ns5:message1"/>
+        <variable name="OnEventTerminationInScope_PTypesOperationOut" messageType="ns5:message1"/>
+        <variable name="OnEventTerminationInScope_PTypesOperationIn" messageType="ns5:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns5:property1"/>
+    </correlationSets>
+    <sequence name="Sequence2">
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="OnEventTerminationInScope_PTypesOperation" portType="ns3:OnEventTerminationInScope_PTypesPortType" variable="OnEventTerminationInScope_PTypesOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign4">
+            <copy>
+                <from>
+                    <literal>InitialAssignInSubBP</literal>
+                </from>
+                <to variable="Variable1"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence1">
+                        <wait name="Wait5">
+                            <for>'P0Y0M0DT0H0M5S'</for>
+                        </wait>
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($Variable1, '-AssignInFH')</from>
+                                <to>$OnEventTerminationInScope_PTypesOperationOut.part1/Id1</to>
+                            </copy>
+                        </assign>
+                        <reply name="Reply1" partnerLink="PartnerLink1" operation="OnEventTerminationInScope_PTypesOperation" portType="ns3:OnEventTerminationInScope_PTypesPortType" variable="OnEventTerminationInScope_PTypesOperationOut"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <flow name="Flow1">
+                <scope>
+                    <eventHandlers>
+                    		<!--name="OnEvent2" -->
+                        <onEvent partnerLink="PartnerLink2" operation="OnEventTerminationInScope_PTypesOperation" portType="ns3:OnEventTerminationInScope_PTypesPortType1" variable="OnEventTerminationInScope_PTypesOperationIn1" messageType="ns5:message1">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <scope>
+                                <assign name="Assign3">
+                                    <copy>
+                                        <from>concat($Variable1, '-AssignAfterOnEvent2')</from>
+                                        <to variable="Variable1"/>
+                                    </copy>
+                                </assign>
+                            </scope>                      
+                        </onEvent>
+                    		<!--name="OnEvent3" -->                        
+                        <onEvent partnerLink="PartnerLink3" operation="OnEventTerminationInScope_PTypesOperation" portType="ns3:OnEventTerminationInScope_PTypesPortType2" variable="Oneventterminationinscope_Ptypesoperationin2" messageType="ns5:message1">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <scope>                        
+                                <sequence name="Sequence3">
+                                    <wait name="Wait6">
+                                        <for>'P0Y0M0DT0H0M0.5S'</for>
+                                    </wait>
+                                    <assign name="Assign2">
+                                        <copy>
+                                            <from>concat($Variable1, '-AssignAfterOnEvent3')</from>
+                                            <to variable="Variable1"/>
+                                        </copy>
+                                    </assign>
+                                    <wait name="Wait7">
+                                        <for>'P0Y0M0DT0H0M10S'</for>
+                                    </wait>
+                                    <reply name="Reply3" partnerLink="PartnerLink3" operation="OnEventTerminationInScope_PTypesOperation" portType="ns3:OnEventTerminationInScope_PTypesPortType2" variable="OnEventTerminationInScope_PTypesOperationOut1"/>
+                                </sequence>
+                            </scope>
+                        </onEvent>
+                    </eventHandlers>
+                    <wait name="Wait6">
+                        <for>'P0Y0M0DT0H1M0S'</for>
+                    </wait>
+                </scope>
+                <sequence name="Sequence4">
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M1S'</for>
+                    </wait>
+                    <throw name="Throw1" faultName="tns:SomeFault"/>
+                </sequence>
+            </flow>
+        </scope>
+    </sequence>
+</process>

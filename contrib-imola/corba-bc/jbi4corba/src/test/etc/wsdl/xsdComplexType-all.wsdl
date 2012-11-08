@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" 
+    xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" 
+    xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" 
+    xmlns:tns="urn:it.imolinfo.Jbi4Corba.test.webservice.generator" 
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    name="EchoService" 
+    targetNamespace="urn:it.imolinfo.Jbi4Corba.test.webservice.generator">
+
+	<wsdl:types>
+		<xsd:schema 
+			targetNamespace="urn:it.imolinfo.Jbi4Corba.test.webservice.generator" 
+			elementFormDefault="qualified" 
+			attributeFormDefault="qualified">
+
+			<!--
+            The element 'all' allow the presence of a set of unordered elements.
+            In this case the elements must have maxOccurs and minOccurs = {0|1}
+            -->
+
+			<xsd:element name="Req">
+            <xsd:complexType>
+            	<xsd:all>
+            		<xsd:element name="user" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            		<xsd:element name="pass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            	</xsd:all>
+            </xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="Res">
+            <xsd:complexType>
+            	<xsd:all>
+            		<xsd:element name="user" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            		<xsd:element name="pass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            	</xsd:all>
+            </xsd:complexType>
+
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="echoReq">
+		<wsdl:part name="parameters" element="tns:Req"/>
+	</wsdl:message>
+	<wsdl:message name="echoRes">
+		<wsdl:part name="parameters" element="tns:Res"/>
+	</wsdl:message>
+
+	<wsdl:portType name="EchoServicePortType">
+
+		<wsdl:operation name="echoAll">
+			<wsdl:input name="echoReq" message="tns:echoReq"/>
+			<wsdl:output name="echoRes" message="tns:echoRes"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="EchoServiceBinding" type="tns:EchoServicePortType">
+		<wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="echoAll">
+			<wsdlsoap:operation soapAction="fooAction"/>
+			<wsdl:input name="echoReq">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="echoRes">
+				<wsdlsoap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="EchoService">
+		<wsdl:port name="EchoServiceHttpPort" binding="tns:EchoServiceBinding">
+			<wsdlsoap:address location="http://localhost/services/EchoService"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

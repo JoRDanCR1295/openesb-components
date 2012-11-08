@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromInvoke/SubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromInvoke/SubBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromInvoke/StandardFaultWSDL" xmlns:ns0="http://xml.netbeans.org/schema/StandardFaultsBpel/src/CorrelationViolation/XmlSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromInvoke/StandardFaultWSDL" location="StandardFaultWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:SubBP" myRole="SubBPPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SubBPOperationOut" messageType="ns1:MessageReply"/>
+        <variable name="SubBPOperationIn" messageType="ns1:MessageRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SubBPOperation" portType="ns1:SubBPPortType" variable="SubBPOperationIn"/>
+        <if name="If1">
+            <condition> ( $SubBPOperationIn.Input/ns0:Data = 'case1' ) </condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>$SubBPOperationIn.Input/ns0:Data</from>
+                    <to>$SubBPOperationOut.Output/ns0:Data</to>
+                </copy>
+                <copy>
+                    <from>$SubBPOperationIn.Input/ns0:Id2</from>
+                    <to>$SubBPOperationOut.Output/ns0:Id2</to>
+                </copy>
+                <copy>
+                    <from>concat($SubBPOperationIn.Input/ns0:Id1, 'case1suffix')</from>
+                    <to>$SubBPOperationOut.Output/ns0:Id1</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$SubBPOperationIn.Input/ns0:Id1</from>
+                        <to>$SubBPOperationOut.Output/ns0:Id1</to>
+                    </copy>
+                    <copy>
+                        <from>$SubBPOperationIn.Input/ns0:Id2</from>
+                        <to>$SubBPOperationOut.Output/ns0:Id2</to>
+                    </copy>
+                    <copy>
+                        <from>$SubBPOperationIn.Input/ns0:Data</from>
+                        <to>$SubBPOperationOut.Output/ns0:Data</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <empty name="Empty1"/>
+                </catchAll>
+            </faultHandlers>
+            <reply name="Reply1" partnerLink="PartnerLink1" operation="SubBPOperation" portType="ns1:SubBPPortType" variable="SubBPOperationOut"/>
+        </scope>
+    </sequence>
+</process>

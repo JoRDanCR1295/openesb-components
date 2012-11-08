@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MQOutPut" 
+   targetNamespace="http://localhost/MQBCBpel/MQOutPut"
+    xmlns:ns1="urn:WS/types"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://localhost/MQBCBpel/MQOutPut" 
+    xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/" 
+    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+
+  <!-- Type definitions -->
+  <types>
+    <xsd:schema targetNamespace="http://localhost/MQBCBpel/MQOutPut" 
+                xmlns:tns="http://localhost/MQBCBpel/MQOutPut">
+    </xsd:schema>
+  </types>
+    <message name="mqTextMessage">
+        <part name="mqMessageTextBody" type="xsd:string"/>
+        <part name="mqSyncPoint" type="xsd:boolean"/>
+        <part name="report" type="xsd:int"/>
+        <part name="encoding" type="xsd:int"/>
+        <part name="characterSet" type="xsd:int"/>
+        <part name="correlationid" type="xsd:hexBinary"/>
+         <part name="groupid" type="xsd:int"/>
+        <part name="priority" type="xsd:int"/>
+        <part name="messageSequenceNum" type="xsd:string"/>
+        <part name="applicationIdData" type="xsd:hexBinary"/>
+        <part name="replyToQueueName" type="xsd:string"/>
+        <part name="replyToQueueMgrName" type="xsd:string"/>
+    </message>
+    <portType name="portTypeMqPut">
+        <operation name="operationMQPut">
+            <input name="input1MqPut" message="tns:mqTextMessage"/>
+        </operation>
+    </portType>
+  <binding name="bindingMqPut" type="tns:portTypeMqPut">
+    <mq:binding/>
+    <operation name="operationMQPut">
+            <mq:operation queueName="queue3" operationType="mqput" transaction="NoTransaction" queueOpenOptions="0"/>
+            <input name="input1MqPut">
+                <mq:header>
+                    <mq:correlationId parts="correlationid"/>
+                    <mq:messageId parts="applicationIdData"/>
+                </mq:header>
+                <mq:body MessageBody="mqMessageTextBody" MessageType="TextMessage" SyncPoint="false" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceMQ">
+        <port name="portMqPut" binding="tns:bindingMqPut">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktypeQPut">
+        <plink:role name="partnerlinktyperoleQPut" portType="tns:portTypeMqPut"/>
+    </plink:partnerLinkType>
+</definitions>

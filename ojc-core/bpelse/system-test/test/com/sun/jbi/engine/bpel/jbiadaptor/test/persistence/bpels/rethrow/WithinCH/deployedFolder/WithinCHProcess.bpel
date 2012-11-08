@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinCHProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinCHProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinCHProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinCH" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinCH" location="WithinCH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinCH1" myRole="WithinCHPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WithinCHOperationOut" messageType="ns1:WithinCHOperationReply"/>
+        <variable name="WithinCHOperationIn" messageType="ns1:WithinCHOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinCHOperationReply" faultVariable="WithinCHOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinCHOperation" portType="ns1:WithinCHPortType" variable="WithinCHOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinCHOperation" portType="ns1:WithinCHPortType" variable="WithinCHOperationIn"/>
+        <scope name="Scope1">
+            <faultHandlers>
+                    <catch faultName="tns:catchFault" faultMessageType="ns1:WithinCHOperationReply" faultVariable="WithinCHOperationOut">
+                         <scope name="OuterScope2">
+                              <faultHandlers>
+                                   <catchAll>
+                                        <compensateScope name="CompensateScope1" target="InnerScope2"/>
+                                   </catchAll>
+                              </faultHandlers>
+                              <flow name="Flow2">
+                                   <scope name="InnerScope2">
+                                        <compensationHandler>
+                                                  <rethrow name="Rethrow2"/>
+                                             </compensationHandler>
+                                        <empty name="Empty2"/>
+                                   </scope>
+                                   <sequence name="Sequence4">
+                                        <throw name="Throw4" faultName="tns:customFault"/>
+                                   </sequence>
+                              </flow>
+                         </scope>
+                    </catch>
+                        <catchAll>
+                             <scope name="OuterScope1">
+                                  <faultHandlers>
+                                       <catchAll>
+                                            <compensate name="Compensate1"/>
+                                       </catchAll>
+                                  </faultHandlers>
+                                  <flow name="Flow1">
+                                       <scope name="InnerScope1">
+                                            <compensationHandler>
+                                                      <rethrow name="Rethrow1">
+                                                                </rethrow>
+                                                 </compensationHandler>
+                                            <empty name="Empty1"/>
+                                       </scope>
+                                       <sequence name="Sequence3">
+                                            <throw name="Throw3" faultName="tns:customFault"/>
+                                       </sequence>
+                                  </flow>
+                             </scope>
+                        </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition> $WithinCHOperationIn.part2 = 'catchAll' </condition>
+                        <sequence name="Sequence1">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($WithinCHOperationIn.part1, '-catchAll-')</from>
+                                <to part="part1" variable="WithinCHOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinCHOperationOut"/>
+                    </sequence>
+                        <else>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($WithinCHOperationIn.part1, '-catch-')</from>
+                                    <to part="part1" variable="WithinCHOperationOut"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinCHOperationOut"/>
+                        </sequence>
+                    </else>
+                </if>
+        </scope>
+    </sequence>
+</process>

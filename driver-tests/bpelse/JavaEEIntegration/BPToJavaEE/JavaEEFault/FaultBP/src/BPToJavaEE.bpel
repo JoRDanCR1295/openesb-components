@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BPToJavaEE"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BPToJavaEE"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/BPToJavaEE" xmlns:ns1="http://j2ee.netbeans.org/wsdl/HttpService" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Fault">
+    <import namespace="http://j2ee.netbeans.org/wsdl/HttpService" location="HttpService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/Fault" location="Fault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="FaultPartnerLink" partnerLinkType="ns2:FaultPartner" partnerRole="FaultPortTypeRole"/>
+        <bpws:partnerLink name="HttpPartnerLink" partnerLinkType="ns1:HttpServicePartner" myRole="HttpServicePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="HttpServiceOperationOut" messageType="ns1:InoutMsg"/>
+        <bpws:variable name="HttpServiceOperationIn" messageType="ns1:InoutMsg"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="HttpReceive" createInstance="yes" partnerLink="HttpPartnerLink" operation="HttpServiceOperation" portType="ns1:HttpServicePortType" variable="HttpServiceOperationIn"/>
+        <bpws:scope name="Scope1">
+            <bpws:variables>
+                <bpws:variable name="FaultOperationOut" messageType="ns2:InoutMsg"/>
+                <bpws:variable name="FaultOperationIn" messageType="ns2:InoutMsg"/>
+            </bpws:variables>
+            <bpws:faultHandlers>
+                <bpws:catch faultName="ns2:faultElem" faultVariable="JavaEEFault_Variable" faultMessageType="ns2:FaultMsg">
+                    <bpws:assign name="AssignFaultMsg">
+                        <bpws:copy>
+                            <bpws:from variable="JavaEEFault_Variable" part="FaultPort"/>
+                            <bpws:to variable="HttpServiceOperationOut" part="InoutPart"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                </bpws:catch>
+            </bpws:faultHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from variable="HttpServiceOperationIn" part="InoutPart"/>
+                        <bpws:to variable="FaultOperationIn" part="InoutPart"/>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:invoke name="InvokeJavaEE" partnerLink="FaultPartnerLink" operation="FaultOperation" portType="ns2:FaultPortType" inputVariable="FaultOperationIn" outputVariable="FaultOperationOut"/>
+                <bpws:assign name="Assign3">
+                    <bpws:copy>
+                        <bpws:from variable="FaultOperationOut" part="InoutPart"/>
+                        <bpws:to variable="HttpServiceOperationOut" part="InoutPart"/>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:sequence>
+        </bpws:scope>
+        <bpws:reply name="ReplyToHttp" partnerLink="HttpPartnerLink" operation="HttpServiceOperation" portType="ns1:HttpServicePortType" variable="HttpServiceOperationOut"/>
+    </sequence>
+</process>

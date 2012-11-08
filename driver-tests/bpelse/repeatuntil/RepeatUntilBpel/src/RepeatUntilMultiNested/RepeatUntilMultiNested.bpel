@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilMultiNested" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilMultiNested"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilMultiNested" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepeatUntilMultiNested">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepeatUntilMultiNested" location="RepeatUntilMultiNested.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Operation1In1" messageType="ns1:RptMessage1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+                <from>0</from>
+                <to part="Counter1" variable="Operation1In1"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to part="Counter2" variable="Operation1In1"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to part="counter3" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <repeatUntil name="RepeatUntil2">
+                    <sequence name="Sequence2">
+                        <repeatUntil name="RepeatUntil3">
+                            <assign name="Assign4">
+                                <copy>
+                                    <from>concat('In RPT3', $Operation1In1.Name)</from>
+                                    <to part="Name" variable="Operation1In1"/>
+                                </copy>
+                                <copy>
+                                    <from> ( $Operation1In1.counter3 + 1 ) </from>
+                                    <to part="counter3" variable="Operation1In1"/>
+                                </copy>
+                            </assign>
+                            <condition> ( $Operation1In1.counter3 >= 2 ) </condition>
+                        </repeatUntil>
+                        <assign name="Assign6">
+                            <copy>
+                                <from>concat($Operation1In1.Name, 'RPT 2.')</from>
+                                <to part="Name" variable="Operation1In1"/>
+                            </copy>
+                            <copy>
+                                <from> ( $Operation1In1.Counter2 + 1 ) </from>
+                                <to part="Counter2" variable="Operation1In1"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                    <condition> ( $Operation1In1.Counter2 >= 2 ) </condition>
+                </repeatUntil>
+                <assign name="Assign7">
+                    <copy>
+                        <from>concat($Operation1In1.Name, 'IN RPT 1..')</from>
+                        <to part="Name" variable="Operation1In1"/>
+                    </copy>
+                    <copy>
+                        <from> ( $Operation1In1.Counter1 + 1 ) </from>
+                        <to part="Counter1" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $Operation1In1.Counter1 >= 2 ) </condition>
+        </repeatUntil>
+        <assign name="Assign5">
+            <copy>
+                <from variable="Operation1In1" part="Name"/>
+                <to variable="Operation1Out1" part="Name"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="Counter1"/>
+                <to variable="Operation1Out1" part="Counter1"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="Counter2"/>
+                <to variable="Operation1Out1" part="Counter2"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="counter3"/>
+                <to variable="Operation1Out1" part="counter3"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

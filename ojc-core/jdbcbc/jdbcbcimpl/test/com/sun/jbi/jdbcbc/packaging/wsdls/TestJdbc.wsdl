@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="JDBCInsert_WSDL"
+             targetNamespace="http://www.mycomp.org/JDBCInsert/JDBCInsert_WSDL"
+             xmlns:tns="http://www.mycomp.org/JDBCInsert/JDBCInsert_WSDL"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:ns="http://xml.netbeans.org/examples/targetNS" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://www.mycomp.org/JDBCInsert/JDBCInsert_WSDL">
+            <xsd:import namespace="http://xml.netbeans.org/examples/targetNS" schemaLocation="echo.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="message_0">
+        <wsdl:part name="part_0" element="ns:echo"/>
+    </wsdl:message>
+    <wsdl:portType name="MyPortType">
+        <wsdl:operation name="operation_0">
+            <wsdl:input name="input" message="tns:message_0"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+        <binding name="SoapBinding" type="tns:MyPortType">
+                <jdbc:binding/>
+                <operation name="operation_0">
+                        <jdbc:operation operationType="insert">
+                                <jdbc:input>insert into testJBI values ('60', ?)</jdbc:input>
+                        </jdbc:operation>
+                        <input name="input">
+                                <jdbc:input paramOrder="echoString"/>
+                        </input>
+                </operation>
+        </binding>
+
+   
+         <wsdl:service name="JDBCInsert_WSDLService">
+		<wsdl:port name="JDBCInsert_WSDLPortName" binding="tns:SoapBinding">
+		 <jdbc:address jndiName="jdbc/__OrclPool"/>
+		</wsdl:port>
+        </wsdl:service>
+
+	<plnk:partnerLinkType name="JDBCInsert_WSDLPartnerLinkType">
+		<plnk:role name="JDBCInsert_WSDLProvider" portType="tns:MyPortType"/>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

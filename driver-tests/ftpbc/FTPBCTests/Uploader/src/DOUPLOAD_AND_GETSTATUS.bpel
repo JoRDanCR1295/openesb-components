@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="DOUPLOAD_AND_GETSTATUS" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/DOUPLOAD_AND_GETSTATUS"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DOUPLOAD_AND_GETSTATUS" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FILE_FEEDER" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FTP_ONE_WAY">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FILE_FEEDER" location="FILE_FEEDER.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FTP_ONE_WAY" location="FTP_ONE_WAY.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:FTP_ONE_WAYPartner" partnerRole="FTP_ONE_WAYPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:FILE_FEEDERPartner" myRole="FILE_FEEDERPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FILE_FEEDEROperationOut" messageType="ns1:FILE_FEEDEROperationReply"/>
+        <bpws:variable name="FTP_ONE_WAYOperationIn" messageType="ns2:FTP_ONE_WAYOperationRequest"/>
+        <bpws:variable name="FILE_FEEDEROperationIn" messageType="ns1:FILE_FEEDEROperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FILE_FEEDEROperation" portType="ns1:FILE_FEEDERPortType" variable="FILE_FEEDEROperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="FILE_FEEDEROperationIn" part="part1"/>
+                <bpws:to variable="FTP_ONE_WAYOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="FTP_ONE_WAYOperation" portType="ns2:FTP_ONE_WAYPortType" inputVariable="FTP_ONE_WAYOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>UPLOAD ONE WAY INVOKING RETURNED WITH OUT FAULT</bpws:literal>
+                </bpws:from>
+                <bpws:to part="part1" variable="FILE_FEEDEROperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="FILE_FEEDEROperation" portType="ns1:FILE_FEEDERPortType" variable="FILE_FEEDEROperationOut"/>
+   </sequence>
+   
+</process>

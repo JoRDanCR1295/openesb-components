@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarmForAndRepeatEvery"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarmForAndRepeatEvery"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarmForAndRepeatEvery" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarmForAndRepeatEvery">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onAlarmForAndRepeatEvery" location="onAlarmForAndRepeatEvery.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarmForAndRepeatEvery1" myRole="onAlarmForAndRepeatEveryPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="TempVariable1" type="xsd:string"/>
+        <bpws:variable name="OnAlarmForAndRepeatEveryOperationOut" messageType="ns1:onAlarmForAndRepeatEveryOperationReply"/>
+        <bpws:variable name="OnAlarmForAndRepeatEveryOperationIn" messageType="ns1:onAlarmForAndRepeatEveryOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarmForAndRepeatEveryOperation" portType="ns1:onAlarmForAndRepeatEveryPortType" variable="OnAlarmForAndRepeatEveryOperationIn"/>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>concat('{Main Process Wait Duration-25 Sec}{For Duration-10 Sec}{ RepeatEvery Duration-3 Sec}', '{Start Time-', current-time(), '}')</bpws:from>
+                <bpws:to variable="TempVariable1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:documentation>ver0.3</bpws:documentation>
+                    <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+                    <bpws:repeatEvery>'P0Y0M0DT0H0M3S'</bpws:repeatEvery>                    
+                    <bpws:scope name="Scope2">
+                        <bpws:sequence name="Sequence1">
+                            <bpws:assign name="Assign1">
+                            <bpws:copy>
+                                <bpws:from>concat($TempVariable1, '[', current-time(), ']')</bpws:from>
+                                <bpws:to variable="TempVariable1"/>
+                            </bpws:copy>
+                        </bpws:assign>
+                        </bpws:sequence>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:wait name="Wait1">
+                <bpws:for>'P0Y0M0DT0H0M25S'</bpws:for>
+            </bpws:wait>
+        </bpws:scope>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($TempVariable1, '{End Time-', current-time(), '}')</bpws:from>
+                <bpws:to part="part1" variable="OnAlarmForAndRepeatEveryOperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarmForAndRepeatEveryOperation" portType="ns1:onAlarmForAndRepeatEveryPortType" variable="OnAlarmForAndRepeatEveryOperationOut"/>
+    </sequence>
+</process>

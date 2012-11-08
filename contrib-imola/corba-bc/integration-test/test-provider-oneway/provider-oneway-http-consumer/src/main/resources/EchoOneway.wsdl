@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoOneway" targetNamespace="urn:jbi4corba/test-provider-oneway" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-provider-oneway" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-provider-oneway" xmlns="urn:jbi4corba/test-provider-oneway" xmlns:ns1="http://testprovideroneway.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://testprovideroneway.test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_testprovideroneway.test.jbi4corba.imolinfo.it.xsd"/>
+            <xs:element name="echoOneway">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="message" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoOnewayStruct">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="message" type="ns1:echoStruct"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>  
+  </wsdl:types>
+  <wsdl:message name="echoOneway">
+        <wsdl:part name="parameters" element="tns:echoOneway">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echoOnewayStruct">
+        <wsdl:part name="parameters" element="tns:echoOnewayStruct">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EchoOneway">
+        <wsdl:operation name="echoOneway">
+            <wsdl:input name="echoOneway" message="tns:echoOneway">
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="echoOnewayStruct">
+            <wsdl:input name="echoOnewayStruct" message="tns:echoOnewayStruct">
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:portType>
+  <wsdl:binding name="EchoOnewayCorbaBinding" type="tns:EchoOneway">
+
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+     <wsdl:operation name="echoOneway">
+      <soap:operation/>
+      <wsdl:input name="echoOneway">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="echoOnewayStruct">
+      <soap:operation/>
+      <wsdl:input name="echoOnewayStruct">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoOneway">
+    <wsdl:port name="EchoOnewayCorbaPort" binding="tns:EchoOnewayCorbaBinding">
+
+      <soap:address location="http://localhost:8192/Service/test-provider-oneway/"/>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoOneway">
+<plnk:role name="EchoOnewayPortTypeRole" portType="tns:EchoOneway"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

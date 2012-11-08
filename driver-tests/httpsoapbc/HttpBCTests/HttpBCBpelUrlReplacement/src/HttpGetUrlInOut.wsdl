@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" name="HttpGetUrlInOut" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/">
+    <types/>
+    <message name="HttpGetUrlReplacementInOutOperationRequest">
+        <part name="param1" type="xsd:string"/>
+        <part name="param2" type="xsd:string"/>
+        <part name="param3" type="xsd:string"/>
+    </message>
+    <message name="HttpGetUrlReplacementInOutOperationReply">
+        <part name="result" type="xsd:string"/>
+    </message>
+    <portType name="HttpGetUrlInOutPortType">
+        <wsdl:operation name="HttpGetUrlReplacementInOutOperation">
+            <wsdl:input name="input1" message="tns:HttpGetUrlReplacementInOutOperationRequest"/>
+            <wsdl:output name="output1" message="tns:HttpGetUrlReplacementInOutOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="HttpGetUrlInOutBinding" type="tns:HttpGetUrlInOutPortType">
+        <http:binding verb="GET"/>
+        <wsdl:operation name="HttpGetUrlReplacementInOutOperation">
+            <http:operation location="inoutget/Foo=(param1)Bar(param2)Bar=(param3)"/>
+            <wsdl:input name="input1">
+                <http:urlReplacement/>
+            </wsdl:input>
+            <wsdl:output name="output1"/>
+        </wsdl:operation>
+    </binding>
+    <service name="HttpGetUrlInOutService">
+        <wsdl:port name="HttpGetUrlInOutPort" binding="tns:HttpGetUrlInOutBinding">
+            <http:address location="http://localhost:${HttpDefaultPort}/HttpGetUrlInOutService/HttpGetUrlInOutPort/HttpGetUrlInOut"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="HttpGetUrlEncodedInOut1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="HttpGetUrlReplacementInOutPortTypeRole" portType="tns:HttpGetUrlInOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

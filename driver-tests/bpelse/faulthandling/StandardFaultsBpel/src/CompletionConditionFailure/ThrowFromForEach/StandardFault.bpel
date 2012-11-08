@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="StandardFault"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CompletionConditionFailure/ThrowFromForEach/StandardFault"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CompletionConditionFailure/ThrowFromForEach/StandardFault" xmlns:ns1="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/src/CompletionConditionFailure/ThrowFromForEach/StandardFault" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://xml.netbeans.org/schema/StandardFaultsBpel/src/CompletionConditionFailure/XmlSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/src/CompletionConditionFailure/ThrowFromForEach/StandardFault" location="StandardFault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkA" partnerLinkType="ns1:StandardFault1" myRole="StandardFaultPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <ns2:variable name="StandardFaultOperationFault" messageType="ns1:StandardFaultOperationFault"/>
+        <ns2:variable name="DummyVariable" messageType="ns1:StandardFaultOperationRequest"/>
+        <variable name="StandardFaultOperationOut" messageType="ns1:StandardFaultOperationReply"/>
+        <variable name="StandardFaultOperationIn" messageType="ns1:StandardFaultOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" variable="StandardFaultOperationIn"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$StandardFaultOperationIn.input/ns0:Id</from>
+                <to>$StandardFaultOperationOut.output/ns0:Id</to>
+            </copy>
+            <copy>
+                <from>$StandardFaultOperationIn.input/ns0:Data</from>
+                <to>$StandardFaultOperationOut.output/ns0:Data</to>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                    <catch faultName="ns2:completionConditionFailure">
+                            <sequence name="Sequence1">
+                                    <assign name="Assign1">
+                                            <copy>
+                                                    <from>$StandardFaultOperationIn.input/ns0:Id</from>
+                                                        <to>$StandardFaultOperationFault.fault/ns0:Id</to>
+                                                </copy>
+                                                <copy>
+                                                    <from>
+                                                            <literal>Response from the standard fault catch block.</literal>
+                                                        </from>
+                                                        <to>$StandardFaultOperationFault.fault/ns0:Data</to>
+                                                </copy>
+                                        </assign>
+                                        <reply name="Reply2" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" faultName="ns1:fault1" variable="StandardFaultOperationFault"/>
+                                </sequence>
+                        </catch>
+                </faultHandlers>
+            <ns2:sequence name="Sequence2">
+                <ns2:forEach name="ForEach1" parallel="no" counterName="counter">
+                    <ns2:startCounterValue>1</ns2:startCounterValue>
+                        <ns2:finalCounterValue>3</ns2:finalCounterValue>
+                        <ns2:completionCondition>
+                            <ns2:branches successfulBranchesOnly="yes">2</ns2:branches>
+                        </ns2:completionCondition>
+                        <ns2:scope name="Scope2">
+                            <ns2:faultHandlers>
+                                    <ns2:catch faultName="ns2:uninitializedVariable">
+                                            <ns2:empty name="Empty1"/>
+                                        </ns2:catch>
+                                </ns2:faultHandlers>
+                                <ns2:assign name="Generate_Fault">
+                                    <ns2:copy>
+                                            <ns2:from>$DummyVariable.input/ns0:Id</ns2:from>
+                                                <ns2:to>$StandardFaultOperationOut.output/ns0:Id</ns2:to>
+                                        </ns2:copy>
+                                        <ns2:copy>
+                                            <ns2:from>$DummyVariable.input/ns0:Data</ns2:from>
+                                                <ns2:to>$StandardFaultOperationOut.output/ns0:Data</ns2:to>
+                                        </ns2:copy>
+                                </ns2:assign>
+                        </ns2:scope>
+                </ns2:forEach>
+                <ns2:reply name="Reply1" partnerLink="PartnerLinkA" operation="StandardFaultOperation" portType="ns1:StandardFaultPortType" variable="StandardFaultOperationOut"/>
+            </ns2:sequence>
+        </scope>
+    </sequence>
+</process>

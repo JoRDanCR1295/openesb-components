@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrInvFlow_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrInvFlow_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrInvFlow_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:InvFlowchildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:InvFlowchildTargetNamespace"
+            location="corrInvFlow_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_childOp"
+                     partnerLinkType="ns0:InvFlowchildServiceLinkType"
+                     myRole="InvFlowchildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InvFlowchildOperation_Output"
+                  messageType="ns0:InvFlowchildMessage"></variable>
+        <variable name="InvFlowchildOperation_Input"
+                  messageType="ns0:InvFlowchildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="InvFlowchildOperation"
+                 partnerLink="plink_childOp"
+                 portType="ns0:InvFlowchildPortType"
+                 operation="InvFlowchildOperation"
+                 variable="InvFlowchildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>concat(&apos;CHILDBP:  &apos;, $InvFlowchildOperation_Output.InvFlowchildPart/string)</from>
+                <to>$InvFlowchildOperation_Input.InvFlowchildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_childOp"
+               portType="ns0:InvFlowchildPortType"
+               operation="InvFlowchildOperation"
+               variable="InvFlowchildOperation_Input"></reply>
+    </sequence>
+</process>

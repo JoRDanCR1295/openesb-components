@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Copystring"
+         targetNamespace="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:tns="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CopyDataTypeTNS"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/">
+    <import namespace="urn:CopyDataTypeTNS"
+            location="CopyDataType.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="copyTestPLink"
+                     partnerLinkType="ns0:CopyDataTypePLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="stringOperation_Output"
+                  messageType="ns0:stringMessage"></variable>
+        <variable name="stringOperation_Input"
+                  messageType="ns0:stringMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="stringOperation"
+                 partnerLink="copyTestPLink"
+                 portType="ns0:CopyDataTypePortType"
+                 operation="stringOperation"
+                 variable="stringOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$stringOperation_Output.stringPart/repeat_string</from>
+                <to>$stringOperation_Input.stringPart/repeat_string</to>
+            </copy>
+            <copy>
+                <from>$stringOperation_Output.stringPart/optional_string</from>
+                <to>$stringOperation_Input.stringPart/optional_string</to>
+            </copy>
+            <copy>
+                <from>$stringOperation_Output.stringPart/xsd_string</from>
+                <to>$stringOperation_Input.stringPart/xsd_string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="copyTestPLink"
+               portType="ns0:CopyDataTypePortType"
+               operation="stringOperation"
+               variable="stringOperation_Input"></reply>
+    </sequence>
+</process>

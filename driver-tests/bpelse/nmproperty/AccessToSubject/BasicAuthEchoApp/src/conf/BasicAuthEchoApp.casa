@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BasicAuthEcho/BasicAuthEcho" xmlns:ns2="http://j2ee.netbeans.org/wsdl/BasicAuthEcho/clientBasicAuthEcho" xmlns:ns3="http://enterprise.netbeans.org/bpel/BasicAuthEcho/basicAuthEcho" xmlns:ns4="http://enterprise.netbeans.org/bpel/BasicAuthEcho/clientBasicAuthEcho" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="BasicAuthEchoPort" interface-name="ns1:BasicAuthEchoPortType" name="endpoint1" service-name="ns1:BasicAuthEchoService"/>
+        <endpoint endpoint-name="clientBasicAuthEchoPort" interface-name="ns2:clientBasicAuthEchoPortType" name="endpoint2" service-name="ns2:clientBasicAuthEchoService"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="BasicAuthEchoPortTypeRole_myRole" file-path="basicAuthEcho.bpel" interface-name="ns1:BasicAuthEchoPortType" name="endpoint3" process-name="basicAuthEcho" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="clientBasicAuthEchoPortTypeRole_myRole" file-path="clientBasicAuthEcho.bpel" interface-name="ns2:clientBasicAuthEchoPortType" name="endpoint4" process-name="clientBasicAuthEcho" service-name="ns4:PartnerLink2"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="BasicAuthEchoPortTypeRole_partnerRole" file-path="clientBasicAuthEcho.bpel" interface-name="ns1:BasicAuthEchoPortType" name="endpoint5" process-name="clientBasicAuthEcho" service-name="ns4:PartnerLink1"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="BasicAuthEcho.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="BasicAuthEchoApp-BasicAuthEcho" unit-name="BasicAuthEcho" unknown="false" x="145" y="99">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BasicAuthEchoApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiasa/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/service[@name='BasicAuthEchoService']/port[@name='BasicAuthEchoPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/BasicAuthEcho/clientBasicAuthEcho.wsdl#xpointer(/definitions/service[@name='clientBasicAuthEchoService']/port[@name='clientBasicAuthEchoPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint1" state="new"/>
+        <connection consumer="endpoint5" provider="endpoint3" state="deleted"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/portType[@name='BasicAuthEchoPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/portType[@name='BasicAuthEchoPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/clientBasicAuthEcho.wsdl#xpointer(/definitions/portType[@name='clientBasicAuthEchoPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/binding[@name='BasicAuthEchoBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/binding[@name='BasicAuthEchoBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/clientBasicAuthEcho.wsdl#xpointer(/definitions/binding[@name='clientBasicAuthEchoBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/service[@name='BasicAuthEchoService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/BasicAuthEcho.wsdl#xpointer(/definitions/service[@name='BasicAuthEchoService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BasicAuthEcho/clientBasicAuthEcho.wsdl#xpointer(/definitions/service[@name='clientBasicAuthEchoService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

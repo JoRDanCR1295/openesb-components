@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="MQRecvFileOutBpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/MQRecvFileOutBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MQRecvFileOutBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MQInRecv" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OutputFileService">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/MQInRecv" location="MQInRecv.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/OutputFileService" location="OutputFileService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkFileOut" partnerLinkType="ns2:OutputFileServicePartner" partnerRole="OutputFileServicePortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkMqRecv1" partnerLinkType="ns1:MQInRecvPartner" myRole="MQInRecvPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="OutputFileServiceOperationIn" messageType="ns2:OutputFileServiceOperationRequest"/>
+        <bpws:variable name="MQInRecvOperationIn" messageType="ns1:MQInRecvOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkMqRecv1" operation="MQInRecvOperation" portType="ns1:MQInRecvPortType" variable="MQInRecvOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="MQInRecvOperationIn" part="partTxMsg"/>
+                <bpws:to variable="OutputFileServiceOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLinkFileOut" operation="OutputFileServiceOperation" portType="ns2:OutputFileServicePortType" inputVariable="OutputFileServiceOperationIn"/>
+   </sequence>
+   
+</process>

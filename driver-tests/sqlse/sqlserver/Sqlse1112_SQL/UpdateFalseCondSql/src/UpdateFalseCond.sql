@@ -1,0 +1,1 @@
+update employee set empname='Sunitha' where empid=0

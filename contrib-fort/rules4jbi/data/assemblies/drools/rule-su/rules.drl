@@ -1,0 +1,13 @@
+package org.example.drools.jsr94tck
+
+import org.openesb.components.rules4jbi.test4rules.domain.Customer;
+import org.openesb.components.rules4jbi.test4rules.domain.Invoice;
+
+rule "Rule 1"	
+	when
+                $invoice : Invoice($amount : amount, status =="unpaid")
+		$customer : Customer(creditLimit  > $amount)
+	then
+                $customer.setCreditLimit($customer.getCreditLimit() - $amount); 
+		$invoice.setStatus("paid");
+end

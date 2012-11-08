@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MQPutRecv" targetNamespace="http://j2ee.netbeans.org/wsdl/MQPutRecv"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/MQPutRecv" xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/">
+    <types/>
+    <message name="messageMQMsg">
+        <part name="mqMessageTextBody" type="xsd:string"/>
+        <part name="report" type="xsd:int"/>
+        <part name="encoding" type="xsd:int"/>
+        <part name="characterSet" type="xsd:int"/>
+        <part name="correlationid" type="xsd:hexBinary"/>
+         <part name="groupid" type="xsd:int"/>
+        <part name="priority" type="xsd:int"/>
+        <part name="messageSequenceNum" type="xsd:string"/>
+        <part name="applicationIdData" type="xsd:hexBinary"/>
+        <part name="replyToQueueName" type="xsd:string"/>
+        <part name="replyToQueueMgrName" type="xsd:string"/>
+    </message>
+    <portType name="MQPutPortType">
+        <operation name="MQPutOperation">
+            <input name="input1" message="tns:messageMQMsg"/>
+        </operation>
+    </portType>
+    <portType name="MQRecvPortType">
+        <operation name="MQRecvOperation">
+            <input name="input1" message="tns:messageMQMsg"/>
+        </operation>
+    </portType>
+    <binding name="bindingMQPut" type="tns:MQPutPortType">
+        <mq:binding/>
+        <operation name="MQPutOperation">
+            <mq:operation queueName="queue2"  queueOpenOptions="2000" transaction="NoTransaction"/>
+            <input name="input1">
+                <mq:body messageBody="mqMessageTextBody" messageType="TextMessage" syncpoint="false" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingMQRecv" type="tns:MQRecvPortType">
+        <mq:binding/>
+        <operation name="MQRecvOperation">
+            <mq:operation queueName="queue2" queueOpenOptions="2000" transaction="NoTransaction" pollingInterval="5000"/>
+            <input name="input1">
+                <mq:body messageBody="mqMessageTextBody" messageType="TextMessage" syncpoint="false" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="service1MqPut">
+        <port name="port1MQPut" binding="tns:bindingMQPut">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </port>
+    </service>
+    <service name="service1MqRecv">
+        <port name="port1MQRecv" binding="tns:bindingMQRecv">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktype1MqPut">
+        <plink:role name="partnerlinktyperole1MqPut" portType="tns:MQPutPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="partnerlinktype1MqRecv">
+        <plink:role name="partnerlinktyperole1MqRecv" portType="tns:MQRecvPortType"/>
+    </plink:partnerLinkType>
+</definitions>

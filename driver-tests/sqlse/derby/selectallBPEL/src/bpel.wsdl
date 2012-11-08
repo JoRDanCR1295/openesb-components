@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/bpel"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpel" name="bpel" xmlns:ns="http://j2ee.netbeans.org/xsd/tableSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/bpel">
+            <xsd:import namespace="http://j2ee.netbeans.org/xsd/tableSchema" schemaLocation="DISCOUNT_CODE.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="bpelOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="bpelOperationReply">
+        <wsdl:part name="part1" element="ns:DISCOUNT_CODE"/>
+    </wsdl:message>
+    <wsdl:portType name="bpelPortType">
+        <wsdl:operation name="bpelOperation">
+            <wsdl:input name="input1" message="tns:bpelOperationRequest"/>
+            <wsdl:output name="output1" message="tns:bpelOperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="bpelBinding" type="tns:bpelPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="bpelOperation">
+            <soap:operation style="document"/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/bpel"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/bpel"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="bpelService">
+        <wsdl:port name="bpelPort" binding="tns:bpelBinding">
+            <soap:address location="http://localhost:18181/bpelService/bpelPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="bpelPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="bpelPortTypeRole" portType="tns:bpelPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

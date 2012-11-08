@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="soapreqreply-jdbcselmulti"
+    targetNamespace="http://enterprise.netbeans.org/bpel/soapreqreply-jdbcselmulti"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/soapreqreply-jdbcselmulti" xmlns:ns1="http://j2ee.netbeans.org/wsdl/soapTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/soapTrigger" location="soapTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="jdbcFind.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:soapTriggerPartner" myRole="soapTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="SoapTriggerOperationOut" messageType="ns1:soapTriggerOperationReply"/>
+      <bpws:variable name="FindOut" messageType="ns2:outputMsg"/>
+      <bpws:variable name="FindIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SoapTriggerOperationIn" messageType="ns1:soapTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="soapTriggerOperation" portType="ns1:soapTriggerPortType" variable="SoapTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+       <bpws:copy>
+            <bpws:from>$SoapTriggerOperationIn.part1/deptno</bpws:from>
+            <bpws:to>$FindIn.part/ns0:DEPTNO</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="find" portType="ns2:jdbcPortType" inputVariable="FindIn" outputVariable="FindOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:EMPNO</bpws:from>
+            <bpws:to>$SoapTriggerOperationOut.part1/ns0:EMPNO</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:DEPTNO</bpws:from>
+            <bpws:to>$SoapTriggerOperationOut.part1/ns0:DEPTNO</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:EMPNAME</bpws:from>
+            <bpws:to>$SoapTriggerOperationOut.part1/ns0:EMPNAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="soapTriggerOperation" portType="ns1:soapTriggerPortType" variable="SoapTriggerOperationOut"/>
+   </sequence>
+</process>

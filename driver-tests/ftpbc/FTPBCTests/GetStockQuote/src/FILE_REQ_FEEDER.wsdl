@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FILE_REQ_FEEDER"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FILE_REQ_FEEDER" name="FILE_REQ_FEEDER" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types/>
+    <wsdl:message name="FILE_REQ_FEEDEROperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="FILE_REQ_FEEDEROperationReply">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FILE_REQ_FEEDERPortType">
+        <wsdl:operation name="FILE_REQ_FEEDEROperation">
+            <wsdl:input name="input1" message="tns:FILE_REQ_FEEDEROperationRequest"/>
+            <wsdl:output name="output1" message="tns:FILE_REQ_FEEDEROperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="FILE_REQ_FEEDERBinding" type="tns:FILE_REQ_FEEDERPortType">
+        <file:binding/>
+        <wsdl:operation name="FILE_REQ_FEEDEROperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="get_stock_quote_%d.txt" pollingInterval="1000" fileNameIsPattern="true"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <file:message use="literal" fileName="stock_price_%d.out" fileNameIsPattern="true"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FILE_REQ_FEEDERService">
+        <wsdl:port name="FILE_REQ_FEEDERPort" binding="tns:FILE_REQ_FEEDERBinding">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/StockQuoteCompApp/test/StockQuoteServiceTest/in_out"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="FILE_REQ_FEEDERPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="FILE_REQ_FEEDERPortTypeRole" portType="tns:FILE_REQ_FEEDERPortType"/>
+    </plink:partnerLinkType>
+</definitions>

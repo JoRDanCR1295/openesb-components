@@ -1,0 +1,247 @@
+<!--
+
+  The contents of this file are subject to the terms
+  of the Common Development and Distribution License
+  (the "License").  You may not use this file except
+  in compliance with the License.
+
+  You can obtain a copy of the license at
+  https://glassfish.dev.java.net/public/CDDLv1.0.html.
+  See the License for the specific language governing
+  permissions and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL
+  HEADER in each file and include the License file at
+  https://glassfish.dev.java.net/public/CDDLv1.0.html.  
+ 
+  If applicable add the following below this CDDL HEADER,
+  with the fields enclosed by brackets "[]" replaced with 
+  your own identifying information: 
+  "Portions Copyrighted [year] [name of copyright owner]"
+
+  %W% %G%
+
+  Copyright 2006 Sun Microsystems, Inc.  All Rights Reserved.
+  
+-->
+<HTML>
+<HEAD>
+ <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+ <TITLE>message server address syntax</TITLE>
+ <LINK rel="StyleSheet" href="../ide.css">
+ 
+</HEAD>
+<BODY>
+ 
+<H2>Message Server Address Syntax</H2>
+<p>The syntax for specifying a message server address is as follows:<br>
+ </p>  
+<p><code><i>scheme</i>://<i>address_syntax</i></code><br>
+  </p> 
+  
+<p>where the <code><i>scheme</i></code> and <code><i>address_syntax</i></code> are described in the folowing 
+  table.</p>
+<TABLE columns="4" border="1">
+	<TR>
+		<TH>Scheme</TH>
+		<TH>Connection Service</TH>
+		<TH>Description</TH>
+		<TH>Syntax</TH>
+	</TR>
+
+	<TR>
+		<TD valign="top"><code>mq</code></TD>
+		
+      <TD valign="top">
+      <code>jms<br>
+        and <br>
+        ssljms</code>
+      </TD>
+		
+	<TD valign="top">The Message Queue Port Mapper at the specified host and port will handle the connection 
+      request, dynamically assigning a port based on the specified connection 
+      service. Once the port number is known, Message Queue makes the connection.</TD>
+		
+    <TD valign="top"><code>[<i>hostName</i>][:<i>port</i>][/<i>serviceName</i>]</code> <br>
+      Defaults (for jms service only): <br>
+      <code><i>hostName</i> = localhost <br>
+      <i>port</i> = 7676 <br>
+      <i>serviceName</i> = jms</code></TD>
+	</TR>
+
+	<TR>
+		
+    <TD valign="top"><code>mqtcp</code></TD>
+		
+    <TD valign="top"><code>jms</code></TD>
+		
+	<TD valign="top">Message Queue makes a direct tcp connection to the specified host and port to establish 
+      a connection.</TD>
+		
+    <TD valign="top"><code><i>hostName</i>:<i>port</i>/jms</code></TD>
+
+	</TR>
+
+	<TR>
+		
+    <TD valign="top"><code>mqssl</code></TD>
+		
+    <TD valign="top"><code>ssljms</code></TD>
+		
+	<TD valign="top">Message Queue makes a direct, secure ssl connection to the specified host and port 
+      to establish a connection.</TD>
+		
+    <TD valign="top"><code><i>hostName</i>:<i>port</i>/ssljms</code></TD>
+
+	</TR>
+	
+	<TR>
+		
+    <TD valign="top"><code>htttp</code></TD>
+		
+    <TD valign="top"><code>httpjms</code></TD>
+		
+	<TD valign="top">Message Queue makes a direct HTTP connection to the specified Message Queue tunnel servlet URL. 
+      (The broker must be configured to access the tunnel servlet.)</TD>
+		
+    <TD valign="top"><code><i>HTTPtunnelServletURL</i></code></TD>
+
+	</TR>
+	
+	<TR>
+		
+    <TD valign="top"><code>htttps</code></TD>
+		
+    <TD valign="top"><code>httpsjms</code></TD>
+		
+	<TD valign="top">Message Queue makes a direct HTTPS connection to the specified Message Queue tunnel servlet URL. 
+      (The broker must be configured to access the tunnel servlet.)</TD>
+		
+    <TD valign="top"><code><i>HTTPStunnelServletURL</i></code></TD>
+
+	</TR>
+</TABLE>
+<p>&nbsp;</p>
+<p>The following table shows how the message server address syntax applies in 
+  some typical cases.</p>
+<TABLE columns="4" border="1">
+	<TR>
+		<TH>Connection Service</TH>
+		<TH>Broker Host</TH>
+		<TH>Port</TH>
+		<TH>Example Address</TH>
+	</TR>
+
+	<TR>
+		
+    <TD valign="top">Unspecified</TD>
+		
+    <TD valign="top">Unspecified</TD>
+	    
+    <TD valign="top">Unspecified</TD>
+		
+    <TD valign="top">Default<br>
+      <code>(mq://localHost:7676/jms)</code></TD>	
+	</TR>
+	
+	<TR>
+		
+    <TD valign="top">Unspecified</TD>
+		
+    <TD valign="top">Specified Host</TD>
+	    
+    <TD valign="top">Unspecified</TD>
+		
+    <TD valign="top"><code>myBkrHost<br>
+      (mq://myBkrHost:7676/jms)</code></TD>	
+	</TR>
+	
+	<TR>
+		
+    <TD valign="top">Unspecified</TD>
+		
+    <TD valign="top">Unspecified</TD>
+	    
+    <TD valign="top">Specified Portmapper Port</TD>
+		
+    <TD valign="top"><code>1012<br>
+      (mq://localHost:1012/jms)</code></TD>	
+	</TR>
+	
+	<TR>
+		
+    <TD valign="top"><code>ssljms</code></TD>
+		
+    <TD valign="top">Local Host</TD>
+	    
+    <TD valign="top">Default Portmapper Port</TD>
+		
+    <TD valign="top"><code>mq://localHost:7676/ssljms</code></TD>	
+	</TR>
+	
+	<TR>
+	 <TD valign="top"><code>ssljms</code></TD>
+		
+    <TD valign="top">Specified Host</TD>
+	    
+    <TD valign="top">Default Portmapper Port</TD>
+		
+    <TD valign="top"><code>mq://myBkrHost:7676/ssljms</code></TD>	
+	</TR>
+	<TR>
+	 <TD valign="top"><code>ssljms</code></TD>
+		
+    <TD valign="top">Specified Host</TD>
+	    
+    <TD valign="top">Specified Portmapper Port</TD>
+		
+    <TD valign="top"><code>mq://myBkrHost:1012/ssljms</code></TD>	
+	</TR>
+	
+	<TR>
+	 
+    <TD valign="top"><code>jms</code></TD>
+		
+    <TD valign="top">Local Host</TD>
+	    
+    <TD valign="top">Specified Service Port</TD>
+		
+    <TD valign="top"><code>mqtcp://localhost:1032/jms</code></TD>	
+	</TR>
+	
+	<TR>
+	 
+    <TD valign="top"><code>ssljms</code></TD>
+		
+    <TD valign="top">Specified Host</TD>
+	    
+    <TD valign="top">Specified Service Port</TD>
+		
+    <TD valign="top"><code>mqssl://myBkrHost:1034/ssljms</code></TD>	
+	</TR>
+	
+	<TR>
+	 
+    <TD valign="top"><code>httpjms</code></TD>
+		
+    <TD valign="top">N/A</TD>
+	    
+    <TD valign="top">N/A</TD>
+		
+    <TD valign="top"><code>http://websrvr1:8085/imq/tunnel</code></TD>	
+	</TR>
+	
+	<TR>
+	 
+    <TD valign="top"><code>httpsjms</code></TD>
+		
+    <TD valign="top">N/A</TD>
+	    
+    <TD valign="top">N/A</TD>
+		
+    <TD valign="top"><code>https://websrvr2:8090/imq/tunnel</code></TD>	
+	</TR>
+</TABLE>
+<P>&nbsp;</P>
+</BODY>
+</HTML>

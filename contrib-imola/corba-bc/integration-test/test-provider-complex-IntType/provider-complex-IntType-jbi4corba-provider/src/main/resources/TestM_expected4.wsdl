@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Echo5" targetNamespace="http://it.imolinfo.jbi4corba.test.webservice.generator.complexintType.Echo5"  xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://it.imolinfo.jbi4corba.test.webservice.generator.complexintType.Echo5">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.webservice.generator.complexintType.Echo5" xmlns:ns1="http://www.w3.org/2005/08/addressing" xmlns:ns2="http://complexintType.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://it.imolinfo.jbi4corba.test.webservice.generator.complexintType.Echo5">
+<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+<xs:import namespace="http://complexintType.generator.webservice.test.jbi4corba.imolinfo.it/"/>
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="echoinout" type="ns1:EndpointReferenceType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="ns2:echoStruct"/>
+<xs:element minOccurs="0" name="echoinout" type="ns1:EndpointReferenceType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://complexintType.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:ns1="http://www.w3.org/2005/08/addressing" xmlns:tns="http://complexintType.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+<xs:complexType name="echoStruct">
+<xs:sequence>
+<xs:element minOccurs="0" name="fieldEcho2" type="ns1:EndpointReferenceType"/>
+<xs:element minOccurs="0" name="persona" type="tns:persona"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="persona">
+<xs:sequence>
+<xs:element minOccurs="0" name="echopersona" type="ns1:EndpointReferenceType"/>
+<xs:element minOccurs="0" name="nome" type="xs:string"/>
+<xs:element minOccurs="0" name="cognome" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Echo5">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Echo5CorbaBinding" type="tns:Echo5">
+<imolacorba:binding>
+<imolacorba:idl>
+//IDL
+module it{
+  module imolinfo{
+    module jbi4corba{
+      module test{
+	 module webservice{
+	   module generator{
+		module complexintType{			
+		   interface Echo {
+    		
+			string echo(in string msg);
+
+                 };
+	
+                // struct
+                struct Persona {
+                Echo            echopersona;
+                string          nome;
+                string          cognome;		
+    
+                };
+
+
+                // struct
+                struct EchoStruct {
+                Echo            fieldEcho2;
+                Persona         persona;	
+        
+                };
+	         
+                interface Echo2{
+    			Echo echo(in EchoStruct msg);
+                };
+
+	         //struct 
+		   struct IntfStruct{
+		   	EchoStruct      fieldEchostruct;
+		   	Echo2           fieldEcho2;
+               }; 
+
+		   interface Echo3{
+    			Echo echo(in string msg);
+               };
+
+	         interface Echo4{
+			Echo echo(inout Echo echoinout);
+		   };	
+
+	         interface Echo5{
+			EchoStruct echo(inout EchoStruct echoinout);
+		   };	
+
+		   interface Echo6{
+    			Echo echo(in long num,in string msg);
+               };
+
+		   interface Echo7{
+			IntfStruct echo(inout IntfStruct mystruct);
+		   };	
+
+		 //  exception EchoException {
+    		 //	Echo reason;
+  		 //  };           
+
+		  // interface Echo8{
+		  //    Echo echo(in Echo2 intf) raises (EchoException);
+              // };
+
+};
+};
+};
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo5">
+    <wsdl:port name="Echo5CorbaPort" binding="tns:Echo5CorbaBinding">
+<imolacorba:address name="Echo5" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

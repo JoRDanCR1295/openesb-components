@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarmBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarmBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarmBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarmSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onAlarmSDL" location="onAlarmSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:onAlarmSDL12" partnerRole="onAlarmSDLPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarmSDL1" myRole="onAlarmSDLPortTypeRole"/>
+    </partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="OnAlarmSDLOperationOut" messageType="ns1:onAlarmSDLOperationReply"/>
+        <bpws:variable name="OnAlarmSDLOperationIn" messageType="ns1:onAlarmSDLOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarmSDLOperation" portType="ns1:onAlarmSDLPortType" variable="OnAlarmSDLOperationIn"/>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:for>'P0Y0M0DT0H0M3S'</bpws:for>
+                    <bpws:scope name="Scope2">
+                        <bpws:assign name="Assign1">
+                            <bpws:copy>
+                                <bpws:from>concat('event handler assign', $OnAlarmSDLOperationIn.part1)</bpws:from>
+                                <bpws:to part="part1" variable="OnAlarmSDLOperationOut"/>
+                            </bpws:copy>
+                        </bpws:assign>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="onAlarmSDLOperation" portType="ns1:onAlarmSDLPortType1" inputVariable="OnAlarmSDLOperationIn"/>
+            </bpws:sequence>
+        </bpws:scope>      
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarmSDLOperation" portType="ns1:onAlarmSDLPortType" variable="OnAlarmSDLOperationOut"/>
+    </sequence>
+</process>

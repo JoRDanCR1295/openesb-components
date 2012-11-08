@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>schedulerbc-installer</artifactId>
+    <name>sun-scheduler-binding</name>
+    <version>${schedulerbc.artifact.version}</version>
+    <description>schedulerbc packaging description</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-generate-i18n-descriptors</id>
+                        <phase>process-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <!-- generate i18n jbi descriptors -->
+                                <taskdef name="i18n-xml" classname="${I18N_XML_TASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n-xml 
+                                    file="${project.build.sourceDirectory}/jbi.xml"
+                                    properties="${project.build.sourceDirectory}/schedulerbc-config.properties"
+                                    outputDir="${project.build.outputDirectory}/META-INF">
+                                    <fileset dir="${project.build.sourceDirectory}"
+                                             includes="schedulerbc-config*.properties"/>
+                                    <namespace prefix="jbi" uri="http://java.sun.com/xml/ns/jbi"/>
+                                    <namespace prefix="config" uri="http://www.sun.com/jbi/Configuration/V1.0"/>
+                                    <expr query="//config:Property"
+                                          i18nAttr="displayName" keyAttr="name"/>
+                                    <expr query="//config:Property"
+                                          i18nAttr="displayDescription" keyAttr="name"/>
+                                    <expr query="/jbi:jbi/jbi:component/jbi:identification/jbi:description"/>
+                                </i18n-xml>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-rename-jars</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <!-- rename schedulerbcimpl.jar to schedulerbc.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/lib/schedulerbcimpl.jar"
+                                    tofile="${project.build.outputDirectory}/lib/schedulerbc.jar" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>  
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        </archive> 
+                    </configuration>
+            </plugin>              
+            <plugin>   
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>    
+                            <goal>manifest</goal>
+                        </goals>   
+                    </execution>
+              </executions>
+               <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-scheduler-binding</Bundle-SymbolicName>
+                        <Bundle-Name>Scheduler Binding Component</Bundle-Name>
+                        <Bundle-Description>Scheduler Binding Component provides scheduling via OpenSymphony Quartz</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>                        
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/schedulerbc.jar,
+                            lib/component-toolkit.jar,
+                            lib/common-util.jar,
+                            lib/qos.jar,
+                            lib/quartz-all.jar,
+                            lib/commons-logging.jar,
+                            lib/commons-collections.jar,
+                            lib/log4j.jar,
+                            lib/jdbc-stdext.jar,
+                            lib/crl.jar,
+                            lib/resolver.jar,
+                            lib/componentsl.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                             !org.apache.xml.resolver.*,
+                             !org.apache.commons.dbcp.*,
+                             !org.apache.avalon.framework.logger.*,
+                             !org.apache.log.*,
+                             !weblogic.*,
+                             !org.jboss.*,
+                             !oracle.sql.*,
+                             *
+                        </Import-Package>
+                    </instructions>
+                </configuration>           
+            </plugin>                  
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>schedulerbcimpl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>crl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.sql</groupId>
+            <artifactId>jdbc-stdext</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

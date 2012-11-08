@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="ReservationSystem"
+         targetNamespace="http://www.seebeyond.com/eInsight/ReservationSystem"
+         xmlns:tns="http://www.seebeyond.com/eInsight/ReservationSystem"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BluePrint5/Reservation"
+         xmlns:ns1="http://localhost/BluePrint5/AirLineReservation"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns3="http://localhost/BluePrint5/HotelReservation"
+         xmlns:ns2="http://localhost/BluePrint5/CarReservation">
+    <import namespace="http://localhost/BluePrint5/Reservation"
+            location="Reservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BluePrint5/AirLineReservation"
+            location="AirLineReservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BluePrint5/CarReservation"
+            location="CarReservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BluePrint5/HotelReservation"
+            location="HotelReservation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="reservationPLink"
+                     partnerLinkType="ns0:reservationPLinkType"
+                     myRole="reservationServicing"/>
+        <partnerLink name="airlineReservation"
+                     partnerLinkType="ns1:AirlineReservationPLinkType"
+                     partnerRole="reservingRole"/>
+        <partnerLink name="airlineStatus"
+                     partnerLinkType="ns1:AirLineReservStatusPLinkType"
+                     myRole="statusReceivingRole"/>
+        <partnerLink name="carReservationPLink"
+                     partnerLinkType="ns2:CarReservationPLinkType"
+                     partnerRole="reservingRole"/>
+        <partnerLink name="carReservationStatusPLink"
+                     partnerLinkType="ns2:CarReservStatusPLinkType"
+                     myRole="statusReceivingRole"/>
+        <partnerLink name="hoteReservationPLink"
+                     partnerLinkType="ns3:HotelReservationPLinkType"
+                     partnerRole="reservingRole"/>
+        <partnerLink name="hotelReservationStatusPLink"
+                     partnerLinkType="ns3:HotelReservStatusPLinkType"
+                     myRole="statusReceivingRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="reserve"
+                  messageType="ns0:reserveMesg"></variable>
+        <variable name="reservationStatus"
+                  messageType="ns0:reservationStatus"></variable>
+        <variable name="reservationFault"
+                  messageType="ns0:reservationFailed"></variable>
+        <variable name="reserveAirlineVar"
+                  messageType="ns1:AirlineReservation"></variable>
+        <variable name="airlineStatusVar"
+                  messageType="ns1:AirlineReservationStatus"></variable>
+        <variable name="reserveCarVar"
+                  messageType="ns2:CarReservation"></variable>
+        <variable name="carStatusVar"
+                  messageType="ns2:CarReservationStatus"></variable>
+        <variable name="reserveHotelVar"
+                  messageType="ns3:HotelReservation"></variable>
+        <variable name="hotelStatusVar"
+                  messageType="ns3:HotelReservationStatus"></variable>                  
+        <variable name="tempCarStatusVar"
+                  messageType="ns2:CarReservationStatus"></variable>
+        <variable name="tempAirlineStatusVar"
+                  messageType="ns1:AirlineReservationStatus"></variable>
+        <variable name="tempHotelStatusVar"
+                  messageType="ns3:HotelReservationStatus"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="reservationCorrelationSet"
+                        properties="ns0:reservationID "/>
+    </correlationSets>
+    <sequence>
+        <receive name="reserve"
+                 partnerLink="reservationPLink"
+                 portType="ns0:doReservePortType"
+                 operation="reserve"
+                 variable="reserve"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="reservationCorrelationSet"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign_1">
+            <copy>
+            <from>$reserve.reservePart/reservationID</from><to>$reserveAirlineVar.reserveAirlinePart/reservationID</to>
+            </copy>
+            <copy>
+            <from>$reserve.reservePart/description</from><to>$reserveAirlineVar.reserveAirlinePart/description</to>
+            </copy>
+            <copy>
+            <from>$reserve.reservePart/reservationID</from><to>$reserveCarVar.reserveCarPart/reservationID</to>
+            </copy>
+            <copy>
+            <from>$reserve.reservePart/description</from><to>$reserveCarVar.reserveCarPart/description</to>
+            </copy>
+            <copy>
+            <from>$reserve.reservePart/reservationID</from><to>$reserveHotelVar.reserveHotelPart/reservationID</to>
+            </copy>
+            <copy>
+            <from>$reserve.reservePart/description</from><to>$reserveHotelVar.reserveHotelPart/description</to>
+            </copy>
+        </assign>
+        <flow name="Flow2">
+                <invoke name="reserveAirline"
+                        partnerLink="airlineReservation"
+                        portType="ns1:AirlineReservationPortType"
+                        operation="reserveAirline"
+                        inputVariable="reserveAirlineVar"></invoke>
+                <invoke name="reserveCar"
+                        partnerLink="carReservationPLink"
+                        portType="ns2:CarReservationPortType"
+                        operation="reserveCar"
+                        inputVariable="reserveCarVar"></invoke>
+                <invoke name="reserveHotel"
+                        partnerLink="hoteReservationPLink"
+                        portType="ns3:HotelReservationPortType"
+                        operation="reserveHotel"
+                        inputVariable="reserveHotelVar"></invoke>
+        </flow>
+        <flow name="Flow">
+                <pick name="receiveHotelStatus">
+                    <onMessage partnerLink="hotelReservationStatusPLink"
+                               portType="ns3:HotelStatusPortType"
+                               operation="sendHotelStatus"
+                               variable="hotelStatusVar">
+                        <correlations>
+                            <correlation set="reservationCorrelationSet"
+                                         initiate="no"/>
+                        </correlations>
+                        <sequence>
+                            <empty name="Empty3"></empty>
+                            <assign name="Assign_7">
+                                <copy>
+                                <from>$hotelStatusVar.status/reservationStatus</from><to>$tempHotelStatusVar.status/reservationStatus</to>
+                                </copy>
+                            </assign>
+                            </sequence>
+                    </onMessage>
+                    <onAlarm>
+                        <for>'P0Y0DT2M'</for>
+                            <assign name="Assign_2">
+                                 <copy>
+                                 <from>false()</from><to>$tempHotelStatusVar.status/reservationStatuss</to>
+                                 </copy>
+                                 <copy>
+                                 <from>false()</from><to>$tempHotelStatusVar.status/reservationStatus</to>
+                                 </copy>
+                            </assign>
+                    </onAlarm>
+                </pick>
+                <pick name="receiveCarStatus">
+                    <onMessage partnerLink="carReservationStatusPLink"
+                               portType="ns2:CarStatusPortType"
+                               operation="sendCarStatus"
+                               variable="carStatusVar">
+                        <correlations>
+                            <correlation set="reservationCorrelationSet"
+                                         initiate="no"/>
+                        </correlations>
+                        <sequence>
+                            <empty name="Empty_2"></empty>
+                            <assign name="Assign1">
+                                <copy>
+                                <from>$carStatusVar.status/reservationStatus</from><to>$tempCarStatusVar.status/reservationStatus</to>
+                                </copy>
+                            </assign>
+                            </sequence>
+                    </onMessage>
+                    <onAlarm>
+                        <for>'P0Y0DT2M'</for>
+                            <assign name="Assign_3">
+                                 <copy>
+                                 <from>false()</from><to>$tempCarStatusVar.status/reservationStatus</to>
+                                 </copy>
+                            </assign>
+                    </onAlarm>
+                </pick>
+                <pick name="receiveAirlineStatus">
+                    <onMessage partnerLink="airlineStatus"
+                               portType="ns1:AirlineStatusPortType"
+                               operation="sendAirlineStatus"
+                               variable="airlineStatusVar">
+                        <correlations>
+                            <correlation set="reservationCorrelationSet"
+                                         initiate="no"/>
+                        </correlations>
+                        <sequence>
+                            <empty name="Empty"></empty>
+                            <assign name="Assign">
+                                <copy>
+                                <from>$airlineStatusVar.status/reservationStatus</from><to>$tempAirlineStatusVar.status/reservationStatus</to>
+                                </copy>
+                            </assign>
+                            </sequence>
+                    </onMessage>
+                    <onAlarm>
+                        <for>'P0Y0DT2M'</for>
+                            <assign name="Assign_4">
+                                 <copy>
+                                 <from>false()</from><to>$tempAirlineStatusVar.status/reservationStatus</to>
+                                 </copy>
+                            </assign>
+                    </onAlarm>
+                </pick>
+        </flow>
+        <assign name="Assign2">
+                    <copy>
+                                <from>$tempAirlineStatusVar.status/reservationStatus</from><to>$reservationStatus.reservationStatusPart/airlineStatus</to>
+                                </copy>
+            <copy>
+            <from>$tempCarStatusVar.status/reservationStatus</from><to>$reservationStatus.reservationStatusPart/carStatus</to>
+            </copy>
+            <copy>
+            <from>$tempHotelStatusVar.status/reservationStatus</from><to>$reservationStatus.reservationStatusPart/hotelStatus</to>
+            </copy>
+        </assign>
+            
+        <reply name="reserve.Reply"
+               partnerLink="reservationPLink"
+               portType="ns0:doReservePortType"
+               operation="reserve"
+               variable="reservationStatus"></reply>
+    </sequence>
+</process>

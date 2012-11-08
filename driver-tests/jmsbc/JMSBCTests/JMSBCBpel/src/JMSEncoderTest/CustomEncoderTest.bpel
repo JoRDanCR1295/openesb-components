@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CustomEncoderTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/jmsbcEncoderTest/CustomEncoderTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/jmsbcEncoderTest/CustomEncoderTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/jmsbcEncoderTest/JMSBCCustomEncoderTest" xmlns:ns0="http://xml.netbeans.org/schema/jmsbcEncoderTest/CustomEncoderTest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/jmsbcEncoderTest/JMSBCCustomEncoderTest" location="JMSBCCustomEncoderTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="JMSRecvPartnerLink" partnerLinkType="ns1:JMSBCCustomEncoderTestInRole" myRole="JMSBCCustomEncoderTestInPortTypeRole"/>
+        <bpws:partnerLink name="JMSSendPartnerLink" partnerLinkType="ns1:JMSBCCustomEncoderTestOutRole" partnerRole="JMSBCCustomEncoderTestOutPortTypeRole"/>
+        <bpws:partnerLink name="SoapDriverPartnerLink" partnerLinkType="ns1:JMSBCCustomEncoderTestDriverRole" myRole="JMSBCCustomEncoderTestDriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JMSBCCustomEncoderTestOperationOut" messageType="ns1:JMSBCCustomEncoderTestMessage"/>
+        <bpws:variable name="JMSBCCustomEncoderTestOperationRecvIn" messageType="ns1:JMSBCCustomEncoderTestMessage"/>
+        <bpws:variable name="JMSBCCustomEncoderTestOperationSendIn" messageType="ns1:JMSBCCustomEncoderTestMessage"/>
+        <bpws:variable name="JMSBCCustomEncoderTestOperationIn" messageType="ns1:JMSBCCustomEncoderTestMessage"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:prop1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapDriverPartnerLink" operation="JMSBCCustomEncoderTestOperation" portType="ns1:JMSBCCustomEncoderTestDriverPortType" variable="JMSBCCustomEncoderTestOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="JMSBCCustomEncoderTestOperationIn" part="corrId"/>
+                <bpws:to variable="JMSBCCustomEncoderTestOperationSendIn" part="corrId"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield1</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationSendIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield2</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationSendIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield2</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield1</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationSendIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield2</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationSendIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="JMSSendPartnerLink" operation="JMSBCCustomEncoderTestOperationSend" portType="ns1:JMSBCCustomEncoderTestOutPortType" inputVariable="JMSBCCustomEncoderTestOperationSendIn"/>
+        <wait name="Wait1">
+            <for>'P0Y0M0DT0H0M10.0S'</for>
+        </wait>
+        <bpws:receive name="Receive2" createInstance="no" partnerLink="JMSRecvPartnerLink" operation="JMSBCCustomEncoderTestOperationRecv" portType="ns1:JMSBCCustomEncoderTestInPortType" variable="JMSBCCustomEncoderTestOperationRecvIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationRecvIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield1</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationOut.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield2</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationRecvIn.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield2</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationOut.encodedPayload/ns0:groupnode/ns0:element1/ns0:delimfield1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationRecvIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield1</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationOut.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield2</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCCustomEncoderTestOperationRecvIn.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield2</bpws:from>
+                <bpws:to>$JMSBCCustomEncoderTestOperationOut.encodedPayload/ns0:groupnode/ns0:element2/ns0:fixedfield1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="JMSBCCustomEncoderTestOperationRecvIn" part="corrId"/>
+                <bpws:to variable="JMSBCCustomEncoderTestOperationOut" part="corrId"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapDriverPartnerLink" operation="JMSBCCustomEncoderTestOperation" portType="ns1:JMSBCCustomEncoderTestDriverPortType" variable="JMSBCCustomEncoderTestOperationOut"/>
+    </sequence>
+</process>

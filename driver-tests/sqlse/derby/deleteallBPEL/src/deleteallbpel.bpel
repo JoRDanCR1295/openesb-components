@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="deleteallbpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/deleteallbpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/deleteallbpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bpel" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/bpel" location="bpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="deleteallbpelSQL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:deleteallbpelSQL_sqlsePartnerLinkType" partnerRole="deleteallbpelSQL_myrole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:bpelPartner" myRole="bpelPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="BpelOperationOut" messageType="ns1:bpelOperationReply"/>
+      <bpws:variable name="DeleteallbpelsqlOut" messageType="ns2:deleteallbpelsqlResponse"/>
+      <bpws:variable name="DeleteallbpelsqlIn" messageType="ns2:deleteallbpelsqlRequest"/>
+      <bpws:variable name="BpelOperationIn" messageType="ns1:bpelOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="BpelOperationIn" part="part1"/>
+            <bpws:to variable="DeleteallbpelsqlIn" part="deleteallbpelsqlRequestPart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="deleteallbpelsql" portType="ns2:deleteallbpelSQL_sqlsePortType" inputVariable="DeleteallbpelsqlIn" outputVariable="DeleteallbpelsqlOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteallbpelsqlOut" part="deleteallbpelsqlResponsePart"/>
+            <bpws:to variable="BpelOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationOut"/>
+   </sequence>
+</process>

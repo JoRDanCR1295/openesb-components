@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="receiveInOnAlarmBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/receiveInOnAlarmBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/receiveInOnAlarmBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/receiveInOnAlarmWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/receiveInOnAlarmWSDL" location="receiveInOnAlarmWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:InvokePartnerLinkType" partnerRole="InvokePortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:InvokePartnerLinkType" myRole="InvokePortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:receiveInOnAlarmWSDL1" myRole="receiveInOnAlarmWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="TempVariable1" type="xsd:string"/>
+        <bpws:variable name="OnAlarmRepeatEveryOnlyWSDLOperationOut" messageType="ns1:receiveInOnAlarmWSDLOperationReply"/>
+        <bpws:variable name="OnAlarmRepeatEveryOnlyWSDLOperationIn" messageType="ns1:receiveInOnAlarmWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="receiveInOnAlarmWSDLOperation" portType="ns1:receiveInOnAlarmWSDLPortType" variable="OnAlarmRepeatEveryOnlyWSDLOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="OnAlarmRepeatEveryOnlyWSDLOperationIn" part="part1"/>
+                <bpws:to variable="TempVariable1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:documentation>ver0.3</bpws:documentation>
+                    <bpws:repeatEvery>'P0Y0M0DT0H0M5S'</bpws:repeatEvery>
+                    <bpws:scope name="Scope2">
+                        <bpws:variables>
+                            <bpws:variable name="InvokeOperationIn" messageType="ns1:receiveInOnAlarmWSDLOperationRequest"/>
+                        </bpws:variables>
+                        <bpws:sequence name="Sequence2">
+                            <bpws:assign name="Assign1">
+                                <bpws:copy>
+                                        <bpws:from>concat($TempVariable1, '* Event Handler Assignment *')</bpws:from>
+                                            <bpws:to variable="TempVariable1"/>
+                                    </bpws:copy>
+                            </bpws:assign>
+			                <bpws:invoke name="Invoke1" partnerLink="PartnerLink3" operation="InvokeOperation" portType="ns1:InvokePortType" inputVariable="OnAlarmRepeatEveryOnlyWSDLOperationIn"/>
+                        </bpws:sequence>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:forEach name="ForEach1" parallel="no" counterName="counter">
+                    <bpws:startCounterValue>1</bpws:startCounterValue>
+                    <bpws:finalCounterValue>2</bpws:finalCounterValue>
+                    <bpws:scope name="Scope3">
+                        <bpws:receive name="Receive2" createInstance="no" partnerLink="PartnerLink2" operation="InvokeOperation" portType="ns1:InvokePortType" variable="OnAlarmRepeatEveryOnlyWSDLOperationIn">
+                            <bpws:correlations>
+                                    <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                                </bpws:correlations>
+                        </bpws:receive>
+                    </bpws:scope>
+                </bpws:forEach>
+
+            </bpws:sequence>
+        </bpws:scope>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from variable="TempVariable1"/>
+                <bpws:to variable="OnAlarmRepeatEveryOnlyWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="receiveInOnAlarmWSDLOperation" portType="ns1:receiveInOnAlarmWSDLPortType" variable="OnAlarmRepeatEveryOnlyWSDLOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://com.sun.jbi/aspect/throttling"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://com.sun.jbi/aspect/throttling" name="throttling" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:ns="http://com.sun.jbi/etl/etlengine">
+    <wsdl:import location="ThrottlingETL_engine.wsdl" namespace="http://com.sun.jbi/etl/etlengine"/>
+    <wsdl:types></wsdl:types>
+    <wsdl:portType name="throttlingPortType">
+        <wsdl:operation name="throttlingOperation">
+            <wsdl:input name="input1" message="ns:input"/>
+            <wsdl:output name="output1" message="ns:output"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="throttlingBinding" type="tns:throttlingPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="throttlingOperation">
+            <soap:operation soapAction="throttlingOperation" style="document"/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="throttlingService">
+        <wsdl:port name="throttlingPort" binding="tns:throttlingBinding">
+            <soap:address location="http://localhost:18182/throttlingService/throttlingPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="throttlingPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="throttlingPortTypeRole" portType="tns:throttlingPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

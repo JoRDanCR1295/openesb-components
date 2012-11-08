@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+  =========================================================
+                                                COORDINATES
+  =========================================================
+  -->
+  <parent>
+    <groupId>it.imolinfo.jbi4cics</groupId>
+    <artifactId>integration-test</artifactId>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <artifactId>test-occurs-wsdl</artifactId>
+
+  <!--
+  =========================================================
+                                                DESCRIPTION
+  =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <!--
+  =========================================================
+                                                  PACKAGING
+  =========================================================
+  -->
+  <packaging>pom</packaging>
+
+  <!--
+  =========================================================
+                                               REPOSITORIES
+  =========================================================
+  -->
+  <repositories>
+    <repository>
+      <id>servicemix-stable-repo</id>
+      <name>Servicemix Maven2 Repository with stable releases</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>     
+  </repositories>
+
+  <!--
+  =========================================================
+                                                    MODULES
+  =========================================================
+  -->
+  <modules>
+    <module>su5-wsdl</module>
+    <module>su6-wsdl</module>
+    <module>sa-occurs-wsdl</module>    
+  </modules>
+
+<profiles>
+<!-- Profile which executes integration test in Open ESB -->
+<profile>
+<id>IntegrationTest</id>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <inherited>false</inherited>      
+        <groupId>it.imolinfo.jbi4cics</groupId>
+        <artifactId>integration-test-mojo</artifactId>       
+        <dependencies>
+          <dependency>
+            <groupId>it.imolinfo.jbi4cics</groupId>
+            <artifactId>jbi4cics</artifactId>
+            <version>${version}</version>
+          </dependency>        
+          <dependency>
+            <groupId>it.imolinfo.jbi4cics</groupId>
+            <artifactId>sa-occurs-wsdl</artifactId>
+            <version>${version}</version>
+            <type>zip</type>
+          </dependency>        
+        </dependencies>
+        <configuration>
+          <openesb.home>${openesb.home}</openesb.home>
+          <soapui.home>${soapui.home}</soapui.home>
+          <maven.repository.home>${maven.repository.home}</maven.repository.home>
+          <project.home>${basedir}/../..</project.home>
+          <sa.list>sa-occurs-wsdl</sa.list>
+          <version>${project.version}</version>
+          <jbi.component.name>jbi4cics</jbi.component.name>
+          <jbi.component.path>${maven.repository.home}/it/imolinfo/jbi4cics/jbi4cics/${version}/jbi4cics-${version}-installer.zip</jbi.component.path>
+          <soapui.project.path>${basedir}/src/test/etc/soapui/jbi4cicsIntegrationTestOccursWSDL-soapui-project.xml</soapui.project.path>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <phase>integration-test</phase>          
+            <goals>
+              <goal>startOpenESB</goal>
+	      <goal>installBCOpenESB</goal> 
+	      <goal>deploy</goal> 
+	      <goal>startIntegrationTestWin</goal>
+	      <goal>startIntegrationTestUnix</goal>
+	      <goal>undeploy</goal>
+	      <goal>uninstallBCOpenESB</goal>
+	      <goal>stopOpenESB</goal>	      
+	      <goal>generateReports</goal>
+            </goals>
+          </execution>
+        </executions>
+        
+      </plugin>
+    </plugins>
+  </build>  
+  <activation>
+    <property>
+      <name>IntegrationTest</name>
+    </property>
+  </activation>
+</profile>
+</profiles>
+
+</project>

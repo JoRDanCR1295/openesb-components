@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="invokeEtl" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/invokeEtl"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/invokeEtl" xmlns:ns1="http://com.sun.jbi/etl/etlengine" xmlns:ns2="http://com.sun.jbi/etl/etlengine/invokeEtl">
+    <import namespace="http://com.sun.jbi/etl/etlengine" location="collab2_engine.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://com.sun.jbi/etl/etlengine" location="invokeEtl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="invokeEtl" partnerLinkType="ns1:invoke_etlPartnerLinkType" myRole="invoke_etl_Myrole"/>
+        <partnerLink name="collab2_engine" partnerLinkType="ns1:collab2_engine_etlPartnerLinkType" partnerRole="collab2_engine_myrole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="invokeEtlOutputMsg" messageType="ns1:invokeEtlOutput"/>
+        <variable name="invokeEtlInputMsg" messageType="ns1:invokeEtlInput"/>
+        <variable name="outputMsg" messageType="ns1:output"/>
+        <variable name="inputMsg" messageType="ns1:input"/>
+    </variables>
+    <sequence>
+       
+        <receive name="ReceiveFromHttpClient" createInstance="yes" partnerLink="invokeEtl" operation="execute" portType="ns1:invoke_etlPortType" variable="invokeEtlInputMsg" />
+        <assign name="Assign1">
+            <copy>
+                <from>$invokeEtlInputMsg.part/ns2:value</from>
+                <to>$inputMsg.part/ns1:value</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeEtl" partnerLink="collab2_engine" operation="execute" portType="ns1:collab2_engine_etlPortType" inputVariable="inputMsg" outputVariable="outputMsg"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$outputMsg.part/ns1:value</from>
+                <to>$invokeEtlOutputMsg.part/ns2:value</to>
+            </copy>
+        </assign>
+        <reply name="ReplyToClient" partnerLink="invokeEtl" operation="execute" portType="ns1:invoke_etlPortType" variable="invokeEtlOutputMsg"/>
+        </sequence>
+   
+</process>

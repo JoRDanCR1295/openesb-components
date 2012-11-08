@@ -1,0 +1,16 @@
+echo .
+echo BUILDING WSTESTCLIENT
+mkdir test
+cp ../../purchaseOrderCoordinator/src/*.wsdl . 
+cp ../../purchaseOrderCoordinator/src/*.xsd .
+echo GENERATING STUBS
+$APPSERVER_HOME/bin/wscompile -gen Config.xml -keep
+echo STUBS GENERATED
+rm *.wsdl
+rm *.xsd
+echo COMPILING CLIENT
+cp Test.java test/Test.java
+mkdir bin
+$JAVA_HOME/bin/javac -cp $APPSERVER_HOME/lib/appserv-ws.jar:$APPSERVER_HOME/lib/javaee.jar test/*.java -d bin test/PurchaseOrderCoordinator/*.java
+echo BUILD SUCCESSFUL
+echo .

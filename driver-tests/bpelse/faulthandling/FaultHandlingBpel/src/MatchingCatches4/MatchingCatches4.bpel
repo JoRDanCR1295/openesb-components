@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="fhMatchingCatches4"
+    targetNamespace="http://www.seebeyond.com/eInsight/MatchingCatches4" 
+    xmlns:tns="http://www.seebeyond.com/eInsight/MatchingCatches4"
+    xmlns:cfns1="http://www.seebeyond.com/eInsight/MatchingCatches4CustomFaults1"
+    xmlns:cfns2="http://www.seebeyond.com/eInsight/MatchingCatches4CustomFaults2"        
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="http://stc.com/FaultTest/MatchingCatches4"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/FaultTest/MatchingCatches4"
+    location="MatchingCatches4.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="faulttestLink"
+        partnerLinkType="ns0:SLT"
+        myRole="server"/>
+    </partnerLinks>
+    <variables> 
+        <variable name="MatchingCatches4_Output"
+        messageType="ns0:FaultTest"></variable>
+        <variable name="MatchingCatches4_Input"
+        messageType="ns0:FaultTest"></variable>
+    </variables>
+    <faultHandlers>
+        <catch faultName="cfns1:FaultName">   
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'Caught by catch Q1 at process level'</from>
+                        <to>$MatchingCatches4_Input.part/retString</to>
+                    </copy>
+                </assign>
+                <reply
+                partnerLink="faulttestLink"
+                portType="ns0:FaultTest"
+                operation="MatchingCatches4"
+                variable="MatchingCatches4_Input"/>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="MatchingCatches4"
+        partnerLink="faulttestLink"
+        portType="ns0:FaultTest"
+        operation="MatchingCatches4"
+        variable="MatchingCatches4_Output"
+        createInstance="yes"/>
+        <if name="Decision">
+            <condition>$MatchingCatches4_Output.part/retString = '1'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="cfns1:AnotherFaultName"
+                                faultVariable="MatchingCatches4_Output1"
+                                faultMessageType="ns0:FaultTest">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case1UnmatchingFaultNameAndMatchingFaultVariable'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>
+                        </faultHandlers>
+                        <throw faultName="cfns1:FaultName"/>
+                    </scope>
+                </sequence>
+            <elseif>
+                <condition>$MatchingCatches4_Output.part/retString = '2'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="cfns1:AnotherFaultName">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case1UnmatchingFaultName'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>                            
+                        </faultHandlers>
+                        <throw faultName="cfns1:FaultName"/>
+                    </scope>
+                </sequence>
+            </elseif>                
+            <elseif>
+                <condition>$MatchingCatches4_Output.part/retString = '3'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultVariable="MatchingCatches4_Output1"
+                                faultMessageType="ns0:FaultTest">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case3MatchingFaultVariable'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>
+                        </faultHandlers>
+                        <throw faultName="cfns1:FaultName"/>
+                    </scope>
+                </sequence>
+            </elseif>                
+            <elseif>
+                <condition>$MatchingCatches4_Output.part/retString = '4'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="cfns1:AnotherFaultName"
+                                faultVariable="MatchingCatches4_Output1"
+                                faultMessageType="ns0:FaultTest">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case4UnmatchingFaultNameAndMatchingFaultVariable'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>
+                            <catch faultName="cfns2:FaultName">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case4UnmatchingFaultName'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>                            
+                        </faultHandlers>
+                        <throw faultName="cfns1:FaultName"/>
+                    </scope>
+                </sequence>
+            </elseif>
+            <elseif>
+                <condition>$MatchingCatches4_Output.part/retString = '5'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="cfns2:FaultName"
+                                faultVariable="MatchingCatches4_Output1"
+                                faultMessageType="ns0:FaultTest">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case5UnmatchingFaultNameAndMatchingFaultVariable'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>
+                            <catch faultVariable="MatchingCatches4_Output1"
+                                faultMessageType="ns0:FaultTest">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Case5MatchingFaultVariable'</from>
+                                            <to>$MatchingCatches4_Input.part/retString</to>
+                                        </copy>
+                                    </assign>
+                                    <reply
+                                    partnerLink="faulttestLink"
+                                    portType="ns0:FaultTest"
+                                    operation="MatchingCatches4"
+                                    variable="MatchingCatches4_Input"/>
+                                </sequence>
+                            </catch>
+                            
+                        </faultHandlers>
+                        <throw faultName="cfns1:FaultName"/>
+                    </scope>
+                </sequence>
+            </elseif>            
+            <else>
+                <sequence>
+                    <assign>
+	                <copy>
+	                    <from>'Scenario Passes Thru'</from>
+	                    <to>$MatchingCatches4_Input.part/retString</to>
+	                </copy>
+	            </assign>
+	            <reply
+	            partnerLink="faulttestLink"
+	            portType="ns0:FaultTest"
+	            operation="MatchingCatches4"
+	            variable="MatchingCatches4_Input"/>
+                 </sequence>
+            </else>
+        </if>
+    </sequence>
+</process>

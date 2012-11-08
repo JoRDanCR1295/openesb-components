@@ -1,0 +1,207 @@
+//IDL
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testconsumerfromidlcomplex{
+
+
+        					// value type
+        					valuetype EchoVT {
+        						public  short publicShort;
+        						private long  privateLong;
+        				    };
+
+                            // value type (boxed) - primitive
+        					valuetype MyLong {
+            					public long data;
+        				    };
+    
+            			    // value type (boxed) - complex
+        					valuetype MySequence {
+            					public sequence<long> data;
+        				    };
+
+            				// abstract value type
+            				// UNSUPPORTED : abstract valuetype AFoo {};
+    
+
+// =============================================================================
+// IDL Type            | Java type                  | Exceptions
+// =============================================================================
+// boolean             | boolean                    |
+// char                | char                       | CORBA::DATA_CONVERSION
+// wchar               | char                       | CORBA::DATA_CONVERSION
+// octet               | byte                       |
+// -----------------------------------------------------------------------------
+// string              | String                     | CORBA::MARSHAL
+//                     |                            | CORBA::DATA_CONVERSION
+// -----------------------------------------------------------------------------
+// wstring             | String                     | CORBA::MARSHAL
+//                     |                            | CORBA::DATA_CONVERSION
+// -----------------------------------------------------------------------------
+// short               | short                      |
+// unsigned short      | short                      |
+// long                | int                        |
+// unsigned long       | int                        |
+// long long           | long                       |
+// unsigned long  long | long                       |
+// float               | float                      |
+// double              | double                     |
+// fixed               | java.math.BigDecimal       |CORBA::DATA_CONVERSION
+// =============================================================================
+// long double         | not available at this time |
+// =============================================================================
+
+                            // struct
+           					struct EchoStruct {
+                                boolean            fieldBoolean;
+                                char               fieldChar;
+                                wchar              fieldWChar;
+
+                                // http://jira.codehaus.org/browse/XFIRE-462
+                                octet              fieldOctet;
+
+                                string             fieldString;
+                                wstring            fieldWString;
+                                short              fieldShort;
+                                unsigned short     fieldUnsignedShort;
+                                long               fieldLong;
+                                unsigned long      fieldUnsignedLong;
+                                long long          fieldLongLong;
+                                unsigned long long fieldUnsignedLongLong;
+                                float              fieldFloat;
+                                double             fieldDouble;
+
+                                // UNSUPPORTED
+                                // The fixed IDL type is not supported by idlj
+                                // http://java.sun.com/j2se/1.4.2/docs/guide/rmi-iiop/toJavaPortableUG.html
+                                //fixed              fieldFixed;
+               				};
+    
+               				// sequence + typedef
+               				typedef sequence<long> SeqLong;
+
+               				// sequence + typedef
+               				typedef sequence<MySequence> SeqMySequence;
+
+               				// sequence + typedef
+               				typedef sequence<EchoStruct> SeqEchoStruct;
+
+    
+               				// exception
+        					exception EchoComplexException {
+            					SeqEchoStruct reason;
+            				};           				
+
+            				// enum
+            				// FIXME: enum is unsupported
+            				// enum EchoComplexEnum {E1, E2, E3};
+    
+            				// FIXME: array is unsupported
+            				// array
+            				//typedef long ArrayLong[10];
+    
+               				// array of struct
+        					//typedef long ArrayOfEchoStruct[10];
+
+
+                            // StructOfStruct
+           					struct StructOfStruct {
+               					EchoStruct internalStruct;
+               				};
+
+        					// value type
+        					valuetype VTPrimi {
+                                public boolean            fieldBoolean;
+                                public char               fieldChar;
+                                public wchar              fieldWChar;
+
+                                // http://jira.codehaus.org/browse/XFIRE-462
+                                public octet              fieldOctet;
+
+                                public string             fieldString;
+                                public wstring            fieldWString;
+                                public short              fieldShort;
+                                public unsigned short     fieldUnsignedShort;
+                                public long               fieldLong;
+                                public unsigned long      fieldUnsignedLong;
+                                public long long          fieldLongLong;
+                                public unsigned long long fieldUnsignedLongLong;
+                                public float              fieldFloat;
+                                public double             fieldDouble;
+        				    };
+
+        					valuetype VTPrimiSeq {
+            					public sequence<VTPrimi> data;
+        				    };
+
+        					valuetype ValueTypeOfValueType {
+            					public VTPrimi data;
+        				    };
+
+        					valuetype ValueTypeOfStruct {
+            					public EchoStruct data;
+        				    };
+
+                            // StructOfStruct
+           					struct StructOfValuetype {
+               					VTPrimi data;
+               				};
+
+
+        					//==================================================
+        					//                                         INTERFACE
+        					//==================================================
+    						interface EchoComplex {
+
+    							string echo(in string msg);
+    
+    							EchoVT echoValueType(in EchoVT e);
+    
+    							MyLong echoValueBoxedTypePrimitive(in MyLong e);
+
+    							MySequence echoValueBoxedTypeComplex(in MySequence e);
+    
+    							EchoStruct echoStruct(in EchoStruct es);
+    
+    							SeqLong echoSequence(in SeqLong es);
+
+    							MySequence echoSequenceValueType(in MySequence es);
+
+    							SeqEchoStruct echoSequenceSeqEchoStruct(in SeqEchoStruct es);
+
+    							SeqMySequence echoSequenceSeqMySequence(in SeqMySequence es);
+    
+    							EchoStruct echoExceptionThrown(in EchoStruct es)
+    							    raises (EchoComplexException);
+
+    							EchoStruct echoExceptionNotThrown(in EchoStruct es)
+    							    raises (EchoComplexException);
+
+    							// FIXME: enum is unsupported
+    							//string echoEnum(in EchoComplexEnum e);
+    
+    							// FIME: array is unsupported
+    							// string echoArray(in ArrayLong e);
+    
+    							// UNSUPPORTED : string echoAbstractValueType(in AFoo n);
+
+
+    							StructOfStruct echoStructOfStruct(in StructOfStruct v);
+
+    							VTPrimi echoVTPrimi(in VTPrimi v);
+
+    							VTPrimiSeq echoVTPrimiSeq(in VTPrimiSeq v);
+
+    							ValueTypeOfValueType echoValueTypeOfValueType(in ValueTypeOfValueType v);
+
+    							ValueTypeOfStruct echoValueTypeOfStruct(in ValueTypeOfStruct v);
+
+    							StructOfValuetype echoStructOfValuetype(in StructOfValuetype v);
+					};
+				};
+			};
+		};
+	};
+};

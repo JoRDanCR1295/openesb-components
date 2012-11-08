@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="XSDVariables_Complex_Expressions3"
+    targetNamespace="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions3"
+    xmlns:tns="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions3"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="http://stc.com/XSDVariables_Complex_Expressions3"
+    xmlns:ns1="urn:SampleXSD"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/XSDVariables_Complex_Expressions3"
+    location="XSDVariables_Complex_Expressions3.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD"
+    location="SampleXSD.xsd"
+    importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+        messageType="ns0:XSDVariables_Complex_Expressions3"></variable>
+        <variable name="messageType_Input"
+        messageType="ns0:XSDVariables_Complex_Expressions3"></variable>
+        <variable name="xsdDataType"
+        type="ns1:USAddressType"></variable>
+    </variables>
+    <sequence>
+        <receive name="XSDVariables_Complex_Expressions3"
+        partnerLink="Client2BP"
+        portType="ns0:XSDVariables_Complex_Expressions3"
+        operation="XSDVariables_Complex_Expressions3"
+        variable="messageType_Input"
+        createInstance="yes"></receive>        
+        <assign name="Assign2">            
+            <!--$messageType_Input.part/name-->
+            <copy>
+                <from>$messageType_Input.part/name/text()</from> <to>$messageType_Output.part/name</to> 
+            </copy>
+            <copy>
+                <from>$messageType_Input.part/street/text()</from> <to>$messageType_Output.part/street</to> 
+            </copy>
+            <copy>
+            <from>$messageType_Input.part/city</from> <to>$messageType_Output.part/city</to>         
+            </copy>
+            <copy>
+                <from>$messageType_Input.part/state</from><to>$messageType_Output.part/state</to>         
+            </copy>
+            <copy>
+            <from>$messageType_Input.part/zip</from> <to>$messageType_Output.part/zip</to>                     
+            </copy>
+        </assign>   
+        <reply name="XSDVariables_Complex_Expressions3.Reply"
+        partnerLink="Client2BP"
+        portType="ns0:XSDVariables_Complex_Expressions3"
+        operation="XSDVariables_Complex_Expressions3"
+        variable="messageType_Output"></reply>
+    </sequence>
+</process>

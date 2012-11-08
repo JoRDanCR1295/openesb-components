@@ -1,0 +1,1 @@
+create view "COMPANY"."v1fullqual" as select * from "APP"."CUSTOMER"

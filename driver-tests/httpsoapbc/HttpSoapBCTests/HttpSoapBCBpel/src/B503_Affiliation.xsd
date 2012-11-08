@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Ardatis N.V. (Ardatis N.V.) -->
+<xs:schema xmlns="http://www.rsvz-inasti.fgov.be/schemas/B2B/Exchanges" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.rsvz-inasti.fgov.be/schemas/B2B/Exchanges" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Elements.xsd"/>
+	<xs:element name="CanAffiliateRequest">
+		<xs:annotation>
+			<xs:documentation xml:lang="nl">Aanvraag nieuwe aansluiting</xs:documentation>
+			<xs:documentation xml:lang="fr">Demande nouvelle affiliation</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="INSS"/>
+				<xs:element ref="LegalInfo"/>
+				<xs:element ref="Membership" maxOccurs="unbounded"/>
+				<xs:element name="CompanyRepresentative" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation xml:lang="nl">Mandataris</xs:documentation>
+						<xs:documentation xml:lang="fr">Mandataire</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="0">
+								<xs:annotation>
+									<xs:documentation xml:lang="nl">vernietigen bestaande code mandataris</xs:documentation>
+									<xs:documentation xml:lang="fr">supprimer code mandataire existant </xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+							<xs:enumeration value="1">
+								<xs:annotation>
+									<xs:documentation xml:lang="nl">invoeren code mandataris</xs:documentation>
+									<xs:documentation xml:lang="fr">introduire code mandataire</xs:documentation>
+								</xs:annotation>
+							</xs:enumeration>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="NISSEQualityCode"/>
+				<xs:element ref="SignatureDate"/>
+				<xs:element ref="OldSIFCode" minOccurs="0"/>
+				<xs:element ref="SuppressionAssistingSpouse" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AffiliateRequest">
+		<xs:annotation>
+			<xs:documentation xml:lang="nl">Antwoord op aanvraag nieuwe aansluiting</xs:documentation>
+			<xs:documentation xml:lang="fr">Réponse à la demande nouvelle affiliation</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="INSS"/>
+				<xs:element ref="Affiliation"/>
+				<xs:element ref="Income" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ReducedContribution" minOccurs="0"/>
+				<xs:element ref="Relationship" minOccurs="0"/>
+				<xs:element ref="MembershipAffiliation" minOccurs="0"/>
+				<xs:element ref="Membership" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CancelAffiliationRequest">
+		<xs:annotation>
+			<xs:documentation>Annulatie aanvraag aansluiting</xs:documentation>
+			<xs:documentation>Annulation demande affiliation</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="AffiliationNbr"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

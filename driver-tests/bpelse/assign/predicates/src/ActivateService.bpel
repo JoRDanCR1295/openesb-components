@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="ActivateService" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/ActivateService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ActivateService" xmlns:ns1="http://www.acme.co.nz/ESB">
+        
+    <import namespace="http://www.acme.co.nz/ESB" location="ActivateService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ActivateService" partnerLinkType="ns1:activateService" myRole="activateServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="activateServiceSoapIn" messageType="ns1:activateServiceSoapIn"/>
+        <variable name="activateServiceSoapOut" messageType="ns1:activateServiceSoapOut"/>
+    </variables>
+    <sequence>
+        <receive name="receiveActivateService" createInstance="yes" partnerLink="ActivateService" operation="activateService" portType="ns1:ActivateServicePortType" variable="activateServiceSoapIn"/>
+        <if name="If1">
+            <condition>starts-with($activateServiceSoapIn.parameters/ns1:objectNames/@test, 'test1')</condition>
+                <assign name="Assign1">
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames[@test='test1']/ns1:item[1]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[1]</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>test1</literal>
+                        </from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[2]</to>
+                    </copy>
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames[@test='test1']/ns1:item[2]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[3]</to>
+                    </copy>
+                </assign>
+            <elseif>
+            <condition>starts-with($activateServiceSoapIn.parameters/ns1:objectNames/@test, 'test2')</condition>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames[@test='test2']/ns1:item[1]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[1]</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>test2</literal>
+                        </from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[2]</to>
+                    </copy>
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames[@test='test2']/ns1:item[2]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[3]</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <else>
+                <assign name="Assign3">
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames/ns1:item[1]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[1]</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>NM</literal>
+                        </from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[2]</to>
+                    </copy>
+                    <copy>
+                        <from>$activateServiceSoapIn.parameters/ns1:objectNames/ns1:item[2]</from>
+                        <to>$activateServiceSoapOut.activateServiceResult/ns1:objectNames/ns1:item[3]</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="replyActivateService" partnerLink="ActivateService" operation="activateService" portType="ns1:ActivateServicePortType" variable="activateServiceSoapOut"/>
+    </sequence>
+   
+</process>

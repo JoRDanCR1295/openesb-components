@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrInvFlow_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrInvFlow_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrInvFlow_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="InvFlowparent"
+         xmlns:ns1="urn:InvFlowchildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="InvFlowparent"
+            location="corrInvFlow_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:InvFlowchildTargetNamespace"
+            location="corrInvFlow_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_childOp"
+                     partnerLinkType="ns1:InvFlowchildServiceLinkType"
+                     partnerRole="InvFlowchildServerRole"/>
+        <partnerLink name="plink_parentOp"
+                     partnerLinkType="ns0:InvFlowparentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parentOp1"
+                     partnerLinkType="ns0:InvFlowparentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childContainer"
+                  messageType="ns1:InvFlowchildMessage"></variable>
+        <variable name="InvFlowparentOperation_Output"
+                  messageType="ns0:InvFlowparentMessage"></variable>
+        <variable name="InvFlowparentOperation_Input"
+                  messageType="ns0:InvFlowparentMessage"></variable>
+        <variable name="InvFlowparentOperation1_Output"
+                  messageType="ns0:InvFlowparentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrProp1"
+                        properties="ns0:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="InvFlowparentOperation"
+                 partnerLink="plink_parentOp"
+                 portType="ns0:InvFlowparentPortType"
+                 operation="InvFlowparentOperation"
+                 variable="InvFlowparentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$InvFlowparentOperation_Output.InvFlowparentPart/string</from>
+                <to>$childContainer.InvFlowchildPart/string</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="plink_childOp"
+                portType="ns1:InvFlowchildPortType"
+                operation="InvFlowchildOperation"
+                inputVariable="childContainer"
+                outputVariable="childContainer">
+            <correlations>
+                <correlation set="CorrProp1"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </invoke>
+        <flow>
+            <empty></empty>
+            <receive name="InvFlowparentOperation1"
+                     partnerLink="plink_parentOp1"
+                     portType="ns0:InvFlowparentPortType1"
+                     operation="InvFlowparentOperation1"
+                     variable="InvFlowparentOperation1_Output">
+                <correlations>
+                    <correlation set="CorrProp1"
+                                 initiate="no"/>
+                </correlations>
+            </receive>
+        </flow>
+        <assign>
+            <copy>
+                <from>concat($childContainer.InvFlowchildPart/string, $InvFlowparentOperation1_Output.InvFlowparentPart/string)</from>
+                <to>$InvFlowparentOperation_Input.InvFlowparentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parentOp"
+               portType="ns0:InvFlowparentPortType"
+               operation="InvFlowparentOperation"
+               variable="InvFlowparentOperation_Input"></reply>
+    </sequence>
+</process>

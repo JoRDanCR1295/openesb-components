@@ -1,0 +1,55 @@
+<definitions targetNamespace="urn:simpleFlowTargetNamespace"
+             name="simpleFlowDefinition"
+             xmlns:tns="urn:simpleFlowTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="urn:simpleFlowTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:simpleFlowTargetNamespace"
+                    xmlns:ns1="urn:simpleFlowTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+            <xsd:complexType name="simpleFlowType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="simpleFlowMessage">
+        <part name="simpleFlowPart" type="tns:simpleFlowType"/>
+    </message>
+    <portType name="simpleFlowPortType">
+        <operation name="simpleFlowOperation">
+            <input message="tns:simpleFlowMessage"/>
+            <output message="tns:simpleFlowMessage"/>
+        </operation>
+    </portType>
+    <binding name="simpleFlowBinding" type="tns:simpleFlowPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="simpleFlowOperation">
+            <soap:operation soapAction="simpleFlowOperation"/>
+            <input>
+                <soap:body parts="simpleFlowPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simpleFlowPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="simpleFlowService">
+        <port name="simpleFlowPort" binding="tns:simpleFlowBinding">
+            <soap:address location="http://localhost:12100/service/simpleFlow"/>
+        </port>
+    </service>
+    <slnk:serviceLinkType name="simpleFlowServiceLinkType"
+       xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+	<slnk:role name="simpleFlowServerRole">
+		<slnk:portType name="simpleFlowPortType"/>
+	</slnk:role>
+   </slnk:serviceLinkType>
+</definitions>

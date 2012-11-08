@@ -1,0 +1,47 @@
+<project name="module-mainbuild" default="build">
+
+	<basename property="cbesb.project.name" file="../" />	
+	<property name="cbesb.home" location="../.." />
+	<property name="src.dir" location="${cbesb.home}/${cbesb.project.name}/src/java" />
+	<property name="build.dir" location="${cbesb.home}/${cbesb.project.name}/target"/>
+	<property name="external_libs" location="${cbesb.home}/lib" />
+	<property name="build.lib.dir" location="${cbesb.home}/build/lib" />
+	
+
+	<target name="build" depends="createJar" />
+	
+	<target name="init">
+		<mkdir dir="${build.dir}/classes" />
+		<mkdir dir="${build.lib.dir}" />		
+	</target>
+	
+	<target name="compile" depends="init">
+		
+		<javac srcdir="${src.dir}" destdir="${build.dir}/classes" debug="true">
+			<classpath>
+				<fileset dir="${build.lib.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="${external_libs}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	
+		
+	</target>
+	
+	<target name="createJar" depends="compile">
+		<jar destfile="${build.lib.dir}/${cbesb.project.name}.jar">
+			<fileset dir="${build.dir}/classes">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>	
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build.dir}/classes" quiet="true"/>
+		<delete file="${build.lib.dir}/${cbesb.project.name}.jar" quiet="true"/>
+	</target>
+	
+</project>

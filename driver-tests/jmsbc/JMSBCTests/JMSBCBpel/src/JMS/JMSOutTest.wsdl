@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://stc.com/onewaytojms" targetNamespace="http://stc.com/onewaytojms">
+    <message name="message">
+        <part name="body" type="xs:string"/>
+    </message>
+    <portType name="portType">
+        <operation name="oneway">
+            <input message="y:message"/>
+        </operation>
+    </portType>
+    <binding name="binding" type="y:portType">
+        <jms:binding/>
+        <operation name="oneway">
+            <jms:operation destination="OutTestDestination" destinationType="Topic" transaction="NoTransaction" disableMessageTimeStamp="true" deliveryMode="NON_PERSISTENT" timeToLive="10000" priority="4" />
+             <input>
+                <jms:message messageType="TextMessage" textPart="body" />
+            </input>
+        </operation>
+    </binding>
+    <service name="jmsOutOnlyTestService">
+        <port binding="y:binding" name="jmsOutOnlyTestEndpoint">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="slt">
+        <plnk:role name="server" portType="y:portType"/>
+    </plnk:partnerLinkType>
+</definitions>

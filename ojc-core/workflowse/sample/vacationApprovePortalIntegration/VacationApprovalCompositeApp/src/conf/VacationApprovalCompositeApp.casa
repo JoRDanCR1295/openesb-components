@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns2="http://j2ee.netbeans.org/wsdl/VacationApproval" xmlns:ns3="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/VacationRequest" xmlns:ns4="http://enterprise.netbeans.org/bpel/VacationApprovalBpelModule/VacationRequest" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="TaskCommonPort" interface-name="ns1:TaskCommonPortType" name="endpoint1" service-name="ns1:TaskCommonService"/>
+<endpoint endpoint-name="VacationApprovalPort" interface-name="ns2:submitVacationRequest" name="endpoint2" service-name="ns2:VacationApprovalService"/>
+<endpoint endpoint-name="submitVacationRequestRole" interface-name="ns2:submitVacationRequest" name="endpoint3" service-name="ns3:taskApproveVacationPartner"/>
+<endpoint display-name="PartnerLink1" endpoint-name="submitVacationRequestRole_myRole" file-path="VacationRequest.bpel" interface-name="ns2:submitVacationRequest" name="endpoint4" process-name="VacationRequest" service-name="ns4:PartnerLink1"/>
+<endpoint display-name="WLMPartnerLink2" endpoint-name="submitVacationRequestRole_partnerRole" file-path="VacationRequest.bpel" interface-name="ns2:submitVacationRequest" name="endpoint5" process-name="VacationRequest" service-name="ns4:WLMPartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="VacationRequestWorklistApp.jar" component-name="sun-wlm-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="VacationApprovalCompositeApp-VacationRequestWorklistApp" unit-name="VacationRequestWorklistApp" unknown="false" x="105" y="256">
+<provides endpoint="endpoint3"/>
+<provides endpoint="endpoint1"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="VacationApprovalBpelModule.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="VacationApprovalCompositeApp-VacationApprovalBpelModule" unit-name="VacationApprovalBpelModule" unknown="false" x="130" y="69">
+<provides endpoint="endpoint4"/>
+<consumes endpoint="endpoint5"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="VacationApprovalCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="67" y="38">
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/VacationApproval.wsdl#xpointer(/definitions/service[@name='VacationApprovalService']/port[@name='VacationApprovalPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint3" state="new"/>
+<connection consumer="endpoint5" provider="endpoint4" state="deleted"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/VacationApproval.wsdl#xpointer(/definitions/portType[@name='submitVacationRequest'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/Partners/VacationApproval/VacationApproval.wsdl#xpointer(/definitions/portType[@name='submitVacationRequest'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/VacationApproval.wsdl#xpointer(/definitions/portType[@name='submitVacationRequest'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/TaskCommon.wsdl#xpointer(/definitions/portType[@name='TaskCommonPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/VacationApproval.wsdl#xpointer(/definitions/binding[@name='VacationApprovalBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/Partners/VacationApproval/VacationApproval.wsdl#xpointer(/definitions/binding[@name='VacationApprovalBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/VacationApproval.wsdl#xpointer(/definitions/binding[@name='VacationApprovalBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/TaskCommon.wsdl#xpointer(/definitions/binding[@name='TaskCommonBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/VacationApproval.wsdl#xpointer(/definitions/service[@name='VacationApprovalService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationApprovalBpelModule/Partners/VacationApproval/VacationApproval.wsdl#xpointer(/definitions/service[@name='VacationApprovalService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/VacationApproval.wsdl#xpointer(/definitions/service[@name='VacationApprovalService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/VacationRequestWorklistApp/TaskCommon.wsdl#xpointer(/definitions/service[@name='TaskCommonService'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/SubBPRecover"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SubBPRecover" name="SubBPRecover" xmlns:ns="http://xml.netbeans.org/schema/SubBPRecoverInlineSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/SubBPRecoverInlineSchema" xmlns:tns1="http://xml.netbeans.org/schema/SubBPRecoverInlineSchema">
+            <xsd:complexType xmlns="http://www.w3.org/2001/XMLSchema" name="content">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"></xsd:element>
+                    <xsd:element name="data" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType xmlns="http://www.w3.org/2001/XMLSchema" name="type1">
+                <xsd:sequence>
+                    <xsd:element name="msg1" type="xsd:string"></xsd:element>
+                    <xsd:element name="content1" type="tns1:content"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType xmlns="http://www.w3.org/2001/XMLSchema" name="type2">
+                <xsd:sequence>
+                    <xsd:element name="msg2" type="xsd:string"></xsd:element>
+                    <xsd:element name="content2" type="tns1:content"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="InboundMsg">
+        <wsdl:part name="part1" type="ns:type1"/>
+    </wsdl:message>
+    <wsdl:message name="OutboundMsg">
+        <wsdl:part name="part1" type="ns:type1"/>
+    </wsdl:message>
+    <wsdl:portType name="MainBPInboundPT">
+        <wsdl:operation name="MainBPInboundOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="InOutPT">
+        <wsdl:operation name="InOutOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+            <wsdl:output name="output1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="MainBPOutboundPT">
+        <wsdl:operation name="MainBPOutboundOper">
+            <wsdl:input name="input1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InBinding" type="tns:MainBPInboundPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="MainBPInboundOper">
+            <soap:operation soapAction="MainBPInboundOper" style="document"/>
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="InOutBinding" type="tns:InOutPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="InOutOper">
+            <soap:operation soapAction="InOutOper" style="document"/>
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="OutBinding" type="tns:MainBPOutboundPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="MainBPOutboundOper">
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InService">
+        <wsdl:port name="MainBPInboundPT" binding="tns:InBinding">
+            <soap:address location="http://localhost:18181/SubBPRecover/MainBPInboundPT"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="InOutService">
+        <wsdl:port name="InOutPT" binding="tns:InOutBinding">
+            <soap:address location="http://localhost:18181/SubBPRecover/InOutPT"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="OutService">
+        <wsdl:port name="MainBPOutboundPT" binding="tns:OutBinding">
+            <soap:address location="http://localhost:18181/SubBPRecover/MainBPOutboundPT"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="InPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="MainBPInboundPTRole" portType="tns:MainBPInboundPT"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="InOutPartner1">
+        <plink:role name="InOutPTRole" portType="tns:InOutPT"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="MainBPOutboundPTRole">
+        <plink:role name="MainBPOutboundPTRole" portType="tns:MainBPOutboundPT"/>
+    </plink:partnerLinkType>
+</definitions>

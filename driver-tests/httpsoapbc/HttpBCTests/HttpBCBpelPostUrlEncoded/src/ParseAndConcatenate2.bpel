@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ParseAndConcatenate2"
+    targetNamespace="http://enterprise.netbeans.org/bpel/HttpBCBpelPostUrlEncoded/ParseAndConcatenate2"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/HttpBCBpelPostUrlEncoded/ParseAndConcatenate2" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Trigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/HttpPostInOut">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/HttpPostInOut" location="HttpPostInOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:HttpPostInOut2" partnerRole="HttpPostInOutPortType2Role"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:TriggerRIT317312" myRole="TriggerPortType2Role"/>
+    </partnerLinks>
+    <variables>
+        <variable name="HttpPostInOutOperation2Out" messageType="ns2:HttpPostInOutOperationReplyComplex"/>
+        <variable name="HttpPostInOutOperation2In" messageType="ns2:HttpPostInOutOpertionRequestSimple"/>
+        <variable name="TriggerOperationOut" messageType="ns1:TriggerOperationReply"/>
+        <variable name="TriggerOperationIn" messageType="ns1:TriggerOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="TriggerOperation" portType="ns1:TriggerPortType2" variable="TriggerOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($TriggerOperationIn.part1, $TriggerOperationIn.part2, $TriggerOperationIn.part3)</from>
+                <to part="part1" variable="HttpPostInOutOperation2In"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="HttpPostInOutOperation2" portType="ns2:HttpPostInOutPortType2" inputVariable="HttpPostInOutOperation2In" outputVariable="HttpPostInOutOperation2Out"/>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($HttpPostInOutOperation2Out.part1/Datum1, '/', $HttpPostInOutOperation2Out.part1/Datum2, '/', $HttpPostInOutOperation2Out.part1/Datum3, '/')</from>
+                <to part="part1" variable="TriggerOperationOut"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="TriggerOperation" portType="ns1:TriggerPortType2" variable="TriggerOperationOut"/>
+    </sequence>
+</process>

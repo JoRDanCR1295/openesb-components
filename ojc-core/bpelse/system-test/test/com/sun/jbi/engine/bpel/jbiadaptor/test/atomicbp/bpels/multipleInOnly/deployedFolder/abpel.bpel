@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="abpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AtomicBP/abpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AtomicBP/abpel.bpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/abpwsdl" xmlns:ns2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Transaction" ns2:atomic="yes">
+   <import namespace="http://j2ee.netbeans.org/wsdl/abpwsdl" location="abpwsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink4" partnerLinkType="ns1:secondInvoke" partnerRole="secondInvokePortTypeRole"/>
+      <partnerLink name="PartnerLink3" partnerLinkType="ns1:invoke" partnerRole="invokePortTypeRole"/>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns1:secondReceive" myRole="SecondReceiveTypeRole"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:main" myRole="mainPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="MainOperationIn" messageType="ns1:mainOperationRequest"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="CorrelationSet1" properties="ns1:Correlation"/>
+   </correlationSets>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="mainOperation" portType="ns1:mainPortType" variable="MainOperationIn">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="yes"/>
+         </correlations>
+      </receive>
+      <invoke name="Invoke1" partnerLink="PartnerLink3" operation="invokeOperation" portType="ns1:invokePortType" inputVariable="MainOperationIn"/>
+      <receive name="Receive2" partnerLink="PartnerLink2" operation="secondReceivelOperation" portType="ns1:secondReceivePortType" createInstance="no" variable="MainOperationIn">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="no"/>
+         </correlations>
+      </receive>
+      <invoke name="Invoke2" partnerLink="PartnerLink4" operation="secondInvokeOperation" portType="ns1:secondInvokePortType" inputVariable="MainOperationIn"/>
+   </sequence>
+</process>

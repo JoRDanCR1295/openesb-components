@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="EnvCleanupSql" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="EnvCleanupRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="EnvCleanupRequest">
+    <part name="EnvCleanupRequestPart" element="tns:EnvCleanupRequest"/>
+  </message>
+  <message name="EnvCleanupResponse">
+    <part name="EnvCleanupResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="EnvCleanupSql_sqlsePortType">
+    <operation name="EnvCleanup">
+      <input name="EnvCleanupRequest" message="tns:EnvCleanupRequest"/>
+      <output name="EnvCleanupResponse" message="tns:EnvCleanupResponse"/>
+    </operation>
+  </portType>
+  <binding name="EnvCleanupSqlBinding" type="tns:EnvCleanupSql_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="EnvCleanup">
+      <soap:operation/>
+      <input name="EnvCleanupRequest">
+        <soap:body/>
+      </input>
+      <output name="EnvCleanupResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="EnvCleanupSql_sqlseService">
+    <port name="EnvCleanupSql_sqlsePort" binding="tns:EnvCleanupSqlBinding">
+      <soap:address location="http://localhost:18181/EnvCleanupSql/EnvCleanupSql/EnvCleanupSql_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="EnvCleanupSql_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="EnvCleanupSql_myrole" portType="tns:EnvCleanupSql_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

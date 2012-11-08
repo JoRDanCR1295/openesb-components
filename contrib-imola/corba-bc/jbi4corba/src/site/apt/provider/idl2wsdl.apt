@@ -1,0 +1,128 @@
+											---
+											IDL to WSDL code generation
+											---
+											Mirco Casoni, Marco Piraccini
+											---
+											24/02/2009
+
+IDL to WSDL code generation
+
+  This component is based on this simple pseudo equation:
+  idj2java + java2wsdl = idl2wsdl.
+  This generation is used for both the WSDL generation (used to configure Jb4Corba endpoints)
+  and for the runtime behaviour for both the {{{../provider/providerArchitecture.html}provider}} and the {{{../consumer/consumerArchitectureFromIDL.html}consumer from IDL}}.
+
+  The algorithm used is the following:
+
+  [[1]] <<idlj>>
+
+        The first step is the "IDL to Java" code generation.
+        To implement this operation the component uses a <Sun>'s tool
+        distributed with the standard JDK: <<idlj>>.
+
+        This tool has several options and if you want a more detailed discussion
+        about it, please visit the {{{http://java.sun.com/j2se/1.5.0/docs/guide/rmi-iiop/toJavaPortableUG.html}java.sun.com}}.
+
+        The command line used is
+        <<idlj -fall -td>> <targetdir> <<-i>> <includedir> <<file.idl>>.
+
+        where <targetdir> is the directory to place the source files
+        and <includedir> is the directory where the IDL file is located.
+
++------------------------------------------+
+  com.sun.tools.corba.se.idl.toJavaPortable.Compile.main(
+      new String[] { "-fall",
+                     "-td",
+                     targetdir,
+                     "-i",
+                     includedir,
+                     idlFilename });
++------------------------------------------+
+
+
+        At the end, if the IDL is correct, in the <targetdir> there are the java
+        source files just generated. 
+        In the {{{../consumer/consumerArchitectureFromIDL.html}consumer from IDL}} case, idlj
+        is used with the <<-fallTIE>> parameter to create the poaTie class.          
+
+  [[2]] <<Value type implementation>>
+
+        If the IDL file contains one or more value types the source files
+        produced don't compile, in fact the developers must supply an
+        implementation class for each value type.
+
+        For example:
+
+        If you have an IDL file that contains a value type like the following
+
++------------------------------------------+
+  valuetype FooValueType {
+    public  short fooField;
+  };
++------------------------------------------+
+
+	    We generate 2 classes: the class of the value type:
+
++------------------------------------------+
+  public abstract class FooValueType
+    implements org.omg.CORBA.portable.StreamableValue {
+
+    // ... some code
+  }
++------------------------------------------+
+
+	...and the Factory:
+	
+
++------------------------------------------+
+  public class FooValueTypeDefaultFactory
+    implements org.omg.CORBA.portable.ValueFactory {
+
+    public java.io.Serializable read_value (
+      org.omg.CORBA_2_3.portable.InputStream is) {
+
+      return is.read_value(new FooValueTypeImpl ());
+    }
+  }
++------------------------------------------+
+
+        But the class FooValueTypeImpl does not exist so we generate an
+        <<empty>> class that extends FooValueType and called <<FooValueTypeImpl>>
+        in the source's directory.
+
++------------------------------------------+
+  public class FooValueTypeImpl extends FooValueType {
+  }
++------------------------------------------+
+
+        Now the code generated compiles!
+        
+
+  [[3]] <<Compiling>>
+
+        Compiling the java source code generated using javac
+
+  [[4]] <<Bytecode manipulation>>
+
+        The compiled code generated is not ready to be used by CXF, so we
+        inspect all the <Operations> class (generated from the CORBA interface)
+        and extract from this class all the data types used in the methods.
+
+        For each data types found we modify their bytecode to comply the CXF
+        behaviour:
+
+                [[1]] for each public or protected member we add the getter
+                      and setter method.
+
+                [[2]] if the class is <abstract> we remove this keyword.
+
+                [[3]] we append to the default constructor the code to
+                      istantiate the array (if the class contains one or more
+                      array) to avoid NullPointerException.
+                
+
+
+  [[5]] <<CXF>>
+
+        Now, the classes are ready to be analyzed by CXF to generate the
+        related WSDL.

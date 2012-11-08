@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AssigninFlowBeforeFlow"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssigninFlowBeforeFlow"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AssigninFlowBeforeFlow" xmlns:ns1="http://j2ee.netbeans.org/wsdl/AssigninFlowBeforeFlow">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AssigninFlowBeforeFlow" location="AssigninFlowBeforeFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:AssigninFlowBeforeFlow2" partnerRole="AssigninFlowBeforeFlow2PortType2Role"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:AssigninFlowBeforeFlow" myRole="AssigninFlowBeforeFlowPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="AssigninFlowBeforeFlow2OperationIn" messageType="ns1:AssigninFlowBeforeFlowOperationRequest"/>
+        <bpws:variable name="Variable2" type="xsd:string"/>
+        <bpws:variable name="Variable1" type="xsd:string"/>
+        <bpws:variable name="AssigninFlowBeforeFlowOperationIn" messageType="ns1:AssigninFlowBeforeFlowOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AssigninFlowBeforeFlowOperation" portType="ns1:AssigninFlowBeforeFlowPortType" variable="AssigninFlowBeforeFlowOperationIn"/>
+        <bpws:flow name="Flow1">
+            <bpws:assign name="Assign1">
+                <bpws:copy>
+                    <bpws:from>
+                        <bpws:literal>_flow Branch 1_</bpws:literal>
+                    </bpws:from>
+                    <bpws:to variable="Variable1"/>
+                </bpws:copy>
+            </bpws:assign>
+            <bpws:assign name="Assign2">
+                <bpws:copy>
+                    <bpws:from>
+                        <bpws:literal>_Flow Branch 2_</bpws:literal>
+                    </bpws:from>
+                    <bpws:to variable="Variable2"/>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:flow>
+        <bpws:flow name="Flow2">
+            <bpws:sequence name="Sequence1">
+                <bpws:assign name="Assign3">
+                    <bpws:copy>
+                        <bpws:from>concat($AssigninFlowBeforeFlowOperationIn.part1, $Variable1, $Variable2)</bpws:from>
+                        <bpws:to part="part1" variable="AssigninFlowBeforeFlow2OperationIn"/>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="AssigninFlowBeforeFlow2Operation" portType="ns1:AssigninFlowBeforeFlow2PortType2" inputVariable="AssigninFlowBeforeFlow2OperationIn"/>
+            </bpws:sequence>
+        </bpws:flow>
+    </sequence>
+</process>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="updateallSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="updateallRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="updateallRequest">
+    <part name="updateallRequestPart" element="tns:updateallRequest"/>
+  </message>
+  <message name="updateallResponse">
+    <part name="updateallResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="updateallSQL_sqlsePortType">
+    <operation name="updateall">
+      <input name="updateallRequest" message="tns:updateallRequest"/>
+      <output name="updateallResponse" message="tns:updateallResponse"/>
+    </operation>
+  </portType>
+  <binding name="updateallSQLBinding" type="tns:updateallSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="updateall">
+      <soap:operation style="document"/>
+      <input name="updateallRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="updateallResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="updateallSQL_sqlseService">
+    <port name="updateallSQL_sqlsePort" binding="tns:updateallSQLBinding">
+      <soap:address location="http://localhost:18181/updateallSQL/updateallSQL/updateallSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="updateallSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="updateallSQL_myrole" portType="tns:updateallSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

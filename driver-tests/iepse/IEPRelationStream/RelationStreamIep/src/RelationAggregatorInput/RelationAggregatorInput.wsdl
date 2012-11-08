@@ -1,0 +1,207 @@
+<definitions targetNamespace="RelationAggregatorInput.RelationAggregatorInput_iep"
+             xmlns:tns="RelationAggregatorInput.RelationAggregatorInput_iep"
+             xmlns:typens="RelationAggregatorInput.RelationAggregatorInput_iep"
+             xmlns:defns="RelationAggregatorInput.RelationAggregatorInput_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="RelationAggregatorInput.RelationAggregatorInput_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="LastName" type="xsd:string"/>
+                    <xsd:element name="MiddleInit" type="xsd:string"/>
+                    <xsd:element name="RegNum" type="xsd:int"/>
+                    <xsd:element name="Income" type="xsd:double"/>
+                    <xsd:element name="RegionNum" type="xsd:long"/>
+                    <xsd:element name="SDate" type="xsd:date"/>
+                    <xsd:element name="STime" type="xsd:string"/>
+                    <xsd:element name="SUpdate" type="xsd:dateTime"/>
+                    <xsd:element name="SDesc" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0Batch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="LastName" type="xsd:string"/>
+                    <xsd:element name="MiddleInit" type="xsd:string"/>
+                    <xsd:element name="RegNum" type="xsd:int"/>
+                    <xsd:element name="Income" type="xsd:double"/>
+                    <xsd:element name="RegionNum" type="xsd:long"/>
+                    <xsd:element name="SDate" type="xsd:date"/>
+                    <xsd:element name="STime" type="xsd:string"/>
+                    <xsd:element name="SUpdate" type="xsd:dateTime"/>
+                    <xsd:element name="SDesc" type="xsd:int"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamOutput1_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="LastName" type="xsd:string"/>
+                   <xsd:element name="RegNum_max" type="xsd:int"/>
+                   <xsd:element name="RegNum_min" type="xsd:int"/>
+                   <xsd:element name="RegNum_avg" type="xsd:int"/>
+                   <xsd:element name="RegNum_sum" type="xsd:int"/>
+                   <xsd:element name="RegNum_count" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="RelationOutput1_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="LastName" type="xsd:string"/>
+                   <xsd:element name="RegNum_max" type="xsd:int"/>
+                   <xsd:element name="RegNum_min" type="xsd:int"/>
+                   <xsd:element name="RegNum_avg" type="xsd:int"/>
+                   <xsd:element name="RegNum_sum" type="xsd:int"/>
+                   <xsd:element name="RegNum_count" type="xsd:int"/>
+                   <xsd:element name="SeqId" type="xsd:string"/>
+                   <xsd:element name="Tag" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamInput0Batch_Msg">
+    <part name="input" element="typens:StreamInput0Batch_MsgObj"/>
+</message>
+<message name="StreamOutput1_Msg">
+    <part name="output" element="typens:StreamOutput1_MsgObj"/>
+</message>
+<message name="RelationOutput1_Msg">
+    <part name="output" element="typens:RelationOutput1_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <input message="tns:StreamInput0Batch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_StreamOutput1">
+    <operation name="StreamOutput1">
+        <input message="tns:StreamOutput1_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_RelationOutput1">
+    <operation name="RelationOutput1">
+        <input message="tns:RelationOutput1_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_StreamOutput1" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_StreamOutput1" portType="tns:OutputPt_StreamOutput1"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_RelationOutput1" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_RelationOutput1" portType="tns:OutputPt_RelationOutput1"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="StreamInput0">
+        <soap:operation soapAction="StreamInput0"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <soap:operation soapAction="StreamInput0Batch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/RelationAggregatorInput.RelationAggregatorInput_iep"/>
+    </port>
+</service>
+
+<!-- http output binding and service
+<binding name="OutputBinding_StreamOutput1" type="defns:OutputPt_StreamOutput1">
+    <operation name="StreamOutput1">
+        <soap:operation soapAction="StreamOutput1"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_RelationOutput1" type="defns:OutputPt_RelationOutput1">
+    <operation name="RelationOutput1">
+        <soap:operation soapAction="RelationOutput1"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutput1">
+    <port name="OutputPort_StreamOutput1" binding="tns:OutputBinding_StreamOutput1">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/RelationAggregatorInput.RelationAggregatorInput_iep_StreamOutput1_callee"/>
+    </port>
+</service>
+<service name="OutputService_RelationOutput1">
+    <port name="OutputPort_RelationOutput1" binding="tns:OutputBinding_RelationOutput1">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/RelationAggregatorInput.RelationAggregatorInput_iep_RelationOutput1_callee"/>
+    </port>
+</service>
+ end of http output binding and service -->
+
+<!-- file output binding and service -->
+<binding name="OutputBinding_StreamOutput1" type="defns:OutputPt_StreamOutput1">
+    <file:binding/>
+    <operation name="StreamOutput1">
+        <file:operation/>
+        <input>
+            <file:message fileName="StreamOutput1.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_RelationOutput1" type="defns:OutputPt_RelationOutput1">
+    <file:binding/>
+    <operation name="RelationOutput1">
+        <file:operation/>
+        <input>
+            <file:message fileName="RelationOutput1.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutput1">
+    <port name="OutputPort_StreamOutput1" binding="tns:OutputBinding_StreamOutput1">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/IEPRelationStream/RelationStreamApp/test/RelationAggregatorInput"/>
+    </port>
+</service>
+<service name="OutputService_RelationOutput1">
+    <port name="OutputPort_RelationOutput1" binding="tns:OutputBinding_RelationOutput1">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/IEPRelationStream/RelationStreamApp/test/RelationAggregatorInput"/>
+    </port>
+</service>
+<!-- end of file output binding and service -->
+</definitions>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SMTPOutbound" xmlns:ns2="http://j2ee.netbeans.org/wsdl/TriggerWsdl" xmlns:ns3="http://enterprise.netbeans.org/bpel/TestBPEL" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="SMTPOutboundPort" interface-name="ns1:SMTPOutboundPortType" name="endpoint1" service-name="ns1:SMTPOutboundService"/>
+<endpoint endpoint-name="TriggerWsdlPort" interface-name="ns2:TriggerWsdlPortType" name="endpoint2" service-name="ns2:TriggerWsdlService"/>
+<endpoint endpoint-name="TriggerWsdlPortTypeRole_myRole" interface-name="ns2:TriggerWsdlPortType" name="endpoint3" service-name="ns3:PartnerLink1"/>
+<endpoint endpoint-name="SMTPOutboundPortTypeRole_partnerRole" interface-name="ns1:SMTPOutboundPortType" name="endpoint4" service-name="ns3:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="SMTPEncTestBPEL.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="SMTPEncTestJBI-SMTPEncTestBPEL" unit-name="SMTPEncTestBPEL" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-smtp-binding.jar" component-name="sun-smtp-binding" description="Represents this Service Unit" name="SMTPEncTestJBI-sun-smtp-binding" unit-name="sun-smtp-binding">
+<ports>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/SMTPOutbound.wsdl#xpointer(/definitions/service[@name='SMTPOutboundService']/port[@name='SMTPOutboundPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="SMTPEncTestJBI-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/TriggerWsdl.wsdl#xpointer(/definitions/service[@name='TriggerWsdlService']/port[@name='TriggerWsdlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/SMTPOutbound.wsdl#xpointer(/definitions/portType[@name='SMTPOutboundPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/TriggerWsdl.wsdl#xpointer(/definitions/portType[@name='TriggerWsdlPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/SMTPOutbound.wsdl#xpointer(/definitions/binding[@name='SMTPOutboundBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/TriggerWsdl.wsdl#xpointer(/definitions/binding[@name='TriggerWsdlBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/SMTPOutbound.wsdl#xpointer(/definitions/service[@name='SMTPOutboundService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SMTPEncTestBPEL/TriggerWsdl.wsdl#xpointer(/definitions/service[@name='TriggerWsdlService'])" xlink:type="simple"/>
+</services>
+<regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

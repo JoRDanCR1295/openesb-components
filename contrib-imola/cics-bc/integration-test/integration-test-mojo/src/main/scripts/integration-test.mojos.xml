@@ -1,0 +1,437 @@
+<pluginMetadata>
+  <mojos>
+  
+    <mojo>
+      <goal>startOpenESB</goal>      
+      <call>startOpenESB</call>     
+      <description>
+        Starts OpenESB and waits 30 sec for executing startup.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+        
+    <mojo>
+      <goal>installBCOpenESB</goal>      
+      <call>installBCOpenESB</call>     
+      <description>
+        Installs the binding component in OpenESB, waits 30 sec and 
+        starts the binding component.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>jbi.component.name</name> 
+          <property>jbi.component.name</property> 
+          <required>true</required> 
+          <expression>${jbi.component.name}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the binding component.</description>
+        </parameter>
+        <parameter>
+          <name>jbi.component.path</name> 
+          <property>jbi.component.path</property> 
+          <required>true</required> 
+          <expression>${jbi.component.path}</expression>
+          <type>java.lang.String</type>
+          <description>The path to the zip of the binding component.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>deploy</goal>      
+      <call>deploy</call>     
+      <description>
+        Executes the services assemblies's deploy on OpenESB.
+      </description>
+      <parameters>
+        <parameter>
+          <name>sa.list</name> 
+          <property>sa.list</property> 
+          <required>true</required> 
+          <expression>${sa.list}</expression>
+          <type>java.lang.String</type>
+          <description>The sa name's list.</description>
+        </parameter>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>project.home</name> 
+          <property>project.home</property> 
+          <required>true</required> 
+          <expression>${project.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of the project.</description>
+        </parameter>
+        <parameter>
+          <name>version</name> 
+          <property>version</property> 
+          <required>true</required> 
+          <expression>${version}</expression>
+          <type>java.lang.String</type>
+          <description>The maven's release version of the binding component.</description>
+        </parameter>
+        <parameter>
+          <name>jbi.component.name</name> 
+          <property>jbi.component.name</property> 
+          <required>true</required> 
+          <expression>${jbi.component.name}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the binding component.</description>
+        </parameter>
+        <parameter>
+          <name>maven.repository.home</name> 
+          <property>maven.repository.home</property> 
+          <required>true</required> 
+          <expression>${maven.repository.home}</expression>
+          <type>java.lang.String</type>
+          <description>Home directory of the maven repository.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>deploySAOpenESB</goal>      
+      <call>deploySAOpenESB</call>     
+      <description>
+        Iterates over the list in the property 'sa.list'.
+        The inheritall is important because otherwise the parameter 'sa' 
+        is not viewable by the target doDeploy.
+        Called by  deploy, do not invoke directly.
+      </description>
+      <parameters>
+        <parameter>
+          <name>sa.list</name> 
+          <property>sa.list</property> 
+          <required>true</required> 
+          <expression>${sa.list}</expression>
+          <type>java.lang.String</type>
+          <description>The sa name's list.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>doDeploySA</goal>      
+      <call>doDeploySA</call>     
+      <description>
+        Deploys the service assembly in OpenESB, waits 30 sec and starts 
+        the sa correspondent to the 'sa' argument.
+        Called by  deploySAOpenESB, do not invoke directly.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>project.home</name> 
+          <property>project.home</property> 
+          <required>true</required> 
+          <expression>${project.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of the project.</description>
+        </parameter>
+        <parameter>
+          <name>sa</name> 
+          <property>sa</property> 
+          <required>true</required> 
+          <expression>${sa}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the sa.</description>
+        </parameter>
+        <parameter>
+          <name>version</name> 
+          <property>version</property> 
+          <required>true</required> 
+          <expression>${version}</expression>
+          <type>java.lang.String</type>
+          <description>The maven's release version of the binding component.</description>
+        </parameter>
+        <parameter>
+          <name>jbi.component.name</name> 
+          <property>jbi.component.name</property> 
+          <required>true</required> 
+          <expression>${jbi.component.name}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the binding component.</description>
+        </parameter>
+        <parameter>
+          <name>maven.repository.home</name> 
+          <property>maven.repository.home</property> 
+          <required>true</required> 
+          <expression>${maven.repository.home}</expression>
+          <type>java.lang.String</type>
+          <description>Home directory of the maven repository.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+    
+    <mojo>
+      <goal>probeOS</goal>      
+      <call>probeOS</call>     
+      <description>
+        Check the os.
+      </description>
+    </mojo>
+
+    <mojo>
+      <goal>startIntegrationTestWin</goal>      
+      <call>startIntegrationTestWin</call>     
+      <description>
+        Starts integration tests in windows os.
+      </description>
+      <parameters>
+        <parameter>
+          <name>soapui.home</name> 
+          <property>soapui.home</property> 
+          <required>true</required> 
+          <expression>${soapui.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of soapui.</description>
+        </parameter>
+        <parameter>
+          <name>soapui.project.path</name> 
+          <property>soapui.project.path</property> 
+          <required>true</required> 
+          <expression>${soapui.project.path}</expression>
+          <type>java.lang.String</type>
+          <description>The path to the soapui project's xml file.</description>
+        </parameter>
+        <parameter>
+          <name>project.home</name> 
+          <property>project.home</property> 
+          <required>true</required> 
+          <expression>${project.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of the project.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>startIntegrationTestUnix</goal>      
+      <call>startIntegrationTestUnix</call>     
+      <description>
+        Starts integration tests in unix os.
+      </description>
+      <parameters>
+        <parameter>
+          <name>soapui.home</name> 
+          <property>soapui.home</property> 
+          <required>true</required> 
+          <expression>${soapui.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of soapui.</description>
+        </parameter>
+        <parameter>
+          <name>soapui.project.path</name> 
+          <property>soapui.project.path</property> 
+          <required>true</required> 
+          <expression>${soapui.project.path}</expression>
+          <type>java.lang.String</type>
+          <description>The path to the soapui project's xml file.</description>
+        </parameter>
+        <parameter>
+          <name>project.home</name> 
+          <property>project.home</property> 
+          <required>true</required> 
+          <expression>${project.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of the project.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+    
+    <mojo>
+      <goal>undeploy</goal>      
+      <call>undeploy</call>     
+      <description>
+        Executes the services assemblies's undeploy on OpenESB.
+      </description>
+      <parameters>
+        <parameter>
+          <name>sa.list</name> 
+          <property>sa.list</property> 
+          <required>true</required> 
+          <expression>${sa.list}</expression>
+          <type>java.lang.String</type>
+          <description>The sa name's list.</description>
+        </parameter>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>maven.repository.home</name> 
+          <property>maven.repository.home</property> 
+          <required>true</required> 
+          <expression>${maven.repository.home}</expression>
+          <type>java.lang.String</type>
+          <description>Home directory of the maven repository.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>undeploySAOpenESB</goal>      
+      <call>undeploySAOpenESB</call>     
+      <description>
+        Iterates over the list in the property 'sa.list'.
+        The inheritall is important because otherwise the parameter 'sa' 
+        is not viewable by the target doUndeploy.
+        Called by  undeploy, do not invoke directly.
+      </description>
+      <parameters>
+        <parameter>
+          <name>sa.list</name> 
+          <property>sa.list</property> 
+          <required>true</required> 
+          <expression>${sa.list}</expression>
+          <type>java.lang.String</type>
+          <description>The sa name's list.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>doUndeploySA</goal>      
+      <call>doUndeploySA</call>     
+      <description>
+        Undeploys in OpenESB the service assembly  correspondent 
+        to the 'sa' argument.
+        Called by  undeploySAOpenESB, do not invoke directly.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>sa</name> 
+          <property>sa</property> 
+          <required>true</required> 
+          <expression>${sa}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the sa.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>uninstallBCOpenESB</goal>      
+      <call>uninstallBCOpenESB</call>     
+      <description>
+        Uninstalls the binding component in OpenESB.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+        <parameter>
+          <name>jbi.component.name</name> 
+          <property>jbi.component.name</property> 
+          <required>true</required> 
+          <expression>${jbi.component.name}</expression>
+          <type>java.lang.String</type>
+          <description>The name of the binding component.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+
+    <mojo>
+      <goal>stopOpenESB</goal>      
+      <call>stopOpenESB</call>     
+      <description>
+        Stops OpenESB.
+      </description>
+      <parameters>
+        <parameter>
+          <name>openesb.home</name> 
+          <property>openesb.home</property> 
+          <required>true</required> 
+          <expression>${openesb.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of glassfish.</description>
+        </parameter>
+      </parameters>      
+    </mojo>
+    
+    <mojo>
+      <goal>generateReports</goal>      
+      <call>generateReports</call>     
+      <description>
+        Generates html reports from soapui's test results.
+      </description>
+      <parameters>
+        <parameter>
+          <name>maven.repository.home</name> 
+          <property>maven.repository.home</property> 
+          <required>true</required> 
+          <expression>${maven.repository.home}</expression>
+          <type>java.lang.String</type>
+          <description>Home directory of the maven repository.</description>
+        </parameter>
+      </parameters>
+    </mojo>
+    
+    <mojo>
+      <goal>doReports</goal>      
+      <call>doReports</call>     
+      <description>
+        Executes the junitreport task. Called by  generateReports, do not invoke directly.
+      </description>
+      <parameters>
+        <parameter>
+          <name>project.home</name> 
+          <property>project.home</property> 
+          <required>true</required> 
+          <expression>${project.home}</expression>
+          <type>java.lang.String</type>
+          <description>The home directory of the project.</description>
+        </parameter>
+      </parameters>      
+    </mojo>
+    
+  </mojos>
+</pluginMetadata>
+

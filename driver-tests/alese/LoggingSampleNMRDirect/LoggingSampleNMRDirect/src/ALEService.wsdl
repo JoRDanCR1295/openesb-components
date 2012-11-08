@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ALEService" 
+            targetNamespace="http://www.sun.com/ALE/1.0/ALEService.wsdl" 
+            xmlns:tns="http://www.sun.com/ALE/1.0/ALEService.wsdl" 
+            xmlns:type="http://www.sun.com/ALE/1.0/ALETypes.xsd" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+            xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <xsd:schema targetNamespace="http://www.sun.com/ALE/1.0/ALEService.wsdl">
+            <xsd:import schemaLocation="ALETypes.xsd" namespace="http://www.sun.com/ALE/1.0/ALETypes.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ALEMessage">
+        <part name="SourceInfo" element="type:SourceInfo"/>
+        <part name="aleRequest" element="type:ALERequest"/>
+    </message>
+    <message name="ALEwithPayloadMessage">
+        <part name="SourceInfo" element="type:SourceInfo"/>
+        <part name="aleRequest" element="type:ALERequest"/>
+        <part name="alePayload" element="type:Payload"/>
+    </message>
+    <portType name="ALEServiceLoggingPortType">
+        <operation name="sendLog">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALERequest" message="tns:ALEMessage"/>
+        </operation>
+        <operation name="sendLogwithPayload">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALEwithPayload" message="tns:ALEwithPayloadMessage"/>
+        </operation>
+    </portType>
+    <portType name="ALEServiceAlertPortType">
+        <operation name="sendAlert">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALERequest" message="tns:ALEMessage"/>
+        </operation>
+        <operation name="sendAlertwithPayload">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALERequestwithPayload" message="tns:ALEwithPayloadMessage"/>
+        </operation>
+    </portType>
+    <portType name="ALEServiceErrorPortType">
+        <operation name="sendError">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALERequest" message="tns:ALEMessage"/>
+        </operation>
+        <operation name="sendErrorwithPayload">
+            <documentation>Provides access to ALE Service </documentation>
+            <input name="ALERequestwithPayload" message="tns:ALEwithPayloadMessage"/>
+        </operation>
+    </portType>
+    <binding name="ALEServiceLoggingBinding" type="tns:ALEServiceLoggingPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sendLog">
+            <soap:operation soapAction="sendLog"/>
+            <input name="ALERequest">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+        <operation name="sendLogwithPayload">
+            <soap:operation soapAction="sendLogwithPayload"/>
+            <input name="ALEwithPayload">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="ALEServiceAlertBinding" type="tns:ALEServiceAlertPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sendAlert">
+            <soap:operation soapAction="sendAlert"/>
+            <input name="ALERequest">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+        <operation name="sendAlertwithPayload">
+            <soap:operation soapAction="sendAlertwithPayload"/>
+            <input name="ALERequestwithPayload">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="ALEServiceErrorBinding" type="tns:ALEServiceErrorPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sendError">
+            <soap:operation soapAction="sendError"/>
+            <input name="ALERequest">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+        <operation name="sendErrorwithPayload">
+            <soap:operation soapAction="sendErrorwithPayload"/>
+            <input name="ALERequestwithPayload">
+                <soap:body use="literal" namespace="http://www.sun.com/IAD/ALEService.wsdl"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="ALELoggingService">
+        <port name="ALELoggingServicePort" binding="tns:ALEServiceLoggingBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ALELoggingService/ALELoggingServicePort"/>
+        </port>
+    </service>
+    <service name="ALEAlertService">
+        <port name="ALEAlertServicePort" binding="tns:ALEServiceAlertBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ALEAlertService/ALEAlertServicePort"/>
+        </port>
+    </service>
+    <service name="ALEErrorService">
+        <port name="ALEErrorServicePort" binding="tns:ALEServiceErrorBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ALEErrorService/ALEErrorServicePort"/>
+        </port>
+    </service>
+</definitions>

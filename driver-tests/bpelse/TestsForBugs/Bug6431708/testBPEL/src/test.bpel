@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="test" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/test"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/test" xmlns:ns1="http://localhost/loanRequestorBpel/loanRequestor">
+    <import namespace="http://localhost/loanRequestorBpel/loanRequestor" location="test.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:loanRequestorPartnerLinkType" myRole="loanRequestorRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="RequestLoanOut1" messageType="ns1:requestLoanResponseMessage"/>
+        <variable name="RequestLoanIn1" messageType="ns1:requestLoanMessage"/>
+    </variables>
+    <sequence name="Sequence1">
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="requestLoan" portType="ns1:IRequestLoan" variable="RequestLoanIn1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+                <from>true()</from>
+                <to>$RequestLoanOut1.responsePart/ns1:result</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="requestLoan" portType="ns1:IRequestLoan" variable="RequestLoanOut1"/>
+    </sequence>
+</process>

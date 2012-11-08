@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://openesb.org/wsdl/camel2jbi/Camel2BpelJBIModule" xmlns:ns2="http://openesb.org/jbi2camel/File2JBICamelJBIModule" xmlns:ns3="http://openesb.org/camel2jbi/File2JBICamelJBIModule" xmlns:ns4="http://enterprise.netbeans.org/bpel/Camel2BpelModule/camel2bpel" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="camel2bpelPort" interface-name="ns1:camel2bpelInterface" name="endpoint1" service-name="ns1:camel2bpelService"/>
+<endpoint endpoint-name="jbi2camel_endpoint" interface-name="ns2:File2JBICamelJBIModule_interface" name="endpoint2" service-name="ns2:File2JBICamelJBIModule_service"/>
+<endpoint endpoint-name="camel2jbi_endpoint" interface-name="ns1:camel2bpelInterface" name="endpoint3" service-name="ns3:Camel2BpelJBIModule_service"/>
+<endpoint display-name="PartnerLink1" endpoint-name="camel2bpelInterfaceRole_myRole" file-path="camel2bpel.bpel" interface-name="ns1:camel2bpelInterface" name="endpoint4" process-name="camel2bpel" service-name="ns4:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="File2JBICamelJBIModule_interface_role_partnerRole" file-path="camel2bpel.bpel" interface-name="ns2:File2JBICamelJBIModule_interface" name="endpoint5" process-name="camel2bpel" service-name="ns4:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="File2JBICamelJBIModule.jar" component-name="camel-jbi-se" defined="true" description="Represents this Service Unit" internal="true" name="File2JBICamelCompositeApp-File2JBICamelJBIModule" unit-name="File2JBICamelJBIModule" unknown="false" x="75" y="260">
+<provides endpoint="endpoint2"/>
+<consumes endpoint="endpoint3"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="Camel2BpelModule.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="File2JBICamelCompositeApp-Camel2BpelModule" unit-name="Camel2BpelModule" unknown="false" x="116" y="99">
+<provides endpoint="endpoint4"/>
+<consumes endpoint="endpoint5"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="File2JBICamelCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="24" y="39">
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/camel2bpel.wsdl#xpointer(/definitions/service[@name='camel2bpelService']/port[@name='camel2bpelPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint1" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint4" state="new"/>
+<connection consumer="endpoint5" provider="endpoint2" state="new"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/camel2bpel.wsdl#xpointer(/definitions/portType[@name='camel2bpelInterface'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/portType[@name='File2JBICamelJBIModule_interface'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/camel2bpel.wsdl#xpointer(/definitions/portType[@name='camel2bpelInterface'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/jbi2camel.wsdl#xpointer(/definitions/portType[@name='File2JBICamelJBIModule_interface'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/META-INF/Camel2BpelModule/src/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/portType[@name='File2JBICamelJBIModule_interface'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/camel2bpel.wsdl#xpointer(/definitions/binding[@name='camel2bpelBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/binding[@name='ServiceBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/camel2bpel.wsdl#xpointer(/definitions/binding[@name='camel2bpelBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/camel2jbi.wsdl#xpointer(/definitions/binding[@name='camelseBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/jbi2camel.wsdl#xpointer(/definitions/binding[@name='ServiceBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/META-INF/Camel2BpelModule/src/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/binding[@name='ServiceBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/camel2bpel.wsdl#xpointer(/definitions/service[@name='camel2bpelService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Camel2BpelModule/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/service[@name='File2JBICamelJBIModule_service'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/camel2bpel.wsdl#xpointer(/definitions/service[@name='camel2bpelService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/camel2jbi.wsdl#xpointer(/definitions/service[@name='Camel2BpelJBIModule_service'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/File2JBICamelJBIModule/jbi2camel.wsdl#xpointer(/definitions/service[@name='File2JBICamelJBIModule_service'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/META-INF/Camel2BpelModule/src/Partners/jbi2camel/jbi2camel.wsdl#xpointer(/definitions/service[@name='File2JBICamelJBIModule_service'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="107"/>
+        <region name="JBI Modules" width="464"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

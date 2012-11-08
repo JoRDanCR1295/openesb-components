@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InsertMySQLBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InsertBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InsertBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InsertMySQLTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InsertMySQLTrigger" location="InsertMySQLTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="InsertMySQLTable.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:InsertMySQLTriggerPartner" myRole="InsertMySQLTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="InsertMySQLTriggerOperationOut" messageType="ns1:InsertMySQLTriggerOperationReply"/>
+      <bpws:variable name="InsertOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="InsertIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="InsertMySQLTriggerOperationIn" messageType="ns1:InsertMySQLTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InsertMySQLTriggerOperation" portType="ns1:InsertMySQLTriggerPortType" variable="InsertMySQLTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$InsertMySQLTriggerOperationIn.part1/ns0:TestTable_Record/ns0:TestSal</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:TestTable_Record/ns0:TestSal</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertMySQLTriggerOperationIn.part1/ns0:TestTable_Record/ns0:TestID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:TestTable_Record/ns0:TestID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertMySQLTriggerOperationIn.part1/ns0:TestTable_Record/ns0:TestFlag</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:TestTable_Record/ns0:TestFlag</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertMySQLTriggerOperationIn.part1/ns0:TestTable_Record/ns0:TestName</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:TestTable_Record/ns0:TestName</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="insert" portType="ns2:jdbcPortType" inputVariable="InsertIn" outputVariable="InsertOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="InsertOut" part="part"/>
+            <bpws:to variable="InsertMySQLTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="InsertMySQLTriggerOperation" portType="ns1:InsertMySQLTriggerPortType" variable="InsertMySQLTriggerOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AttrQProc"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AttrQTest/AttrQProc"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AttrQTest/AttrQProc" xmlns:ns0="http://j2ee.netbeans.org/xsd/AttrQTest/AttrQSchema" xmlns:ns1="http://xml.netbeans.org/schema/AttrSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" location="AttrQService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" partnerLinkType="tns:AttrQPLT" myRole="AttrQPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Fault1FaultVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" messageType="tns:AttrQRes"/>
+        <variable name="AttrQOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" messageType="tns:AttrQReq"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AttrQOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" portType="tns:AttrQPT" variable="AttrQOperIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>10</from>
+                <to>$Fault1FaultVar.RespPart/ns0:child/@ns1:intAttr</to>
+            </copy>
+            <copy>
+                <from>20</from>
+                <to>$Fault1FaultVar.RespPart/@ns0:idAttr</to>
+            </copy>
+            <copy>
+                <from>30</from>
+                <to>$Fault1FaultVar.RespPart/ns0:id</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="AttrQOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrQTest/AttrQService" portType="tns:AttrQPT" faultName="tns:fault1" variable="Fault1FaultVar"/>
+    </sequence>
+</process>

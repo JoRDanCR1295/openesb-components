@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Fault Handling using BPEL</title>
+</head>
+<body>
+<h1><small><small style="font-style: italic; font-weight: bold;"><span
+ style="font-weight: normal;"></span></small>BPEL BluePrint 3</small></h1>
+<h1>Fault Handling Using BPEL</h1>
+<p>Kiran Bhumana, Ryan Kennedy, Shauna Pickett-Gordon </p>
+<h2>Problem Description</h2>
+<p>Built-in support for error handling has evolved into a key feature
+of many programming languages. Before the advent of error-handling
+constructs, developers had to manually provide the framework to ensure
+proper execution in error situations. Now, error-handling constructs
+are available to support the following patterns:</p>
+<ul>
+  <li>Propagate the error and its information</li>
+  <li>Ensure that certain code is executed if an error occurs </li>
+  <li>Ensure that certain code is executed, whether or not an error
+occurs</li>
+</ul>
+<p>Modern programming languages, including the Business Process
+Execution Language (BPEL), provide high-level constructs that enable
+error-handling patterns to be programmed easily and with minimal risk. </p>
+<p>Since BPEL is a WSDL-based specification, it refers to these
+concepts as <i>fault handling</i>.
+Fault handling in BPEL provides semantics for catching various types of
+faults, propagating faults, and nesting fault-handling operations. </p>
+<p>This document explains some design aspects and usage patterns of
+BPEL fault handling. It does not attempt an exhaustive list of
+fault-handling features, but focuses on the most common usage patterns.
+</p>
+<h2>Solution</h2>
+<p>While a BPEL process is running, it can encounter faults from
+partner services that are invoked or faults that originate from within
+the BPEL process itself. Faults that are due to partner service
+invocations are typically defined on the WSDL operation, whereas faults
+that originate from within the process are BPEL-defined standard faults
+and are identified in certain error situations.</p>
+<p>BPEL defines a <code>faultHandler</code> construct that contains <code>catch</code>
+or <code>catchAll</code> constructs to enable the handling of a fault.
+A <code>faultHandler</code>'s <code>catch</code> construct defines
+certain criteria for catching a fault, and the <code>catch </code>executes
+when a fault is thrown and meets those criteria. The <code>faultHandler</code>'s
+<code>catchAll</code> construct handles any occurrence of a fault. In
+the example provided in this BluePrint's design
+details, a defined <code>faultHandler</code> executes a <code>reply</code>
+activity notifying the client that an item is out of stock. </p>
+<p>A BPEL developer can isolate sets of related activities within a
+business process by placing them in a <code>scope</code> element.
+Using <code>scope</code>
+lets the developer control a fault's effect and any consequent action
+or compensation. The design also isolates other areas of business
+process execution, and enables better event handling and compensatory
+actions. </p>
+<p>BPEL provides the <code>faultHandler</code> construct at three
+levels: </p>
+<ul>
+  <li>As associated with a BPEL process, in short process-level fault
+handlers </li>
+  <li>As associated with a <code>scope</code>, in short scope-level
+fault handlers </li>
+  <li>As an inlined short-cut associated with an <code>invoke</code>
+activity </li>
+</ul>
+<p>Scopes not only isolate fault handling, but also provide a nesting
+capability, which suggests that associated fault handlers can form a
+similar nested hierarchy. A nested <code>faultHandler</code> that
+can't handle a particular fault delegates fault handling to the
+enclosing <code>faultHandler</code>, until it reaches the <code>faultHandler</code>
+at the process level. At that level, either the fault is handled or the
+instance is terminated. The <code>throw</code> and <code>rethrow</code>
+constructs are
+defined to explicitly cause a fault to happen and propagate throughout
+the fault-handling chain. A nested <code>faultHandler</code> can <code>rethrow</code>
+a fault so that its enclosed scope has the opportunity to handle it. <code>faultHandler</code>
+that are associated with a scope are also used to undo partially
+completed work within the scope. <br>
+</p>
+<h2>Design Details<br>
+</h2>
+<p>The example shown here uses the
+services discussed in the first BluePrint of this
+series, Synchronous
+Web Service Interactions Using BPEL, with added
+emphasis on fault handling. <br>
+</p>
+<p>The following figure describes the synchronous interaction pattern
+between the services. </p>
+<p><img alt="Service-Implementation" src="images/bp3-fig1.PNG"
+ name="graphics1"
+ style="border: 0px solid ; width: 561px; height: 190px;"><br>
+<b>Figure
+1: Stateless and Synchronous Service Implementation </b>
+</p>
+<p>In this scenario, the following fault handling patterns are
+demonstrated:</p>
+<ul>
+  <li>Fault handling at the process level</li>
+  <li>Explicitly throwing a fault in the BPEL process </li>
+  <li>Handling the thrown fault </li>
+  <li>Invoking an operation on a partner service that returns a
+WSDL-defined fault message, causing a BPEL fault. </li>
+  <li>Handling the received WSDL-defined fault </li>
+</ul>
+<p>To achieve those fault handling patterns, the following BPEL
+constructs are used: </p>
+<ul>
+  <li><code><font face="Courier New, monospace">faultHandlers</font><font
+ face="Times New Roman, serif"> <big>at the process level</big></font></code>
+  </li>
+  <li><code><font face="Courier New, monospace">throw</font></code><font
+ face="Times New Roman, serif">, with a fault name and a fault message </font>
+  </li>
+  <li><code>catch</code>, with a fault name parameter specified </li>
+</ul>
+<h3>Business Logic of the Services<br>
+</h3>
+<p>See the first
+BluePrint in this series for the essential business logic of the
+services that are used in this example.<br>
+</p>
+<h3>Define the BPEL<br>
+</h3>
+<p style="">This particular example demonstrates two kinds of faults: a
+fault
+that is explicitly thrown in <code><span style="">POService</span></code>,
+and a fault that could happen due to the consumption of
+<code>InventoryService.</code><br>
+<b><br>
+</b></p>
+<div style="margin-left: 40px;"><b>Fault Explicitly Thrown in BPEL
+Process</b><br>
+BPEL provides the <code><span style=""><font
+ face="Courier New, monospace">throw</font></span></code><span style="">
+construct</span> in order to throw a fault&nbsp;explicitly within a
+BPEL process.<br>
+</div>
+<p style="margin-left: 40px;"><span style="">In this example, </span><code><span
+ style="">POService</span></code><span style="">
+has been modified to check if the incoming purchase order's </span><code><span
+ style="">orderDescription</span></code><span style="">
+value starts with </span><code><span style="">ThrowPOServiceFault</span></code><span
+ style="">.
+If so, </span><code><span style="">POService <big><font
+ face="Times New Roman, serif">uses
+the </font></big></span><code><span style=""><font
+ face="Courier New, monospace">throw</font></span></code><span style=""><font
+ face="Times New Roman, serif">
+<big>construct </big></font></span></code><span style=""><big><font
+ face="Times New Roman, serif">
+</font></big>to throw a fault that is to be handled by the
+process-level
+<font face="Courier New, monospace">faultHandlers</font><big>.<br>
+</big></span></p>
+<p style="margin-left: 40px;"><span style=""><small><big><span
+ style="font-family: courier new;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<small>&lt;if name="Decision"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;condition&gt;starts-with($purchaseOrderRequest.purchaseOrder/orderDescription,
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; 'ThrowPOServiceFault')<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;/condition&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;sequence name="Sequence1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;assign name="Assign1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;from&gt;'throwing purchase order fault'&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;to
+part="faultInfo" variable="purchaseOrderFault"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/assign&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;throw name="Throw"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+faultName="pos:cannotCompleteOrder"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+faultVariable="purchaseOrderFault"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/sequence&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/if&gt;</small></span></big><small><span
+ style="font-family: courier new;"></span></small><br>
+</small>
+</span></p>
+<p style="margin-left: 40px; font-family: times new roman,times,serif;"><small><span
+ style=""></span></small><span style=""><span
+ style="font-family: courier new,courier,monospace;"><small>faultHandlers</small>
+</span>are
+used in much the same way as
+try/catch blocks found in modern programming languages.
+Within the faultHandlers,
+one or more <small><span
+ style="font-family: courier new,courier,monospace;">catch
+</span></small>activities are
+defined
+allowing you to handle&nbsp;different faults that may occur within the
+business process.</span><code><span style=""></span></code><br>
+</p>
+<p style="margin-left: 40px; font-family: times new roman,times,serif;">In
+this scenario, <small><span
+ style="font-family: courier new,courier,monospace;">POService </span></small>contains
+a
+process-level fault handler with a <code
+ style="font-family: times new roman,times,serif;">catch</code><span
+ style="font-family: times new roman,times,serif;">
+activity to
+handle the </span><small><code
+ style="font-family: courier new,courier,monospace;">pos:cannotCompleteOrder</code></small><span
+ style="font-family: times new roman,times,serif;"><span
+ style="font-family: courier new,courier,monospace;"> </span>fault.
+Here, the
+</span><small><code style="font-family: courier new,courier,monospace;">catch</code></small><span
+ style="font-family: times new roman,times,serif;"><small><span
+ style="font-family: courier new,courier,monospace;"> </span></small>clause
+is
+defined so that the faults are
+handled
+by the fault name.</span></p>
+<p style="margin-left: 80px;"><small><span
+ style="font-family: courier new;">&lt;faultHandlers&gt;</span><br
+ style="font-family: courier new;">
+<span style="font-family: courier new;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-weight: bold;">&lt;catch
+faultName="pos:cannotCompleteOrder"&gt;</span></span><br
+ style="font-family: courier new;">
+<span style="font-family: courier new;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-weight: bold;">&lt;sequence&gt;</span></span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;reply name="sendPurchaseOrder.Fault"</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+partnerLink="POServicePLink"</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+portType="pos:purchaseOrderPT"</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+operation="sendPurchaseOrder"</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+variable="purchaseOrderFault"</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+faultName="pos:cannotCompleteOrder"/&gt;</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/sequence&gt;</span><br
+ style="font-weight: bold; font-family: courier new;">
+<span style="font-family: courier new; font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/catch&gt;</span><br style="font-family: courier new;">
+<span style="font-family: courier new;">...<br>
+&lt;/faultHandlers&gt;<br>
+</span></small></p>
+<div style="margin-left: 40px;"><small><span
+ style="font-family: courier new;"></span></small></div>
+<p style="margin-left: 40px;"><b>Fault Thrown Due to the Consumption of
+Partner Service</b><br>
+The inventory service provider has business logic to check the
+availability of an item. In this BluePrint, additional behavior has
+been defined so that <code>InventoryService</code> can return a
+WSDL-defined fault when a requested item is not available in inventory.
+Within
+<code>InventoryService</code>, if the incoming purchase order's
+<code>orderDescription</code> value starts with <code>ThrowInventoryFault</code>,
+a <code>reply</code>
+activity is used to return a fault message to the consumer of the
+service, <code>POService</code>. <code></code>
+</p>
+<p style="margin-left: 40px;"><small><span
+ style="font-family: courier new;">&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="font-family: courier new;">&lt;if
+name="checkAvailability"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;condition&gt;starts-with($purchaseOrder.purchaseOrder/orderDescription,
+'OrderVal')&lt;/condition&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;assign name="Case1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;from&gt;true()&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;to&gt;$inventoryStatus.inventoryPart/inventoryStatus&lt;/to&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;from&gt;'available'&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;to&gt;$inventoryStatus.inventoryPart/inventoryStatusMessage&lt;/to&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/assign&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;elseif&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;condition&gt;starts-with($purchaseOrder.purchaseOrder/orderDescription,
+'ThrowInventoryFault')&lt;/condition&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;sequence name="Case3"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;assign name="Assign2"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;from&gt;concat('Inventory Fault thrown for PurchaseOrder ID ',
+$purchaseOrder.purchaseOrder/orderId, ' customer ID ',
+$purchaseOrder.purchaseOrder/customerId)&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;to
+part="faultInfo" variable="inventoryService_Fault"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/assign&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;reply name="inventoryService.Reply_1"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+partnerLink="inventorySevicePLink"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+portType="invs:inventoryPortType"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+operation="inventoryService"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+variable="inventoryService_Fault"
+faultName="invs:inventoryFaultType"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/sequence&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/elseif&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;else&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;assign name="Case2"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;from&gt;false()&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;to&gt;$inventoryStatus.inventoryPart/inventoryStatus&lt;/to&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;from&gt;'currently out of
+stock'&lt;/from&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;to&gt;$inventoryStatus.inventoryPart/inventoryStatusMessage&lt;/to&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/assign&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/else&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/if&gt;</span></small></p>
+<p style="margin-left: 40px;">A <code>invs:inventoryFaultType </code>fault
+is then caught in a
+second catch activity defined within the <code>POService</code> fault
+handler. This particular fault is <span style="">handled
+at the process level</span> and causes <code>POService</code> to
+return a WSDL-defined fault to its consumer.<br>
+</p>
+<p style="margin-left: 80px;"><small><small><big><span
+ style="font-family: courier new;">&lt;faultHandlers&gt;<br>
+...<br>
+<span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;catch faultName="invs:inventoryFaultType"
+faultVariable="inventoryServiceFault"
+faultMessageType="invs:inventoryFault"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;sequence&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;assign name="Assign1_1"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;from variable="inventoryServiceFault"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+part="faultInfo"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;to variable="purchaseOrderFault"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+part="faultInfo"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/copy&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/assign&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;reply name="sendPurchaseOrder.Fault"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+partnerLink="POServicePLink"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+portType="pos:purchaseOrderPT"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+operation="sendPurchaseOrder"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+variable="purchaseOrderFault"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+faultName="pos:cannotCompleteOrder"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/sequence&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/catch&gt;</span></span></big><span
+ style="font-family: courier new;"><big><span style="font-weight: bold;"></span><br>
+...<br>
+&lt;/faultHandlers&gt;</big><br>
+</span></small></small></p>
+<p style="margin-left: 40px;">Since the fault handling is at the
+process level, the BPEL process
+instance is terminated after the fault is handled.<br>
+<br>
+<span style="font-weight: bold;"></span></p>
+<p>The following diagram illustrates how a process-level fault handler
+is
+used in the <code>POService</code> BPEL process. </p>
+<p><img src="images/bp3-fig2.PNG" alt=""
+ style="width: 792px; height: 804px;"><br>
+<b>Figure
+2: POService BPEL Process</b> </p>
+<p><br>
+The next diagram shows the corresponding fault-handling
+activities in the <code>InventoryService</code> BPEL process. </p>
+<p><img src="images/bp3-fig3.PNG" alt=""
+ style="width: 645px; height: 660px;"><br>
+<b>Figure
+3: InventoryService BPEL Process<br>
+</b></p>
+<p>See the first
+BluePrint in this series for further details on the BPEL
+artifacts used in each process.</p>
+<h3>Define the WSDL </h3>
+<p>The following <code>POService</code> WSDL operation defines a
+fault named <small><font face="Courier New, monospace">cannotCompleteOrder</font>:</small></p>
+<pre style="margin-left: 40px;">    &lt;portType name="purchaseOrderPT"&gt;<br>        &lt;operation name="sendPurchaseOrder"&gt;<br>            &lt;input name="sendPurchaseOrderRequest" message="tns:POMessage"&gt;&lt;/input&gt;<br>            &lt;output name="sendPurchaseOrderReply" message="tns:POMessage"&gt;&lt;/output&gt;<br>            &lt;fault name="cannotCompleteOrder" message="tns:orderFaultType"&gt;&lt;/fault&gt;<br>        &lt;/operation&gt;<br>    &lt;/portType&gt;</pre>
+<p>The <code>InventoryService</code> WSDL operation also defines a
+fault named <small><font face="Courier New, monospace">inventoryFaultType</font>:</small></p>
+<pre style="margin-left: 40px;">    &lt;portType name="inventoryPortType"&gt;<br>        &lt;operation name="inventoryService"&gt;<br>            &lt;input name="purchaseOrder" message="tns:POMessage"&gt;&lt;/input&gt;<br>            &lt;output name="inventoryStatus" message="tns:InventoryMessage"&gt;&lt;/output&gt;<br>            &lt;fault name="inventoryFaultType" message="tns:inventoryFault"&gt;&lt;/fault&gt;<br>        &lt;/operation&gt;<br>    &lt;/portType&gt;</pre>
+<p>See the first
+BluePrint in this series for further details on these WSDL
+artifacts. </p>
+<h3>Additional Design Details</h3>
+<p>Also consider the following when you are designing fault handling
+into your BPEL processes.</p>
+<ul>
+  <li>
+    <p style="margin-bottom: 0in;"><b>Various ways of handling faults.</b>
+In this particular scenario, the <code>catch</code> section of a fault
+handler handles a fault by only the fault name. Refer to the BPEL
+specification for other ways of handling faults. </p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0in;"><b>Scope in fault handling.</b> In
+this particular design, scopes could have been defined around the
+regions where fault handling is necessary. This would be beneficial if
+a lot of fault handling code were needed, and if fault handling code
+were not required to be shared. </p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0in;"><b>Invoke-related fault handling.</b>
+An inlined or embedded fault handler can be defined for <code>invoke</code>,
+which would handle faults related to that <code>invoke</code>. This
+would target the fault-handling code over the areas where the fault
+occurs. The advantage is that all the necessary fault handling is
+handled where it is expected to occur. However, <code>invoke</code>
+related
+fault handling isn't the ideal approach if fault handling code needs to
+be shared or must be duplicated. </p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0in;"><b>Localized usage of fault handling.</b>
+Fault handling at the scope or <code>invoke</code> level lets the
+developer take appropriate compensatory action based on the fault. This
+pattern is more applicable to a BPEL process, which is an orchestration
+of many services that might still need to continue despite the
+occurrence of a fault in one area. </p>
+  </li>
+  <li>
+    <p style="margin-bottom: 0in;"><b>Trade-offs in level-specific
+design.</b> Fault handling must be designed appropriately at the level
+of process, scope, or invoke activity level. Consider the pros and cons
+of isolation, compensation, and sharing of the fault handling code. </p>
+  </li>
+  <li>
+    <p><b>Use of </b><code><b>reply</b></code><b> to send faults.</b>
+A <code>reply</code> activity can be used to send a WSDL-defined fault
+to the
+consumer of the service. A <code>faultName</code> attribute on the <code>reply</code>
+activity gives a clue to the <code>faultType</code>. </p>
+  </li>
+</ul>
+<h3>Input Data XML for Different Scenarios </h3>
+<p>The following input XML instance gives a valid response.</p>
+<pre>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" <br>xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;sendPurchaseOrder&gt;<br>      &lt;purchaseOrder&gt;<br>        &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>          &lt;orderId&gt;00012343&lt;/orderId&gt;<br>	  &lt;customerId&gt;9876&lt;/customerId&gt;<br>	  &lt;orderDescription&gt;OrderVal_Any_Description&lt;/orderDescription&gt;<br>	  &lt;price&gt;&lt;/price&gt;<br>        &lt;/purchaseOrder&gt;<br>      &lt;/purchaseOrder&gt;<br>    &lt;/sendPurchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;<br></pre>
+<p>The next input XML instance causes a <code>cannotCompleteOrder</code>
+fault to be thrown to the client. The fault is due to the execution
+of a <code>throw</code> activity within the <code>POService</code>
+BPEL process.</p>
+<pre>&lt;soapenv:Envelope xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;sendPurchaseOrder&gt;<br>      &lt;purchaseOrder&gt;<br>        &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>          &lt;orderId&gt;00012342&lt;/orderId&gt;<br>          &lt;customerId&gt;9876&lt;/customerId&gt;<br>          &lt;orderDescription&gt;ThrowPOServiceFault_Val_Any_Description&lt;/orderDescription&gt;<br>          &lt;price&gt;&lt;/price&gt;<br>        &lt;/purchaseOrder&gt;<br>      &lt;/purchaseOrder&gt;<br>    &lt;/sendPurchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;<br></pre>
+<p>The following input XML instance causes a <code>cannotCompleteOrder</code>
+fault to be thrown to the client. This fault is due to a fault sent
+by the inventory service. </p>
+<pre>&lt;soapenv:Envelope xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;sendPurchaseOrder&gt;<br>      &lt;purchaseOrder&gt;<br>        &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>          &lt;orderId&gt;00012341&lt;/orderId&gt;<br>          &lt;customerId&gt;9876&lt;/customerId&gt;<br>          &lt;orderDescription&gt;ThrowInventoryFault_Any_Description&lt;/orderDescription&gt;<br>          &lt;price&gt;&lt;/price&gt;<br>        &lt;/purchaseOrder&gt;<br>      &lt;/purchaseOrder&gt;<br>    &lt;/sendPurchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<h2>References</h2>
+<ul>
+  <li>Browse the <a target="_blank"
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+code</a> for this
+BluePrint, including the
+BPEL process files and WSDL files.</li>
+  <li>See the BPEL BluePrint sample projects included in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a>.</li>
+  <li>For general information on BPEL, see <a
+ href="http://developers.sun.com/prodtech/javatools/jsenterprise/tpr/reference/techart/bpel.html">Business
+Process Execution Language, Part 1: An Introduction</a>.</li>
+</ul>
+<hr>
+<small>&copy; Sun Microsystems 2006. All of the material in The Java
+BluePrints Solutions Catalog is <a
+ href="https://bpcatalog.dev.java.net/nonav/COPYRIGHT.html">copyright</a>-protected
+and may not be published in other works without express written
+permission from Sun Microsystems. </small>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="NestedwithCompesateScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/NestedScope/NestedwithCompesateScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/NestedScope/NestedwithCompesateScope" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/interfaceWithCScope"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/interfaceWithCScope" location="interfaceWithCScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="FinalInvPL" partnerLinkType="ns1:FinalInvPLT" partnerRole="FinalInvPTRole"/>
+        <partnerLink name="OneWayInvPL" partnerLinkType="ns1:OneWayPLT" partnerRole="OneWayPTRole"/>
+        <partnerLink name="initPL" partnerLinkType="ns1:interfaceWithCScope1" myRole="CompScopePTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="GlobalScope1Var" type="xsd:string"/>
+        <variable name="GlobalScope2Var" type="xsd:string"/>
+        <variable name="GlobalScope3Var" type="xsd:string"/>
+        <variable name="GlobalFaultVar" type="xsd:string"/>
+        <variable name="InitRepVar" messageType="ns1:RepMsg"/>
+        <variable name="InitRecVar" messageType="ns1:InMsg"/>
+    </variables>
+    <sequence>
+        <receive name="InitRec" createInstance="yes" partnerLink="initPL" operation="CompScopeOper" portType="ns1:CompScopePT" variable="InitRecVar"/>
+        <assign name="InitToGFaultVar">
+            <copy>
+                <from>concat($InitRecVar.InPart, ' In Main process:')</from>
+                <to variable="GlobalFaultVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <variables>
+                <variable name="Scope1Var" type="xsd:string"/>
+                <variable name="S1InvVar" messageType="ns1:InMsg"/>
+                <variable name="S1FHInvVar" messageType="ns1:InMsg"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="ns2:uninitializedVariable">
+                    <sequence name="FaultHandlerSeq">
+                		<assign name="AssignInFault1">
+                    		<copy>
+                        		<from>
+                            	<literal>First assign in S1FH</literal>
+                        		</from>
+                        		<to variable="S1FHInvVar" part="InPart"/>
+		                    </copy>                    
+                        </assign>
+                        <invoke name="S1FHInv1" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                portType="ns1:OneWayPT" inputVariable="S1FHInvVar"/>
+                        <assign name="AssignInFault2">
+                            <copy>
+                                <from>concat($GlobalFaultVar, ' Fault handled in Scope1:')</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                        <compensateScope name="compensateScope2" target="Scope2"/>
+                        <assign name="AssignInFault2">
+                            <copy>
+                                <from>concat($GlobalFaultVar, ' Exiting Scope1 FH:')</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                            <copy>
+                                <from variable="GlobalFaultVar"/>
+                                <to variable="S1FHInvVar" part="InPart"/>
+                            </copy>
+                        </assign>
+                        <invoke name="S1FHInv2" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                portType="ns1:OneWayPT" inputVariable="S1FHInvVar"/>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence name="Scope1Seq">
+                <assign name="Scope1Start">
+                    <copy>
+                        <from>
+                            <literal> Starting Scope1:</literal>
+                        </from>
+                        <to variable="Scope1Var"/>
+                    </copy>
+                    <copy>
+                        <from>concat($GlobalFaultVar, $Scope1Var)</from>
+                        <to variable="GlobalFaultVar"/>
+                    </copy>
+                </assign>
+                <scope name="Scope2">
+                    <variables>
+                        <variable name="S2CHInvVar" messageType="ns1:InMsg"/>
+                    </variables>
+                    <compensationHandler>
+                        <sequence name="Scope2CHSeq">
+	                		<assign name="S2CHAssign2">
+	                    		<copy>
+	                        		<from>
+	                            	<literal>First assign in S2CH</literal>
+	                        		</from>
+	                        		<to variable="S2CHInvVar" part="InPart"/>
+			                    </copy>                    
+	                        </assign>
+	                        <invoke name="S2CHInv1" partnerLink="OneWayInvPL" operation="OneWayOper" 
+	                                portType="ns1:OneWayPT" inputVariable="S2CHInvVar"/>
+                            <compensateScope name="compensateScope3" target="Scope3"/>
+                            <assign name="S2CHAssign2">
+                                <copy>
+                                    <from>concat($GlobalFaultVar, ' In Scope2 CH :')</from>
+                                    <to variable="GlobalFaultVar"/>
+                                </copy>
+                                <copy>
+                                    <from variable="GlobalFaultVar"/>
+                                    <to variable="S2CHInvVar" part="InPart"/>
+                                </copy>
+                            </assign>
+                            <invoke name="S2CHInv2" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                    portType="ns1:OneWayPT" inputVariable="S2CHInvVar"/>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="Scope2Seq">
+                        <assign name="Scope2Start">
+                            <copy>
+                                <from>
+                                    <literal> Scope2 Start:</literal>
+                                </from>
+                                <to variable="GlobalScope2Var"/>
+                            </copy>
+                            <copy>
+                                <from>concat($GlobalFaultVar, $GlobalScope2Var)</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                        <scope name="Scope3">
+                            <variables>
+                                <variable name="Scope3Var" type="xsd:string"/>
+                                <variable name="S3InvVar" messageType="ns1:InMsg"/>
+                                <variable name="S3CHInvVar" messageType="ns1:InMsg"/>
+                            </variables>
+                            <compensationHandler>
+                                <sequence name="Scope3CHSeq">
+                                    <compensate/>
+                                    <assign name="Scope3CHAssign">
+                                        <copy>
+                                            <from>concat($GlobalFaultVar, ' In Scope3 CH:')</from>
+                                            <to variable="GlobalFaultVar"/>
+                                        </copy>
+                                        <copy>
+                                            <from variable="GlobalFaultVar"/>
+                                            <to variable="S3CHInvVar" part="InPart"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="S3CHInv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                            portType="ns1:OneWayPT" inputVariable="S3CHInvVar"/>
+                                </sequence>
+                            </compensationHandler>
+                            <sequence name="Scope3Seq">
+                                <assign name="Scope3Start">
+                                    <copy>
+                                        <from>
+                                            <literal> Scope3 start:</literal>
+                                        </from>
+                                        <to variable="Scope3Var"/>
+                                    </copy>
+                                    <copy>
+                                        <from>concat($Scope3Var, ' Scope3 End:')</from>
+                                        <to variable="Scope3Var"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="Scope3Var"/>
+                                        <to variable="GlobalScope3Var"/>
+                                    </copy>
+                                    <copy>
+                                        <from>concat($GlobalFaultVar, $GlobalScope3Var)</from>
+                                        <to variable="GlobalFaultVar"/>
+                                    </copy>
+                                    <copy>
+                                        <from variable="GlobalScope3Var"/>
+                                        <to variable="S3InvVar" part="InPart"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="S3Inv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                        portType="ns1:OneWayPT" inputVariable="S3InvVar"/>
+                            </sequence>
+                        </scope>
+                        <assign name="Scope2End">
+                            <copy>
+                                <from>concat($GlobalScope2Var, ' Scope2End:')</from>
+                                <to variable="GlobalScope2Var"/>
+                            </copy>
+                            <copy>
+                                <from>concat($GlobalFaultVar, ' Scope2End:')</from>
+                                <to variable="GlobalFaultVar"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <assign name="Scope1BeforeFault">
+                    <copy>
+                        <from>concat($Scope1Var, ' In Scope1 before fault:')</from>
+                        <to variable="Scope1Var"/>
+                    </copy>
+                    <copy>
+                        <from variable="Scope1Var">$Scope1Var</from>
+                        <to variable="GlobalScope1Var"/>
+                    </copy>
+                    <copy>
+                        <from>concat($GlobalFaultVar, ' In Scope1 before fault:')</from>
+                        <to variable="GlobalFaultVar"/>
+                    </copy>
+                    <copy>
+                        <from variable="GlobalScope1Var"/>
+                        <to variable="S1InvVar" part="InPart"/>
+                    </copy>
+                </assign>
+                <invoke name="S1Inv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                        portType="ns1:OneWayPT" inputVariable="S1InvVar"/>
+                <ns2:throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+        <assign name="ReplyAssign">
+            <copy>
+                <from variable="GlobalScope1Var"/>
+                <to>$InitRepVar.RepPart/Scope1Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalScope2Var"/>
+                <to>$InitRepVar.RepPart/Scope2Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalScope3Var"/>
+                <to>$InitRepVar.RepPart/Scope3Var</to>
+            </copy>
+            <copy>
+                <from variable="GlobalFaultVar"/>
+                <to>$InitRepVar.RepPart/OutVar</to>
+            </copy>
+        </assign>
+        <invoke name="finalInv" partnerLink="FinalInvPL" operation="FinalInvOper" 
+                portType="ns1:FinalInvPT" inputVariable="InitRepVar"/>
+        
+    </sequence>
+</process>

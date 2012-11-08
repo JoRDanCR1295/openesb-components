@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<project name="testSU" default="default" basedir="."> 
+
+    <target name="default" depends="package" description="compiles and packages the project."/>
+    
+    <target name="-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+    </target>
+    
+    <target name="-init-user" depends="-pre-init" >
+        <echo level="debug" message="loading user properties from ${user.properties.file}" />
+        <property file="${user.properties.file}"/>
+    </target>
+    
+    <target name="-init-project" depends="-pre-init, -init-user" >
+        <echo level="debug" message="loading build.properties" />
+        <property file="build.properties"/>
+    </target>
+    
+    <target name="-do-init" depends="-pre-init, -init-user, -init-project" >
+        <echo level="debug" message="Nothing to -do-init" />
+    </target>
+        
+    <target name="-init-check" depends="-pre-init, -init-user, -init-project,-do-init">
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="dist.dir">Must set dist.dir</fail>
+        <fail unless="dist.zip">Must set dist.zip</fail>
+    </target>
+    
+    <!-- Init project -->
+    <target name="init" 
+        depends="-pre-init, -init-user, -init-project,-do-init"
+        description="initilizes the build settings">        
+    </target>
+    
+    <target name="-post-compile-su">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the build.xml file. -->
+    </target>
+            
+    <!-- Clean target -->
+    <target  name="clean" depends="init" description="Clean the Service Unit" >
+        <echo level="debug" message ="Cleaning the Service Unit" />
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/> 
+    </target>
+    
+    <!-- Compile target -->
+    <target name="compile" depends="init" description="Compile Service Unit">
+        <echo level="debug" message ="Compiling Service Unit" />
+        <mkdir dir="${build.dir}"/>
+        <copy file="${src.dir}/META-INF/jbi.xml" todir="${build.dir}/META-INF" overwrite="true" />
+        <copy file="${src.dir}/echo.wsdl" todir="${build.dir}" overwrite="true" >
+            <filterset id="soapbc_su_filterset" begintoken="__" endtoken="__">
+                <filter token="SOAP_ENDPOINT_ADDRESS_LOCATION" value="${soap.binding.inbound.endpoint.address.location}"/>
+            </filterset>
+        </copy>        
+    </target>
+    
+    <!-- Package target -->
+    <target name="package" depends="init, compile"  description="Package the Service Unit" >
+        <echo level="debug" message ="Packaging Service Unit" />
+        <mkdir dir="${dist.dir}"/>
+        <zip destfile="${dist.zip}" basedir="${build.dir}" />
+    </target>    
+    
+    <!-- Help target -->
+    <target  name="help" depends="init" description="Display Help on Service Unit">
+        <echo message ="Builds  Service Unit ${dist.zip}" />
+    </target>
+        
+</project>

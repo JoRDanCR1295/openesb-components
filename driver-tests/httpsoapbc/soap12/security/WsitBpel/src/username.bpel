@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="username"
+    targetNamespace="http://enterprise.netbeans.org/bpel/WsitBpel/username"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/WsitBpel/username">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WsitBpel/username" location="username.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/WsitBpel/username" partnerLinkType="tns:username" myRole="usernamePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="UsernameOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/WsitBpel/username" messageType="tns:usernameOperationResponse"/>
+        <variable name="UsernameOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/WsitBpel/username" messageType="tns:usernameOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="usernameOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/WsitBpel/username" portType="tns:usernamePortType" variable="UsernameOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="UsernameOperationIn" part="part1"/>
+                <to variable="UsernameOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="usernameOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/WsitBpel/username" portType="tns:usernamePortType" variable="UsernameOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="MainBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/VarialbleConsistencyTestAfterReplyAndInvoke/MainBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/VarialbleConsistencyTestAfterReplyAndInvoke/MainBP" xmlns:ns0="http://j2ee.netbeans.org/bpelse/assign/VarialbleConsistencyTestAfterReplyAndInvoke/wsdl/wsdl" xmlns:ns1="http://xml.netbeans.org/schema/bpelse/assign/VarialbleConsistencyTestAfterReplyAndInvoke/XmlSchema">
+    <documentation>This test was created for bug 487. Please refer to it for more details.
+https://open-jbi-components.dev.java.net/issues/show_bug.cgi?id=487</documentation>
+    <import namespace="http://j2ee.netbeans.org/bpelse/assign/VarialbleConsistencyTestAfterReplyAndInvoke/wsdl/wsdl" location="wsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns0:subBPOneWayNext" myRole="subBPOneWayNextPortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns0:subBP" partnerRole="subBPPortTypeRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns0:subBPOneWay" myRole="subBPOneWayPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/bpelse/assign/VarialbleConsistencyTestAfterReplyAndInvoke/wsdl/wsdl" partnerLinkType="tns:main" myRole="mainPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WsdlOperationIn1" messageType="ns0:mainOperationResponse"/>
+        <variable name="WsdlOperationIn" messageType="ns0:mainOperationResponse"/>
+        <variable name="SubBPOperationOut" messageType="ns0:mainOperationResponse"/>
+        <variable name="SubBPOperationIn" messageType="ns0:mainOperationRequest"/>
+        <variable name="MainOperationOut" messageType="ns0:mainOperationResponse"/>
+        <variable name="MainOperationIn" messageType="ns0:mainOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:corr"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="mainOperation" portType="ns0:mainPortType" variable="MainOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$MainOperationIn.input/ns1:Id</from>
+                <to>$SubBPOperationIn.input/ns1:Id</to>
+            </copy>
+            <copy>
+                <from>$MainOperationIn.input/ns1:Data</from>
+                <to>$SubBPOperationIn.input/ns1:Data</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="subBPOperation" portType="ns0:subBPPortType" inputVariable="SubBPOperationIn" outputVariable="SubBPOperationOut"/>
+        <receive name="Receive2" createInstance="no" partnerLink="PartnerLink3" operation="subBPOneWayOperation" portType="ns0:subBPOneWayPortType" variable="WsdlOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <receive name="Receive3" createInstance="no" partnerLink="PartnerLink4" operation="subBPOneWayNextOperation" portType="ns0:subBPOneWayNextPortType" variable="WsdlOperationIn1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <if name="If1">
+            <condition>$SubBPOperationOut.output/ns1:Data = 'originalReplyValue' and $WsdlOperationIn.output/ns1:Data = 'originalInvokeValue'</condition>
+            <assign name="Assign2">
+                <copy>
+                    <from>$MainOperationIn.input/ns1:Id</from>
+                    <to>$MainOperationOut.output/ns1:Id</to>
+                </copy>
+                <copy>
+                    <from>'Test Passed. Values as expected.'</from>
+                    <to>$MainOperationOut.output/ns1:Data</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign3">
+                    <copy>
+                        <from>$MainOperationIn.input/ns1:Id</from>
+                        <to>$MainOperationOut.output/ns1:Id</to>
+                    </copy>
+                    <copy>
+                        <from>concat('Test Failed. Vaues did not match. :', $SubBPOperationOut.output/ns1:Data, ' and ', $WsdlOperationIn.output/ns1:Data)</from>
+                        <to>$MainOperationOut.output/ns1:Data</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="mainOperation" portType="ns0:mainPortType" variable="MainOperationOut"/>
+    </sequence>
+</process>

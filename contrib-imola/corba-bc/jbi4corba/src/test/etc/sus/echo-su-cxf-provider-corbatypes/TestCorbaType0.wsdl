@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Echo" targetNamespace="it.imolinfo.jbi4corba.test" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="it.imolinfo.jbi4corba.test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://test.jbi4corba.imolinfo.it/" xmlns:ns1="it.imolinfo.jbi4corba.test" xmlns:ns2="http://jaxb.dev.java.net/array" xmlns:tns="http://test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+<xs:import namespace="it.imolinfo.jbi4corba.test"/>
+<xs:import namespace="http://jaxb.dev.java.net/array"/>
+<xs:complexType name="complexStruct1">
+<xs:sequence>
+<xs:element name="fieldBoolean" type="xs:boolean"/>
+<xs:element name="fieldChar" type="xs:unsignedShort"/>
+<xs:choice minOccurs="0">
+<xs:element name="two_format" type="ns1:any"/>
+<xs:element name="numeric" type="xs:int"/>
+<xs:element name="alfanumeric" type="xs:string"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ThirdUnion">
+<xs:sequence>
+<xs:choice minOccurs="0">
+<xs:element name="secondo" type="xs:short"/>
+<xs:element name="altro" type="xs:boolean"/>
+<xs:element name="primo" type="xs:int"/>
+<xs:element name="third" type="ns2:anyTypeArray"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="SecondUnion">
+<xs:sequence>
+<xs:choice minOccurs="0">
+<xs:element name="two_format" type="ns1:any"/>
+<xs:element name="numeric" type="xs:int"/>
+<xs:element name="alfanumeric" type="xs:string"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="complexStruct1Array">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:complexStruct1"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://jaxb.dev.java.net/array" xmlns="http://jaxb.dev.java.net/array" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+       
+<xs:complexType final="#all" name="anyTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="it.imolinfo.jbi4corba.test" xmlns="it.imolinfo.jbi4corba.test" xmlns:ns1="http://test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+       
+   
+<xs:import namespace="http://test.jbi4corba.imolinfo.it/"/>
+<xs:element name="echo1">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="msg" type="ns1:ThirdUnion"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo1Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo2">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="msg" type="ns1:SecondUnion"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo2Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="ns1:ThirdUnion"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo3">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="msg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo3Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="ns1:complexStruct1"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo4">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="msg" type="ns1:complexStruct1"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo4Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo5">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="msg" type="ns1:complexStruct1Array"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo5Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo6">
+<xs:complexType>
+<xs:sequence>
+<xs:element minOccurs="0" name="msg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo6Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="ns1:complexStruct1Array"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:complexType abstract="true" name="any">
+<xs:sequence/>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo2Response">
+    <wsdl:part name="parameters" element="tns:echo2Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo1">
+    <wsdl:part name="parameters" element="tns:echo1">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo2">
+    <wsdl:part name="parameters" element="tns:echo2">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo3">
+    <wsdl:part name="parameters" element="tns:echo3">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo4">
+    <wsdl:part name="parameters" element="tns:echo4">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo6">
+    <wsdl:part name="parameters" element="tns:echo6">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo5">
+    <wsdl:part name="parameters" element="tns:echo5">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo3Response">
+    <wsdl:part name="parameters" element="tns:echo3Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo4Response">
+    <wsdl:part name="parameters" element="tns:echo4Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo1Response">
+    <wsdl:part name="parameters" element="tns:echo1Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo6Response">
+    <wsdl:part name="parameters" element="tns:echo6Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo5Response">
+    <wsdl:part name="parameters" element="tns:echo5Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Echo">
+    <wsdl:operation name="echo5">
+      <wsdl:input name="echo5" message="tns:echo5">
+    </wsdl:input>
+      <wsdl:output name="echo5Response" message="tns:echo5Response">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo1">
+      <wsdl:input name="echo1" message="tns:echo1">
+    </wsdl:input>
+      <wsdl:output name="echo1Response" message="tns:echo1Response">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo2">
+      <wsdl:input name="echo2" message="tns:echo2">
+    </wsdl:input>
+      <wsdl:output name="echo2Response" message="tns:echo2Response">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo4">
+      <wsdl:input name="echo4" message="tns:echo4">
+    </wsdl:input>
+      <wsdl:output name="echo4Response" message="tns:echo4Response">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo3">
+      <wsdl:input name="echo3" message="tns:echo3">
+    </wsdl:input>
+      <wsdl:output name="echo3Response" message="tns:echo3Response">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo6">
+      <wsdl:input name="echo6" message="tns:echo6">
+    </wsdl:input>
+      <wsdl:output name="echo6Response" message="tns:echo6Response">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoCorbaBinding" type="tns:Echo">
+<imolacorba:binding localizationType="NameService" role="provider">
+<imolacorba:idl>
+module it{
+module imolinfo{
+module jbi4corba{
+module test{
+module webservice{
+module generator{
+module testclasses{
+	
+	union TempUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+	
+	union FirstUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		case 3: TempUnion uni1;
+		case 4: sequence &lt;TempUnion&gt; uni2;
+		default: any two_format;
+	};
+
+	union SecondUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+
+	union ThirdUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: sequence &lt;FirstUnion&gt; third;
+		default: boolean altro; 
+	}; 
+	
+	union ForthUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: FirstUnion third;
+		default: boolean altro; 
+	}; 
+	
+	struct ComplexStruct1 {
+		boolean          fieldBoolean;
+		char             fieldChar;
+	        SecondUnion      fieldWChar;
+	};
+	
+	typedef ComplexStruct1 ArrayComplexStruct1[2][3];
+	
+	interface Echo {
+		string echo1(in ThirdUnion msg);
+		ThirdUnion echo2(in SecondUnion msg);
+		ComplexStruct1 echo3(in string msg);
+		string echo4(in ComplexStruct1 msg);
+		string echo5(in ArrayComplexStruct1 msg);
+		ArrayComplexStruct1 echo6(in string msg);
+		};
+		
+	interface Echo1 {
+		ForthUnion echo1(in ThirdUnion msg);
+	};		
+};
+};
+};
+}; 
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo5">
+      <wsdl:input name="echo5">
+      </wsdl:input>
+      <wsdl:output name="echo5Response">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo1">
+      <wsdl:input name="echo1">
+      </wsdl:input>
+      <wsdl:output name="echo1Response">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo2">
+      <wsdl:input name="echo2">
+      </wsdl:input>
+      <wsdl:output name="echo2Response">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo4">
+      <wsdl:input name="echo4">
+      </wsdl:input>
+      <wsdl:output name="echo4Response">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo3">
+      <wsdl:input name="echo3">
+      </wsdl:input>
+      <wsdl:output name="echo3Response">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="echo6">
+      <wsdl:input name="echo6">
+      </wsdl:input>
+      <wsdl:output name="echo6Response">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo">
+    <wsdl:port name="EchoCorbaPort" binding="tns:EchoCorbaBinding">
+<imolacorba:address name="Echo" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

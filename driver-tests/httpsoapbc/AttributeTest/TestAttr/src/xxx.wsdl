@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="NumberService" 
+    targetNamespace="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService">
+            <xsd:complexType name="RequestType">
+                <xsd:sequence>
+                    <xsd:element name="nString" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ResponseType">
+                <xsd:sequence>
+                    <xsd:element name="nDecimal" type="xsd:decimal" minOccurs="0"/>
+                    <xsd:element name="nShort" type="xsd:short" minOccurs="0"/>
+                    <xsd:element name="nLong" type="xsd:long" minOccurs="0"/>
+                    <xsd:element name="nInt" type="xsd:int" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="iInt" type="xsd:int" use="required"/>
+                <xsd:attribute name="iLong" type="xsd:long" use="required"/>
+                <xsd:attribute name="iShort" type="xsd:short" use="required"/>
+                <xsd:attribute name="iDecimal" type="xsd:decimal" use="required"/>
+            </xsd:complexType>
+            
+            <xsd:complexType  name="ExceptionType">
+                <xsd:sequence>
+                    <xsd:element name="message"  type="xsd:string" minOccurs="0" />
+                    <xsd:element name="number" type="xsd:int" minOccurs="0"/>
+                    <xsd:element name="cause" type="tns:ExceptionType" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="code1" type="xsd:int" use="required"/>
+                <xsd:attribute name="code2" type="xsd:int" use="required" form="qualified"/>
+                <xsd:attribute name="code3" type="xsd:int"  use="required" form="qualified"/>
+            </xsd:complexType>
+
+            <xsd:element name="NumException" type="tns:ExceptionType"/>
+            <xsd:element name="NumRequest" type="tns:RequestType"/>
+            <xsd:element name="NumResponse" type="tns:ResponseType"/>
+        </xsd:schema>
+    </types>
+    <message name="xxxServiceOperationRequest">
+        <part name="request" element="tns:NumRequest"/>
+    </message>
+    <message name="xxxServiceOperationResponse">
+        <part name="response" element="tns:NumResponse"/>
+    </message>
+    <message name="xxxServiceOperationFault">
+        <part name="fault" element="tns:NumException"/>
+    </message>
+    <portType name="xxxInterface">
+        <operation name="NumberServiceOperation">
+            <input name="numIn" message="tns:xxxServiceOperationRequest"/>
+            <output name="numOut" message="tns:xxxServiceOperationResponse"/>
+            <fault name="numFault" message="tns:xxxServiceOperationFault"/>
+        </operation>
+    </portType>
+    <binding name="xxxServiceSOAPBinding" type="tns:xxxInterface">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="NumberServiceOperation">
+            <input name="numIn">
+                <soap:body use="literal"/>
+            </input>
+            <output name="numOut">
+                <soap:body use="literal"/>
+            </output>
+            <fault name="numFault">
+                <soap:fault use="literal" name="numFault"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="xxxService">
+        <port name="xxxServiceSOAPPort" binding="tns:xxxServiceSOAPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/xxxService"/>
+        </port>
+    </service>
+
+    <plnk:partnerLinkType name="xxxServicePLink">
+        <plnk:role name="xxxServiceInterfaceRole" portType="tns:xxxInterface"/>
+    </plnk:partnerLinkType>
+</definitions>

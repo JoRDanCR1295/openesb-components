@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSMapMessageTest"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSMapMessageTest"
+         sbynpxp:end_YLoc="230.0"
+         sbynpxp:start_YLoc="135.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="37.0"
+         sbynpxp:end_XLoc="802.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSMapMessageTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/bpel/JMSMapMessageTest"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/bpel/JMSMapMessageTest"
+            location="JMSMapMessageTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSMapMessageTestReqReplyPartner"
+                     partnerLinkType="ns0:JMSMapMessageTestRequestReplyLnkType"
+                     myRole="roleJMSMapMessageTestTrigger"/>
+        <partnerLink name="JMSMapMessageTestSendPartner"
+                     partnerLinkType="ns0:JMSMapMessageTestOutLnkType"
+                     partnerRole="roleJMSMapMessageTestSender"/>
+        <partnerLink name="JMSMapMessageTestReceivePartner"
+                     partnerLinkType="ns0:JMSMapMessageTestInLnkType"
+                     myRole="roleJMSMapMessageTestReceiver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationOneWayOut_Input"
+                  messageType="ns0:messageOneWayOut"></variable>
+        <variable name="operationOneWayIn_Output"
+                  messageType="ns0:messageOneWayIn"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSetMapMessageTest"
+                        properties="ns0:propJMSMapMessageName1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMSMapMessageTestReqReplyPartner"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="126.0"
+                 sbynpxp:YLoc="209.0">
+            <correlations>
+                <correlation set="cSetMapMessageTest"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="230.0"
+                sbynpxp:YLoc="138.0">
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/boolean</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partBoolean"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/char</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partChar"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/double</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partDouble"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/float</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partFloat"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/int</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partInt"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/long</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partLong"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/short</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partShort"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/string</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partString"/>
+            </copy>
+        </assign>
+        <invoke name="operationOneWayOut"
+                partnerLink="JMSMapMessageTestSendPartner"
+                portType="ns0:portTypeOneWayOut"
+                operation="operationOneWayOut"
+                inputVariable="operationOneWayOut_Input"
+                sbynpxp:XLoc="309.0"
+                sbynpxp:YLoc="211.0"></invoke>
+        <receive name="operationOneWayIn"
+                 partnerLink="JMSMapMessageTestReceivePartner"
+                 portType="ns0:portTypeOneWayIn"
+                 operation="operationOneWayIn"
+                 variable="operationOneWayIn_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="407.0"
+                 sbynpxp:YLoc="139.0">
+            <correlations>
+                <correlation set="cSetMapMessageTest"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2"
+                sbynpxp:XLoc="545.0"
+                sbynpxp:YLoc="224.0">
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partBoolean"/>
+                <to>$operationRequestReply_Input.partReqReply/boolean</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partChar"/>
+                <to>$operationRequestReply_Input.partReqReply/char</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partDouble"/>
+                <to>$operationRequestReply_Input.partReqReply/double</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partFloat"/>
+                <to>$operationRequestReply_Input.partReqReply/float</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partInt"/>
+                <to>$operationRequestReply_Input.partReqReply/int</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partLong"/>
+                <to>$operationRequestReply_Input.partReqReply/long</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partShort"/>
+                <to>$operationRequestReply_Input.partReqReply/short</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partString"/>
+                <to>$operationRequestReply_Input.partReqReply/string</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMSMapMessageTestReqReplyPartner"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"
+               sbynpxp:XLoc="645.0"
+               sbynpxp:YLoc="142.0"></reply>
+    </sequence>
+</process>

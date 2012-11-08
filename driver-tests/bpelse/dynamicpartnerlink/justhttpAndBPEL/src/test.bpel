@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="test"
+    targetNamespace="http://enterprise.netbeans.org/bpel/justhttpAndBPEL/test"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/justhttpAndBPEL/test" xmlns:ns1="http://j2ee.netbeans.org/wsdl/test" xmlns:ns2="http://j2ee.netbeans.org/wsdl/consumer" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/test" location="test.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/consumer" location="consumer.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:consumer2" partnerRole="consumerPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:consumer1" partnerRole="consumerPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:test1" myRole="testPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="ConsumerOperationOut" messageType="ns2:consumerOperationReply"/>
+        <bpws:variable name="ConsumerOperationIn" messageType="ns2:consumerOperationRequest"/>
+        <bpws:variable name="TestOperationOut" messageType="ns1:testOperationReply"/>
+        <bpws:variable name="TestOperationIn" messageType="ns1:testOperationRequest"/>
+        <bpws:variable name="Variable1" type="xsd:int"/>        
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="testOperation" portType="ns1:testPortType" variable="TestOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>2</bpws:from>
+                <bpws:to variable="Variable1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TestOperationIn.part1/ns0:string</bpws:from>
+                <bpws:to>$TestOperationOut.part1/ns0:string</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TestOperationIn.part1/ns0:string</bpws:from>
+                <bpws:to>$ConsumerOperationIn.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:while name="While1">
+            <bpws:condition>    ( $Variable1 != 0 )    </bpws:condition>
+            <bpws:sequence name="Sequence1">
+                <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="consumerOperation" portType="ns2:consumerPortType" inputVariable="ConsumerOperationIn" outputVariable="ConsumerOperationOut"/>
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from> ( $Variable1 - 1 ) </bpws:from>
+                        <bpws:to variable="Variable1"/>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from>concat($TestOperationOut.part1/ns0:string, ' after invoke ', $Variable1, ' ', $ConsumerOperationOut.part1/ns0:string)</bpws:from>
+                        <bpws:to>$TestOperationOut.part1/ns0:string</bpws:to>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from partnerLink="PartnerLink3" endpointReference="partnerRole" />
+                        <bpws:to partnerLink="PartnerLink2" />
+                    </bpws:copy>                    
+                </bpws:assign>
+            </bpws:sequence>
+        </bpws:while>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="testOperation" portType="ns1:testPortType" variable="TestOperationOut"/>
+    </sequence>
+</process>

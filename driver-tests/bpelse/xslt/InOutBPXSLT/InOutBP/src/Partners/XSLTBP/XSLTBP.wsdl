@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/XSLTBP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/XSLTBP" name="XSLTBP" xmlns:ns="http://xml.netbeans.org/schema/XSLTBPSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/XSLTBPSchema" xmlns:tns1="http://xml.netbeans.org/schema/XSLTBPSchema">
+            <xsd:complexType name="MsgType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="MsgElem" type="tns1:MsgType"></xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="InOutMsg">
+        <wsdl:part name="InOutPart" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:portType name="InOutXSLTBPPortType">
+        <wsdl:operation name="InOutXSLTBPOperation">
+            <wsdl:input name="input1" message="tns:InOutMsg"/>
+            <wsdl:output name="output1" message="tns:InOutMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="HttpBPPortType">
+        <wsdl:operation name="HttpBPOper">
+            <wsdl:input name="input1" message="tns:InOutMsg"/>
+            <wsdl:output name="output1" message="tns:InOutMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="XSLTBPBinding" type="tns:InOutXSLTBPPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="InOutXSLTBPOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="InOutPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="InOutPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="HttpBPBinding" type="tns:HttpBPPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="HttpBPOper">
+            <wsdl:input name="input1">
+                <soap:body parts="InOutPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="InOutPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="XSLTBPService">
+        <wsdl:port name="XSLTBPServicePort" binding="tns:XSLTBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/XSLTService/XSLTBP/XSLTBPServicePort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="HttpBPService">
+        <wsdl:port name="HttpBPServicePort" binding="tns:HttpBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/XSLTService/XSLTBP/HttpBPServicePort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="XSLTBPPartnerLinkType">
+        <plnk:role name="InOutXSLTBPPortTypeRole" portType="tns:InOutXSLTBPPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="HttpBPPartnerLinkType">
+        <plnk:role name="HttpBPPortTypeRole" portType="tns:HttpBPPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

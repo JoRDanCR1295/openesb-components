@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JMXBinding" default="run" basedir=".">
+    <description> This project compile, package and manage JBI Components using Ant and JBI Ant tasks in OpenESB2.0 </description>
+    
+    <target name="-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+    </target>
+    
+    <target name="-init-user" depends="-pre-init" >
+        <echo message="loading user properties from ${user.properties.file}" />
+        <property file="${user.properties.file}"/>
+    </target>
+    
+    <target name="-init-project" depends="-pre-init, -init-user" >
+        <echo level="debug" message="loading build.properties" />
+        <property file="build.properties"/>
+        <!-- test sa build properties -->
+        <condition property="can.deploy.testSA">
+            <istrue value="${testSA.enabled}" />
+        </condition>
+        <!-- test service assembly build directory -->
+        <property name="project.testSA.build.dir" location="${build.test.dir}/${testSA.name}" />
+        <!-- test SA zip file -->
+        <property name="reference.testSA.zip" location="${project.testSA.build.dir}/${testSA.name}.zip" />
+    </target>
+    
+    <target name="-do-init" depends="-pre-init, -init-user, -init-project" >
+        <echo level="debug" message="Nothing to -do-init" />
+    </target>
+    
+    <target name="-init-check" depends="-pre-init, -init-user, -init-project,-do-init">
+        <available file="${glassfish.home}" property="glassfish.home.exists" />
+        <fail unless="glassfish.home.exists"
+              message="glassfish.home=${glassfish.home} is not valid. Please set a valid glassfish home." />
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="dist.dir">Must set dist.dir</fail>
+        <fail unless="dist.zip">Must set dist.zip</fail>
+    </target>
+    
+    <!-- initilizes the build settings -->
+    <target name="init" 
+            depends="-pre-init, -init-user, -init-project,-do-init, -init-check" >
+    </target>  
+    <!-- initializes the jbi ant tasks -->
+    <target name="-init-jbi-ant-tasks">
+        <available file="${glassfish.home}" property="glassfish.home.exists" />
+        <fail unless="glassfish.home.exists"
+              message="glassfish.home=${glassfish.home} is not valid. Please set a valid glassfish home." />    
+        <!-- Load jbi task definitions -->
+        <taskdef resource="com/sun/jbi/ui/ant/antlib.xml" classpath="${jbi.ant.tasks.classpath}"/>               
+    </target>
+    
+    <target name="compile" depends="init"  description="compiles jbi component source" >
+        <mkdir dir="${build.classes.dir}"/>
+        <!-- Compile the java code from ${src.dir} into ${build.classes.dir} -->
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpath="${javac.classpath}" debug="true"  source="${javac.source}" target="${javac.target}">
+            <!-- add additional options to javac here -->
+            <compilerarg value="-Xlint:unchecked" />
+            
+        </javac>
+        <copy todir="${build.classes.dir}">  <!-- copy resources from ${src} -->
+            <fileset dir="${src.dir}" excludes="**/*.java"/>
+        </copy>
+    </target>
+    
+    <target name="deps-package" depends="init" unless="no.deps">
+        <ant target="package-all" inheritall="false" antfile="../component-common/build.xml" />
+    </target>    
+    
+    <target name="package" depends="init, deps-package, compile" 
+            description="compile and packages jbi component sources into installer zip archive file" >
+        <mkdir dir="${build.predist.dir}"/>
+        <mkdir dir="${build.predist.lib.dir}"/>
+        <!-- package component runtime into component.jar -->
+        <jar jarfile="${build.predist.jar}" basedir="${build.classes.dir}"/>
+        <!-- copy component configuration from ${conf.dir} to the ${build.predist.dir} -->
+        <copy todir="${build.predist.dir}">  <!-- copy resources from ${src} -->
+            <fileset dir="${conf.dir}"/>
+        </copy>    
+        <!-- copy required libraries into the ${build.predist.lib.dir} -->
+        <copy file="${libs.jbi.component.common.classpath}" todir="${build.predist.lib.dir}" />
+        <copy file="${libs.wsdl4j.162.classpath}" todir="${build.predist.lib.dir}" />
+        <!-- Create the distribution directory and -->    
+        <mkdir dir="${dist.dir}"/>
+        <!-- Put everything in ${build.predist.dir} into the ${jbi.install.file} file -->
+        <zip destfile="${jbi.install.file}" basedir="${build.predist.dir}"/>
+    </target>  
+    
+    <target name="clean" depends="init" description="clean up" >
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>  
+    
+    <target name="run" depends="install, show" description="compile, package and installs the jbi component"/>
+    
+    <!-- testing the JBI Component -->
+  
+    <target name="compile-test" depends="init"  description="compile the test source " >
+        <mkdir dir="${build.test.classes.dir}"/>
+        <!-- Compile the test java code from ${test.src.dir} into ${build.test.classes.dir} -->
+        <javac srcdir="${test.src.dir}" destdir="${build.test.classes.dir}" classpath="${javac.test.classpath}" debug="true" source="${javac.source}" target="${javac.target}" />
+        <copy todir="${build.test.classes.dir}">  <!-- copy resources from ${src} -->
+            <fileset dir="${test.src.dir}" excludes="**/*.java"/>
+        </copy>
+    </target>
+    
+    <target name="-pre-test-run" depends="init, -init-jbi-ant-tasks" if="can.deploy.testSA">
+        <mkdir dir="${build.test.results.dir}"/>
+        <property name="have.tests" value="false" />
+        <!-- build testSA and deploy, start the test SA -->
+        <ant target="package" inheritall="false" antfile="${project.testSA}/build.xml">
+            <property name="build.dir" location="${project.testSA.build.dir}" />
+            <property name="service.assembly.name" value="${testSA.name}" />
+        </ant>
+        <antcall inheritall="true" target="-deploy-test-sa"/>
+    </target>
+    
+    <target name="-do-test-run" depends="init, compile-test">
+        <java classname="bindingtest.BindingComponentTest" fork="true">          
+            <sysproperty key="test.results.dir" value="${build.test.results.dir}"/>
+            <classpath>
+                <path path="${run.test.classpath}" />
+            </classpath>
+        </java>
+    </target>
+    
+    <target name="-post-test-run" depends="init, -init-jbi-ant-tasks" if="can.deploy.testSA">
+        <!-- stop,shutdown and undeploy testSA -->
+        <antcall inheritall="true" target="-undeploy-test-sa"/>
+        <property name="tests.failed" value="false" />
+    </target>
+    
+    <target name="test" depends="init, compile-test, -pre-test-run, -do-test-run, -post-test-run" description="tests the jbi component" />
+    
+    <!-- JBI Component and Service assembly Administration targets  -->
+ 
+    <target name="install" depends="init, -init-jbi-ant-tasks, package" 
+            description="compile, package, install and starts the jbi component" >
+        <!-- Install the component -->
+        <jbi-install-component 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            file="${jbi.install.file}"/>
+        <!-- Start the installed component -->
+        <jbi-start-component 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${jbi.component.name}" failOnError="false" />      
+    </target>
+    
+    <target name="uninstall" depends="init, -init-jbi-ant-tasks" 
+            description="Stop, shuts down and uninstalls the jbi component" >
+        <!-- Stop and shutdown the component before uninstalling -->
+        <jbi-stop-component 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${jbi.component.name}" failOnError="false" />     
+        <jbi-shut-down-component 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${jbi.component.name}" failOnError="false" />     
+        <!-- uninstall the component -->
+        <jbi-uninstall-component 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${jbi.component.name}"/>
+    </target>    
+    
+    <target name="show" depends="init, -init-jbi-ant-tasks" description="displays runtime state of jbi component info">
+        <!-- Shows the jbi component installed with ${jbi.component.name} in the OpenESB runtime -->
+        <jbi-list-binding-components
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            bindingComponentName="${jbi.component.name}" />
+    </target>
+    <!-- Deploys and starts the testSA -->
+    <target name="-deploy-test-sa" depends="init, -init-jbi-ant-tasks" >
+        <jbi-deploy-service-assembly 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            file="${reference.testSA.zip}"/>
+        <jbi-start-service-assembly 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${testSA.name}" failOnError="false" />      
+    </target>
+    <!-- stop, shutdown and undeploys testSA -->
+    <target name="-undeploy-test-sa" depends="init, -init-jbi-ant-tasks" >
+        <jbi-stop-service-assembly 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${testSA.name}" failOnError="false" />     
+        <jbi-shut-down-service-assembly 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${testSA.name}" failOnError="false" />     
+        <jbi-undeploy-service-assembly 
+            host="${jbi.host}" port="${jbi.port}" username="${jbi.username}" password="${jbi.password}" 
+            name="${testSA.name}"/>
+    </target>  
+    
+    <target name="javadoc" depends="init" >
+        <mkdir dir="${dist.javadoc.dir}"/>
+        <javadoc destdir="${dist.javadoc.dir}" source="${src.dir}" notree="${javadoc.notree}" use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}" splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}" private="${javadoc.private}" additionalparam="${javadoc.additionalparam}" failonerror="true" useexternalfile="true">
+            <classpath>
+                <path path="${javac.classpath}"/>
+            </classpath>
+            <sourcepath>
+                <pathelement location="${src.dir}"/>
+            </sourcepath>
+            <packageset dir="${src.dir}" includes="*/**"/>
+            <fileset dir="${src.dir}" includes="*.java"/>
+        </javadoc>        
+    </target>    
+    
+</project>

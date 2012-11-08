@@ -1,0 +1,88 @@
+<definitions targetNamespace="http://stc.com/services/soapHeaderUsage"
+             name="MyHelloService"
+             xmlns:tns="http://stc.com/services/soapHeaderUsage"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+              xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://stc.com/services/soapHeaderUsage"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                      xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:tns="http://stc.com/services/soapHeaderUsage"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:ns1="http://stc.com/services/soapHeaderUsage"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element type="tns:helloObjType"
+                         name="headerObj"></xsd:element>
+            <xsd:element type="tns:helloObjType"
+                         name="helloObj">
+                <xsd:annotation>
+                    <xsd:documentation></xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="hello1"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="hello2"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="HelloIF_sayHello">
+        <part name="body"
+              element="tns:helloObj"/>
+        <part name="header"
+              element="tns:headerObj"/>
+    </message>
+    <message name="HelloIF_sayHelloResponse">
+        <part name="result"
+              element="tns:helloObj"/>
+        <part name="header"
+              element="tns:headerObj"/>
+    </message>
+    <portType name="HelloIF">
+        <operation name="sayHello">
+            <input message="tns:HelloIF_sayHello"/>
+            <output message="tns:HelloIF_sayHelloResponse"/>
+        </operation>
+    </portType>
+    <binding name="HelloIFBinding"
+             type="tns:HelloIF">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body"
+                           use="literal"/>
+                <soap:header message="tns:HelloIF_sayHello"
+                             part="header"
+                             use="literal"></soap:header>
+            </input>
+            <output>
+                <soap:body parts="result"
+                           use="literal"/>
+                <soap:header message="tns:HelloIF_sayHello"
+                             part="header"
+                             use="literal"></soap:header>
+            </output>
+        </operation>
+    </binding>
+    <service name="soapHeaderService">
+        <port name="soapHeaderPort"
+              binding="tns:HelloIFBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/helloservice"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="soapHeaderUsageLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="HeaderUsageRole"
+                   portType="tns:HelloIF"></plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,1 @@
+create table "COMPANY"."@#$%a" (ename varchar(10))

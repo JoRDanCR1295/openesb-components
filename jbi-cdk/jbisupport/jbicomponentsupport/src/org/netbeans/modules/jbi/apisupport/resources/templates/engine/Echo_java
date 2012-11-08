@@ -1,0 +1,115 @@
+/*
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the "License").  You may not use this file except
+ * in compliance with the License.
+ *
+ * You can obtain a copy of the license at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * HEADER in each file and include the License file at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * If applicable add the following below this CDDL HEADER,
+ * with the fields enclosed by brackets "[]" replaced with
+ * your own identifying information: Portions Copyright
+ * [year] [name of copyright owner]
+ */
+
+/*
+ * Copyright 2004-2006 Sun Microsystems, Inc. All Rights Reserved.
+ */
+
+/*
+ * __NAME__.java
+ *
+ * Created on __DATE__, __TIME__
+ */
+
+package JBISupport.codegen.components.engine;
+
+import com.sun.jbi.sample.component.runtime.RuntimeHelper;
+import java.io.StringReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+/**
+ * This interface defines the operations corresponding to the abstract wsdl service definition
+ * defined for this service.
+ *
+ * @author __USER__
+ */
+public interface Echo {
+    
+    /**
+     * this operation takes the input xml document and constructs the output xml document
+     * with the same data to implement the echo.
+     * @param inputDoc input xml document
+     * @return output xml document
+     */
+    Source echo(Source inputDoc) throws Exception ;
+    
+    /**
+     * This class implements the echo interface operations which the service engine
+     * will invoke when a InOut message exchange is processed to invoke a service
+     * provided by the engine.
+     */
+    public static class EchoService implements Echo {
+        
+        private EchoService() {}
+        /**
+         * accessor to create/locate the service implemenation
+         * @return echo service implementation
+         */
+        public static Echo getInstance() {
+            return new EchoService();
+        }
+        /**
+         * this operation takes the input xml document and constructs the output xml document
+         * with the same data to implement the echo.
+         * @param inputDoc input document
+         * @return output document
+         */
+        public Source echo(Source inputDoc) throws Exception {
+            
+            Document outDoc = null;
+            
+            StringBuffer inBuff = RuntimeHelper.readFromSource(inputDoc);
+            
+            System.out.println("############### INPUT MESSAGE BEGIN #################");
+            System.out.println(inBuff);
+            System.out.println("############### INPUT MESSAGE END  ##################");
+            
+            outDoc = RuntimeHelper.buildDOMDocument(new StringReader(inBuff.toString()));
+            // find the value element and modify it to append "EchoResult" as test.
+            NodeList nodes = outDoc.getElementsByTagName("value");
+            Element ele = null;
+            if ( nodes.getLength() > 0 ) {
+                // ele = (Element)
+                ele = (Element) nodes.item(0);
+            }
+            if ( ele != null ) {
+                // Node textNode =
+                Node txtNode = outDoc.createTextNode(" EchoResult: ");
+                // prefix the txtNode.
+                Node first = ele.getFirstChild();
+                if ( first != null ) {
+                    ele.insertBefore(txtNode, first);
+                } else {
+                    ele.appendChild(txtNode);
+                }
+                
+            }
+            
+            DOMSource outSource = new DOMSource(outDoc);
+            
+            return outSource;
+        }
+    }
+}

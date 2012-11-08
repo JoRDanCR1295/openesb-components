@@ -1,0 +1,1 @@
+create table with numeric value - 12345

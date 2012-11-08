@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" name="EchoOneway" targetNamespace="urn:jbi4corba/test-consumer-fromidl-complex-oneway">
+	<wsdl:types>
+		<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-consumer-fromidl-complex-oneway" xmlns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" xmlns:ns1="http://testconsumerfromidloneway.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://testconsumerfromidloneway.test.jbi4corba.imolinfo.it/"/>
+			<xs:element name="echoOneway">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="message" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="echoOnewayStruct">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="message" type="ns1:echoStruct"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://testconsumerfromidloneway.test.jbi4corba.imolinfo.it/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://testconsumerfromidloneway.test.jbi4corba.imolinfo.it/">
+			<xs:complexType name="echoStruct">
+				<xs:sequence>
+					<xs:element name="fieldBoolean" type="xs:boolean"/>
+					<xs:element name="fieldChar" type="xs:unsignedShort"/>
+					<xs:element name="fieldWChar" type="xs:unsignedShort"/>
+					<xs:element name="fieldOctet" type="xs:byte"/>
+					<xs:element minOccurs="0" name="fieldString" type="xs:string"/>
+					<xs:element minOccurs="0" name="fieldWString" type="xs:string"/>
+					<xs:element name="fieldShort" type="xs:short"/>
+					<xs:element name="fieldUnsignedShort" type="xs:short"/>
+					<xs:element name="fieldLong" type="xs:int"/>
+					<xs:element name="fieldUnsignedLong" type="xs:int"/>
+					<xs:element name="fieldLongLong" type="xs:long"/>
+					<xs:element name="fieldUnsignedLongLong" type="xs:long"/>
+					<xs:element name="fieldFloat" type="xs:float"/>
+					<xs:element name="fieldDouble" type="xs:double"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="echoOneway">
+		<wsdl:part name="parameters" element="tns:echoOneway">
+        </wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="echoOnewayStruct">
+		<wsdl:part name="parameters" element="tns:echoOnewayStruct">
+        </wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="EchoOnewayPortType">
+		<wsdl:operation name="echoOneway">
+			<wsdl:input name="echoOneway" message="tns:echoOneway">
+            </wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="echoOnewayStruct">
+			<wsdl:input name="echoOnewayStruct" message="tns:echoOnewayStruct">
+            </wsdl:input>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="EchoOnewayCorbaBinding" type="tns:EchoOnewayPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="echoOneway">
+			<soap:operation/>
+			<wsdl:input name="echoOneway">
+            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="echoOnewayStruct">
+			<soap:operation/>
+			<wsdl:input name="echoOnewayStruct">
+            <soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="EchoOneway">
+		<wsdl:port name="EchoOnewayCorbaPort" binding="tns:EchoOnewayCorbaBinding">
+			<soap:address location="http://localhost:8192/Service/test-consumer-fromidl-complex-oneway/"/>
+		</wsdl:port>
+	</wsdl:service>
+	<plnk:partnerLinkType name="echoComplexOneWayProcess">
+		<plnk:role name="echoComplexOneWayProcess" portType="tns:EchoOnewayPortType"/>
+	</plnk:partnerLinkType>
+</wsdl:definitions>

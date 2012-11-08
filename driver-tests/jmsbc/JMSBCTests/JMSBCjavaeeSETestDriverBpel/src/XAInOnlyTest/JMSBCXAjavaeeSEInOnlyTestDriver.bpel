@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="JMSBCXAjavaeeSEInOnlyTestDriver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSBCXAjavaeeSEInOnlyTestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSBCXAjavaeeSEInOnlyTestDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBCXAjavaeeSEInOnlyTestDriver" xmlns:ns0="http://xml.netbeans.org/schema/JMSBCjavaeeXAInOnlyTest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSBCXAjavaeeSEInOnlyTestDriver" location="JMSBCXAjavaeeSEInOnlyTestDriver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLinkJMSRecvFromDLQ" partnerLinkType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverInFromDLQ" myRole="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQRole"/>
+        <bpws:partnerLink name="PartnerLinkJMSRecvFromOutQ" partnerLinkType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverInFromOutQ" myRole="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQRole"/>
+        <bpws:partnerLink name="PartnerLinkJMSSendToInQ" partnerLinkType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverOut" partnerRole="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOutRole"/>
+        <bpws:partnerLink name="PartnerLinkSoapDriver" partnerLinkType="ns1:JMSBCXAjavaeeSEInOnlyTestDriver" myRole="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriverRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JMSBCXAjavaeeSEInOnlyTestDriverOperationOut" messageType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        <bpws:variable name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn1" messageType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        <bpws:variable name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn" messageType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        <bpws:variable name="JMSBCXAjavaeeSEInOnlyTestDriverOperationIn1" messageType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        <bpws:variable name="JMSBCXAjavaeeSEInOnlyTestDriverOperationIn" messageType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:prop1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkSoapDriver" operation="JMSBCXAjavaeeSEInOnlyTestDriverOperation" portType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriver" variable="JMSBCXAjavaeeSEInOnlyTestDriverOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationIn.part1/ns0:msg</bpws:from>
+                <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationIn1.part1/ns0:msg</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationIn.part1/ns0:corrId</bpws:from>
+                <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationIn1.part1/ns0:corrId</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLinkJMSSendToInQ" operation="JMSBCXAjavaeeSEInOnlyTestDriverOperation" portType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOut" inputVariable="JMSBCXAjavaeeSEInOnlyTestDriverOperationIn1"/>
+        <bpws:pick name="Pick1">
+            <bpws:onMessage partnerLink="PartnerLinkJMSRecvFromOutQ" operation="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv" portType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQ" variable="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn">
+                <bpws:correlations>
+                    <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                </bpws:correlations>
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn.part1/ns0:msg</bpws:from>
+                        <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationOut.part1/ns0:msg</bpws:to>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn.part1/ns0:corrId</bpws:from>
+                        <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationOut.part1/ns0:corrId</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:onMessage>
+            <bpws:onMessage partnerLink="PartnerLinkJMSRecvFromDLQ" operation="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv" portType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQ" variable="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn1">
+                <bpws:correlations>
+                    <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                </bpws:correlations>
+                <bpws:assign name="Assign3">
+                    <bpws:copy>
+                        <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn1.part1/ns0:msg</bpws:from>
+                        <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationOut.part1/ns0:msg</bpws:to>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from>$JMSBCXAjavaeeSEInOnlyTestDriverOperationRecvIn1.part1/ns0:corrId</bpws:from>
+                        <bpws:to>$JMSBCXAjavaeeSEInOnlyTestDriverOperationOut.part1/ns0:corrId</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:onMessage>
+        </bpws:pick>
+        <bpws:reply name="Reply1" partnerLink="PartnerLinkSoapDriver" operation="JMSBCXAjavaeeSEInOnlyTestDriverOperation" portType="ns1:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriver" variable="JMSBCXAjavaeeSEInOnlyTestDriverOperationOut"/>
+    </sequence>
+</process>

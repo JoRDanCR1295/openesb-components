@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinForEachProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinForEachProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinForEachProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinForEach" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinForEach" location="WithinForEach.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinForEach1" myRole="WithinForEachPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WithinForEachOperationOut" messageType="ns1:WithinForEachOperationReply"/>
+        <variable name="WithinForEachOperationIn" messageType="ns1:WithinForEachOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinForEachOperationReply" faultVariable="WithinForEachOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinForEachOperation" portType="ns1:WithinForEachPortType" variable="WithinForEachOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinForEachOperation" portType="ns1:WithinForEachPortType" variable="WithinForEachOperationIn"/>
+        <scope name="Scope1">
+            <faultHandlers>
+                    <catch faultName="tns:catchFault" faultMessageType="ns1:WithinForEachOperationReply" faultVariable="WithinForEachOperationOut">
+                        <forEach name="ForEach2" parallel="no" counterName="Cntr2">
+                            <startCounterValue>1</startCounterValue>
+                            <finalCounterValue>3</finalCounterValue>
+                            <scope name="Scope3">
+                                <rethrow name="Rethrow2"/>
+                            </scope>
+                        </forEach>
+                    </catch>
+                        <catchAll>
+                            <forEach name="ForEach1" parallel="no" counterName="Cntr1">
+                                <startCounterValue>1</startCounterValue>
+                                <finalCounterValue>3</finalCounterValue>
+                                <scope name="Scope2">
+                                    <rethrow name="Rethrow1"/>
+                                </scope>
+                            </forEach>
+                        </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition> ( $WithinForEachOperationIn.part2 = 'catchAll' ) </condition>
+                        <sequence name="Sequence1">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($WithinForEachOperationIn.part1, '-catchAll-')</from>
+                                <to part="part1" variable="WithinForEachOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinForEachOperationOut"/>
+                    </sequence>
+                        <else>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($WithinForEachOperationIn.part1, '-catch-')</from>
+                                    <to part="part1" variable="WithinForEachOperationOut"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinForEachOperationOut"/>                            
+                        </sequence>
+                    </else>
+                </if>
+        </scope>
+    </sequence>
+</process>

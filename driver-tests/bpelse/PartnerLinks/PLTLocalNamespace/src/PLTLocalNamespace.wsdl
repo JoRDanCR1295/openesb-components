@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="PLTLocalNamespace" targetNamespace="http://j2ee.netbeans.org/wsdl/PLTLocalNamespace"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/PLTLocalNamespace" 
+    xmlns:ns0="http://xml.netbeans.org/schema/PLTLocalNamespaceSchema">
+    <plnk:partnerLinkType name="LocalNamespacePLT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="InOutPTRole" portType="tns:InOutPT"/>
+    </plnk:partnerLinkType>
+        <types>
+            <xsd:schema targetNamespace="http://xml.netbeans.org/schema/PLTLocalNamespaceSchema" 
+                xmlns:tns1="http://xml.netbeans.org/schema/PLTLocalNamespaceSchema">
+                <xsd:element name="strElem" type="xsd:string"></xsd:element>
+            </xsd:schema>
+        </types>
+    <message name="StrMsg">
+        <wsdl:part name="strPart" element="ns0:strElem"/>
+    </message>
+    <portType name="InOutPT">
+        <wsdl:operation name="InOutOper">
+            <wsdl:input name="input1" message="tns:StrMsg"/>
+            <wsdl:output name="output1" message="tns:StrMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="InOutBinding" type="tns:InOutPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="InOutOper">
+            <wsdl:input name="input1">
+                <soap:body parts="strPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="strPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="InOutService">
+        <wsdl:port name="InOutSrvPort" binding="tns:InOutBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/PLTLocalNamespace/PLTLocalNamespace/InOutSrvPort"/>
+        </wsdl:port>
+    </service>
+</definitions>

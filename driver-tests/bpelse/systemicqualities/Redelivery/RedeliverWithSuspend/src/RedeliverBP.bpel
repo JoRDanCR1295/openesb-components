@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RedeliverBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RedeliverWithSuspend/RedeliverBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/RedeliverWithSuspend/RedeliverBP" 
+    xmlns:ns0="http://localhost/MultiDepBpel/benchMark">
+    <import namespace="http://localhost/MultiDepBpel/benchMark" 
+            location="benchMark.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="QueuePartner" partnerLinkType="ns0:QueuePLT" 
+                     partnerRole="QueuePTRole"/>
+        <partnerLink name="RedeliverPartner" partnerLinkType="ns0:benchMarkSubBPLinkType" 
+                     partnerRole="Server"/>
+        <partnerLink name="TestPartner" partnerLinkType="ns0:benchMarkLinkType" 
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="QueueOperIn" messageType="ns0:benchMarkMessage"/>
+        <variable name="BenchMarkSubBPOperation1Out" messageType="ns0:benchMarkMessage"/>
+        <variable name="BenchMarkSubBPOperation1In" messageType="ns0:benchMarkMessage"/>
+        <variable name="BenchMarkOperation1Out" messageType="ns0:benchMarkMessage"/>
+        <variable name="BenchMarkOperation1In" messageType="ns0:benchMarkMessage"/>
+    </variables>
+    <sequence>
+        <receive name="TestRec" createInstance="yes" partnerLink="TestPartner" 
+                 operation="benchMarkOperation1" portType="ns0:benchMarkPortType" 
+                 variable="BenchMarkOperation1In"/>
+        <assign name="ReplyAssign">
+            <copy>
+                <from>$BenchMarkOperation1In.benchMarkPart/ns0:payLoad</from>
+                <to>$BenchMarkOperation1Out.benchMarkPart/ns0:payLoad</to>
+            </copy>
+            <copy>
+                <from>concat($BenchMarkOperation1In.benchMarkPart/ns0:string, ' added in bp: ')</from>
+                <to>$BenchMarkOperation1Out.benchMarkPart/ns0:string</to>
+            </copy>
+            <copy>
+                <from>$BenchMarkOperation1In.benchMarkPart/ns0:waitTime</from>
+                <to>$BenchMarkOperation1Out.benchMarkPart/ns0:waitTime</to>
+            </copy>
+        </assign>
+        <reply name="TestReply" partnerLink="TestPartner" operation="benchMarkOperation1" 
+               portType="ns0:benchMarkPortType" variable="BenchMarkOperation1Out"/>
+        <assign name="RedeliverAssign">
+            <copy>
+                <from variable="BenchMarkOperation1In"/>
+                <to variable="BenchMarkSubBPOperation1In"/>
+            </copy>
+        </assign>
+        <invoke name="RedeliverInv" partnerLink="RedeliverPartner" 
+                operation="benchMarkSubBPOperation1" portType="ns0:benchMarkSubBPPortType" 
+                inputVariable="BenchMarkSubBPOperation1In" 
+                outputVariable="BenchMarkSubBPOperation1Out"/>
+        <assign name="QueueAssign">
+            <copy>
+                <from variable="BenchMarkOperation1In"/>
+                <to variable="QueueOperIn"/>
+            </copy>
+        </assign>
+        <invoke name="QueueInv" partnerLink="QueuePartner" operation="QueueOper" 
+                portType="ns0:QueuePT" inputVariable="QueueOperIn"/>
+    </sequence>
+</process>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BasicAuth"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InboundBasicAuthTest1/BasicAuth"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InboundBasicAuthTest1/BasicAuth" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InboundWsdl" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OutboundWsdl">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InboundWsdl" location="InboundWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OutboundWsdl" location="OutboundWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:InboundWsdl1" myRole="InboundWsdlPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InboundWsdlOperationOut" messageType="ns1:InboundWsdlOperationReply"/>
+        <variable name="OutboundWsdlOperationOut" messageType="ns2:OutboundWsdlOperationReply"/>
+        <variable name="InboundWsdlOperationIn" messageType="ns1:InboundWsdlOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InboundWsdlOperation" portType="ns1:InboundWsdlPortType" variable="InboundWsdlOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="InboundWsdlOperationIn" part="part1"/>
+                <to variable="InboundWsdlOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="InboundWsdlOperation" portType="ns1:InboundWsdlPortType" variable="InboundWsdlOperationOut"/>
+    </sequence>
+</process>

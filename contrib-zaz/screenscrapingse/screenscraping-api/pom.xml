@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../../ojc-core/build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.zaz.screenscrapingse</groupId>
+    <artifactId>screenscraping-api</artifactId>
+    <name>screenscraping-api</name>
+    <packaging>jar</packaging>
+    <version>${jbicomps.currentVersion}</version>
+    <description>screenscraping-api</description>
+    <build>
+    <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>flase</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-ant-junit</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <patternset id="jbicomps.junit.test.patternset">
+                                    <include name="**/*Test.java" />
+                                    
+                                </patternset>
+
+                                <ant antfile="${SRCROOT}/global-common/m2.ant" dir="${project.build.sourceDirectory}/.." target="run_junit">
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="maven.repo.local" value="${maven.repo.local}" />
+                                    <property name="project.artifactId" value="${project.artifactId}" />
+                                    <property name="project.build.directory" value="${project.build.directory}" />
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties" />
+
+                                    <reference refid="maven.test.classpath" />
+                                    <reference refid="jbicomps.junit.sysproperties" />
+                                    <reference refid="jbicomps.junit.test.patternset" />
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+    </build>
+   
+    <dependencies>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

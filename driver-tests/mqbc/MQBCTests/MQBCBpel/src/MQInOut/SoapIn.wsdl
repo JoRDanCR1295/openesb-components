@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SoapIn" targetNamespace="http://j2ee.netbeans.org/wsdl/SoapIn"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SoapIn" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://xml.netbeans.org/schema/ExternalOrder" xmlns:ns1="http://xml.netbeans.org/schema/InterOrderXMLSchema">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/SoapIn">
+            <xsd:import schemaLocation="../MQInOut/InterOrder.xsd" namespace="http://xml.netbeans.org/schema/InterOrderXMLSchema"/>
+            <xsd:import schemaLocation="../MQInOut/ExternalOrder.xsd" namespace="http://xml.netbeans.org/schema/ExternalOrder"/>
+        </xsd:schema>
+    </types>
+    <message name="messageSoapInExtOrder">
+        <part name="partXmlExtOrdrTextMsgBody" element="ns:ExtOrderElem"/>
+    </message>
+    <message name="messageSoapOutIntOrder">
+        <part name="partXmlIntOrdrTextMsgBody2" element="ns1:InterOrderElem"/>
+    </message>
+    <portType name="SoapInPortType">
+        <operation name="SoapInOutOperation">
+            <input name="input1" message="tns:messageSoapInExtOrder"/>
+            <output name="output1" message="tns:messageSoapOutIntOrder"/>
+        </operation>
+    </portType>
+    <binding name="binding1" type="tns:SoapInPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="SoapInOutOperation">
+            <input name="input1">
+                <soap:body parts="partXmlExtOrdrTextMsgBody" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="partXmlIntOrdrTextMsgBody2" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="serviceSoapInOut">
+        <port name="port1SoapInOut" binding="tns:binding1">
+            <soap:address location="http://localhost:18181/MQBCBpel/SoapIn/port1SoapInOut"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktypeSopaInOut">
+        <plink:role name="partnerlinktyperoleSoapInOut" portType="tns:SoapInPortType"/>
+    </plink:partnerLinkType>
+</definitions>

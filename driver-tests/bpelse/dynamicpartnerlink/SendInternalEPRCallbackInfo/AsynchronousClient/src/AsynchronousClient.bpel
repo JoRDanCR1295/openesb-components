@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AsynchronousClient"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AsynchronousClient/asynchronousClient"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AsynchronousClient/asynchronousClient"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace"
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2" xmlns:ns0="http://xml.netbeans.org/schema/Synchronous" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/serviceref" xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns3="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" xmlns:ns4="http://xml.netbeans.org/schema/Common" xmlns:ns5="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:iepr="http://java.sun.com/jbi/end-point-reference" xmlns:ns6="http://xml.netbeans.org/schema/asyncRequest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" location="AsynchronousClientWS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncRequest" location="asyncRequest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncResponse" location="asyncResponse.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref" location="http://docs.oasis-open.org/wsbpel/2.0/OS/serviceref/ws-bpel_serviceref.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" location="WizardCorrelationProperties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <!--issue with importing this document  import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" location="addressing.xsd" importType="http://www.w3.org/2001/XMLSchema"/-->
+    <import namespace="http://xml.netbeans.org/schema/asyncRequest" location="asyncRequest.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+
+    <partnerLinks>
+        <partnerLink name="asynch.request" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncRequest" partnerLinkType="tns:asyncRequest" partnerRole="asyncRequestPortTypeRole"/>
+        <partnerLink name="synchronous" xmlns:tns="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" partnerLinkType="tns:AsynchronousClientWS" myRole="AsynchronousClientWSPortTypeRole"/>
+        <partnerLink name="asynch.callback" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncResponse" partnerLinkType="tns:asyncResponse" myRole="asyncResponsePortTypeRole"/>
+    </partnerLinks>
+
+    <variables>
+        <variable name="epAsyncService" element="ns6:request"/>
+        <variable name="generated_asynch-callback_myRole" element="ns1:service-ref">
+            <sxed2:editor>
+                <sxed2:pseudoComp source="from" parentPath="$generated_asynch-callback_myRole" type="ns2:EndpointReferenceType" qName="ns2:EndpointReference"/>
+            </sxed2:editor>
+        </variable>
+        <variable name="AsyncResponseOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncResponse" messageType="tns:asyncResponseOperationRequest"/>
+        <variable name="AsyncRequestOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncRequest" messageType="tns:asyncRequestOperationRequest"/>
+        <variable name="outputVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" messageType="tns:responseMessage"/>
+        <variable name="inputVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" messageType="tns:requestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="wzrd_set_Invoke1_Receive1" properties="ns3:wzrd_prop_paramA_paramA"/>
+    </correlationSets>
+    <sequence>
+        <receive name="start" createInstance="yes" partnerLink="synchronous" operation="AsynchronousClientWSOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" portType="tns:AsynchronousClientWSPortType" variable="inputVar"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="inputVar" part="inputType"/>
+                <to>$AsyncRequestOperationIn.part1/ns4:typeA</to>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from partnerLink="asynch.callback" endpointReference="myRole"/>
+                <to variable="generated_asynch-callback_myRole"/>
+            </copy>
+            <copy>
+                <from>$generated_asynch-callback_myRole/ns2:EndpointReference
+                    <sxed2:editor>
+                        <sxed2:pseudoComp source="from" parentPath="$generated_asynch-callback_myRole" type="ns2:EndpointReferenceType" qName="ns2:EndpointReference"/>
+                    </sxed2:editor>
+                </from>
+                <to>$AsyncRequestOperationIn.part1/ns2:EndpointReference</to>
+            </copy>
+        </assign>
+        <assign name="Assign4">
+            <copy>
+                <from>
+                    <literal>
+                        <ns2:EndpointReference xmlns:asyn="http://enterprise.netbeans.org/bpel/Asynchronous/asynchronous"
+                                            xmlns:iepr="http://java.sun.com/jbi/end-point-reference">
+                            <ns2:Address/>
+                            <iepr:ServiceName PortName="asyncRequestPortTypeRole_myRole">asyn:asynch.request</iepr:ServiceName>
+                        </ns2:EndpointReference>
+                    </literal>
+                </from>
+                <to>$epAsyncService/ns2:EndpointReference</to>
+            </copy>
+            <copy>
+                <from>ns5:doXslTransform('urn:stylesheets:wrap2serviceref.xsl', $epAsyncService/ns2:EndpointReference)</from>
+                <to partnerLink="asynch.request"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="asynch.request" operation="asyncRequestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncRequest" portType="tns:asyncRequestPortType" inputVariable="AsyncRequestOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_Invoke1_Receive1" initiate="yes"/>
+            </correlations>
+        </invoke>
+        <receive name="Receive1" partnerLink="asynch.callback" operation="asyncResponseOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendInternalEPRCallbackInfo/asyncResponse" portType="tns:asyncResponsePortType" createInstance="no" variable="AsyncResponseOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_Invoke1_Receive1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign3">
+            <copy>
+                <from variable="AsyncResponseOperationIn" part="part1"/>
+                <to variable="outputVar" part="resultType"/>
+            </copy>
+        </assign>
+        <reply name="end" partnerLink="synchronous" operation="AsynchronousClientWSOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/AsynchronousClient/AsynchronousClientWS" portType="tns:AsynchronousClientWSPortType" variable="outputVar"/>
+    </sequence>
+</process>
+
+
+
+
+
+
+
+
+
+

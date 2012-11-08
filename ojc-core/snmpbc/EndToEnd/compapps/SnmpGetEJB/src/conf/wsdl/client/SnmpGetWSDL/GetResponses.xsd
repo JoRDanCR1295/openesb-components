@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="sun.com/soabi/snmpbc/getresponses"
+            xmlns:tns="sun.com/soabi/snmpbc/getresponses"
+            elementFormDefault="qualified">
+    <xsd:complexType name="GetResponse">
+        <xsd:sequence>
+            <xsd:element name="RequestID" type="xsd:string"></xsd:element>
+            <xsd:element name="ResponseStatus" type="tns:ResponseStatusType" default="Okay"></xsd:element>
+            <xsd:element name="ResponseVarBindList" type="tns:ResponseVarBind" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            <xsd:element name="ErrorMsg" type="xsd:string" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ResponseVarBind">
+        <xsd:sequence>
+            <xsd:element name="OID" type="xsd:string"></xsd:element>
+            <xsd:element name="Type" type="xsd:int"></xsd:element>
+            <xsd:element name="Value" type="xsd:string"></xsd:element>
+            <xsd:element name="HasError" type="xsd:boolean" default="false"></xsd:element>
+            <xsd:element name="ErrorMsg" type="xsd:string" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="GetResponses">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="GetResponse" type="tns:GetResponse" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="ResponseStatusType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Okay"/>
+            <xsd:enumeration value="Error"/>
+            <xsd:enumeration value="Timeout"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="echo" targetNamespace="http://j2ee.netbeans.org/wsdl/echo"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/echo" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://j2ee.netbeans.org/wsdl/echo">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="AirlineId" type="xsd:string"/>
+                        <xsd:element name="ConnectionID" type="xsd:string" />  
+                        <xsd:element name="FlightDate" type="xsd:string" /> 
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="itemResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoRequest">
+        <part element="tns:item" name="part"/>
+    </message>
+    <message name="echoReply">
+        <part element="tns:itemResponse" name="part"/>
+    </message>
+    <portType name="echo">
+        <wsdl:operation name="echo">
+            <wsdl:input name="input1" message="tns:echoRequest"/>
+            <wsdl:output name="output1" message="tns:echoReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="Binding" type="tns:echo">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="echo">
+            <soap:operation soapAction="echo"/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="echoService">
+        <wsdl:port name="echoServicePort" binding="tns:Binding">
+            <soap:address location="http://localhost:18181/SAPBCBpel/echo/echoServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="echo1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="echoRole" portType="tns:echo"/>
+    </plnk:partnerLinkType>
+</definitions>

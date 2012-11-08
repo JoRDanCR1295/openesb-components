@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SampleXACMLAccess" targetNamespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://xml.sun.com/gte/schema/XACMLRequest">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess">
+            <xsd:import schemaLocation="XACMLRequestData.xsd" namespace="http://xml.sun.com/gte/schema/XACMLRequest"/>
+            <xsd:import namespace="http://xml.sun.com/gte/schema/XACMLRequest" schemaLocation="XACMLRequestData.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="authorizeRequest">
+        <part name="part1" element="ns0:Request"/>
+    </message>
+    <message name="authorizeReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="interface">
+        <operation name="authorize">
+            <input name="request" message="tns:authorizeRequest"/>
+            <output name="response" message="tns:authorizeReply"/>
+        </operation>
+    </portType>
+    <binding name="binding" type="tns:interface">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="authorize">
+            <soap:operation/>
+            <input name="request">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"/>
+            </input>
+            <output name="response">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="XACMLService">
+        <port name="endpoint" binding="tns:binding">
+            <soap:address location="http://localhost:18181/BPELWithXACML/endpoint"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="XACMLAccess">
+        <plnk:role name="interfaceRole" portType="tns:interface"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="BPELAccess">
+        <plnk:role name="BPELInterfaceRole" portType="tns:interface"/>
+    </plnk:partnerLinkType>
+</definitions>

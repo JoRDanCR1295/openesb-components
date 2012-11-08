@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InsertSelectSql" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="InsertSelectRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="InsertSelectRequest">
+    <part name="InsertSelectRequestPart" element="tns:InsertSelectRequest"/>
+  </message>
+  <message name="InsertSelectResponse">
+    <part name="InsertSelectResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="InsertSelectSql_sqlsePortType">
+    <operation name="InsertSelect">
+      <input name="InsertSelectRequest" message="tns:InsertSelectRequest"/>
+      <output name="InsertSelectResponse" message="tns:InsertSelectResponse"/>
+    </operation>
+  </portType>
+  <binding name="InsertSelectSqlBinding" type="tns:InsertSelectSql_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="InsertSelect">
+      <soap:operation/>
+      <input name="InsertSelectRequest">
+        <soap:body/>
+      </input>
+      <output name="InsertSelectResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="InsertSelectSql_sqlseService">
+    <port name="InsertSelectSql_sqlsePort" binding="tns:InsertSelectSqlBinding">
+      <soap:address location="http://localhost:18181/InsertSelectSql/InsertSelectSql/InsertSelectSql_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="InsertSelectSql_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="InsertSelectSql_myrole" portType="tns:InsertSelectSql_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

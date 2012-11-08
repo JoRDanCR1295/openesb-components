@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="request-response-initiateyes_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/request-response-initiateyes_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/request-response-initiateyes_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:request-response-initiateyesChildTargetNamespace"
+         xmlns:ns1="request-response-initiateyesParent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:request-response-initiateyesChildTargetNamespace"
+            location="request-response-initiateyes_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="request-response-initiateyesParent"
+            location="request-response-initiateyes_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:request-response-initiateyesChildServiceLinkType"
+                     partnerRole="request-response-initiateyesChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:request-response-initiateyesParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:request-response-initiateyesParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childOperation"
+                  messageType="ns0:request-response-initiateyesChildMessage"></variable>
+        <variable name="request-response-initiateyesParentOperation_Output"
+                  messageType="ns1:request-response-initiateyesParentMessage"></variable>
+        <variable name="request-response-initiateyesParentOperation_Input"
+                  messageType="ns1:request-response-initiateyesParentMessage"></variable>
+        <variable name="request-response-initiateyesParentOperation1_Output"
+                  messageType="ns1:request-response-initiateyesParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corProp1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="request-response-initiateyesParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:request-response-initiateyesParentPortType"
+                 operation="request-response-initiateyesParentOperation"
+                 variable="request-response-initiateyesParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$request-response-initiateyesParentOperation_Output.request-response-initiateyesParentPart/string</from>
+                <to>$childOperation.request-response-initiateyesChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="plink_child"
+                portType="ns0:request-response-initiateyesChildPortType"
+                operation="request-response-initiateyesChildOperation"
+                inputVariable="childOperation"
+                outputVariable="childOperation">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="yes"
+                             pattern="request-response"/>
+            </correlations>
+        </invoke>
+        <receive name="request-response-initiateyesParentOperation1"
+                 partnerLink="plink_parent1"
+                 portType="ns1:request-response-initiateyesParentPortType1"
+                 operation="request-response-initiateyesParentOperation1"
+                 variable="request-response-initiateyesParentOperation1_Output">
+            <correlations>
+                <correlation set="corProp1"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$request-response-initiateyesParentOperation1_Output.request-response-initiateyesParentPart/string</from>
+                <to>$request-response-initiateyesParentOperation_Input.request-response-initiateyesParentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parent"
+               portType="ns1:request-response-initiateyesParentPortType"
+               operation="request-response-initiateyesParentOperation"
+               variable="request-response-initiateyesParentOperation_Input"></reply>
+    </sequence>
+</process>

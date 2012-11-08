@@ -1,0 +1,103 @@
+                     			---
+								Configuration guide for the supported Application Servers
+								---
+								Marco Piraccini
+								---
+								29/07/2007
+
+J2EE Applications Server guide
+
+	The Jbi4Ejb component is tested with different application servers and different orbs.
+	See the {{{sysreqs.html}the system requirements}} for the tested combinations of J2EE Application Servers/ORB/ESB.
+	
+	We tested with
+	
+	* {{{applicationServerConfiguration.html#Glassfish v2}Glassfish v2}}
+	
+    * {{{applicationServerConfiguration.html#Websphere 6.1}Websphere 6.1}}
+    
+    * {{{applicationServerConfiguration.html#Jboss 4}Jboss 4}}
+    
+    * {{{applicationServerConfiguration.html#Weblogic 10}Weblogic 10}}
+	
+{Glassfish v2}
+
+	The Glassfish application server has been tested using both the SUN JDK ORB and the Glassfish ORB.
+	To configure the Glassfish ORB, simply put this ORB confoguration (see the  {{{wsdlExtensions.html}WSDL exensions}}
+	for the meaning).  
+	
++----------------------------------------------------------+
+<imolaejb:binding>
+	<imolaejb:orb>
+		<imolaejb:property name="org.omg.CORBA.ORBClass" 
+			value="com.sun.corba.ee.impl.orb.ORBImpl"/>				
+	</imolaejb:orb>
+</imolaejb:binding>	
++----------------------------------------------------------+	
+
+	Otherwise, for the default JDK ORB, if the SUN  JDK is used, no configuration is needed and an empty 
+	jbi4ejb:binding can be added:
+
++----------------------------------------------------------+
+<imolaejb:binding>
+	<imolaejb:orb/>	
+</imolaejb:binding>	
++----------------------------------------------------------+
+
+	The glassfish corbaname (default configuration) are in the form: <<corbaname:iiop:host:3700#jndiName>>
+			
+	Notice that the ORB classes must be in the ESB classpath: this automatic if the bus is OpenESB, but
+	with Servicemix, if the Glassfish ORB is used, the <<appserv-rt.jar>> (from the Glassfish distribution)
+	must be copied in the SERVICEMIX_HOME/lib/optional folder. 
+	
+	
+{Websphere 6.1}
+
+	The ORB tested for the Websphere connection is the IBK ORB. The binding configuration is:
+	
++----------------------------------------------------------+
+<imolaejb:binding>
+	<imolaejb:orb>
+		<imolaejb:property name="org.omg.CORBA.ORBClass" 
+			value="com.ibm.CORBA.iiop.ORB"/>				
+	</imolaejb:orb>
+</imolaejb:binding>	
++----------------------------------------------------------+		
+	
+	The corbaname are (in the default configuration) are in the form: <<corbaname:iiop:host:2809/NameServiceServerRoot#jndiName>>.
+	
+	Notice that the ORB classes must be in the ESB classpath: this can be done putting the
+	<<ibmcwf.jar>>, <<ibmorbapi.jar>> and <<ibmorb.jar>> (from the Websphere runtime) in:
+		
+		* GLASSFISH_HOME/domains/mydomain/lib/ext for OpenESB
+		
+		* SERVICEMIX_HOME/lib/optional for Servicemix
+			
+
+{Jboss 4}
+
+	The ORB tested for JBoss is Jacorb. To configure-it, the binding extension is:
+	
++----------------------------------------------------------+
+<imolaejb:binding>
+	<imolaejb:orb>
+		<imolaejb:property name="org.omg.CORBA.ORBClass" 
+			value="org.jacorb.orb.ORB"/>
+		<imolaejb:property name="org.omg.CORBA.ORBSingletonClass" 
+			value="org.jacorb.orb.ORBSingleton"/>							
+	</imolaejb:orb>
+</imolaejb:binding>	
++----------------------------------------------------------+	
+
+	The corbaname are (in the default configuration) are in the form: <<corbaname:iiop:host:3528/NameService#jndiName>>.
+	
+	Notice that the ORB classes must be in the ESB classpath: this can be done putting the
+	<<jacorb.jar>>, <<avalon-framework.jar>> and <<logkit.jar>> (from the Jboss runtime) in:
+		
+		* GLASSFISH_HOME/domains/mydomain/lib/ext for OpenESB
+		
+		* SERVICEMIX_HOME/lib/optional for Servicemix
+
+{Weblogic 10}	 	 
+
+	The Orb tested are the Glassfish ORB and the SUN JDK ORB, so the configuration is the same as Glassfish v2.

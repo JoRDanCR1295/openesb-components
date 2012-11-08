@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowMultipleNested" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/FlowMultipleNested"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FlowMultipleNested" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FlowMultipleNested">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FlowMultipleNested" location="FlowMultipleNested.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowMultipleNestedPLT" myRole="FlowMultipleNestedPLTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch3" type="xsd:string"/>
+        <variable name="branch4" type="xsd:string"/>
+        <variable name="FlowMultipleNestedOperationOut1" messageType="ns1:FlowOutMessage"/>
+        <variable name="FlowMultipleNestedOperationIn1" messageType="ns1:FlowInMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowMultipleNestedOperation" portType="ns1:FlowMultipleNestedPortType" variable="FlowMultipleNestedOperationIn1" createInstance="yes"/>
+        <flow name="Flow1">
+            <flow name="Flow2">
+                <flow name="Flow3">
+                    <flow name="Flow4">
+                        <assign name="Assign5">
+                            <copy>
+                                <from>'NESTED FLOW BRANCH4:'</from>
+                                <to variable="branch4"/>
+                            </copy>
+                        </assign>
+                    </flow>
+                    <assign name="Assign4">
+                        <copy>
+                            <from>'NESTED FLOW BRANCH3:'</from>
+                            <to variable="branch3"/>
+                        </copy>
+                    </assign>
+                </flow>
+                <assign name="Assign3">
+                    <copy>
+                        <from>'NESTED FLOW BRANCH2:'</from>
+                        <to variable="branch2"/>
+                    </copy>
+                </assign>
+            </flow>
+            <assign name="Assign2">
+                <copy>
+                    <from>'BRANCH1:'</from>
+                    <to variable="branch1"/>
+                </copy>
+            </assign>
+        </flow>
+        <assign name="Assign6">
+            <copy>
+                <from>concat($branch1, $branch2, $branch3, $branch4, $FlowMultipleNestedOperationIn1.part1)</from>
+                <to part="part1" variable="FlowMultipleNestedOperationOut1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowMultipleNestedOperation" portType="ns1:FlowMultipleNestedPortType" variable="FlowMultipleNestedOperationOut1"/>
+    </sequence>
+   
+</process>

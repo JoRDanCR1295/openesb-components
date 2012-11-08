@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/TestJMSProperties/TestJMSProperties"
+             name="TestJMSProperties"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"             
+             xmlns:tns="http://localhost/TestJMSProperties/TestJMSProperties"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <plink:partnerLinkType name="RequestReplyLnkType">
+        <plink:role portType="tns:portTypeRequestReply"
+                    name="roleTestTrigger"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSOutLnkType">
+        <plink:role portType="tns:portTypeOneWayOut"
+                    name="roleJMSSender"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSInLnkType">
+        <plink:role portType="tns:portTypeOneWayIn"
+                    name="roleJMSReceiver"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:property type="xsd:string"
+                   name="propertyName1"></vprop:property>
+    <vprop:propertyAlias part="partReqReply"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:messageRequestReply">
+        <vprop:query>bodyPayload</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias part="partBody"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:messageOneWay">
+        <vprop:query></vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/TestJMSProperties/TestJMSProperties"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://localhost/TestJMSProperties/TestJMSProperties"
+                    xmlns:ns1="http://localhost/TestJMSProperties/TestJMSProperties"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            <xsd:element type="tns:RequestReplyType"
+                         name="RequestReply"></xsd:element>
+            <xsd:complexType name="RequestReplyType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="bodyPayload"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="propString"></xsd:element>
+                    <xsd:element type="xsd:boolean"
+                                 name="propBoolean"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="propShort"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="propInt"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="propLong"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="propFloat"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneStringElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneBooleanElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:boolean"
+                                 name="boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneShortElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneIntElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneLongElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="OneFloatElemType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>            
+        </xsd:schema>
+    </types>
+    <message name="messageRequestReply">
+        <part name="partReqReply"
+              type="tns:RequestReplyType"></part>
+    </message>
+    <message name="messageOneWay">
+        <part name="partBody"
+              type="xsd:string"></part>
+        <part name="partPropString"
+              type="xsd:string"></part>
+        <part name="partPropBoolean"
+              type="xsd:boolean"></part>
+        <part name="partPropShort"
+              type="xsd:short"></part>
+        <part name="partPropInt"
+              type="xsd:int"></part>
+        <part name="partPropLong"
+              type="xsd:long"></part>
+        <part name="partPropFloat"
+              type="xsd:float"></part>
+    </message>
+    <portType name="portTypeRequestReply">
+        <operation name="operationRequestReply">
+            <input name="input"
+                   message="tns:messageRequestReply"></input>
+            <output name="output"
+                    message="tns:messageRequestReply"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayOut">
+        <operation name="operationOneWayOut">
+            <input name="input"
+                   message="tns:messageOneWay"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayIn">
+        <operation name="operationOneWayIn">
+            <input name="input"
+                   message="tns:messageOneWay"></input>
+        </operation>
+    </portType>
+    <binding name="bindingHttpRequestReply"
+             type="tns:portTypeRequestReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operationRequestReply">
+            <soap:operation soapAction="soapActionTestJMSProperties"/>
+            <input name="input">
+                <soap:body parts="partReqReply" use="literal"/>
+            </input>
+            <output name="output">
+                <soap:body parts="partReqReply" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayOut"
+             type="tns:portTypeOneWayOut">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayOut">
+            <jms:operation destination="PropertiesTestDestination" destinationType="Queue" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partBody">
+                    <jms:properties>
+                        <jms:property part="partPropString" type="string" name="AppStringProperty"></jms:property>
+                        <jms:property part="partPropBoolean" type="boolean" name="AppBooleanProperty"></jms:property>
+                        <jms:property part="partPropShort" type="short" name="AppShortProperty"></jms:property>
+                        <jms:property part="partPropInt" type="int" name="AppIntProperty"></jms:property>
+                        <jms:property part="partPropLong" type="long" name="AppLongProperty"></jms:property>
+                        <jms:property part="partPropFloat" type="float" name="AppFloatProperty"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayIn"
+             type="tns:portTypeOneWayIn">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayIn">
+            <jms:operation destination="PropertiesTestDestination" destinationType="Queue" transaction="NoTransaction" >
+                <jms:options>
+                    <jms:option name="endpointPoolMaxSize" value="1"/>
+                </jms:options>
+            </jms:operation>
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partBody">
+                    <jms:properties>
+                        <jms:property part="partPropString" type="string" name="AppStringProperty"></jms:property>
+                        <jms:property part="partPropBoolean" type="boolean" name="AppBooleanProperty"></jms:property>
+                        <jms:property part="partPropShort" type="short" name="AppShortProperty"></jms:property>
+                        <jms:property part="partPropInt" type="int" name="AppIntProperty"></jms:property>
+                        <jms:property part="partPropLong" type="long" name="AppLongProperty"></jms:property>
+                        <jms:property part="partPropFloat" type="float" name="AppFloatProperty"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceTestJMSProperties">
+        <port name="portTestJMSPropertiesTrigger"
+              binding="tns:bindingHttpRequestReply">
+            <soap:address location="http://localhost:12100/service/testJMSProperties"></soap:address>
+        </port>
+        <port name="portTestJMSPropertiesSend"
+              binding="tns:bindingJMSOneWayOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portTestJMSPropertiesRecv"
+              binding="tns:bindingJMSOneWayIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+</definitions>

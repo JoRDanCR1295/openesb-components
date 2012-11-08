@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:tns="http://service.hello/" 
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             targetNamespace="http://service.hello/" 
+             name="HelloService">
+    <types>
+        <xsd:schema version="1.0" targetNamespace="http://service.hello/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="sayHelloRequest" type="ns1:sayHelloRequestType" xmlns:ns1="http://service.hello/"/>
+            <xsd:complexType name="sayHelloRequestType">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="sayHelloResponse" type="ns2:sayHelloResponseType" xmlns:ns2="http://service.hello/"/>
+            <xsd:complexType name="sayHelloResponseType">
+                <xsd:sequence>
+                    <xsd:element name="return" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    
+    <message name="msgSayHelloRequest">
+        <part name="parameters" element="tns:sayHelloRequest"/>
+    </message>
+    <message name="msgSayHelloResponse">
+        <part name="parameters" element="tns:sayHelloResponse"/>
+    </message>
+    
+    <portType name="ptHello">
+        <operation name="opSayHello">
+            <input message="tns:msgSayHelloRequest"/>
+            <output message="tns:msgSayHelloResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="bdHello" type="tns:ptHello">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="opSayHello">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+
+    <service name="HelloService">
+        <documentation>Hello Service</documentation>	
+        <port name="HelloXSLTEngineEP" binding="tns:bdHello">
+            <soap:address location="http://localhost:13012/hello"/>
+        </port>
+    </service>
+    
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+                          name="plHelloServiceProvider">
+        <plnk:role name="server" portType="tns:ptHello"/>
+    </plnk:partnerLinkType>
+    
+</definitions>

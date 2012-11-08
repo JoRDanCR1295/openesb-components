@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<definitions targetNamespace="urn:assign:assignService"
+             xmlns:tns="urn:assign:assignService"
+             xmlns:slt="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+	     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+    <types>
+        <xsd:schema targetNamespace="urn:assign:assignService">
+            <xsd:complexType name="complexPartType">
+              <xsd:sequence>
+                <xsd:element name="strElem" type="xsd:string"/>
+                <xsd:element name="intElem" type="xsd:integer"/>
+                <xsd:element name="boolElem" type="xsd:boolean"/>
+                <xsd:element name="nestedElem" type="tns:nestedComplexType"/>
+                <xsd:element name="repeatingElem" type="xsd:string"
+                    minOccurs="1" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="nestedComplexType">
+                <xsd:sequence>
+                  <xsd:element name="nestedStrElem" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+		    
+	        <xsd:element name="complexElement">
+	            <xsd:complexType>
+        	      <xsd:sequence>
+            	    <xsd:element name="strElem" type="xsd:string"/>
+	              </xsd:sequence>
+    	         <xsd:attribute name="attrib3" type="xsd:string" use="required"/>
+    	        </xsd:complexType>
+        	</xsd:element>
+        </xsd:schema>
+    </types>
+             
+   <message name="AssignMessageType">
+      <part name="strPart" type="xsd:string"/>
+      <part name="intPart" type="xsd:int"/>
+      <part name="boolPart" type="xsd:boolean"/>
+      <part name="complexPart" type="tns:complexPartType"/>
+      <part name="complexElement" element="tns:complexElement"/>      
+   </message>
+
+   <portType name="assignPT">
+      <operation name="assign">
+         <input message="tns:AssignMessageType"/>
+         <output message="tns:AssignMessageType"/>
+      </operation>
+   </portType>
+
+   <slt:serviceLinkType name="assignSLT">
+     <slt:role name="caller">
+       <slt:portType name="tns:assignPT"/>
+     </slt:role>
+   </slt:serviceLinkType>
+
+    <service name="AssignTest">
+    </service>
+
+</definitions>

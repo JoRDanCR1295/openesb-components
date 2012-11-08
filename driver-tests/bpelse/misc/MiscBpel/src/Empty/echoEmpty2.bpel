@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoEmpty2"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoEmpty2"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoEmpty2"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/echoEmpty2"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/echoEmpty2"
+            location="echoEmpty2.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_empty2"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoEmpty2_Output"
+                  messageType="ns0:echoEmpty2"></variable>
+        <variable name="echoEmpty2_Input"
+                  messageType="ns0:echoEmpty2"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoEmpty2"
+                 partnerLink="plink_empty2"
+                 portType="ns0:echoEmpty2"
+                 operation="echoEmpty2"
+                 variable="echoEmpty2_Output"
+                 createInstance="yes"></receive>
+        <flow>
+            <assign>
+                <copy>
+                    <from>$echoEmpty2_Output.part/value</from>
+                    <to>$echoEmpty2_Input.part/value</to>
+                </copy>
+            </assign>
+            <empty></empty>
+        </flow>
+        <reply partnerLink="plink_empty2"
+               portType="ns0:echoEmpty2"
+               operation="echoEmpty2"
+               variable="echoEmpty2_Input"></reply>
+    </sequence>
+</process>

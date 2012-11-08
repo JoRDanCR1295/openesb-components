@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ScalabilityWithProcessLvlEHWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jmsTest" xmlns:ns3="http://enterprise.netbeans.org/bpel/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHBpel" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="ScalabilityWithProcessLvlEHWSDLPort" interface-name="ns1:ScalabilityWithEHWSDLPortType" name="endpoint1" service-name="ns1:ScalabilityWithProcessLvlEHWSDLService"/>
+        <endpoint endpoint-name="jmsTestPort" interface-name="ns2:jmsTestPortType" name="endpoint2" service-name="ns2:jmsTestService"/>
+        <endpoint endpoint-name="port1" interface-name="ns2:ProcessedPortType" name="endpoint3" service-name="ns2:JMSOUT_Service2"/>
+        <endpoint endpoint-name="ScalabilityWithEHWSDLPortTypeRole_myRole" file-path="ScalabilityWithProcessLvlEHBpel.bpel" interface-name="ns1:ScalabilityWithEHWSDLPortType" name="endpoint4" process-name="ScalabilityWithProcessLvlEHBpel" service-name="ns3:InputPartnerLink"/>
+        <endpoint endpoint-name="jmsTestPortTypeRole_partnerRole" file-path="ScalabilityWithProcessLvlEHBpel.bpel" interface-name="ns2:jmsTestPortType" name="endpoint5" process-name="ScalabilityWithProcessLvlEHBpel" service-name="ns3:JMSPartnerLink"/>
+        <endpoint endpoint-name="Finish_PLT_partnerRole" file-path="ScalabilityWithProcessLvlEHBpel.bpel" interface-name="ns2:ProcessedPortType" name="endpoint6" process-name="ScalabilityWithProcessLvlEHBpel" service-name="ns3:JMSFinishPL"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="ScalabilityTest3Bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="ScalabilityTest3CompApp-ScalabilityTest3Bpel" unit-name="ScalabilityTest3Bpel" unknown="false" x="93" y="99">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="ScalabilityTest3CompApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="197">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHWSDL.wsdl#xpointer(/definitions/service[@name='ScalabilityWithProcessLvlEHWSDLService']/port[@name='ScalabilityWithProcessLvlEHWSDLPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="ScalabilityTest3CompApp-sun-jms-binding" unit-name="sun-jms-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/service[@name='jmsTestService']/port[@name='jmsTestPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/service[@name='JMSOUT_Service2']/port[@name='port1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint5" provider="endpoint2" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/portType[@name='jmsTestPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/portType[@name='ProcessedPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHWSDL.wsdl#xpointer(/definitions/portType[@name='ScalabilityWithEHWSDLPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/binding[@name='jmsTestBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/binding[@name='JMSOut2Binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHWSDL.wsdl#xpointer(/definitions/binding[@name='ScalabilityWithProcessLvlEHWSDLBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/service[@name='jmsTestService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/partners/JMSPartner.wsdl#xpointer(/definitions/service[@name='JMSOUT_Service2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHWSDL.wsdl#xpointer(/definitions/service[@name='ScalabilityWithProcessLvlEHWSDLService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

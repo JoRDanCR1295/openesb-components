@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>bpelse-installer</artifactId>
+    <name>sun-bpel-engine</name>
+    <version>${bpelse.artifact.version}</version>
+    <description>bpel packaging description</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-generate-i18n-descriptors</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- generate i18n jbi descriptors -->
+                                <taskdef name="i18n-xml" classname="${I18N_XML_TASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n-xml
+                                   file="${project.build.sourceDirectory}/jbi.xml"
+                                   properties="${project.build.sourceDirectory}/sun-bpel-engine-config.properties"
+                                   outputDir="${project.build.outputDirectory}/META-INF">
+                                    <fileset dir="${project.build.sourceDirectory}"
+                                            includes="sun-bpel-engine-config*.properties"/>
+                                    <namespace prefix="jbi" uri="http://java.sun.com/xml/ns/jbi"/>
+                                    <namespace prefix="cfg" uri="http://www.sun.com/jbi/Configuration/V1.0"/>
+                                    <expr query="//cfg:Property"
+                                         i18nAttr="displayName" keyAttr="name"/>
+                                    <expr query="//cfg:Property"
+                                         i18nAttr="displayDescription" keyAttr="name"/>
+                                    <expr query="/jbi:jbi/jbi:component/jbi:identification/jbi:description"/>
+                                </i18n-xml>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-rename-jars</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- rename the debuggerbdi.jar to just bdi.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/lib/debuggerbdi.jar"
+                                    tofile="${project.build.outputDirectory}/lib/bdi.jar" />
+                                <copy todir="${project.build.outputDirectory}/lib/META-INF" overwrite="true" filtering="true" verbose="true" failonerror="false" >
+                                    <fileset dir="src">
+                                        <include name="services/*" />
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-bpel-engine</Bundle-SymbolicName>
+                        <Bundle-Name>BPEL Service Engine</Bundle-Name>
+                        <Bundle-Description>BPEL Service Engine</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS},Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/bpeljbiadapter.jar,
+                            lib/bpelcore.jar,
+                            lib/jxpath.jar,
+                            lib/resolver.jar,
+                            lib/componentsl.jar,
+                            lib/common-util.jar,
+                            lib/bpelmodel.jar,
+                            lib/xpathmodel.jar,
+                            lib/bdi.jar,
+                            lib/xmltransformer.jar,
+                            lib/resolver.jar,
+                            lib/net.sf.hulp.meas.itf.jar,
+                            lib/qos.jar,
+                            lib/rhino.jar,
+                            lib/transform-api.jar,
+                            lib/component-toolkit.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                            javax.xml.namespace,
+                            !org.jdom.*,
+                            !org.netbeans.modules.*,
+                            !org.exolab.castor.xml.*,
+                            !org.apache.commons.*,
+                            !com.sun.xpath.*,
+                            !javax.servlet.*,
+                            *;-nouses:=true
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>bpelmodel</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xpathmodel</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xmltransformer</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>jxpath</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>bpelcore</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>bpeljbiadapter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>debuggerbdi</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.itf</artifactId>
+            <version>2.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>js-engine</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>transform-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>transform-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSHeadersTest"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSHeadersTest"
+         sbynpxp:end_YLoc="266.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="828.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSHeadersTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/bpel/JMSHeadersTest"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/bpel/JMSHeadersTest"
+            location="JMSHeadersTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSHeadersTestReqReplyTrigger"
+                     partnerLinkType="ns0:JMSHeadersTestRequestReplyLnkType"
+                     myRole="roleJMSHeadersTestTrigger"/>
+        <partnerLink name="JMSHeadersTestSender"
+                     partnerLinkType="ns0:JMSHeadersTestOutLnkType"
+                     partnerRole="roleJMSHeadersTestSender"/>
+        <partnerLink name="JMSHeadersTestReceiver"
+                     partnerLinkType="ns0:JMSHeadersTestInLnkType"
+                     myRole="roleJMSHeadersTestReceiver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationOneWayOut_Input"
+                  messageType="ns0:messageOneWayOut"></variable>
+        <variable name="operationOneWayIn_Output"
+                  messageType="ns0:messageOneWayIn"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSetHeadersTest"
+                        properties="ns0:propJMSHeadersName1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMSHeadersTestReqReplyTrigger"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="119.0"
+                 sbynpxp:YLoc="275.0">
+            <correlations>
+                <correlation set="cSetHeadersTest"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="226.0"
+                sbynpxp:YLoc="118.0">
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/correlationID</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partCorrelationID"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/priority</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partPriority"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/type</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partType"/>
+            </copy>
+            <copy>
+                <from>&apos;This is some static text&apos;</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partBody"/>
+            </copy>
+        </assign>
+        <invoke name="operationOneWayOut"
+                partnerLink="JMSHeadersTestSender"
+                portType="ns0:portTypeOneWayOut"
+                operation="operationOneWayOut"
+                inputVariable="operationOneWayOut_Input"
+                sbynpxp:XLoc="335.0"
+                sbynpxp:YLoc="255.0"></invoke>
+        <receive name="operationOneWayIn"
+                 partnerLink="JMSHeadersTestReceiver"
+                 portType="ns0:portTypeOneWayIn"
+                 operation="operationOneWayIn"
+                 variable="operationOneWayIn_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="447.0"
+                 sbynpxp:YLoc="107.0">
+            <correlations>
+                <correlation set="cSetHeadersTest"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2"
+                sbynpxp:XLoc="581.0"
+                sbynpxp:YLoc="286.0">
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partCorrelationID"/>
+                <to>$operationRequestReply_Input.partReqReply/correlationID</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partDeliveryMode"/>
+                <to>$operationRequestReply_Input.partReqReply/deliveryMode</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partPriority"/>
+                <to>$operationRequestReply_Input.partReqReply/priority</to>
+            </copy>
+            <copy>
+                <from variable="operationOneWayIn_Output"
+                      part="partType"/>
+                <to>$operationRequestReply_Input.partReqReply/type</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMSHeadersTestReqReplyTrigger"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"
+               sbynpxp:XLoc="692.0"
+               sbynpxp:YLoc="170.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="prjTaskBpel"
+         targetNamespace="http://www.seebeyond.com/eInsight/prjTaskBpel"
+         sbynpxp:end_YLoc="332.0"
+         sbynpxp:start_YLoc="280.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="21.0"
+         sbynpxp:end_XLoc="768.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/prjTaskBpel"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/TestprjTask"
+         xmlns:ns1="http://localhost/prjTask/TaakService"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:ns2="http://localhost/prjTask/SunService"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/TestprjTask"
+            location="TestprjTask.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/prjTask/TaakService"
+            location="TaakService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/prjTask/SunService"
+            location="SunService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="prjTaskPL"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+        <partnerLink name="TaakPL"
+                     partnerLinkType="ns1:TaakServiceSEIPartnerLink"
+                     partnerRole="TaakServiceSEIRole"/>
+        <partnerLink name="SunServicePL"
+                     partnerLinkType="ns2:SunServiceSEIPartnerLink"
+                     myRole="SunServiceSEIRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TestprjTask_Output"
+                  messageType="ns0:TestprjTask"></variable>
+        <variable name="TestprjTask_Input"
+                  messageType="ns0:TestprjTask"></variable>
+        <variable name="createTaak_Input"
+                  messageType="ns1:TaakServiceSEI_createTaakRequest"></variable>
+        <variable name="createTaak_Output"
+                  messageType="ns1:TaakServiceSEI_createTaakResponse"></variable>
+        <variable name="createTaak_Fault"
+                  messageType="ns1:TaakServiceSEI_VentourisWSException"></variable>
+        <variable name="setTaakVerwerkt_Output"
+                  messageType="ns2:SetTaakVerwerktRequest"></variable>
+        <variable name="setTaakVerwerkt_Input"
+                  messageType="ns2:SetTaakVerwerktResponse"></variable>
+        <variable name="setTaakVerwerkt_Fault"
+                  messageType="ns2:SetTaakVerwerkt_VentourisWSException"></variable>
+    </variables>
+    <sequence>
+        <receive name="TestprjTask"
+                 partnerLink="prjTaskPL"
+                 portType="ns0:TestprjTask"
+                 operation="TestprjTask"
+                 variable="TestprjTask_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="91.0"
+                 sbynpxp:YLoc="264.0"></receive>
+        <assign name="Assign1"
+                sbynpxp:XLoc="209.0"
+                sbynpxp:YLoc="273.0">
+            <copy>
+                <from>$TestprjTask_Output.part/value</from>
+                <to>$createTaak_Input.parameters/dossierId</to>
+            </copy>
+            <copy>
+                <from>&apos;x&apos;</from>
+                <to>$createTaak_Input.parameters/taakType</to>
+            </copy>
+        </assign>
+        <invoke name="createTaak"
+                partnerLink="TaakPL"
+                portType="ns1:TaakServiceSEI"
+                operation="createTaak"
+                inputVariable="createTaak_Input"
+                outputVariable="createTaak_Output"
+                sbynpxp:XLoc="295.0"
+                sbynpxp:YLoc="181.0"></invoke>
+        <receive name="setTaakVerwerkt"
+                 partnerLink="SunServicePL"
+                 portType="ns2:SunServiceSEI"
+                 operation="setTaakVerwerkt"
+                 variable="setTaakVerwerkt_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="384.0"
+                 sbynpxp:YLoc="313.0"></receive>
+        <reply name="setTaakVerwerkt.Reply"
+               partnerLink="SunServicePL"
+               portType="ns2:SunServiceSEI"
+               operation="setTaakVerwerkt"
+               variable="setTaakVerwerkt_Input"
+               sbynpxp:XLoc="484.0"
+               sbynpxp:YLoc="313.0"></reply>
+        <assign name="Assign"
+                sbynpxp:XLoc="585.0"
+                sbynpxp:YLoc="240.0">
+            <copy>
+                <from variable="createTaak_Output"
+                      part="result"/>
+                <to>$TestprjTask_Output.part/value</to>
+            </copy>
+            <copy> <!-- hot fix -->
+                <from variable="setTaakVerwerkt_Input"/>
+                <to variable="setTaakVerwerkt_Input"/>
+            </copy>
+        </assign>
+        <reply name="TestprjTask.Reply"
+               partnerLink="prjTaskPL"
+               portType="ns0:TestprjTask"
+               operation="TestprjTask"
+               variable="TestprjTask_Output"
+               sbynpxp:XLoc="672.0"
+               sbynpxp:YLoc="311.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/EjbDriver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/TwoWay" xmlns:ns3="http://enterprise.netbeans.org/bpel/TwoWay/BpelService" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="ejbSrvPort" interface-name="ns1:EjbPT" name="endpoint1" service-name="ns1:ejbSrv"/>
+<endpoint endpoint-name="TwoWaySrvPort" interface-name="ns2:TwoWayPT" name="endpoint2" service-name="ns2:TwoWaySrv"/>
+<endpoint endpoint-name="javaee_ejbSrvPort" interface-name="ns1:EjbPT" name="endpoint3" service-name="ns1:ejbSrv"/>
+<endpoint endpoint-name="javaee_TwoWaySrvPort" interface-name="ns2:TwoWayPT" name="endpoint4" service-name="ns2:TwoWaySrv"/>
+<endpoint display-name="bpelService" endpoint-name="TwoWayPTRole_myRole" file-path="BpelService.bpel" interface-name="ns2:TwoWayPT" name="endpoint5" process-name="BpelService" service-name="ns3:bpelService"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="EjbWebService.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="TwoWayJBI-EjbWebService" unit-name="EjbWebService" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="TwoWay.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="TwoWayJBI-TwoWay" unit-name="TwoWay" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint5"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="TwoWayJBI-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/client/TwoWay/TwoWay.wsdl#xpointer(/definitions/service[@name='TwoWaySrv']/port[@name='TwoWaySrvPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/EjbWebService/EjbDriver.wsdl#xpointer(/definitions/service[@name='ejbSrv']/port[@name='ejbSrvPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint2" provider="endpoint5" state="deleted"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/client/TwoWay/TwoWay.wsdl#xpointer(/definitions/portType[@name='TwoWayPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/EjbWebService/EjbDriver.wsdl#xpointer(/definitions/portType[@name='EjbPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/portType[@name='inputPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/portType[@name='outputPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/EjbDriver.wsdl#xpointer(/definitions/portType[@name='EjbPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/TwoWay.wsdl#xpointer(/definitions/portType[@name='TwoWayPT'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/client/TwoWay/TwoWay.wsdl#xpointer(/definitions/binding[@name='TwoWayBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/EjbWebService/EjbDriver.wsdl#xpointer(/definitions/binding[@name='ejbBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/binding[@name='OuputBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/EjbDriver.wsdl#xpointer(/definitions/binding[@name='ejbBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/TwoWay.wsdl#xpointer(/definitions/binding[@name='TwoWayBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/client/TwoWay/TwoWay.wsdl#xpointer(/definitions/service[@name='TwoWaySrv'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EjbWebService/META-INF/wsdl/EjbWebService/EjbDriver.wsdl#xpointer(/definitions/service[@name='ejbSrv'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/service[@name='InputSrv'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/Driver.wsdl#xpointer(/definitions/service[@name='OutputSrv'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/EjbDriver.wsdl#xpointer(/definitions/service[@name='ejbSrv'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/TwoWay/TwoWay.wsdl#xpointer(/definitions/service[@name='TwoWaySrv'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

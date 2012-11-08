@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SERV_STOCK_QUOTE"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SERV_STOCK_QUOTE"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SERV_STOCK_QUOTE" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SERV_STOCK_QUOTE_FTP">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SERV_STOCK_QUOTE_FTP" location="SERV_STOCK_QUOTE_FTP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SERV_STOCK_QUOTE_FTPPartner" myRole="SERV_STOCK_QUOTE_FTPPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="SERV_STOCK_QUOTE_FTPOperationOut" messageType="ns1:SERV_STOCK_QUOTE_FTPOperationReply"/>
+        <bpws:variable name="SERV_STOCK_QUOTE_FTPOperationIn" messageType="ns1:SERV_STOCK_QUOTE_FTPOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SERV_STOCK_QUOTE_FTPOperation" portType="ns1:SERV_STOCK_QUOTE_FTPPortType" variable="SERV_STOCK_QUOTE_FTPOperationIn"/>
+        <bpws:if name="If1">
+            <bpws:condition>starts-with($SERV_STOCK_QUOTE_FTPOperationIn.part1, 'SUNW')</bpws:condition>
+            <bpws:assign name="Assign1">
+                <bpws:copy>
+                    <bpws:from>
+                        <bpws:literal>6.60</bpws:literal>
+                    </bpws:from>
+                    <bpws:to part="part1" variable="SERV_STOCK_QUOTE_FTPOperationOut"/>
+                </bpws:copy>
+            </bpws:assign>
+            <bpws:else>
+                <bpws:if name="If2">
+                    <bpws:condition>starts-with($SERV_STOCK_QUOTE_FTPOperationIn.part1, 'IBM')</bpws:condition>
+                    <bpws:assign name="Assign2">
+                        <bpws:copy>
+                            <bpws:from>
+                                <bpws:literal>98.40</bpws:literal>
+                            </bpws:from>
+                            <bpws:to part="part1" variable="SERV_STOCK_QUOTE_FTPOperationOut"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:else>
+                        <bpws:if name="If3">
+                            <bpws:condition>starts-with($SERV_STOCK_QUOTE_FTPOperationIn.part1, 'MSFT')</bpws:condition>
+                            <bpws:assign name="Assign3">
+                                <bpws:copy>
+                                    <bpws:from>
+                                        <bpws:literal>29.60</bpws:literal>
+                                    </bpws:from>
+                                    <bpws:to part="part1" variable="SERV_STOCK_QUOTE_FTPOperationOut"/>
+                                </bpws:copy>
+                            </bpws:assign>
+                            <bpws:else>
+                                <bpws:assign name="Assign4">
+                                    <bpws:copy>
+                                        <bpws:from>
+                                            <bpws:literal>unknown symbol</bpws:literal>
+                                        </bpws:from>
+                                        <bpws:to part="part1" variable="SERV_STOCK_QUOTE_FTPOperationOut"/>
+                                    </bpws:copy>
+                                </bpws:assign>
+                            </bpws:else>
+                        </bpws:if>
+                    </bpws:else>
+                </bpws:if>
+            </bpws:else>
+        </bpws:if>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SERV_STOCK_QUOTE_FTPOperation" portType="ns1:SERV_STOCK_QUOTE_FTPPortType" variable="SERV_STOCK_QUOTE_FTPOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="WhileBasicAssignment"
+             targetNamespace="http://www.mycomp.org/WhileBasicAssignment/WhileBasicAssignment"
+             xmlns:tns="http://www.mycomp.org/WhileBasicAssignment/WhileBasicAssignment"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:message name="WhileMessage">
+        <wsdl:part name="part_0" type="xsd:string"/>
+        <wsdl:part name="part_1" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:portType name="MyPortType">
+        <wsdl:operation name="WhileOperation">
+            <wsdl:input name="input" message="tns:WhileMessage"/>
+            <wsdl:output name="output" message="tns:WhileMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+        <binding name="SoapBinding" type="tns:MyPortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                <operation name="WhileOperation">
+                        <soap:operation style="document"/>
+                        <input name="input">
+                                <soap:body/>
+                        </input><output name="output">
+    <soap:body/>
+</output>
+                </operation>
+        </binding>
+
+   
+         <wsdl:service name="BasicAssignmentService">
+		<wsdl:port name="BasicAssignmentPortName" binding="tns:SoapBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/BasicAssignment/BasicAssignment"/>
+		</wsdl:port>
+        </wsdl:service>
+
+	<plnk:partnerLinkType name="BasicAssignmentPartnerLinkType">
+		<plnk:role name="BasicAssignmentProvider" 
+			portType="tns:MyPortType">
+		</plnk:role>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>
+ 

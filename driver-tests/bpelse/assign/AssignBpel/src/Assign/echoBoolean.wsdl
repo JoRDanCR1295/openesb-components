@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoBoolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoBoolean" targetNamespace="http://stc.com/echoBoolean">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoBoolean">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoBoolean">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoBoolean">
+        <operation name="echoBoolean">
+            <input message="tns:echoBoolean"/>
+            <output message="tns:echoBoolean"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoBoolean">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoBoolean">
+            <soap:operation soapAction="echoBoolean"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoBooleanService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoBoolean"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoBoolean"/>
+    </plnk:partnerLinkType>
+</definitions>

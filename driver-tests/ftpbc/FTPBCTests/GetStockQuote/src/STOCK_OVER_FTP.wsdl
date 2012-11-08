@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/STOCK_OVER_FTP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/STOCK_OVER_FTP" name="STOCK_OVER_FTP" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/">
+    <wsdl:types/>
+    <wsdl:message name="STOCK_OVER_FTPOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="STOCK_OVER_FTPOperationReply">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="STOCK_OVER_FTPPortType">
+        <wsdl:operation name="STOCK_OVER_FTPOperation">
+            <wsdl:input name="input1" message="tns:STOCK_OVER_FTPOperationRequest"/>
+            <wsdl:output name="output1" message="tns:STOCK_OVER_FTPOperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="binding1" type="tns:STOCK_OVER_FTPPortType">
+        <ftp:binding/>
+        <wsdl:operation name="STOCK_OVER_FTPOperation">
+            <ftp:operation/>
+            <wsdl:input name="input1">
+                <ftp:message messageRepository="STOCK_QUOTE_SERVICE" use="literal" pollIntervalMillis="5000" archive="true" protect="true" messageCorrelate="true" messageName="%u_%h%h.%m%m.%s%s" messageNamePrefixIB="request_" messageNamePrefixOB="response_" stage="true" part="part1"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <ftp:message messageRepository="STOCK_QUOTE_SERVICE" use="literal" pollIntervalMillis="5000" archive="true" protect="true" messageCorrelate="true" messageName="%u_%h%h.%m%m.%s%s" messageNamePrefixIB="request_" messageNamePrefixOB="response_" stage="true"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="service1">
+        <wsdl:port name="port1" binding="tns:binding1">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" mode="BINARY" cmdChannelTimeout="0"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="STOCK_OVER_FTPPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="STOCK_OVER_FTPPortTypeRole" portType="tns:STOCK_OVER_FTPPortType"/>
+    </plink:partnerLinkType>
+</definitions>

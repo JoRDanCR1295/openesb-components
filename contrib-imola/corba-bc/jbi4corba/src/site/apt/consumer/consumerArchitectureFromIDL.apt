@@ -1,0 +1,50 @@
+																			---
+																			Consumer From IDL: Architecture
+																			---
+																			Mirco Casoni, Marco Piraccini
+																			---
+																			23/03/2007
+																			
+Consumer IDL First - Architecture
+
+
+    Jbi4Corba, when run in <<consumer from IDL>> mode, is based on this simple pseudo
+    equation: idj2java + java2wsdl = {{{../provider/idl2wsdl.html}idl2wsdl}}.
+
+	From the architectural point of view, we analyze two different phases: the 
+	<<deploy>> and the <<runtime>>.
+
+* {Deploy}
+
+  At deploy time the following sequence of events occurs:
+  
+  [[1]] The IDL file is parsed and used to {{{idl2wsdl.html}generate the java classes}}.
+        (To verify which IDL's features are supported please visit the page
+        of the {{{supportedIDLDataTypes.html}supported IDL data types}}). 
+  
+  [[2]] Generated java classes are compiled.
+  
+  [[3]] One Jbi4Corba Endpoint per IDL interface is created.
+  
+  [[4]] When the endpoint is activated, a new instance of the servant is created and registered on the corba service name.
+  
+  
+  []
+  
+  The following (unformal) sequence diagram shows this process:
+
+[../images/deployTime.jpg] The deploy time process.  
+
+* {The Runtime}
+
+  [[1]] A corba client call a method on the corba servant.
+
+  [[2]] The corba servant call Jbi4CorbaEndpoint to handle the request.
+
+  [[3]] The Endpoint sends the MessageExchange on the bus to obtain the response.
+
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[../images/ConsumerRunTime.jpg] The runtime process.

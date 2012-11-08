@@ -1,0 +1,111 @@
+<process name="echo4"
+         targetNamespace="http://www.seebeyond.com/eInsight/echo4"
+         sbynpxp:end_YLoc="206.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="550.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echo4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:Echo4"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:Echo4"
+            location="resources/echo4.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="echo2Server"
+                     partnerLinkType="ns0:HelloIFServiceLink"
+                     myRole="HelloIFRole"/>
+    </partnerLinks>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <variables>
+        <variable name="sayHello_Output"
+                  messageType="ns0:HelloIF_sayHello"></variable>
+        <variable name="sayHello_Input"
+                  messageType="ns0:HelloIF_sayHelloResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="sayHello"
+                 partnerLink="echo2Server"
+                 portType="ns0:HelloIF"
+                 operation="sayHello"
+                 variable="sayHello_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="134.0"
+                 sbynpxp:YLoc="60.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="249.0"
+                sbynpxp:YLoc="46.0">
+            <copy>
+                <from>$sayHello_Output.body/string</from>
+                <to>$sayHello_Input.result/string</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/nonNegativeInteger</from>
+                <to>$sayHello_Input.result/nonNegativeInteger</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/byte</from>
+                <to>$sayHello_Input.result/byte</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/short</from>
+                <to>$sayHello_Input.result/short</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/int</from>
+                <to>$sayHello_Input.result/int</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/long</from>
+                <to>$sayHello_Input.result/long</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/negativeInteger</from>
+                <to>$sayHello_Input.result/negativeInteger</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/dateTime</from>
+                <to>$sayHello_Input.result/dateTime</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/nonPositiveInteger</from>
+                <to>$sayHello_Input.result/nonPositiveInteger</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/duration</from>
+                <to>$sayHello_Input.result/duration</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/ENTITIES</from>
+                <to>$sayHello_Input.result/ENTITIES</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/double</from>
+                <to>$sayHello_Input.result/double</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/ENTITY</from>
+                <to>$sayHello_Input.result/ENTITY</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/float</from>
+                <to>$sayHello_Input.result/float</to>
+            </copy>
+        </assign>
+        <reply name="sayHello.Reply"
+               partnerLink="echo2Server"
+               portType="ns0:HelloIF"
+               operation="sayHello"
+               variable="sayHello_Input"
+               sbynpxp:XLoc="355.0"
+               sbynpxp:YLoc="62.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="greetCust"
+    targetNamespace="http://enterprise.netbeans.org/bpel/greetCust"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/greetCust" xmlns:ns1="http://j2ee.netbeans.org/wsdl/greetService">
+    <import namespace="http://j2ee.netbeans.org/wsdl/greetService" location="greetService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="GreetCustClientPL" partnerLinkType="ns1:greetServicePartner" myRole="greetServicePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="Fault1FaultVar" messageType="ns1:faultMsg"/>
+        <bpws:variable name="GreetServiceOperationOut" messageType="ns1:greetServiceOperationReply"/>
+        <bpws:variable name="GreetServiceOperationIn" messageType="ns1:greetServiceOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="GreetCustClientPL" operation="greetServiceOperation" portType="ns1:greetServicePortType" variable="GreetServiceOperationIn"/>
+        <bpws:if name="If1">
+            <bpws:condition>    ( 'throw' = $GreetServiceOperationIn.part1 )    </bpws:condition>
+            <bpws:sequence name="Sequence1">
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from>
+                            <bpws:literal>fault Requested  </bpws:literal>
+                        </bpws:from>
+                        <bpws:to part="part1" variable="Fault1FaultVar"/>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:reply name="Reply2" partnerLink="GreetCustClientPL" operation="greetServiceOperation" portType="ns1:greetServicePortType" faultName="ns1:fault1" variable="Fault1FaultVar"/>
+            </bpws:sequence>
+        </bpws:if>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat('Hello ', $GreetServiceOperationIn.part1)</bpws:from>
+                <bpws:to part="part1" variable="GreetServiceOperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="GreetCustClientPL" operation="greetServiceOperation" portType="ns1:greetServicePortType" variable="GreetServiceOperationOut"/>
+    </sequence>
+</process>

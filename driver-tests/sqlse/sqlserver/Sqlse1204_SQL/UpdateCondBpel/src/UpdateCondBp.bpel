@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UpdateCondBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/UpdateCondBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/UpdateCondBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/UpdateCondBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="UpdateCondSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/UpdateCondBpel" location="UpdateCondBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:UpdateCondBpelPartner" partnerRole="UpdateCondBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:UpdateCondSql_sqlsePartnerLinkType" myRole="UpdateCondSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="UpdateCondOut" messageType="ns1:UpdateCondResponse"/>
+      <bpws:variable name="UpdateCondBpelOperationOut" messageType="ns2:UpdateCondBpelOperationReply"/>
+      <bpws:variable name="UpdateCondBpelOperationIn" messageType="ns2:UpdateCondBpelOperationRequest"/>
+      <bpws:variable name="UpdateCondIn" messageType="ns1:UpdateCondRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="UpdateCond" portType="ns1:UpdateCondSql_sqlsePortType" variable="UpdateCondIn"/>
+      <bpws:assign name="Assign1"/>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="UpdateCondBpelOperation" portType="ns2:UpdateCondBpelPortType" inputVariable="UpdateCondBpelOperationIn" outputVariable="UpdateCondBpelOperationOut"/>
+      <bpws:assign name="Assign2"/>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="UpdateCond" portType="ns1:UpdateCondSql_sqlsePortType" variable="UpdateCondOut"/>
+   </sequence>
+</process>

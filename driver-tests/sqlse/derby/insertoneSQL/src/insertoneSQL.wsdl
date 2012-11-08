@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="insertoneSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="insertoneRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="insertoneRequest">
+    <part name="insertoneRequestPart" element="tns:insertoneRequest"/>
+  </message>
+  <message name="insertoneResponse">
+    <part name="insertoneResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="insertoneSQL_sqlsePortType">
+    <operation name="insertone">
+      <input name="insertoneRequest" message="tns:insertoneRequest"/>
+      <output name="insertoneResponse" message="tns:insertoneResponse"/>
+    </operation>
+  </portType>
+  <binding name="insertoneSQLBinding" type="tns:insertoneSQL_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="insertone">
+      <soap:operation/>
+      <input name="insertoneRequest">
+        <soap:body/>
+      </input>
+      <output name="insertoneResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="insertoneSQL_sqlseService">
+    <port name="insertoneSQL_sqlsePort" binding="tns:insertoneSQLBinding">
+      <soap:address location="http://localhost:18181/insertoneSQL/insertoneSQL/insertoneSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="insertoneSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="insertoneSQL_myrole" portType="tns:insertoneSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

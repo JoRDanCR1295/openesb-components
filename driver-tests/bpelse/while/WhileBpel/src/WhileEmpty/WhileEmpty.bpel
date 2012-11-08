@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileEmpty" 
+    targetNamespace="http://www.mycomp.org/WhileEmpty/WhileEmpty"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/WhileEmpty/WhileEmptyBP" xmlns:ns1="http://www.mycomp.org/WhileEmpty/WhileEmpty">
+    <import namespace="http://www.mycomp.org/WhileEmpty/WhileEmpty" location="WhileEmpty.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WhileEmptyPartnerLinkType" myRole="WhileEmptyProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WhileIn" messageType="ns1:EmptyMessage"/>
+        <variable name="WhileOut" messageType="ns1:EmptyResponse"/>
+        <variable name="counter" messageType="ns1:CountMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="EmptyOperation" portType="ns1:EmptyPort" variable="WhileIn" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="Count" variable="counter"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $counter.Count &lt;= 3 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat($WhileIn.request, '::While Loop::', '**Before Empty Activity**')</from><to part="response" variable="WhileOut"/>
+                    </copy>
+                </assign>
+                <empty name="Empty1"/>
+                <assign name="Assign3">
+                    <copy>
+                    <from>concat($WhileOut.response, '## After Empty Activity ##')</from><to part="request" variable="WhileIn"/>
+                    </copy>
+                    <copy>
+                    <from> ( $counter.Count + 1 ) </from><to part="Count" variable="counter"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign4">
+            <copy>
+            <from variable="WhileIn" part="request"/><to variable="WhileOut" part="response"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="EmptyOperation" portType="ns1:EmptyPort" variable="WhileOut"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Post Installation task for ETL SE component -->
+<project name="post-install" default="install" basedir=".">
+
+    <!-- Property file containing authentication info -->
+    <property file="post-install.properties"/>
+
+    <target name="install">
+
+    <!-- Deploy ETLSE Monitor Web Application -->
+    <echo> Deploying ETLSE Monitor Web Application....</echo>
+   	<exec executable="${glassfish.asadmin}">
+		<arg line="deploy"/>
+		<arg line="--user ${admin.user}"/>
+		<arg line="--passwordfile  ${admin.password.file}"/>
+		<arg line="--port ${admin.port}"/>
+		<arg line="--contextroot etlse-monitor"/>
+		<arg line="${glassfish.asadmin}/../../domains/${glassfish.domain}/jbi/components/sun-etl-engine/install_root/webapp/etlse-monitor.war"/>
+	</exec>
+    </target>
+</project>
+

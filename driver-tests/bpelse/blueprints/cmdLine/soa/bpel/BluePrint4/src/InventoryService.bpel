@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="InventoryService"
+         targetNamespace="http://www.seebeyond.com/eInsight/inventoryservice/bp4"
+         xmlns:tns="http://www.seebeyond.com/eInsight/inventoryservice/bp4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:invs="http://manufacturing.org/wsdl/inventory/bp4">
+    <import namespace="http://manufacturing.org/wsdl/inventory/bp4"
+            location="InventoryService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="inventorySevicePLink"
+                     partnerLinkType="invs:inventoryRequestingLT"
+                     myRole="inventoryService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="purchaseOrder"
+                  messageType="invs:POMessage"></variable>
+        <variable name="inventoryStatus"
+                  messageType="invs:InventoryMessage"></variable>
+        <variable name="inventoryService_Fault"
+                  messageType="invs:inventoryFault"></variable>
+    </variables>
+    <sequence>
+        <receive name="inventoryService"
+                 partnerLink="inventorySevicePLink"
+                 portType="invs:inventoryPortType"
+                 operation="inventoryService"
+                 variable="purchaseOrder"
+                 createInstance="yes"></receive>
+        <if name="checkAvailability">
+                <condition>starts-with($purchaseOrder.purchaseOrder/orderDescription, 'OrderVal')</condition>
+                <sequence>
+                    <assign name="Assign_2">
+                        <copy>
+                            <from>true()</from>
+                            <to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                        </copy>
+                        <copy>
+                            <from>'available'</from>
+                            <to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            <else>
+                <sequence>
+                    <assign name="Assign">
+                        <copy>
+                            <from>false()</from>
+                            <to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                        </copy>
+                        <copy>
+                            <from>'currently out of stock'</from>
+                            <to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            </else>
+        </if>
+        <reply name="inventoryService.Reply"
+               partnerLink="inventorySevicePLink"
+               portType="invs:inventoryPortType"
+               operation="inventoryService"
+               variable="inventoryStatus"></reply>
+    </sequence>
+</process>

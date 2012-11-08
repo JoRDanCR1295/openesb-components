@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="Pick" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/Pick"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Pick" xmlns:ns1="http://j2ee.netbeans.org/testPickNoSibling">
+   <import namespace="http://j2ee.netbeans.org/testPickNoSibling" location="testPickNoSibling.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:testPickNoSiblingPartner" myRole="testPickNoSiblingPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="TestPickNoSiblingOperationOut1" messageType="ns1:testPickNoSiblingOperationReply"/>
+      <variable name="TestPickNoSiblingOperationIn1" messageType="ns1:testPickNoSiblingOperationRequest"/>
+   </variables>
+   <sequence>
+      <sequence name="Sequence1">
+         <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink1" operation="testPickNoSiblingOperation" portType="ns1:testPickNoSiblingPortType" variable="TestPickNoSiblingOperationIn1">
+               <sequence name="Sequence2">
+                  <wait name="Wait1">
+                     <for>'P0Y0M0DT0H0M2S'</for>
+                  </wait>
+                  <assign name="Assign1">
+                  <copy>
+                     <from variable="TestPickNoSiblingOperationIn1" part="part1"/>
+                     <to variable="TestPickNoSiblingOperationOut1" part="part1"/>
+                  </copy>
+               </assign>
+               </sequence>
+            </onMessage>
+         </pick>
+      </sequence>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="testPickNoSiblingOperation" portType="ns1:testPickNoSiblingPortType" variable="TestPickNoSiblingOperationOut1"/>
+   </sequence>
+   
+</process>

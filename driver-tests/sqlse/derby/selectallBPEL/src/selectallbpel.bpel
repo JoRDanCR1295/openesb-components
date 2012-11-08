@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="selectallbpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/selectallbpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/selectallbpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bpel" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/bpel" location="bpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="selectallbpelSQL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:selectallbpelSQL_sqlsePartnerLinkType" partnerRole="selectallbpelSQL_myrole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:bpelPartner" myRole="bpelPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="BpelOperationOut" messageType="ns1:bpelOperationReply"/>
+      <bpws:variable name="SelectallsqlbpelOut" messageType="ns2:selectallsqlbpelResponse"/>
+      <bpws:variable name="SelectallsqlbpelIn" messageType="ns2:selectallsqlbpelRequest"/>
+      <bpws:variable name="BpelOperationIn" messageType="ns1:bpelOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="BpelOperationIn" part="part1"/>
+            <bpws:to variable="SelectallsqlbpelIn" part="selectallsqlbpelRequestPart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="selectallsqlbpel" portType="ns2:selectallbpelSQL_sqlsePortType" inputVariable="SelectallsqlbpelIn" outputVariable="SelectallsqlbpelOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$SelectallsqlbpelOut.selectallsqlbpelResponsePart/ns2:DISCOUNT_CODE</bpws:from>
+            <bpws:to>$BpelOperationOut.part1/ns0:DISCOUNT_CODE</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SelectallsqlbpelOut.selectallsqlbpelResponsePart/ns2:RATE</bpws:from>
+            <bpws:to>$BpelOperationOut.part1/ns0:RATE</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationOut"/>
+   </sequence>
+</process>

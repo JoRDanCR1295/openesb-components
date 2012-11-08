@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileFlow" 
+    targetNamespace="http://www.mycomp.org/Flow11/Flow11BP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/Flow11/Flow11BP" xmlns:ns1="http://www.mycomp.org/Flow11/Flow11">
+    <import namespace="http://www.mycomp.org/Flow11/Flow11" location="WhileFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:Flow11PartnerLinkType" myRole="Flow11Provider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="countPart" messageType="ns1:countMessage"/>
+        <variable name="FlowOutput" messageType="ns1:responseMessage"/>
+        <variable name="FlowInput" messageType="ns1:requestMessage"/>
+    </variables>
+    <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FlowOperation" portType="ns1:FlowPort" variable="FlowInput"/>
+        <assign name="Assign2">
+            <copy>
+            <from>1</from><to part="count" variable="countPart"/>
+            </copy>
+            <copy>
+                <from>'0'</from>
+                <to variable="branch2"/>
+            </copy>
+            <copy>
+                <from>'0'</from>
+                <to variable="branch1"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition>  ( $countPart.count &lt;= 3 )  </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign3">
+                    <copy>
+                    <from>concat($FlowInput.request, '**InsideWhileLoop**')</from><to part="request" variable="FlowInput"/>
+                    </copy>
+                </assign>
+                <assign name="Assign4">
+                    <copy>
+                    <from>  ( $countPart.count + 1 )  </from><to part="count" variable="countPart"/>
+                    </copy>
+                </assign>
+                <flow name="Flow1">
+                    <assign name="Assign6">
+                        <copy>
+                            <from>concat($branch1, '**InsideBranch1**', $countPart.count)</from>
+                            <to variable="branch1"/>
+                        </copy>
+                    </assign>
+                    <assign name="Assign7">
+                        <copy>
+                            <from>concat($branch2, '**InsideBranch2**', $countPart.count)</from>
+                            <to variable="branch2"/>
+                        </copy>
+                    </assign>
+                </flow>
+            </sequence>
+        </while>
+        <assign name="Assign5">
+            <copy>
+                <from>concat($FlowInput.request, $branch1, $branch2)</from>
+                <to part="response" variable="FlowOutput"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowOperation" portType="ns1:FlowPort" variable="FlowOutput"/>
+   </sequence>
+   
+</process>

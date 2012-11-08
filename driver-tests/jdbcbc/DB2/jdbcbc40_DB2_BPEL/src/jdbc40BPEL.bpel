@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="jdbc40BPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/jdbc40BPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/jdbc40BPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/soapreqrep-jdbcpoll" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc40Insert" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/soapreqrep-jdbcpoll" location="soapreqrep-jdbcpoll.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc40Insert" location="jdbcbc40Insert.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns1:jdbcpartner" myRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:soappartner" myRole="soapReqResPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SoapReqReslOperationOut" messageType="ns1:outputMsg"/>
+      <bpws:variable name="PollrecordsIn" messageType="ns1:inputMsg"/>
+      <bpws:variable name="InsertOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="InsertIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SoapReqReslOperationIn" messageType="ns1:inputMsg"/>
+   </variables>
+   <correlationSets>
+      <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+   </correlationSets>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="soapReqReslOperation" portType="ns1:soapReqResPortType" variable="SoapReqReslOperationIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+         </bpws:correlations>
+      </bpws:receive>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$SoapReqReslOperationIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapReqReslOperationIn.part/ns0:DEPTID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:DEPTID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapReqReslOperationIn.part/ns0:MARKCOLUMN</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:MARKCOLUMN</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapReqReslOperationIn.part/ns0:ENAME</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:ENAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="insert" portType="ns2:jdbcPortType" inputVariable="InsertIn" outputVariable="InsertOut"/>
+      <bpws:receive name="Receive2" createInstance="no" partnerLink="PartnerLink3" operation="pollrecords" portType="ns1:jdbcPortType" variable="PollrecordsIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet1" initiate="no"/>
+         </bpws:correlations>
+      </bpws:receive>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:EMPID</bpws:from>
+            <bpws:to>$SoapReqReslOperationOut.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:DEPTID</bpws:from>
+            <bpws:to>$SoapReqReslOperationOut.part/ns0:DEPTID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:MARKCOLUMN</bpws:from>
+            <bpws:to>$SoapReqReslOperationOut.part/ns0:MARKCOLUMN</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$PollrecordsIn.part/ns0:ENAME</bpws:from>
+            <bpws:to>$SoapReqReslOperationOut.part/ns0:ENAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="soapReqReslOperation" portType="ns1:soapReqResPortType" variable="SoapReqReslOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MutualCertificateBP/mutualC" xmlns:ns2="http://j2ee.netbeans.org/wsdl/MutualCertificateBP/mutualCProxy" xmlns:ns3="http://enterprise.netbeans.org/bpel/MutualCertificateBP/mutualC" xmlns:ns4="http://enterprise.netbeans.org/bpel/MutualCertificateBP/mutualCProxy" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="mutualCPort" interface-name="ns1:mutualCPortType" name="endpoint1" service-name="ns1:mutualCService"/>
+        <endpoint endpoint-name="mutualCProxyPort" interface-name="ns2:mutualCProxyPortType" name="endpoint2" service-name="ns2:mutualCProxyService"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="mutualCPortTypeRole_myRole" file-path="mutualC.bpel" interface-name="ns1:mutualCPortType" name="endpoint3" process-name="mutualC" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="mutualCProxyPortTypeRole_myRole" file-path="mutualCProxy.bpel" interface-name="ns2:mutualCProxyPortType" name="endpoint4" process-name="mutualCProxy" service-name="ns4:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="mutualCPortTypeRole_partnerRole" file-path="mutualCProxy.bpel" interface-name="ns1:mutualCPortType" name="endpoint5" process-name="mutualCProxy" service-name="ns4:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="MutualCertificateBP.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="MutualCertificateCA-MutualCertificateBP" unit-name="MutualCertificateBP" unknown="false" x="132" y="99">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="MutualCertificateCA-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="342">
+                    <link xlink:href="../jbiasa/MutualCertificateBP/mutualC.wsdl#xpointer(/definitions/service[@name='mutualCService']/port[@name='mutualCPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiasa/MutualCertificateBP/mutualCProxy.wsdl#xpointer(/definitions/service[@name='mutualCProxyService']/port[@name='mutualCProxyPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint1" state="new"/>
+        <connection state="deleted" consumer="endpoint5" provider="endpoint3"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualC.wsdl#xpointer(/definitions/portType[@name='mutualCPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualCProxy.wsdl#xpointer(/definitions/portType[@name='mutualCProxyPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualC.wsdl#xpointer(/definitions/binding[@name='mutualCBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualCProxy.wsdl#xpointer(/definitions/binding[@name='mutualCProxyBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualC.wsdl#xpointer(/definitions/service[@name='mutualCService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/MutualCertificateBP/mutualCProxy.wsdl#xpointer(/definitions/service[@name='mutualCProxyService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

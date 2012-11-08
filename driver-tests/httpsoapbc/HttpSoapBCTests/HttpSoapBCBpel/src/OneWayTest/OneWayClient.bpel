@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OneWayClient"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OneWayClient"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/OneWayClient" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Trigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OneWay">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OneWay" location="OneWay.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:OneWayPartner" partnerRole="OneWayPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:TriggerPartner" myRole="TriggerPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OneWayOperationIn" messageType="ns2:OneWayOperationRequest"/>
+        <bpws:variable name="TriggerOperationOut" messageType="ns1:TriggerOperationReply"/>
+        <bpws:variable name="TriggerOperationIn" messageType="ns1:TriggerOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="TriggerOperation" portType="ns1:TriggerPortType" variable="TriggerOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="TriggerOperationIn" part="part1"/>
+                <bpws:to variable="OneWayOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="OneWayOperation" portType="ns2:OneWayPortType" inputVariable="OneWayOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="TriggerOperationIn" part="part1"/>
+                <bpws:to variable="TriggerOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="TriggerOperation" portType="ns1:TriggerPortType" variable="TriggerOperationOut"/>
+    </sequence>
+</process>

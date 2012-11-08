@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="InvokeThrowsFault"
+             targetNamespace="http://www.mycomp.org/InvokeThrowsFault/InvokeThrowsFault"
+             xmlns:tns="http://www.mycomp.org/InvokeThrowsFault/InvokeThrowsFault"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types/>
+    <wsdl:message name="message1">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="receivePortType">
+	 <wsdl:operation name="receiveOper">
+	  <wsdl:input name="input1" message="tns:message1"/>
+	 </wsdl:operation>
+	</wsdl:portType>
+    <wsdl:portType name="invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1" message="tns:message1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="InvokeThrowsFaultPortType">
+        <wsdl:operation name="InvokeThrowsFaultOperation">
+            <wsdl:input name="input1" message="tns:message1"/>
+            <wsdl:output name="output1" message="tns:message1"/>
+            <wsdl:fault name="fault1" message="tns:message1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="receiveSoapBinding" type="tns:receivePortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="receiveOper">
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <wsdl:binding name="invokeSoapBinding" type="tns:invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InvokeThrowsFaultService">
+		<wsdl:port name="InvokeThrowsFaultPortName" binding="tns:invokeSoapBinding">                    
+                     <soap:address location="http://localhost:18181/InvokeThrowsFault"/>
+		</wsdl:port>
+        <wsdl:port name="receiveOperationPortName" binding="tns:receiveSoapBinding">
+            <soap:address location="http://localhost:18181/InvokeThrowsFault/rec"/>
+        </wsdl:port>
+    </wsdl:service>
+
+	<plnk:partnerLinkType name="InvokeThrowsFaultPartnerLinkType">
+		<plnk:role name="InvokeThrowsFaultProvider" portType="tns:invokePortType"/>
+	</plnk:partnerLinkType>
+    <plnk:partnerLinkType name="receiveOperPartnerLinkType">
+        <plnk:role name="receiveOperationProvider" portType="tns:receivePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="InvokeThrowsFaultPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="InvokeThrowsFaultPortTypeRole" portType="tns:InvokeThrowsFaultPortType"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

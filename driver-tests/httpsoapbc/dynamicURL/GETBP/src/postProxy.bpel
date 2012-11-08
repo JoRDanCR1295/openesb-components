@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="postProxy"
+    targetNamespace="http://enterprise.netbeans.org/bpel/GETBP/postProxy"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/GETBP/postProxy" xmlns:sxnmp="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/NMProperty">
+    <import namespace="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" location="postProxy.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/GETBP/post" location="post.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/post" partnerLinkType="tns:post" partnerRole="postPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" partnerLinkType="tns:postProxy" myRole="postProxyPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="PostOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/post" messageType="tns:postOperationResponse"/>
+        <variable name="PostOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/post" messageType="tns:postOperationRequest"/>
+        <variable name="PostProxyOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" messageType="tns:postProxyOperationResponse"/>
+        <variable name="PostProxyOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" messageType="tns:postProxyOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="postProxyOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" portType="tns:postProxyPortType" variable="PostProxyOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="PostProxyOperationIn" part="part1"/>
+                <to variable="PostOperationIn" part="part1"/>
+            </copy>
+            <copy>
+                <from>'http://localhost:9080/postService/postPort'</from>
+                <to variable="PostOperationIn" sxnmp:nmProperty="org.glassfish.openesb.outbound.address.url"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="postOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/post" portType="tns:postPortType" inputVariable="PostOperationIn" outputVariable="PostOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="PostOperationOut" part="part1"/>
+                <to variable="PostProxyOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="postProxyOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/postProxy" portType="tns:postProxyPortType" variable="PostProxyOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FileOneWayIn"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileOneWayIn" name="FileOneWayIn" xmlns:ns="http://xml.netbeans.org/schema/SimpleSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/FileOneWayIn">
+            <xsd:import namespace="http://xml.netbeans.org/schema/SimpleSchema" schemaLocation="SimpleSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="FileOneWayInOperationRequest">
+        <part name="part1" type="ns:requestType"/>
+    </message>
+    <portType name="FileOneWayInPortType">
+        <wsdl:operation name="FileOneWayInOperation">
+            <wsdl:input name="input1" message="tns:FileOneWayInOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="FileOneWayInBinding" type="tns:FileOneWayInPortType">
+        <file:binding/>
+        <wsdl:operation name="FileOneWayInOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="FileOneWayIn_Input%t.xml" pollingInterval="1000" fileNameIsPattern="true"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="FileOneWayInService">
+        <wsdl:port name="FileOneWayInPort" binding="tns:FileOneWayInBinding">
+            <file:address fileDirectory="JavaEE_vs_BC" relativePath="true" pathRelativeTo="User Home"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="FileOneWayInPartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FileOneWayInPortTypeRole" portType="tns:FileOneWayInPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

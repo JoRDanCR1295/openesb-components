@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="bpFHAssociatedToScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FaultHandlingBpel/bpFHAssociatedToScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FaultHandlingBpel/bpFHAssociatedToScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bpFHAssociatedToScope" xmlns:ns2="http://j2ee.netbeans.org/wsdl/ServiceProvider">
+    <import namespace="http://j2ee.netbeans.org/wsdl/bpFHAssociatedToScope" location="bpFHAssociatedToScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/ServiceProvider" location="ServiceProvider.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns2:ServiceProvider12" partnerRole="ServiceProviderPortTypeInOnlyRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:ServiceProvider1" partnerRole="ServiceProviderPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:bpFHAssociatedToScope1" myRole="bpFHAssociatedToScopePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" type="xsd:boolean"/>
+        <variable name="BpFHAssociatedToScopeOperationOut" messageType="ns1:bpFHAssociatedToScopeOperationReply"/>
+        <variable name="BpFHAssociatedToScopeOperationIn" messageType="ns1:bpFHAssociatedToScopeOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="bpFHAssociatedToScopeOperation" portType="ns1:bpFHAssociatedToScopePortType" variable="BpFHAssociatedToScopeOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="BpFHAssociatedToScopeOperationIn" part="part1"/>
+                <to variable="BpFHAssociatedToScopeOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>    ( $BpFHAssociatedToScopeOperationIn.part1 = 'InvokeInOutInFH' )    </condition>
+            <scope name="Scope1">
+                <variables>
+                    <variable name="ServiceProviderOperationOut" messageType="ns2:ServiceProviderOperationReply"/>
+                    <variable name="ServiceProviderOperationIn" messageType="ns2:ServiceProviderOperationRequest"/>
+                </variables>
+                <faultHandlers>
+                    <catchAll>
+                        <sequence name="Sequence1">
+                            <assign name="Assign3">
+                                <copy>
+                                    <from>
+                                        <literal>[Scope1 FH]</literal>
+                                    </from>
+                                    <to part="part1" variable="ServiceProviderOperationIn"/>
+                                </copy>
+                            </assign>
+                            <invoke name="Invoke1" partnerLink="PartnerLink2" operation="ServiceProviderOperation" portType="ns2:ServiceProviderPortType" inputVariable="ServiceProviderOperationIn" outputVariable="ServiceProviderOperationOut"/>
+                            <assign name="Assign4">
+                                <copy>
+                                    <from>concat($BpFHAssociatedToScopeOperationOut.part1, '[After Invoke in Scope1]', $ServiceProviderOperationOut.part1)</from>
+                                    <to part="part1" variable="BpFHAssociatedToScopeOperationOut"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition>$Variable1</condition>
+                    <empty name="Empty1"/>
+                </if>
+            </scope>
+            <elseif>
+                <condition>    ( $BpFHAssociatedToScopeOperationIn.part1 = 'InvokeInOnlyInFH' )    </condition>
+                <scope name="Scope2">
+                    <variables>
+                        <variable name="ServiceProviderOperationIn" messageType="ns2:ServiceProviderOperationRequest1"/>
+                    </variables>
+                    <faultHandlers>
+                        <catchAll>
+                            <sequence name="Sequence2">
+                                <assign name="Assign5">
+                                    <copy>
+                                        <from>
+                                            <literal>[Scope2 FH]</literal>
+                                        </from>
+                                        <to part="part1" variable="ServiceProviderOperationIn"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="Invoke2" partnerLink="PartnerLink3" operation="ServiceProviderOperation" portType="ns2:ServiceProviderPortTypeInOnly" inputVariable="ServiceProviderOperationIn"/>
+                                <assign name="Assign6">
+                                    <copy>
+                                        <from>concat($BpFHAssociatedToScopeOperationOut.part1, '[After Invoke in Scope2]')</from>
+                                        <to part="part1" variable="BpFHAssociatedToScopeOperationOut"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </catchAll>
+                    </faultHandlers>
+                    <if name="If3">
+                        <condition>$Variable1</condition>
+                        <empty name="Empty1"/>
+                    </if>
+                </scope>
+            </elseif>
+            <else>
+                <scope name="Scope3">
+                    <faultHandlers>
+                        <catchAll>
+                            <assign name="Assign7">
+                                <copy>
+                                    <from>concat($BpFHAssociatedToScopeOperationOut.part1, '[Scope3 FH]')</from>
+                                    <to part="part1" variable="BpFHAssociatedToScopeOperationOut"/>
+                                </copy>
+                            </assign>
+                        </catchAll>
+                    </faultHandlers>
+                    <if name="If4">
+                        <condition>$Variable1</condition>
+                        <empty name="Empty1"/>
+                    </if>
+                </scope>
+            </else>
+        </if>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($BpFHAssociatedToScopeOperationOut.part1, '[After FH]')</from>
+                <to part="part1" variable="BpFHAssociatedToScopeOperationOut"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="bpFHAssociatedToScopeOperation" portType="ns1:bpFHAssociatedToScopePortType" variable="BpFHAssociatedToScopeOperationOut"/>
+    </sequence>
+</process>

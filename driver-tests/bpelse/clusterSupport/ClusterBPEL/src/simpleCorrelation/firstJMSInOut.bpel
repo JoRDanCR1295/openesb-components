@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="simpleCorrelationJMSInOut"
+         targetNamespace="http://www.seebeyond.com/eInsight/simpleCorrelationJMSInOut"
+         xmlns:tns="http://www.seebeyond.com/eInsight/simpleCorrelationJMSInOut"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BPELProject/simpleCorrelationJMSIn"
+         xmlns:ns1="http://localhost/BPELProject/simpleCorrelationJMSOut"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://localhost/BPELProject/simpleCorrelationJMSIn"
+            location="JMSIn.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BPELProject/simpleCorrelationJMSOut"
+            location="JMSOut.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <bpws:partnerLink name="jmsInLink1" partnerLinkType="ns0:JMSInLinkType1" myRole="Server1"/>
+        <partnerLink name="jmsInLink"
+                     partnerLinkType="ns0:JMSInLinkType"
+                     myRole="Server"/>
+        <partnerLink name="jmsOutLink"
+                     partnerLinkType="ns1:JMSOutLinkType"
+                     partnerRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operation_JMSIn_Output"
+                  messageType="ns0:message_JMSIn"></variable>
+        <variable name="operation_JMSIn_Output1"
+                  messageType="ns0:message_JMSIn"></variable>                  
+        <variable name="operation_JMSOut_Input"
+                  messageType="ns1:message_JMSOut"></variable>
+    </variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns0:property"/>
+    </bpws:correlationSets>
+    <sequence>
+        <receive name="operation_JMSIn"
+                 partnerLink="jmsInLink"
+                 portType="ns0:portType_JMSIn"
+                 operation="operation_JMSIn"
+                 variable="operation_JMSIn_Output"
+                 createInstance="yes">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </receive>
+        <wait>
+            <for>'P0Y0M0DT0H0M30S'</for>
+        </wait>        
+        <bpws:receive name="operation_JMSIn1" createInstance="no" partnerLink="jmsInLink1" operation="operation_JMSIn1" portType="ns0:portType_JMSIn1" variable="operation_JMSIn_Output1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <assign>
+            <bpws:copy>
+                <bpws:from>concat($operation_JMSIn_Output.part_JMSIn, $operation_JMSIn_Output1.part_JMSIn)</bpws:from>
+                <bpws:to part="part_JMSOut" variable="operation_JMSOut_Input"/>
+            </bpws:copy>
+        </assign>
+        <wait>
+            <for>'P0Y0M0DT0H0M30S'</for>
+        </wait>
+        <invoke name="operation_JMSOut"
+                partnerLink="jmsOutLink"
+                portType="ns1:portType_JMSOut"
+                operation="operation_JMSOut"
+                inputVariable="operation_JMSOut_Input"></invoke>
+    </sequence>
+</process>

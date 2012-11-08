@@ -1,0 +1,46 @@
+;:- STC MsgStruct Version 3.1
+
+;:- MsgStructure Header
+;:- MsgStructure "root"
+;:- UserComment "             "
+;:- Version "e*Gate 4.1.1"
+;:- FormatOption DELIMITED
+;:- RepSeparator "Repetition Delimiter  " " "
+;:- Escape "Escape Character Delimiter            " ""
+;:- DefaultDelimiters "OTHER"
+;:- End MsgStructure Header
+
+;:- Delimiter Structure
+(define root-delm '(
+ ("|" (EscD ""))
+ ("," separator)
+ (":" array)
+ ))
+
+;:- Global Template Reference
+;:- End Global Template Reference
+
+;:- Local Template Definition
+;:- End Local Template Definition
+
+;:- MsgStructure Definition
+(define root-struct ($resolve-event-definition (quote
+  (root ON 1 1 und und und -1
+    (delim1 ON 1 1 und und und -1
+      (delim1_sub1 ON 1 1 und und und -1)	;:= {0.0.0:N}
+      (delim1_sub2 ON 0 1 und und und -1)	;:= {0.0.1:N}
+    )	;:= {0.0:N}
+    (delim2 ON 1 1 und und und -1
+      (delim2_sub1 ON 1 1 und und und -1)	;:= {0.1.0:N}
+      ((Ed  (Ri (Ed "~") )) delim2_sub2 ONA 1 INF und und und -1)	;:= {0.1.1:N}
+      (delim2_sub3 ON 1 1 und und und -1)	;:= {0.1.2:N}
+    )	;:= {0.1:N}
+  )	;:= {0:N}
+)))
+;:- End MsgStructure Definition
+
+(define it ($make-event-map root-delm root-struct))
+($event-parse it "a,b|c,q1~q2~q3,d")
+(newline)
+($event->string it)
+(newline)

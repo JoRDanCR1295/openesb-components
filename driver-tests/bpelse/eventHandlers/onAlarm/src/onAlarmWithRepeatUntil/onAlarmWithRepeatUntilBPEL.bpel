@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarmWithRepeatUntilBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarmWithRepeatUntilBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarmWithRepeatUntilBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarmWithRepeatUntilWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onAlarmWithRepeatUntilWSDL" location="onAlarmWithRepeatUntilWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarmWithRepeatUntilWSDL1" myRole="onAlarmWithRepeatUntilWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="tempVariable2" type="xsd:string"/>
+        <bpws:variable name="tempVariable1" type="xsd:int"/>
+        <bpws:variable name="OnAlarmWithRepeatUntilWSDLOperationOut" messageType="ns1:onAlarmWithRepeatUntilWSDLOperationReply"/>
+        <bpws:variable name="OnAlarmWithRepeatUntilWSDLOperationIn" messageType="ns1:onAlarmWithRepeatUntilWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarmWithRepeatUntilWSDLOperation" portType="ns1:onAlarmWithRepeatUntilWSDLPortType" variable="OnAlarmWithRepeatUntilWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($OnAlarmWithRepeatUntilWSDLOperationIn.part1, 'Iterating 5 times')</bpws:from>
+                <bpws:to variable="tempVariable2"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>0</bpws:from>
+                <bpws:to variable="tempVariable1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:documentation>ver0.3</bpws:documentation>
+                    <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+                    <bpws:scope name="Scope2">
+                        <bpws:repeatUntil name="RepeatUntil1">
+                            <bpws:assign name="Assign2">
+                                <bpws:copy>
+                                    <bpws:from>concat($tempVariable2, '*Repeat Every Execution Inside EH*')</bpws:from>
+                                    <bpws:to variable="tempVariable2"/>
+                                </bpws:copy>
+                                <bpws:copy>
+                                    <bpws:from> ( $tempVariable1 + 1 ) </bpws:from>
+                                    <bpws:to variable="tempVariable1"/>
+                                </bpws:copy>
+                            </bpws:assign>
+                            <bpws:condition> ( $tempVariable1 = 5 ) </bpws:condition>
+                        </bpws:repeatUntil>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:wait name="Wait1">
+                <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+            </bpws:wait>
+        </bpws:scope>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from variable="tempVariable2"/>
+                <bpws:to variable="OnAlarmWithRepeatUntilWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarmWithRepeatUntilWSDLOperation" portType="ns1:onAlarmWithRepeatUntilWSDLPortType" variable="OnAlarmWithRepeatUntilWSDLOperationOut"/>
+    </sequence>
+</process>

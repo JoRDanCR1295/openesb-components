@@ -1,0 +1,85 @@
+/*
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the "License").  You may not use this file except
+ * in compliance with the License.
+ *
+ * You can obtain a copy of the license at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * HEADER in each file and include the License file at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * If applicable add the following below this CDDL HEADER,
+ * with the fields enclosed by brackets "[]" replaced with
+ * your own identifying information: Portions Copyright
+ * [year] [name of copyright owner]
+ */
+
+/*
+ * Copyright 2004-2006 Sun Microsystems, Inc. All Rights Reserved.
+ */
+
+/*
+ * __NAME__.java
+ *
+ * Created on __DATE__, __TIME__
+ */
+
+package JBISupport.codegen.components.engine;
+
+import com.sun.jbi.sample.component.runtime.InOutProviderMessageExchangeHandler;
+import com.sun.jbi.sample.component.runtime.RuntimeHelper;
+import java.io.StringReader;
+import javax.jbi.messaging.Fault;
+import javax.jbi.messaging.MessagingException;
+import javax.jbi.messaging.NormalizedMessage;
+import javax.xml.transform.Source;
+
+/**
+ * This class extends the InOutProviderMessageExchangeHandler to provide the
+ * implementation of invoking the operation on the service implemenated
+ * which is specific to the service provider.
+ *@author  __USER__
+ */
+public class ServiceEngineMessageExchangeHandler
+    extends InOutProviderMessageExchangeHandler {
+    
+    /** Creates a new instance of ServiceEngineMessageExchangeHandler */
+    public ServiceEngineMessageExchangeHandler() {
+    }
+    /**
+     * invokes the operations that processes the in message and sets the content of the out message.
+     * if the operation has any fault, it will set the fault content and return false. It return true
+     * to indicate a sucessful invocation of the operation.
+     */
+    protected boolean invokeOperation(NormalizedMessage inMsg, NormalizedMessage outMsg, Fault fault) throws MessagingException {
+        
+        Source inContent = null;
+        Source outContent = null;
+        Source faultContent = null;
+        
+        // process in message
+        inContent = inMsg.getContent();
+        
+        // Locate Service implementation
+        Echo echo = Echo.EchoService.getInstance();
+        // invoke the operation on the service
+        try {
+            outContent = echo.echo(inContent);
+        } catch (Exception ex) {
+            // exception invoking the operation. so, set fault content and return false
+            String faultText = RuntimeHelper.getExceptionAsXmlText(ex);
+            faultContent = RuntimeHelper.createDOMSource(new StringReader(faultText));
+            fault.setContent(faultContent);
+            return false;
+        }
+        // set the out message content and return true
+        outMsg.setContent(outContent);
+        
+        return true;
+    }
+    
+}

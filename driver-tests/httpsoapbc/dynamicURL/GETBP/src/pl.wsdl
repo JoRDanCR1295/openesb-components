@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="pl" targetNamespace="http://j2ee.netbeans.org/wsdl/GETBP/pl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/GETBP/pl" xmlns:ns="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns0="http://xml.netbeans.org/schema/get" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/GETBP/pl">
+            <xsd:import namespace="http://xml.netbeans.org/schema/get" schemaLocation="get.xsd"/>
+            <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="schemas.xmlsoap.org/ws/2004/08/addressing.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="plOperationRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" element="ns:EndpointReference"/>
+    </message>
+    <message name="plOperationResponse">
+        <part name="part1" element="ns0:myntir"/>
+    </message>
+    <portType name="plPortType">
+        <operation name="plOperation">
+            <input name="input1" message="tns:plOperationRequest"/>
+            <output name="output1" message="tns:plOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="plBinding" type="tns:plPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="plOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/GETBP/pl"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/GETBP/pl"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="plService">
+        <port name="plPort" binding="tns:plBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/plService/plPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="pl">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="plPortTypeRole" portType="tns:plPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

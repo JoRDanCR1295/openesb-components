@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="concurrentParent" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="concurrentParent" targetNamespace="concurrentParent">
+    <types>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="concurrentParent">
+            <xsd:element name="concurrentParentElement" type="tns:concurrentParentType">
+            </xsd:element>
+            <xsd:complexType name="concurrentParentType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="concurrentParentMessage">
+        <part element="tns:concurrentParentElement" name="concurrentParentPart"/>
+    </message>
+    <portType name="concurrentParentPortType">
+        <operation name="concurrentParentOperation">
+            <input message="tns:concurrentParentMessage"/>
+            <output message="tns:concurrentParentMessage"/>
+        </operation>
+    </portType>
+    <binding name="concurrentParentBinding" type="tns:concurrentParentPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="concurrentParentOperation">
+            <soap:operation soapAction="concurrentParentOperation"/>
+            <input>
+                <soap:body parts="concurrentParentPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="concurrentParentPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="concurrentParentService">
+        <port binding="tns:concurrentParentBinding" name="concurrentParentPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/concurrentParentService"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="concurrentParentServiceLinkType">
+	<plnk:role name="Server" portType="tns:concurrentParentPortType"/>
+   </plnk:partnerLinkType>
+</definitions>

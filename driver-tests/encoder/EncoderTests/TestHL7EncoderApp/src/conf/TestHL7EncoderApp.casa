@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReceiveInput" xmlns:ns10="http://enterprise.netbeans.org/bpel/TestHL7Encoder/ReadProvideResult" xmlns:ns2="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ProviderResult" xmlns:ns3="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/WriteToFile" xmlns:ns4="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/PrepareOutput" xmlns:ns5="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/Transform" xmlns:ns6="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReadResult" xmlns:ns7="http://enterprise.netbeans.org/bpel/TestHL7Encoder/PrepareOutput" xmlns:ns8="http://enterprise.netbeans.org/bpel/TestHL7EncoderTransform" xmlns:ns9="http://enterprise.netbeans.org/bpel/TestHL7Encoder/DumpInputToFile" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="ReceiveInputPort" interface-name="ns1:ReceiveInputPortType" name="endpoint1" service-name="ns1:ReceiveInputService"/>
+        <endpoint endpoint-name="ProviderResultPort" interface-name="ns2:ProviderResultPortType" name="endpoint2" service-name="ns2:ProviderResultService"/>
+        <endpoint endpoint-name="WriteToFilePort" interface-name="ns3:WriteToFilePortType" name="endpoint3" service-name="ns3:WriteToFileService"/>
+        <endpoint endpoint-name="PrepareOutputPort" interface-name="ns4:PrepareOutputPortType" name="endpoint4" service-name="ns4:PrepareOutputService"/>
+        <endpoint endpoint-name="TransformPort" interface-name="ns5:TransformPortType" name="endpoint5" service-name="ns5:TransformService"/>
+        <endpoint endpoint-name="ReadResultPort" interface-name="ns6:ReadResultPortType" name="endpoint6" service-name="ns6:ReadResultService"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="PrepareOutputPortTypeRole_myRole" file-path="DecodeEncode\PrepareOutput.bpel" interface-name="ns4:PrepareOutputPortType" name="endpoint7" process-name="PrepareOutput" service-name="ns7:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="TransformPortTypeRole_myRole" file-path="DecodeEncode\Transform.bpel" interface-name="ns5:TransformPortType" name="endpoint8" process-name="Transform" service-name="ns8:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="ReceiveInputPortTypeRole_myRole" file-path="Receive\ReceiveAndDump.bpel" interface-name="ns1:ReceiveInputPortType" name="endpoint9" process-name="DumpInputToFile" service-name="ns9:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="ProviderResultPortTypeRole_myRole" file-path="Reply\ReadProvideResult.bpel" interface-name="ns2:ProviderResultPortType" name="endpoint10" process-name="ReadProvideResult" service-name="ns10:PartnerLink2"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="ReadResultPortTypeRole_myRole" file-path="Reply\ReadProvideResult.bpel" interface-name="ns6:ReadResultPortType" name="endpoint11" process-name="ReadProvideResult" service-name="ns10:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="WriteToFilePortTypeRole_partnerRole" file-path="Receive\ReceiveAndDump.bpel" interface-name="ns3:WriteToFilePortType" name="endpoint12" process-name="DumpInputToFile" service-name="ns9:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="TestHL7EncoderBP.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="TestHL7EncoderApp-TestHL7EncoderBP" unit-name="TestHL7EncoderBP" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+            <provides endpoint="endpoint9"/>
+            <provides endpoint="endpoint10"/>
+            <provides endpoint="endpoint11"/>
+            <consumes endpoint="endpoint12"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="TestHL7EncoderApp-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="0" y="60">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/PrepareOutput.wsdl#xpointer(/definitions/service[@name='PrepareOutputService']/port[@name='PrepareOutputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+                <port x="0" y="150">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/Transform.wsdl#xpointer(/definitions/service[@name='TransformService']/port[@name='TransformPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+                <port x="0" y="240">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/WriteToFile.wsdl#xpointer(/definitions/service[@name='WriteToFileService']/port[@name='WriteToFilePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="0" y="330">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ReadResult.wsdl#xpointer(/definitions/service[@name='ReadResultService']/port[@name='ReadResultPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                    <provides endpoint="endpoint6"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="TestHL7EncoderApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="420">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/ReceiveInput.wsdl#xpointer(/definitions/service[@name='ReceiveInputService']/port[@name='ReceiveInputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="510">
+                    <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ProviderResult.wsdl#xpointer(/definitions/service[@name='ProviderResultService']/port[@name='ProviderResultPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint9" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint8" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint11" state="unchanged"/>
+        <connection consumer="endpoint12" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint10" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/PrepareOutput.wsdl#xpointer(/definitions/portType[@name='PrepareOutputPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/Transform.wsdl#xpointer(/definitions/portType[@name='TransformPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/ReceiveInput.wsdl#xpointer(/definitions/portType[@name='ReceiveInputPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/WriteToFile.wsdl#xpointer(/definitions/portType[@name='WriteToFilePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ProviderResult.wsdl#xpointer(/definitions/portType[@name='ProviderResultPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ReadResult.wsdl#xpointer(/definitions/portType[@name='ReadResultPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/PrepareOutput.wsdl#xpointer(/definitions/binding[@name='PrepareOutputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/Transform.wsdl#xpointer(/definitions/binding[@name='TransformBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/ReceiveInput.wsdl#xpointer(/definitions/binding[@name='ReceiveInputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/WriteToFile.wsdl#xpointer(/definitions/binding[@name='WriteToFileBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ProviderResult.wsdl#xpointer(/definitions/binding[@name='ProviderResultBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ReadResult.wsdl#xpointer(/definitions/binding[@name='ReadResultBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/PrepareOutput.wsdl#xpointer(/definitions/service[@name='PrepareOutputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/DecodeEncode/Transform.wsdl#xpointer(/definitions/service[@name='TransformService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/ReceiveInput.wsdl#xpointer(/definitions/service[@name='ReceiveInputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Receive/WriteToFile.wsdl#xpointer(/definitions/service[@name='WriteToFileService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ProviderResult.wsdl#xpointer(/definitions/service[@name='ProviderResultService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/TestHL7EncoderBP/Reply/ReadResult.wsdl#xpointer(/definitions/service[@name='ReadResultService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

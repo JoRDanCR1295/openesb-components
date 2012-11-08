@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="xsddatatype8"
+         targetNamespace="http://www.seebeyond.com/eInsight/xsddatatype8"
+         xmlns:tns="http://www.seebeyond.com/eInsight/xsddatatype8"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/xsddatatype8"
+         xmlns:ns1="urn:SampleXSD"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/xsddatatype8"
+            location="xsddatatype8.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD"
+            location="SampleXSD.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output" messageType="ns0:xsddatatype8"></variable>
+        <variable name="messageType_Input"  messageType="ns0:xsddatatype8"></variable>
+        <variable name="xsdDataType_Element1"   element="ns1:person"></variable>
+        <variable name="xsdDataType_Element2"   element="ns1:person"></variable> 
+        <variable name="xsdDataType_Element3"   element="ns1:person"></variable>                                      
+    </variables>
+    <sequence>
+        <receive name="xsddatatype8"
+                 partnerLink="Client2BP"
+                 portType="ns0:xsddatatype8"
+                 operation="xsddatatype8"
+                 variable="messageType_Output"
+                 createInstance="yes"></receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$messageType_Output.part</from>
+                <to variable="xsdDataType_Element1"></to>
+            </copy>
+        </assign>                 
+        <assign name="Assign2">
+            <copy>
+                <from>'99999'</from>
+                <to>$messageType_Output.part/home/zip</to>
+            </copy>
+        </assign>        
+        <assign name="Assign3">
+            <copy>
+                <from>$xsdDataType_Element1/home/zip</from>
+                <to>$messageType_Input.part/home/zip</to>
+            </copy>
+        </assign> 
+        <reply name="xsddatatype8.Reply"
+               partnerLink="Client2BP"
+               portType="ns0:xsddatatype8"
+               operation="xsddatatype8"
+               variable="messageType_Input"></reply>
+    </sequence>
+</process>

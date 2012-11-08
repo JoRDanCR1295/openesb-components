@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BPwithMsgElem"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BPwithMsgElem"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/BPwithMsgElem" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BPwithMsgElem">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/BPwithMsgElem" location="BPwithMsgElem.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="ExtPartLink" partnerLinkType="ns1:BPwithMsgElemPartner1" myRole="ExtPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="ExtPTOperOut" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="ExtPTOperIn" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ExtPartLink" operation="ExtPTOper" portType="ns1:ExtPT" variable="ExtPTOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>101</bpws:from>
+                <bpws:to>$ExtPTOperOut.part1/msgId</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Added in the BPEL BPwithMsgElem NonQualified</bpws:literal>
+                </bpws:from>
+                <bpws:to>$ExtPTOperOut.part1/msgStr</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ExtPartLink" operation="ExtPTOper" portType="ns1:ExtPT" variable="ExtPTOperOut"/>
+    </sequence>
+</process>

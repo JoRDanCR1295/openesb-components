@@ -1,0 +1,1 @@
+create table "COMPANY"."1234a" (ename varchar(10))

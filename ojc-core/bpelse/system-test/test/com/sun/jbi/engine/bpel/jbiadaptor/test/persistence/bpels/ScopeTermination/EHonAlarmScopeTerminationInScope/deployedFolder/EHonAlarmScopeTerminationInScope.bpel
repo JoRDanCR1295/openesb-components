@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="EHonAlarmScopeTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ScopeTerminationBpel/EHonAlarmScopeTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ScopeTerminationBpel/EHonAlarmScopeTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/EHonAlarmScopeTerminationInScope" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/EHonAlarmScopeTerminationInScope1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/EHonAlarmScopeTerminationInScope" location="EHonAlarmScopeTerminationInScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:EHonAlarmScopeTerminationInScopePlink" myRole="EHonAlarmScopeTerminationInScopePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EHonAlarmScopeTerminationInScopeOperationIn" messageType="ns1:EHonAlarmScopeTerminationInScopeOperationRequest"/>
+        <variable name="EHonAlarmScopeTerminationInScopeOperationOut" messageType="ns1:EHonAlarmScopeTerminationInScopeOperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="EHonAlarmScopeTerminationInScopeOperation" portType="ns1:EHonAlarmScopeTerminationInScopePortType" variable="EHonAlarmScopeTerminationInScopeOperationIn"/>
+        <assign name="Assign">
+            <copy>
+                <from>concat('1. Input is -  ', $EHonAlarmScopeTerminationInScopeOperationIn.InputPart)</from>
+                <to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+            </copy>
+        </assign>
+        <ns2:scope name="GlobalScope">
+            <ns2:faultHandlers>
+                <ns2:catch faultName="ns2:someFault">
+                    <ns2:sequence name="FH_Sequence">
+                        <ns2:assign name="FH_Assign">
+                            <ns2:copy>
+                                <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' \n 4. Sending Output from FH')</ns2:from>
+                                <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                            </ns2:copy>                            
+                        </ns2:assign>
+                        <ns2:reply name="replyFromFH" partnerLink="PartnerLinkInOut" operation="EHonAlarmScopeTerminationInScopeOperation" portType="ns1:EHonAlarmScopeTerminationInScopePortType" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                    </ns2:sequence>
+                </ns2:catch>
+            </ns2:faultHandlers>
+            <ns2:sequence name="Sequence">
+                <ns2:flow name="Flow1">
+                            <ns2:scope name="RunningScope">                         
+                                <ns2:eventHandlers>
+                                    <ns2:onAlarm>
+                                        <ns2:for>'P0Y0M0DT0H0M1S'</ns2:for>
+                                        <ns2:scope name="EventHandlerScope">
+                                            <ns2:sequence name="EH_Sequence">
+                                                <ns2:assign name="EH_Assign">
+                                                    <ns2:copy>
+                                                        <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' \n 3. In EH_Assign ')</ns2:from>
+                                                        <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                                    </ns2:copy>
+                                                </ns2:assign>
+                                                <ns2:wait name="EH_Wait_45Secs">
+                                                    <ns2:for>'P0Y0M0DT0H0M45S'</ns2:for>
+                                                </ns2:wait>
+                                                <ns2:reply name="replyFromEH" partnerLink="PartnerLinkInOut" operation="EHonAlarmScopeTerminationInScopeOperation" portType="ns1:EHonAlarmScopeTerminationInScopePortType" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                            </ns2:sequence>
+                                        </ns2:scope>
+                                    </ns2:onAlarm>
+                                </ns2:eventHandlers>
+                                <ns2:sequence name="RunningScope_Sequence">
+                                    <ns2:assign name="AssignInFlow">
+                                        <ns2:copy>
+                                            <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' \n 2. In Branch2: Nested Flow follows ')</ns2:from>
+                                            <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                        </ns2:copy>
+                                    </ns2:assign>
+                                    <ns2:flow name="Flow2">
+                                        <ns2:sequence name="Sequence2">
+                                            <ns2:assign name="Assign2">
+                                                <ns2:copy>
+                                                                        <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' Nested_Branch1 ')</ns2:from>
+                                                                        <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                                    </ns2:copy>
+                                            </ns2:assign>
+                                        </ns2:sequence>
+                                        <ns2:flow name="NestedFlow">
+                                            <ns2:sequence name="Sequence3">
+                                                <ns2:assign name="Assign3">
+                                                    <ns2:copy>
+                                                                        <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' Nested_Branch2 ')</ns2:from>
+                                                                        <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                                        </ns2:copy>
+                                                </ns2:assign>
+                                            </ns2:sequence>
+                                            <ns2:flow name="NestedFlow2">
+                                                <ns2:sequence name="Sequence4">
+                                                    <ns2:assign name="Assign4">
+                                                        <ns2:copy>
+                                                                <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' Nested_Branch3 ')</ns2:from>
+                                                                <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                                            </ns2:copy>
+                                                    </ns2:assign>
+                                                </ns2:sequence>
+                                                <ns2:sequence name="Sequence5">
+                                                                <ns2:assign name="Assign5">
+                                                                    <ns2:copy>
+                                                                        <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' Nested_Branch4 ')</ns2:from>
+                                                                        <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                                                                    </ns2:copy>
+                                                                </ns2:assign>
+                                                                    <ns2:wait name="Wait_50Secs">
+                                                                        <ns2:for>'P0Y0M0DT0H0M50S'</ns2:for>
+                                                                    </ns2:wait>
+                                                            </ns2:sequence>
+                                                    </ns2:flow>
+                                            </ns2:flow>
+                                    </ns2:flow>
+                                </ns2:sequence>                                             
+                                </ns2:scope>
+                    <ns2:sequence name="Sequence6">
+                        <ns2:wait name="Wait_3Secs">
+                            <ns2:for>'P0Y0M0DT0H0M3S'</ns2:for>
+                        </ns2:wait>
+                        <ns2:throw name="Throw1" faultName="ns2:someFault"/>
+                    </ns2:sequence>
+                </ns2:flow>
+                <ns2:assign name="Assign_ShouldNotExecute">
+                    <ns2:copy>
+                        <ns2:from>concat($EHonAlarmScopeTerminationInScopeOperationOut.OutputPart, ' This assign should not have executed. ')</ns2:from>
+                        <ns2:to part="OutputPart" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+                    </ns2:copy>
+                </ns2:assign>
+                <ns2:reply name="replyFromProcess" partnerLink="PartnerLinkInOut" operation="EHonAlarmScopeTerminationInScopeOperation" portType="ns1:EHonAlarmScopeTerminationInScopePortType" variable="EHonAlarmScopeTerminationInScopeOperationOut"/>
+            </ns2:sequence>
+        </ns2:scope>
+    </sequence>
+</process>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoProcessUnionTypes"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoUnionTypesProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/scProcess" 
+    xmlns:ns1="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://testconsumerfromidluniontypes.test.jbi4corba.imolinfo.it/">
+    <import namespace="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" location="EchoUnionTypes.wsdl"  importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="echoUnionTypesProcess" partnerLinkType="ns1:echoUnionTypesProcess" myRole="echoUnionTypesProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Echo9Out" messageType="ns1:echo9Response"/>
+        <variable name="Echo9In" messageType="ns1:echo9"/>
+        <variable name="Echo8Out" messageType="ns1:echo8Response"/>
+        <variable name="Echo8In" messageType="ns1:echo8"/>
+        <variable name="Echo7Out" messageType="ns1:echo7Response"></variable>
+        <variable name="Echo7In" messageType="ns1:echo7"/>
+        <variable name="Echo6Out" messageType="ns1:echo6Response"/>
+        <variable name="Echo6In" messageType="ns1:echo6"/>
+        <variable name="Echo5Out" messageType="ns1:echo5Response"/>
+        <variable name="Echo5In" messageType="ns1:echo5"/>
+        <variable name="Echo4Out" messageType="ns1:echo4Response"/>
+        <variable name="Echo4In" messageType="ns1:echo4"/>
+        <variable name="Echo3Out" messageType="ns1:echo3Response"/>
+        <variable name="Echo3In" messageType="ns1:echo3"/>
+        <variable name="Echo2Out" messageType="ns1:echo2Response"/>
+        <variable name="Echo2In" messageType="ns1:echo2"/>
+        <variable name="Echo1Out" messageType="ns1:echo1Response"/>
+        <variable name="Echo1In" messageType="ns1:echo1"/>
+    </variables>
+    <sequence name="Sequence1">
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo1" portType="ns1:EchoUnionTypesPortType" variable="Echo1In">
+                <sequence name="Sequence2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>concat($Echo1In.parameters/ns1:msg/ns2:primo, $Echo1In.parameters/ns1:msg/ns2:altro, $Echo1In.parameters/ns1:msg/ns2:secondo, $Echo1In.parameters/ns1:msg/ns2:third)</from>
+                            <to>$Echo1Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="echoUnionTypesProcess" operation="echo1" portType="ns1:EchoUnionTypesPortType" variable="Echo1Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo2" portType="ns1:EchoUnionTypesPortType" variable="Echo2In">
+                <sequence name="Sequence3">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>true()</from>
+                            <to>$Echo2Out.parameters/ns1:return/ns2:altro</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo2In.parameters/ns1:msg/ns2:alfanumeric</from>
+                            <to>$Echo2Out.parameters/ns1:msg/ns2:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply2" partnerLink="echoUnionTypesProcess" operation="echo2" portType="ns1:EchoUnionTypesPortType" variable="Echo2Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo3" portType="ns1:EchoUnionTypesPortType" variable="Echo3In">
+                <sequence name="Sequence4">
+                    <assign name="Assign3">
+                       
+                        <copy>
+                            <from>true()</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>10</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo3In.parameters/ns1:msg</from>
+                            <to>$Echo3Out.parameters/ns1:return/ns2:fieldWChar/ns2:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply3" partnerLink="echoUnionTypesProcess" operation="echo3" portType="ns1:EchoUnionTypesPortType" variable="Echo3Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo4" portType="ns1:EchoUnionTypesPortType" variable="Echo4In">
+                <sequence name="Sequence5">
+                    <assign name="Assign4">
+                        <copy>
+                            <from>concat($Echo4In.parameters/ns1:msg/ns2:fieldBoolean, $Echo4In.parameters/ns1:msg/ns2:fieldChar, $Echo4In.parameters/ns1:msg/ns2:fieldWChar/ns2:alfanumeric, $Echo4In.parameters/ns1:msg/ns2:fieldWChar/ns2:numeric, $Echo4In.parameters/ns1:msg/ns2:fieldWChar/ns2:two_format)</from>
+                            <to>$Echo4Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply4" partnerLink="echoUnionTypesProcess" operation="echo4" portType="ns1:EchoUnionTypesPortType" variable="Echo4Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo5" portType="ns1:EchoUnionTypesPortType" variable="Echo5In">
+                <sequence name="Sequence6">
+                    <assign name="Assign5">
+                        <copy>
+                            <from>$Echo5In.parameters/ns1:msg/ns2:fieldBoolean</from>
+                            <to>$Echo5Out.parameters/ns1:msg/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo5In.parameters/ns1:msg/ns2:fieldChar</from>
+                            <to>$Echo5Out.parameters/ns1:msg/ns2:fieldChar</to>
+                        </copy>
+                        
+                        <copy>
+                            <from>$Echo5In.parameters/ns1:msg/ns2:fieldWChar/ns2:alfanumeric</from>
+                            <to>$Echo5Out.parameters/ns1:msg/ns2:fieldWChar/ns2:alfanumeric</to>
+                        </copy>
+                        <copy>
+                            <from>$Echo5In.parameters/ns1:msg/ns2:fieldWChar/ns2:alfanumeric</from>
+                            <to>$Echo5Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply5" partnerLink="echoUnionTypesProcess" operation="echo5" portType="ns1:EchoUnionTypesPortType" variable="Echo5Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo6" portType="ns1:EchoUnionTypesPortType" variable="Echo6In">
+                <sequence name="Sequence7">
+                    <assign name="Assign6">
+                       
+                        <copy>
+                            <from>true()</from>
+                            <to>$Echo6Out.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>100</from>
+                            <to>$Echo6Out.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>concat('Received: ', $Echo6In.parameters/ns1:msg)</from>
+                            <to>$Echo6Out.parameters/ns1:return/ns2:fieldWChar/ns2:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply6" partnerLink="echoUnionTypesProcess" operation="echo6" portType="ns1:EchoUnionTypesPortType" variable="Echo6Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo7" portType="ns1:EchoUnionTypesPortType" variable="Echo7In">
+                <sequence name="Sequence8">
+                    <assign name="Assign7">
+                        
+                        <copy>
+                            <from>true()</from>
+                            <to>$Echo7Out.parameters/ns1:return/ns2:item/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>10</from>
+                            <to>$Echo7Out.parameters/ns1:return/ns2:item/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>concat('Received: ', $Echo7In.parameters/ns1:msg)</from>
+                            <to>$Echo7Out.parameters/ns1:return/ns2:item/ns2:fieldWChar/ns2:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply7" partnerLink="echoUnionTypesProcess" operation="echo7" portType="ns1:EchoUnionTypesPortType" variable="Echo7Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo8" portType="ns1:EchoUnionTypesPortType" variable="Echo8In">
+                <sequence name="Sequence9">
+                    <assign name="Assign8">
+                        <copy>
+                            <from>$Echo8In.parameters/ns1:msg</from>
+                            <to>$Echo8Out.parameters/ns1:return/ns2:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply8" partnerLink="echoUnionTypesProcess" operation="echo8" portType="ns1:EchoUnionTypesPortType" variable="Echo8Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoUnionTypesProcess" operation="echo9" portType="ns1:EchoUnionTypesPortType" variable="Echo9In">
+                <sequence name="Sequence10">
+                    <assign name="Assign9">
+                        <copy>
+                            <from>concat('Message:', $Echo9In.parameters/ns1:msg/ns2:item/ns2:fieldBoolean, $Echo9In.parameters/ns1:msg/ns2:item/ns2:fieldChar, $Echo9In.parameters/ns1:msg/ns2:item/ns2:fieldWChar/ns2:alfanumeric, $Echo9In.parameters/ns1:msg/ns2:item/ns2:fieldWChar/ns2:numeric, $Echo9In.parameters/ns1:msg/ns2:item/ns2:fieldWChar/ns2:two_format)</from>
+                            <to>$Echo9Out.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply9" partnerLink="echoUnionTypesProcess" operation="echo9" portType="ns1:EchoUnionTypesPortType" variable="Echo9Out"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>
+
+

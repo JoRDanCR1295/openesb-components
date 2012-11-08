@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoFault" targetNamespace="urn:jbi4corba/test-consumer-fromidl-complex-fault" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-fault" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:import namespace="urn:jbi4corba/test-consumer-fromidl-complex-fault" schemaLocation="EchoFault_test-consumer-fromidl-fault.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="EchoComplexException">
+        <wsdl:part name="EchoComplexException" element="tns:EchoComplexException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="EchoSimpleException">
+        <wsdl:part name="EchoSimpleException" element="tns:EchoSimpleException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo">
+        <wsdl:part name="parameters" element="tns:echo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="parameters" element="tns:echoResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EchoFaultOperations">
+        <wsdl:operation name="echo">
+            <wsdl:input name="echo" message="tns:echo">
+            </wsdl:input>
+            <wsdl:output name="echoResponse" message="tns:echoResponse">
+            </wsdl:output>
+            <wsdl:fault name="EchoComplexException" message="tns:EchoComplexException">
+            </wsdl:fault>
+            <wsdl:fault name="EchoSimpleException" message="tns:EchoSimpleException">
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EchoFaultOperationsCorbaBinding" type="tns:EchoFaultOperations">
+        <imolacorba:binding>
+            <imolacorba:idl>
+//IDL
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testconsumerfromidlfault{
+		
+                                    struct EchoStruct {
+                                        boolean            fieldBoolean;
+                                        char               fieldChar;
+                                        string             fieldString;
+                                        long               fieldLong;
+                                    };								            				
+		            				
+                                    exception EchoComplexException {
+            				EchoStruct reason;
+                                    };       		       
+            				
+                                    exception EchoSimpleException {
+            				string reason;
+                                    };       				
+
+                                    interface EchoFault {
+					string echo(in string msg) raises (EchoSimpleException, EchoComplexException);
+                                    };
+				};
+			};
+		};
+	};
+};
+            </imolacorba:idl>
+        </imolacorba:binding>
+        <wsdl:operation name="echo">
+            <wsdl:input name="echo">
+            </wsdl:input>
+            <wsdl:output name="echoResponse">
+            </wsdl:output>
+            <wsdl:fault name="EchoComplexException">
+            </wsdl:fault>
+            <wsdl:fault name="EchoSimpleException">
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EchoFault">
+        <wsdl:port name="EchoFaultOperationsCorbaPort" binding="tns:EchoFaultOperationsCorbaBinding">
+            <imolacorba:address name="EchoFault" localizationType="NameService">
+                <imolacorba:orb>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+                </imolacorba:orb>
+            </imolacorba:address>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="EchoFault">
+        <plnk:role name="EchoFaultPortTypeRole" portType="tns:EchoFaultOperations"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>

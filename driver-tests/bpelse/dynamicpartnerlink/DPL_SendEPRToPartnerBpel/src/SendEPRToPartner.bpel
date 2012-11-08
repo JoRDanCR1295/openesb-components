@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SendEPRToPartner"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DPL_SendEPRToPartner/SendEPRToPartner"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/DPL_SendEPRToPartner/SendEPRToPartner" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" xmlns:ns1="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/serviceref">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" location="SendEPRToPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OneWayBpelService" location="OneWayBpelService1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OneWayCallbackBpelService" location="OneWayCallbackBpelService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref" location="ws-bpel_serviceref.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="CallbackPartner" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayCallbackBpelService" partnerLinkType="tns:OneWayCallbackBpelServiceIn" partnerRole="OneWayCallbackBpelServiceInPortTypeRole"/>
+        <partnerLink name="OneWay1" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayBpelService" partnerLinkType="tns:OneWayBpelService1Out" myRole="OneWayBpelService1OutPortTypeRole"/>
+        <partnerLink name="InOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" partnerLinkType="tns:SendEPRToPartner" myRole="SendEPRToPartnerPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" element="ns2:service-ref">
+            <sxed:editor>
+                <sxed:pseudoComps>
+                    <sxed:pseudoComp parentPath="$Variable1" type="ns1:EndpointReferenceType" qName="ns1:EndpointReference" source="from"/>
+                </sxed:pseudoComps>
+            </sxed:editor>
+        </variable>
+        <variable name="OneWayBpelServiceOutOperationIn1" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayBpelService" messageType="tns:OneWayBpelServiceOutOperationRequest"/>
+        <variable name="OneWayCallbackBpelServiceInOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayCallbackBpelService" messageType="tns:OneWayCallbackBpelServiceInOperationRequest"/>
+        <variable name="SendEPRToPartnerOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" messageType="tns:SendEPRToPartnerOperationResponse"/>
+        <variable name="SendEPRToPartnerOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" messageType="tns:SendEPRToPartnerOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:CorrelationVariable"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="InOut" operation="SendEPRToPartnerOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" portType="tns:SendEPRToPartnerPortType" variable="SendEPRToPartnerOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign_Data">
+            <copy>
+                <from variable="SendEPRToPartnerOperationIn" part="Service"/>
+                <to variable="OneWayCallbackBpelServiceInOperationIn" part="Data"/>
+            </copy>
+        </assign>
+        <assign name="AssignPL_1Way1">
+            <copy>
+                <from partnerLink="OneWay1" endpointReference="myRole"/>
+                <to variable="Variable1"/>
+            </copy>
+        </assign>
+        <assign name="Assign1">
+            <copy>
+                <sxed:editor>
+                    <sxed:pseudoComps>
+                        <sxed:pseudoComp parentPath="$Variable1" type="ns1:EndpointReferenceType" qName="ns1:EndpointReference" source="from"/>
+                    </sxed:pseudoComps>
+                </sxed:editor>
+                <from>$Variable1/ns1:EndpointReference</from>
+                <to variable="OneWayCallbackBpelServiceInOperationIn" part="EPR"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke2" partnerLink="CallbackPartner" operation="OneWayCallbackBpelServiceInOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayCallbackBpelService" portType="tns:OneWayCallbackBpelServiceInPortType" inputVariable="OneWayCallbackBpelServiceInOperationIn" />
+        <pick name="Pick1">
+            <onMessage partnerLink="OneWay1" operation="OneWayBpelServiceOutOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OneWayBpelService" portType="tns:OneWayBpelServiceOutPortType" variable="OneWayBpelServiceOutOperationIn1">
+                <correlations>
+                    <correlation set="CorrelationSet1" initiate="no"/>
+                </correlations>
+                <assign name="InputFromSubBP1">
+                    <copy>
+                        <from>concat('OneWay ', $OneWayBpelServiceOutOperationIn1.part1, ' is called dynamically from SubBP')</from>
+                        <to variable="SendEPRToPartnerOperationOut" part="output"/>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <reply name="Reply1" partnerLink="InOut" operation="SendEPRToPartnerOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SendEPRToPartner" portType="tns:SendEPRToPartnerPortType" variable="SendEPRToPartnerOperationOut"/>
+    </sequence>
+</process>

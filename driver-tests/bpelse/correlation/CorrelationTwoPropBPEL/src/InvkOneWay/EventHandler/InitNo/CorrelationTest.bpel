@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CorrelationTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeOneWay_EvntHandler_InitNo/src/CorrelationTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InvokeOneWay_EvntHandler_InitNo/src/CorrelationTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InvokeOneWay_EvntHandler_InitNo/src/CorrelationTest" xmlns:ns0="http://xml.netbeans.org/schema/InvokeOneWay_EvntHandler_InitNo/src/Message">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InvokeOneWay_EvntHandler_InitNo/src/CorrelationTest" location="CorrelationTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkB" partnerLinkType="ns1:SubBPPartner" partnerRole="SubBPPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:CorrelationTestPartner" myRole="CorrelationTestPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="InvokeOperationIn" messageType="ns1:CorrMessage"/>
+        <bpws:variable name="InitiateProcessOperationIn" messageType="ns1:Message"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet" properties="ns1:CorrelationId1 ns1:CorrelationId2"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:CorrelationTestPortType" variable="InitiateProcessOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$InitiateProcessOperationIn.Data/ns0:Content</bpws:from>
+                <bpws:to>$InvokeOperationIn.Data/ns0:Content</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InitiateProcessOperationIn.Data/ns0:CorrelationVal1/ns0:Id</bpws:from>
+                <bpws:to>$InvokeOperationIn.Data/ns0:Id1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InitiateProcessOperationIn.Data/ns0:CorrelationVal2/ns0:Id</bpws:from>
+                <bpws:to>$InvokeOperationIn.Data/ns0:Id2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <invoke name="Invoke1" partnerLink="PartnerLinkB" operation="InvokeOperation" portType="ns1:SubBPPortType" inputVariable="InvokeOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet" initiate="yes"/>
+            </correlations>
+        </invoke>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onEvent partnerLink="PartnerLinkA" operation="CorrelationTestOperation" portType="ns1:CorrelationTestPortType" variable="InvokeOperationIn" messageType="ns1:CorrMessage">
+                    <bpws:correlations>
+                        <bpws:correlation set="CorrelationSet" initiate="no"/>
+                    </bpws:correlations>
+                    <bpws:scope name="Scope2">
+                        <bpws:assign name="Assign1">
+                    <bpws:copy>
+                        <bpws:from>concat($InvokeOperationIn.Data/ns0:Content, 'Received In OnEvent.')</bpws:from>
+                        <bpws:to>$InitiateProcessOperationIn.Data/ns0:Content</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+                    </bpws:scope>
+                </bpws:onEvent>
+            </bpws:eventHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:wait name="Wait1">
+                <bpws:for>'P0Y0M0DT0H0M15S'</bpws:for>
+            </bpws:wait>
+            </bpws:sequence>
+        </bpws:scope>
+        <bpws:reply name="Reply1" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:CorrelationTestPortType" variable="InitiateProcessOperationIn"/>
+    </sequence>
+</process>

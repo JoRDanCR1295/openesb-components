@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/client"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${libs.jaxws20.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-client-check-NewWebServiceFromWSDL" depends="wsimport-init">
+        <condition property="wsimport-client-NewWebServiceFromWSDL.notRequired">
+            <available file="${build.generated.dir}/wsimport/client/org/netbeans/j2ee/wsdl/junitwsdl" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-client-NewWebServiceFromWSDL" depends="wsimport-init,wsimport-client-check-NewWebServiceFromWSDL" unless="wsimport-client-NewWebServiceFromWSDL.notRequired">
+        <wsimport fork="true" xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/client" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/xml-resources/web-service-references/NewWebServiceFromWSDL/wsdl/localhost_8080/junitWSDLService/NewWebServiceFromWSDL.wsdl" wsdlLocation="http://localhost:8080/junitWSDLService/NewWebServiceFromWSDL?wsdl" catalog="catalog.xml">
+            <jvmarg value="-Djava.endorsed.dirs=${jaxws.endorsed.dir}"/>
+        </wsimport>
+        <copy todir="${build.classes.dir}">
+            <fileset dir="${build.generated.dir}/wsimport/binaries" includes="**/*.xml"/>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-NewWebServiceFromWSDL" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/client/org/netbeans/j2ee/wsdl/junitwsdl"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-NewWebServiceFromWSDL"/>
+    <target name="wsimport-client-compile" depends="-pre-pre-compile">
+        <j2seproject3:depend srcdir="${build.generated.dir}/wsimport/client" classpath="${libs.jaxws20.classpath}:${javac.classpath}" destdir="${build.classes.dir}"/>
+        <j2seproject3:javac srcdir="${build.generated.dir}/wsimport/client" classpath="${libs.jaxws20.classpath}:${javac.classpath}" destdir="${build.classes.dir}"/>
+    </target>
+</project>

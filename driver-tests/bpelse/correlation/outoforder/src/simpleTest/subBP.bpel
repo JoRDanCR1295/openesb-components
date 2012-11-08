@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="subBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/outoforder/subBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/outoforder/subBP" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/subBPinitiating" location="subBPinitiating.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/subBPCorrelating" location="subBPCorrelating.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="initiatingPLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating" partnerLinkType="tns:subBPinitiating" myRole="subBPinitiatingPortTypeRole"/>
+        <partnerLink name="correlatingPLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPCorrelating" partnerLinkType="tns:subBPCorrelating" myRole="subBPCorrelatingPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SubBPinitiatingOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating" messageType="tns:subBPinitiatingOperationResponse"/>
+        <variable name="SubBPCorrelatingOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPCorrelating" messageType="tns:subBPCorrelatingOperationRequest"/>
+        <variable name="SubBPinitiatingOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating" messageType="tns:subBPinitiatingOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="tns:property" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="initiatingPLink" operation="subBPinitiatingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating" portType="tns:subBPinitiatingPortType" variable="SubBPinitiatingOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="Receive2" createInstance="no" partnerLink="correlatingPLink" operation="subBPCorrelatingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPCorrelating" portType="tns:subBPCorrelatingPortType" variable="SubBPCorrelatingOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>'in sub BP'</from>
+                <to variable="SubBPinitiatingOperationOut" part="part1"/>
+            </copy>
+            <copy>
+                <from>''</from>
+                <to variable="SubBPinitiatingOperationOut" part="part2"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="initiatingPLink" operation="subBPinitiatingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/subBPinitiating" portType="tns:subBPinitiatingPortType" variable="SubBPinitiatingOperationOut"/>
+    </sequence>
+</process>

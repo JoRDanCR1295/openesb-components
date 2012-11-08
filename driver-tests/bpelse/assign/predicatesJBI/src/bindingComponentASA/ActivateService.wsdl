@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+name="ESB" 
+xmlns:esb="http://www.acme.co.nz/ESB" 
+targetNamespace="http://www.acme.co.nz/ESB" 
+xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<types>
+            <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.acme.co.nz/ESB">
+                <xsd:complexType name="arrayOfString">
+                        <xsd:sequence>
+                                <xsd:element name="item" type="xsd:string" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                        <xsd:attribute name="test" type="xsd:string"/>
+                </xsd:complexType>
+
+
+                <xsd:complexType name="activateServiceObjectType">
+                        <xsd:sequence>
+                                <xsd:element name="objectNames" type="esb:arrayOfString" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                </xsd:complexType>
+                <xsd:element name="activateService" type="esb:activateServiceObjectType"/>
+
+
+                <xsd:complexType name="activateServiceResponseObjectType">
+                        <xsd:sequence>
+                                <xsd:element name="objectNames" type="esb:arrayOfString" />
+                        </xsd:sequence>
+                </xsd:complexType>
+                <xsd:element name="activateServiceResponse" type="esb:activateServiceResponseObjectType"/>
+                
+                <xsd:complexType name="detail">
+                        <xsd:sequence>
+                                <xsd:element name="code" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="message" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                </xsd:complexType>                
+                <xsd:complexType name="faultObjectType">
+                        <xsd:sequence>
+                                <xsd:element name="faultcode" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="faultstring" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="faultactor" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="detail" type="esb:detail" minOccurs="0"/>
+                        </xsd:sequence>
+                </xsd:complexType>                
+                
+                <xsd:element name="fault" type="esb:faultObjectType"/>
+            </xsd:schema>
+	</types>
+	<message name="activateServiceSoapIn">
+		<part name="parameters" element="esb:activateService"/>
+	</message>
+	<message name="activateServiceSoapOut">
+		<part name="activateServiceResult" element="esb:activateServiceResponse"/>
+	</message>
+	<message name="soapFault">
+		<part name="fault" element="esb:fault"/>
+	</message>
+        <portType name="ActivateServicePortType">
+   	     <operation name="activateService">
+		<input name="activateServiceRequest" message="esb:activateServiceSoapIn"/>
+                <output name="activateServiceResponse" message="esb:activateServiceSoapOut"/>
+                <fault name="fault" message="esb:soapFault"/>
+             </operation>
+        </portType>
+
+	<binding name="ActivateServiceBinding" type="esb:ActivateServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="activateService">
+			<soap:operation soapAction="activateService" style="document"/>
+			<input name="activateServiceRequest">
+				<soap:body parts="parameters" use="literal" namespace="http://www.acme.co.nz/ESB"/>
+			</input>
+			<output name="activateServiceResponse">
+				<soap:body parts="activateServiceResult" use="literal" namespace="http://www.acme.co.nz/ESB"/>
+			</output>
+			<fault name="fault">
+				<soap:fault name="fault" use="literal" namespace="http://www.acme.co.nz/ESB"/>
+			</fault>
+		</operation>
+         </binding>
+
+	<service name="ActivateServiceService">
+		<port name="ActivateServicePort" binding="esb:ActivateServiceBinding">
+			<soap:address location="http://localhost:${HttpDefaultPort}/activateService"/>
+		</port>
+	</service>
+
+	<plnk:partnerLinkType name="activateService">
+		<plnk:role name="activateServiceProvider" portType="esb:ActivateServicePortType">
+		</plnk:role>
+	</plnk:partnerLinkType>
+</definitions>

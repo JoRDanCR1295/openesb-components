@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OnEvtReceiveReplyInProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnEvtReceiveReplyInProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/OnEvtReceiveReplyInProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess" xmlns:ns3="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_PTypes" xmlns:ns4="http://xml.netbeans.org/schema/DataTypes" xmlns:ns5="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:ns6="http://j2ee.netbeans.org/wsdl/OnEventReplyInAssoScope_PTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEvtReceiveReplyInProcess_PTypes" location="OnEvtReceiveReplyInProcess_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEventReplyInAssoScope_PTypes" location="../OnEventReplyInAssoScope/OnEventReplyInAssoScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns6:OnEventReplyInAssoScope_PTypesPartner2" myRole="OnEventReplyInAssoScope_PTypesPortType2Role"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns3:OnEvtReceiveReplyInProcess_PTypesPartner1" myRole="OnEvtReceiveReplyInProcess_PTypesPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns3:OnEvtReceiveReplyInProcess_PTypesPartner" myRole="OnEvtReceiveReplyInProcess_PTypesPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OnEvtReceiveReplyInProcess_PTypesOperationIn" messageType="ns5:message1"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns5:property1"/>
+    </correlationSets>
+    <eventHandlers>
+        <bpws:onEvent partnerLink="PartnerLink2" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns3:OnEvtReceiveReplyInProcess_PTypesPortType1" variable="eventVar1" messageType="ns5:message1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+            <bpws:scope name="Scope1">
+                <bpws:sequence name="Sequence2">
+                    <bpws:assign name="Assign1">
+                        <bpws:copy>
+                            <bpws:from>concat($OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message, '-Reply2')</bpws:from>
+                            <bpws:to>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message</bpws:to>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:reply name="Reply2" partnerLink="PartnerLink2" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns3:OnEvtReceiveReplyInProcess_PTypesPortType1" variable="OnEvtReceiveReplyInProcess_PTypesOperationIn"/>
+                    <bpws:receive name="Receive2" partnerLink="PartnerLink3" operation="OnEventReplyInAssoScope_PTypesOperation" portType="ns6:OnEventReplyInAssoScope_PTypesPortType2" createInstance="no" variable="OnEvtReceiveReplyInProcess_PTypesOperationIn">
+                        <bpws:correlations>
+                            <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                        </bpws:correlations>
+                    </bpws:receive>
+                </bpws:sequence>
+            </bpws:scope>
+        </bpws:onEvent>
+    </eventHandlers>
+    <sequence name="Sequence1">
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns3:OnEvtReceiveReplyInProcess_PTypesPortType" variable="OnEvtReceiveReplyInProcess_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message, '-Reply1')</bpws:from>
+                <bpws:to>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="OnEvtReceiveReplyInProcess_PTypesOperation" portType="ns3:OnEvtReceiveReplyInProcess_PTypesPortType" variable="OnEvtReceiveReplyInProcess_PTypesOperationIn"/>
+        <bpws:wait name="Wait1">
+            <bpws:for>'P0Y0M0DT0H0M15S'</bpws:for>
+        </bpws:wait>
+        <assign name="Assign3">
+            <copy>
+                    <from>concat($OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message, '-Reply3')</from>
+                        <to>$OnEvtReceiveReplyInProcess_PTypesOperationIn.part1/Message</to>
+                </copy>
+        </assign>
+        <reply name="Reply3" partnerLink="PartnerLink3" operation="OnEventReplyInAssoScope_PTypesOperation" portType="ns6:OnEventReplyInAssoScope_PTypesPortType2" variable="OnEvtReceiveReplyInProcess_PTypesOperationIn"/>
+    </sequence>
+</process>

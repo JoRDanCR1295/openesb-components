@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="request-response-initiatejoin_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/request-response-initiatejoin_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/request-response-initiatejoin_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:request-response-initiatejoinChildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:request-response-initiatejoinChildTargetNamespace"
+            location="request-response-initiatejoin_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:request-response-initiatejoinChildServiceLinkType"
+                     myRole="request-response-initiatejoinChildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="request-response-initiatejoinChildOperation_Output"
+                  messageType="ns0:request-response-initiatejoinChildMessage"></variable>
+        <variable name="request-response-initiatejoinChildOperation_Input"
+                  messageType="ns0:request-response-initiatejoinChildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="request-response-initiatejoinChildOperation"
+                 partnerLink="plink_child"
+                 portType="ns0:request-response-initiatejoinChildPortType"
+                 operation="request-response-initiatejoinChildOperation"
+                 variable="request-response-initiatejoinChildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$request-response-initiatejoinChildOperation_Output.request-response-initiatejoinChildPart/string</from>
+                <to>$request-response-initiatejoinChildOperation_Input.request-response-initiatejoinChildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_child"
+               portType="ns0:request-response-initiatejoinChildPortType"
+               operation="request-response-initiatejoinChildOperation"
+               variable="request-response-initiatejoinChildOperation_Input"></reply>
+    </sequence>
+</process>

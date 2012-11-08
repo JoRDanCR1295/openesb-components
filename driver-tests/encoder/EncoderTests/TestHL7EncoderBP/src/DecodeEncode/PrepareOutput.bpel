@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PrepareOutput"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestHL7Encoder/PrepareOutput"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/TestHL7Encoder/PrepareOutput"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/PrepareOutput"
+    xmlns:ns0="http://xml.netbeans.org/schema/TestHL7Encoder/OutputEnvelope">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/PrepareOutput"
+        location="PrepareOutput.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:PrepareOutput1"
+            myRole="PrepareOutputPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="PrepareOutputOperationOut"
+            messageType="ns1:PrepareOutputOperationReply"/>
+        <bpws:variable name="PrepareOutputOperationIn"
+            messageType="ns1:PrepareOutputOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive-Output.txt" createInstance="yes" partnerLink="PartnerLink1"
+            operation="PrepareOutputOperation" portType="ns1:PrepareOutputPortType"
+            variable="PrepareOutputOperationIn">
+            <bpws:documentation>Receive from Output.txt file</bpws:documentation>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:documentation>Populate Action and payload</bpws:documentation>
+            <bpws:copy>
+                <bpws:from variable="PrepareOutputOperationIn" part="pooIn"/>
+                <bpws:to>$PrepareOutputOperationOut.pooOut/ns0:Payload</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>getResult</bpws:literal>
+                </bpws:from>
+                <bpws:to>$PrepareOutputOperationOut.pooOut/ns0:Action</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1"
+            operation="PrepareOutputOperation" portType="ns1:PrepareOutputPortType"
+            variable="PrepareOutputOperationOut"/>
+    </sequence>
+</process>

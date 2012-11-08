@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="VacationApproval" targetNamespace="http://j2ee.netbeans.org/wsdl/VacationApproval"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/VacationApproval" xmlns:ns="http://xml.netbeans.org/schema/VacationApproval" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/VacationApproval">
+            <xsd:import namespace="http://xml.netbeans.org/schema/VacationApproval" schemaLocation="VacationApproval.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="VacationApprovalOperationRequest">
+        <part name="part1" element="ns:vacationRequest"/>
+    </message>
+    <message name="VacationApprovalOperationReply">
+        <part name="part1" element="ns:vacationReply"/>
+    </message>
+    <portType name="submitVacationRequest">
+        <wsdl:operation name="VacationApprovalOperation">
+           <wsdl:input name="input1" message="tns:VacationApprovalOperationRequest"/>
+           <!-- <wsdl:output name="output1" message="tns:VacationApprovalOperationReply"/> -->
+        </wsdl:operation>
+    </portType>
+    <portType name="approveVacationRequest">
+        <wsdl:operation name="VacationApprovalOperation">
+           <wsdl:input name="input1" message="tns:VacationApprovalOperationRequest"/>
+           <wsdl:output name="output1" message="tns:VacationApprovalOperationReply"/>
+        </wsdl:operation>
+    </portType>
+
+    <portType name="submitVacationRequestFileOut">
+        <wsdl:operation name="VacationApprovalOperation">
+           <wsdl:input name="output1" message="tns:VacationApprovalOperationReply"/>
+        </wsdl:operation>
+    </portType>    
+    <binding name="VacationApprovalBinding" type="tns:approveVacationRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="VacationApprovalOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="VacationSubmitBinding" type="tns:submitVacationRequest">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="VacationApprovalOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>    
+    <binding name="VacationApprovalFileOutBinding" type="tns:submitVacationRequestFileOut">
+        <file:binding/>
+        <operation name="VacationApprovalOperation">
+            <file:operation/>
+            <input name="output1">
+                <file:message use="literal" 
+                              fileName="VacationApprovalOperationReply.xml"
+                              multipleRecordsPerFile="false"
+                              part="part1"
+                              fileNameIsPattern="false"
+                              addEOL="false"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="VacationApprovalService">
+        <wsdl:port name="VacationApprovalPort" binding="tns:VacationApprovalBinding">
+            <soap:address location="http://localhost:18181/VacationApprovalService/VacationApprovalPort"/>
+        </wsdl:port>
+    </service>
+    <service name="VacationApprovalFileOutService">
+        <port name="VacationApprovalFileOutPort" binding="tns:VacationApprovalFileOutBinding">
+            <file:address fileDirectory="/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/soapui/output"/>
+        </port>
+    </service>    
+    <service name="VacationSubmitService">
+        <port name="VacationSubmitPort" binding="tns:VacationSubmitBinding">
+            <soap:address location="http://localhost:18181/VacationSubmitService/VacationApprovalPort"/>
+        </port>
+    </service>        
+    <plnk:partnerLinkType name="VacationApproval1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="approveVacationRequestRole" portType="tns:approveVacationRequest"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="VacationSubmit1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="submitVacationRequestRole" portType="tns:submitVacationRequest"/>
+    </plnk:partnerLinkType>   
+    <plnk:partnerLinkType name="VacationOutPutFile">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="outputVacationReplyRole" portType="tns:submitVacationRequestFileOut"/>
+    </plnk:partnerLinkType>      
+</definitions>

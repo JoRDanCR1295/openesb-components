@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="UserProfileCorbaInterfaceOperationsService" targetNamespace="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/">
+    <xs:complexType name="userProfile">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="address" type="xs:string"/>
+            <xs:element name="age" type="xs:int"/>
+            <xs:element minOccurs="0" name="name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType final="#all" name="userProfileArray">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:userProfile"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="UserProfileException" type="tns:UserProfileException"/>
+    <xs:complexType name="UserProfileException">
+        <xs:sequence>
+            <xs:element name="reason" nillable="true" type="xs:string"/>
+            <xs:element name="profiles" nillable="true" type="tns:userProfileArray"/>
+            <xs:element name="userCode" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="setUserProfileArray">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="es" type="tns:userProfile"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="setUserProfileArrayResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getUserProfile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="code" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getUserProfileResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" type="tns:userProfile"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>  </wsdl:types>
+  <wsdl:message name="setUserProfileArrayResponse">
+    <wsdl:part name="parameters" element="tns:setUserProfileArrayResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getUserProfileResponse">
+    <wsdl:part name="parameters" element="tns:getUserProfileResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UserProfileException">
+    <wsdl:part name="UserProfileException" element="tns:UserProfileException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="setUserProfileArray">
+    <wsdl:part name="parameters" element="tns:setUserProfileArray">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getUserProfile">
+    <wsdl:part name="parameters" element="tns:getUserProfile">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="UserProfileCorbaInterfaceOperationsService">
+    <wsdl:operation name="setUserProfileArray">
+      <wsdl:input name="setUserProfileArray" message="tns:setUserProfileArray">
+    </wsdl:input>
+      <wsdl:output name="setUserProfileArrayResponse" message="tns:setUserProfileArrayResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUserProfile">
+      <wsdl:input name="getUserProfile" message="tns:getUserProfile">
+    </wsdl:input>
+      <wsdl:output name="getUserProfileResponse" message="tns:getUserProfileResponse">
+    </wsdl:output>
+      <wsdl:fault name="UserProfileException" message="tns:UserProfileException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UserProfileCorbaInterfaceOperationsServiceCorbaBinding" type="tns:UserProfileCorbaInterfaceOperationsService">
+<imolacorba:binding>
+<imolacorba:idl>
+
+
+module it {
+module imolinfo {
+module jbi4corba {
+module test {
+module webservice {
+module generator {
+module testclasses {
+   
+   // sequence + typedef
+	typedef sequence&lt;long&gt; SeqLong;
+
+    // Userprofile Struct object
+    struct UserProfile {
+        string name;
+        string address;
+        long age;
+        SeqLong testArray;
+    };	
+    
+	// sequence + typedef
+   typedef sequence&lt;UserProfile&gt; SeqUserProfile;  
+                
+    // UserProfileException
+    exception UserProfileException {
+        string userCode;
+        string reason;
+        SeqUserProfile profiles;
+    };
+
+    // Gest the UserProfile from the user code
+    interface UserProfileCorbaInterface {    
+        UserProfile getUserProfile(in string code) raises (UserProfileException);   
+        
+        SeqLong setUserProfileArray(in SeqUserProfile es);         
+    };
+    
+};};};};};};};
+
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="setUserProfileArray">
+      <wsdl:input name="setUserProfileArray">
+      </wsdl:input>
+      <wsdl:output name="setUserProfileArrayResponse">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUserProfile">
+      <wsdl:input name="getUserProfile">
+      </wsdl:input>
+      <wsdl:output name="getUserProfileResponse">
+      </wsdl:output>
+      <wsdl:fault name="UserProfileException">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="UserProfileCorbaInterfaceOperationsService">
+    <wsdl:port name="UserProfileCorbaInterfaceOperationsServiceCorbaPort" binding="tns:UserProfileCorbaInterfaceOperationsServiceCorbaBinding">
+<imolacorba:address name="CorbaUserProfile" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="UserProfileCorbaInterfaceOperationsService">
+<plnk:role name="UserProfileCorbaInterfaceOperationsServicePortTypeRole" portType="tns:UserProfileCorbaInterfaceOperationsService"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

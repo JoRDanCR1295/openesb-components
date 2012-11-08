@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="MainBP" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/MainBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MainBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPRecover">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SubBPRecover" location="SubBPRecover.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="OutPartnerLink" partnerLinkType="ns1:MainBPOutboundPTRole" partnerRole="MainBPOutboundPTRole"/>
+        <bpws:partnerLink name="InOutPartnerLink" partnerLinkType="ns1:InOutPartner1" partnerRole="InOutPTRole"/>
+        <bpws:partnerLink name="InPartnerLink" partnerLinkType="ns1:InPartner" myRole="MainBPInboundPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="OutboundVar" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="InOutOutput" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="InOutInput" messageType="ns1:InboundMsg"/>
+        <bpws:variable name="InVar" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="InReceive" createInstance="yes" partnerLink="InPartnerLink" operation="MainBPInboundOper" portType="ns1:MainBPInboundPT" variable="InVar"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$InVar.part1/msg1</bpws:from>
+                <bpws:to>$InOutInput.part1/msg1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InVar.part1/content1/id</bpws:from>
+                <bpws:to>$InOutInput.part1/content1/id</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InVar.part1/content1/data</bpws:from>
+                <bpws:to>$InOutInput.part1/content1/data</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InOutInvoke" partnerLink="InOutPartnerLink" operation="InOutOper" portType="ns1:InOutPT" inputVariable="InOutInput" outputVariable="InOutOutput"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$InOutOutput.part1/msg1</bpws:from>
+                <bpws:to>$OutboundVar.part1/msg1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InOutOutput.part1/content1/id</bpws:from>
+                <bpws:to>$OutboundVar.part1/content1/id</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InOutOutput.part1/content1/data</bpws:from>
+                <bpws:to>$OutboundVar.part1/content1/data</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InvokeOut" partnerLink="OutPartnerLink" operation="MainBPOutboundOper" portType="ns1:MainBPOutboundPT" inputVariable="OutboundVar"/>
+    </sequence>
+   
+</process>

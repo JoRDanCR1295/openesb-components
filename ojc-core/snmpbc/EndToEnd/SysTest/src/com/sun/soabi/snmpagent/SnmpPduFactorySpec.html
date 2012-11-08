@@ -1,0 +1,205 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR"
+ content="Mozilla/4.61 [en] (X11; I; SunOS 5.8 sun4u) [Netscape]">
+  <title>Implementing SNMP security with Java DMK 5.1</title>
+</head>
+<body text="#000000" bgcolor="#ffffff">
+<i>Copyright 2004 Sun Microsystems, Inc. All rights reserved.</i> <br>
+<i>This software is the proprietary information of Sun Microsystems,
+Inc.</i> <br>
+<i>Use is subject to license terms.</i>
+<p><i>Copyright 2004 Sun Microsystems, Inc. Tous droits
+r&eacute;serv&eacute;s.</i> <br>
+<i>Ce logiciel est propriet&eacute; de Sun Microsystems, Inc.</i> <br>
+<i>Distribu&eacute; par des licences qui en restreignent l'utilisation.</i> </p>
+<h1 style="text-align: justify;"> Implementing SNMP security with Java
+DMK 5.1</h1>
+Java DMK 5.1 provides several means of implementing SNMP security.
+<p style="text-align: justify;">First, Java DMK 5.1 provides an SNMP v3
+adaptor, which lets you benefit of the SNMP v3 security, as defined by
+RFC 2574. This should be the preferred mean to implement security
+whenever secure SNMP agents are needed. All SNMP v3 security aspects
+are handled completely at SNMP adaptor level. Hence the instrumentation
+of a MIB does not depend on which protocol version it will be accessed
+through. MIBs that were developed against Java DMK 4.2 can thus be
+directly registered into the new <tt>SnmpAdaptorServerV3</tt>, and
+will benefit of the whole SNMP v3 security mechanisms. </p>
+<div> </div>
+<p style="text-align: justify;">In addition, earlier versions of Java
+DMK used to provide a hook - via the SnmpPduFactory, which enabled the
+implementation of authentication and encryption on top of the SNMP
+protocol adaptor. This could be used to implement security in a
+proprietary way over the regular SNMP v1/v2 PDUs. In Java DMK 5.1, this
+hook has been preserved. It is however recommended to migrate those
+SNMP applications that need better security than the regular SNMP v1/v2
+community-based mechanism to standard SNMP v3 security. </p>
+<div style="text-align: justify;"> </div>
+<p style="text-align: justify;">For more information on SNMP v3
+security, refer to the <tt>AgentV3</tt>,<tt>AgentEncryptV3</tt>,<tt>SyncManagerV3</tt>
+and <tt>SyncManagerEncryptV3</tt> examples in the <br>
+<i>installDir</i>/SUNWjdmk/5.1/examples/current/Snmp/Agent and <i>installDir</i>/SUNWjdmk/5.1/examples/current/Snmp/Manager
+directories. </p>
+<div style="text-align: justify;"> </div>
+<p style="text-align: justify;">Note that the Java DMK 4.2 applications
+which have implemented their own PDU factory will have to be revisited
+if they need to be imported in a Java DMK 5.1 SnmpAdaptorServerV3, as
+the SnmpPduFactory developed for SNMP v1/v2 PDUs will not be compatible
+with SNMP v3 PDUs. </p>
+<div style="text-align: justify;"> </div>
+<p style="text-align: justify;">The SnmpPduFactory hook provided by
+Java DMK involves the following Java classes: </p>
+<div style="text-align: justify;"> </div>
+<ul style="text-align: justify;">
+  <li> <tt>com.sun.management.snmp.SnmpPduFactory</tt></li>
+  <li> <tt>com.sun.management.snmp.SnmpPduFactoryBER</tt></li>
+  <li> <tt>com.sun.management.snmp.SnmpPdu</tt></li>
+  <li> <tt>com.sun.management.snmp.SnmpMsg</tt></li>
+</ul>
+<div style="text-align: justify;"> The goal of this document is to
+explain how to use these classes. The first section describes how Java
+DMK encodes and decodes SNMP packets (and introduces <tt>SnmpPdu</tt>
+and <tt>SnmpMsg</tt>). The second section explains the conversion
+between <tt>SnmpPdu</tt> and <tt>SnmpMsg</tt> (and introduces <tt>SnmpPduFactory</tt>
+and <tt>SnmpPduFactoryBER</tt>). The last section describes how to
+implement and set up a new <tt>SnmpPduFactory</tt> object. </div>
+<h3 style="text-align: justify;"> How Java DMK decodes and encodes SNMP
+packets</h3>
+<div style="text-align: justify;"> After receiving an SNMP packet, Java
+DMK performs the following steps: </div>
+<ol style="text-align: justify;">
+  <li> The received bytes are translated into an <tt>SnmpMsg</tt> object
+by the Message Processing Subsystem. If the SNMP protocol version of the
+original request was v1/v2, this step simply involves the BER decoding
+of the ASN.1 Message sequence as defined in RFC 1901. If the SNMP
+protocol version of the original request was v3, the Message Processing
+Subsystem will in addition invoke the security subsystem in order to
+authenticate and decrypt the message.</li>
+  <li> The <tt>SnmpMsg</tt> object is then translated into an <tt>SnmpPdu</tt>
+object.</li>
+  <li> The <tt>SnmpPdu</tt> is analyzed and the corresponding operation
+is performed.</li>
+</ol>
+<div style="text-align: justify;"> Before sending an SNMP packet, Java
+DMK performs the following steps: </div>
+<ol style="text-align: justify;">
+  <li> An <tt>SnmpPdu</tt> object is initialized according to the
+requested operation. This could be either an <tt>SnmpPduPacket</tt>
+(v1/v2) or an <tt>SnmpScopedPduPacket</tt> (v3) - see Javadoc of <tt>com.sun.management.snmp.SnmpPdu</tt>.</li>
+  <li> The <tt>SnmpPdu</tt> object is translated into an <tt>SnmpMsg.</tt></li>
+  <li> The <tt>SnmpMsg </tt>is then passed to the Message Processing
+Subsystem, and then translated into bytes. If the SNMP protocol version
+is v1/v2, this step simply involves the BER encoding of the ASN.1
+Message sequence as defined in RFC 1901. If the SNMP protocol version is
+v3, the Message Processing Subsystem will in addition invoke the
+Security Subsystem in order to sign and encrypt the message.</li>
+</ol>
+<div style="text-align: justify;"> The <tt>SnmpPdu</tt> object is the
+fully decoded description of the SNMP request. In particular, it
+includes the operation type (get, set...), the list of variables to be
+operated upon, the request identifier, the protocol version...
+<blockquote>
+  <pre><b>abstract class</b> SnmpPdu {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public int</b> version ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public int</b> type ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public int</b> requestId ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public</b> SnmpVarBind[] varBindList ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>}</pre>
+</blockquote>
+The <tt>SnmpMsg</tt> is a partially decoded representation of the SNMP
+request. Only the protocol version and security parameters are decoded.
+All the other parameters remain encoded. </div>
+<p style="text-align: justify;">The <tt>SnmpMsg</tt> class is the base
+class derived from the <tt>Message</tt> syntax from RFC 1157 and RFC
+1901, and <tt>SNMPv3Message</tt> from RFC 2572. The <tt>SnmpMessage</tt>
+class which was already present in Java DMK 4.2 derives from <tt>SnmpMsg</tt>
+and represents a SNMP v1 or v2 Message as described in RFC 1157 and RFC
+1901. As SNMP v3 introduces additional security parameters, the <tt>SnmpMessage</tt>
+class can only be used for v1/v2 messages. <tt>SnmpPduFactory</tt>
+implementations that make direct use of this class will therefore need
+to be updated if they need to be imported into a Java DMK 5.1 SNMP v3
+protocol adaptor. However, they do not need to be changed as long as
+the old <tt>SnmpAdaptorServer</tt> is used. </p>
+<div style="text-align: justify;">
+<blockquote>
+  <pre><b>abstract class</b> SnmpMsg {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public int</b> version ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>}</pre>
+  <pre><b>class</b> SnmpMessage extends SnmpMsg {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public byte[]</b> community ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>public byte[]</b> data ;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>}</pre>
+</blockquote>
+</div>
+<h3 style="text-align: justify;"> The <tt>SnmpPduFactory</tt> interface</h3>
+<div style="text-align: justify;"> When Java DMK needs to translate an <tt>SnmpMsg</tt>
+object into an <tt>SnmpPdu</tt>object, it delegates this task to an
+object which implements <tt>SnmpPduFactory</tt>, as follows:
+<blockquote>
+  <pre><b>interface</b> SnmpPduFactory {<br><br>&nbsp; <i>// Makes an SnmpPdu from an SnmpMsg<br></i>&nbsp; <b>public</b> SnmpPdu decodeSnmpPdu(SnmpMsg msg)&nbsp;<br>&nbsp; <b>throws</b> SnmpStatusException ;<br>&nbsp;&nbsp;<br>&nbsp; <i>// Makes an SnmpMsg from an SnmpPdu<br></i>&nbsp; <b>public</b> SnmpMsg encodeSnmpPdu(SnmpPdu pdu, <b>int</b> maxPktSize)<br>&nbsp; <b>throws</b> SnmpStatusException, SnmpTooBigException ;<br>&nbsp;&nbsp;<br>}</pre>
+</blockquote>
+<div style="text-align: justify;"><b>Note:</b> the SnmpPduFactory also
+has two additional methods inherited from Java DMK 4.2, <tt>decodePdu(...)</tt>
+and <tt>encodePdu(...)</tt>which are now deprecated but kept for
+backward compatibility. </div>
+</div>
+<p style="text-align: justify;">Java DMK provides a default
+implementation of this interface: it is named <tt>SnmpPduFactoryBER</tt>
+and it is used automatically unless stated otherwise. The <tt>SnmpPduFactoryBER</tt>
+methods control every incoming or outgoing SNMP PDUs: </p>
+<div style="text-align: justify;"> </div>
+<ul style="text-align: justify;">
+  <li> if <tt>decodeSnmpPdu()</tt> returns null, Java DMK will assume
+that the <tt>SnmpMsg</tt> is unsafe and will drop it.</li>
+  <li> if <tt>encodeSnmpPdu()</tt> returns null, Java DMK will assume
+that it cannot send the <tt>SnmpPdu</tt> safely and will abort the
+current request.</li>
+</ul>
+<div style="text-align: justify;"> Therefore, it's possible to implement
+a security policy, by using an <tt>SnmpPduFactory</tt> class. However,
+it is recommended to rely rather on the standard SNMP v3 policy. As a
+matter of fact, using the SnmpPduFactory to implement additional levels
+of security does only make sense on a v1/v2 framework, when SNMP v3 is
+not an option (e.g. the Management Console can only use v2). </div>
+<h3 style="text-align: justify;"> Implementing a new <tt>SnmpPduFactory</tt>
+class</h3>
+<div style="text-align: justify;"> Java DMK expects <tt>decodeSnmpPdu()</tt>
+to behave as follows: </div>
+<ul style="text-align: justify;">
+  <li> it decodes the <tt>SnmpMsg</tt> object and returns a fully
+initialized <tt>SnmpPdu</tt>,</li>
+  <li> it returns null if it judges the <tt>SnmpMsg</tt> object to be
+unsafe. In this case, Java DMK will drop the <tt>SnmpMsg </tt>object.</li>
+  <li> it throws an <tt>SmpStatusException</tt> if decoding failed or if
+the pdu contains out-of-bounds values. In this case, Java DMK will drop
+the <tt>SnmpMsg </tt>object.</li>
+</ul>
+<div style="text-align: justify;"> Java DMK expects <tt>encodeSnmpPdu()</tt>
+to behave as follows: </div>
+<ul>
+  <li> it encodes the <tt>SnmpPdu</tt> object and returns a fully
+initialized <tt>SnmpMsg </tt>object.</li>
+  <li> it throws an <tt>SnmpStatusException</tt> if the <tt>SnmpPdu</tt>
+object contains out-of-bounds values.</li>
+  <li> it throws an <tt>SnmpTooBigException</tt> if the <tt>SnmpPdu</tt>
+object does not fit into the internal buffer used by Java DMK.</li>
+  <li> it may return null if it fails to secure the <tt>SnmpPdu</tt>
+object. In this case, Java DMK will abort the current request and
+reports an error. This probably means that the agent/manager contains a
+bug.</li>
+</ul>
+As SnmpPdu and SnmpMsg are abstract class, it is recommended to
+delegate the creation/initialization of these classes to an instance of
+the provided <tt>SnmpPduFactoryBER</tt>, and to work on the returned
+result.
+<p>The <tt>setPduFactory()</tt> method enables the <tt>SnmpPduFactory</tt>
+object used by the SNMP adaptor to be changed, as follows: </p>
+<blockquote>
+  <pre>&nbsp; ...<br>&nbsp; myAdaptor.setPduFactory(<b>new</b> MyFireWallPduFactory()) ;<br>&nbsp; ...</pre>
+</blockquote>
+In Java DMK 4.2 the <tt>SnmpPduFactory</tt> was attached to the <tt>SnmpPeer</tt>
+object. In Java DMK 5.1 the <tt>SnmpPduFactory</tt> is attached  to the <tt>SnmpSession</tt>.
+Factory set via deprecated <tt>SnmpPeer</tt> API  is reused in Java DMK
+5.1. It can be changed using the <tt>setPduFactory</tt> method, as
+follows:
+<blockquote>
+  <pre>&nbsp; ...<br>&nbsp; SnmpSession mySession = <b>new</b> SnmpSession() ;<br>&nbsp; mySession.setPduFactory(<b>new</b> MyFireWallPduFactory()) ;<br>&nbsp; mySession.snmpGet(myPeer, <b>this</b>, myVarBindList) ;<br>&nbsp; ...</pre>
+</blockquote>
+<p> WARNING : Setting 2 different factories in the peer and the session
+can lead to unpredictable behavior. Use the same factory is you set it
+at the 2 levels. </p>
+</body>
+</html>

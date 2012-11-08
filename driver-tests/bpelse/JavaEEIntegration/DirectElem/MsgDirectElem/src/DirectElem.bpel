@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DirectElem"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DirectElem"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DirectElem" xmlns:ns1="http://j2ee.netbeans.org/wsdl/DirectElem">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/DirectElem" location="DirectElem.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="CallJavaEEPartnerLink" partnerLinkType="ns1:CallJavaEEPartnerLinkType" partnerRole="CallJavaEEPTRole"/>
+        <bpws:partnerLink name="CallBPPartnerLink" partnerLinkType="ns1:CallBPPartnerLinkType" myRole="CallBPPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="CallJavaEEOperOut" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="CallJavaEEOperIn" messageType="ns1:InboundMsg"/>
+        <bpws:variable name="CallBPOperOut" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="CallBPOperIn" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="CallBPReceive" createInstance="yes" partnerLink="CallBPPartnerLink" operation="CallBPOper" portType="ns1:CallBPPT" variable="CallBPOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($CallBPOperIn.Input/strElem, ' Sending Msg to JavaEE from BPEL:')</bpws:from>
+                <bpws:to>$CallJavaEEOperIn.Input/strElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$CallBPOperIn.Input/intElem</bpws:from>
+                <bpws:to>$CallJavaEEOperIn.Input/intElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="CallJavaEEInv" partnerLink="CallJavaEEPartnerLink" operation="CallJavaEEOper" portType="ns1:CallJavaEEPT" inputVariable="CallJavaEEOperIn" outputVariable="CallJavaEEOperOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($CallJavaEEOperOut.Output/strElem, ' Received Msg From JavaEE:')</bpws:from>
+                <bpws:to>$CallBPOperOut.Output/strElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$CallJavaEEOperOut.Output/intElem</bpws:from>
+                <bpws:to>$CallBPOperOut.Output/intElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="CallBCReply" partnerLink="CallBPPartnerLink" operation="CallBPOper" portType="ns1:CallBPPT" variable="CallBPOperOut"/>
+    </sequence>
+</process>

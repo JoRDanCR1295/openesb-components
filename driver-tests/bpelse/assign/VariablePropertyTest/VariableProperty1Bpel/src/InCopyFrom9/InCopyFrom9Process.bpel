@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InCopyFrom9Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/VariableProperty1Bpel/InCopyFrom9Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/VariableProperty1Bpel/InCopyFrom9Process" xmlns:ns0="http://j2ee.netbeans.org/wsdl/InCopyFrom9" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://xml.netbeans.org/schema/simple">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InCopyFrom9" location="InCopyFrom9.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/simple" location="../simple.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="PlinkInOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom9" partnerLinkType="tns:InCopyFrom9" myRole="InCopyFrom9PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutputBoolVar" type="xsd:boolean"/>
+        <variable name="OutputIntVar" type="xsd:int"/>
+        <variable name="BoolVariable" type="xsd:boolean"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="TypeVariable" type="ns2:ComplexType"/>
+        <variable name="InCopyFrom9OperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom9" messageType="tns:InCopyFrom9OperationResponse"/>
+        <variable name="InCopyFrom9OperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom9" messageType="tns:InCopyFrom9OperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PlinkInOut" operation="InCopyFrom9Operation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom9" portType="tns:InCopyFrom9PortType" variable="InCopyFrom9OperationIn"/>
+        <assign name="PreAssign">
+            <copy>
+                <from>$InCopyFrom9OperationIn.inputPart/ns2:itemName</from>
+                <to>$TypeVariable/ns2:itemName</to>
+            </copy>
+            <copy>
+                <from>$InCopyFrom9OperationIn.inputPart/ns2:price</from>
+                <to>$TypeVariable/ns2:price</to>
+            </copy>
+            <copy>
+                <from>$InCopyFrom9OperationIn.inputPart/ns2:itemAvailable</from>
+                <to>$TypeVariable/ns2:itemAvailable</to>
+            </copy>
+            <copy>
+                <from>10</from>
+                <to variable="IntVariable"/>
+            </copy>
+            <copy>
+                <from>true()</from>
+                <to variable="BoolVariable"/>
+            </copy>
+        </assign>
+        <assign name="Assign_getVP">
+            <copy>
+                <from>$BoolVariable or ns1:getVariableProperty('TypeVariable', 'ns0:boolProperty')</from>
+                <to variable="OutputBoolVar"/>
+            </copy>
+            <copy>
+                <from>(ns1:getVariableProperty('TypeVariable', 'ns0:intProperty') - $IntVariable) div 2</from>
+                <to variable="OutputIntVar"/>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($OutputBoolVar, $OutputIntVar)</from>
+                <to variable="InCopyFrom9OperationOut" part="outputPart"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PlinkInOut" operation="InCopyFrom9Operation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom9" portType="tns:InCopyFrom9PortType" variable="InCopyFrom9OperationOut"/>
+    </sequence>
+</process>

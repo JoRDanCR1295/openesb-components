@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>global-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>./global-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>alaska-top</artifactId>
+    <packaging>pom</packaging>
+    <name>alaska-top</name>
+    <version>${jbicomps.currentVersion}</version>
+    <description>Top-level Build for alaska-top</description>
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${artifactId}-set-build-properties</id>
+                        <phase>clean</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <tstamp>
+                                    <format property="TIMESTAMP" pattern="yyMMdd_HHmm" />
+                                </tstamp>
+                                <!-- this is no-op if BUILD_NUMBER is already defined: -->
+                                <property name="BUILD_NUMBER" value="${TIMESTAMP}" />
+
+                                <mkdir  dir="${SRCROOT}/bld" />
+                                <!-- note - cannot get a final newline from pom file. RT 7/13/07 -->
+                                <echo file="${version.properties}" append="false">#
+BUILD_NUMBER=${BUILD_NUMBER}
+JBI_SPEC_VERSION=${JBI_SPEC_VERSION}
+#
+</echo>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>junitreport</id>
+                        <phase>test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <ant antfile="${SRCROOT}/global-common/m2.ant" dir="${SRCROOT}" target="junit_report">
+                                    <property name="SRCROOT" value="${SRCROOT}"/>
+                                    <property name="TOOLROOT" value="${TOOLROOT}"/>
+                                    <property name="maven.test.skip" value="${maven.test.skip}"/>
+                                    <property name="runFullBuild" value="${runFullBuild}"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>default-profile</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- global common project: -->
+                <module>global-common</module>
+                <module>global-common/ojc-versions</module>
+
+                <!-- everything under the "ojc-core" directory: -->
+                <module>ojc-core</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release-build-profile</id>
+            <activation>
+                <property>
+                    <name>runFullBuild</name>
+                    <value>1</value>
+                </property>
+            </activation>
+            <modules>
+                <!-- global common project: -->
+                <module>global-common</module>
+                <module>global-common/ojc-versions</module>
+
+                <!-- everything under the "ojc-core" directory: -->
+                <module>ojc-core</module>
+                <!-- third-party components: -->
+                <module>contrib-stort</module>
+                <module>contrib-imola</module>
+                <module>contrib-gestalt</module>
+                <module>contrib-zaz</module>
+                <!-- packaging project: -->
+                <module>packaging</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release-deploy-profile</id>
+            <activation>
+                <property>
+                    <name>deployRemote</name>
+                    <value>1</value>
+                </property>
+            </activation>
+            <modules>
+                <!-- maven requires that we distribute parent poms: -->
+                <module>global-common</module>
+                <module>global-common/ojc-versions</module>
+
+                <module>ojc-core</module>
+            </modules>
+        </profile>
+
+        <!-- run-system-tests profile: -->
+        <profile>
+            <id>run-system-tests</id>
+            <activation>
+                <property>
+                    <name>jregress</name>
+                    <value>1</value>
+                </property>
+            </activation>
+            <build>
+                <defaultGoal>integration-test</defaultGoal>
+            </build>
+            <modules>
+                <!-- list only modules that have jregress tests: -->
+                <module>packaging</module>
+            </modules>
+        </profile>
+
+        <!-- use this profile to refresh all parent poms: -->
+        <profile>
+            <id>refresh-common-poms-profile</id>
+            <activation>
+                <property>
+                    <name>refreshPoms</name>
+                    <value>1</value>
+                </property>
+            </activation>
+            <modules>
+                <!-- maven requires that we distribute parent poms: -->
+                <module>global-common</module>
+                <module>global-common/ojc-versions</module>
+
+                <module>ojc-core/build-common/ojc-common</module>
+                <module>ojc-core/build-common/package-common</module>
+                <module>ojc-core/build-common</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <!--
+     # do not distribute the top pom:
+     # RT 4/28/08
+     -->
+    <distributionManagement>
+        <repository>
+            <id>default-remote-repo</id>
+            <name>default-remote-repo</name>
+            <url>file://${SRCROOT}/bld/remote_not</url>
+        </repository>
+    </distributionManagement>
+</project>

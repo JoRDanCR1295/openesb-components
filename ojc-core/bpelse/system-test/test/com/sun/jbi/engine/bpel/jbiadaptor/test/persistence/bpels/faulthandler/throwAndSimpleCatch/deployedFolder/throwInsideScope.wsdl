@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="throwInsideScope"
+             targetNamespace="http://www.mycomp.org/throwInsideScope/throwInsideScope"
+             xmlns:tns="http://www.mycomp.org/throwInsideScope/throwInsideScope"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:message name="message1">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="receivePortType">
+	 <wsdl:operation name="receiveOper">
+	  <wsdl:input name="input1" message="tns:message1"/>
+	 </wsdl:operation>
+	</wsdl:portType>
+    <wsdl:portType name="invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1" message="tns:message1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="receiveSoapBinding" type="tns:receivePortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="receiveOper">
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <wsdl:binding name="invokeSoapBinding" type="tns:invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="throwInsideScopeService">
+		<wsdl:port name="throwInsideScopePortName" binding="tns:invokeSoapBinding">                    
+                     <soap:address location="http://localhost:18181/throwInsideScope"/>
+		</wsdl:port>
+        <wsdl:port name="receiveOperationPortName" binding="tns:receiveSoapBinding">
+            <soap:address location="http://localhost:18181/throwInsideScope/rec"/>
+        </wsdl:port>
+    </wsdl:service>
+
+	<plnk:partnerLinkType name="throwInsideScopePartnerLinkType">
+		<plnk:role name="throwInsideScopeProvider" portType="tns:invokePortType"/>
+	</plnk:partnerLinkType>
+    <plnk:partnerLinkType name="receiveOperPartnerLinkType">
+        <plnk:role name="receiveOperationProvider" portType="tns:receivePortType"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

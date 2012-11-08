@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoIor" targetNamespace="urn:jbi4corba/test-provider-ior" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-provider-ior" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+      <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-provider-ior" xmlns="urn:jbi4corba/test-provider-ior" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="echo">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoIor">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoIorCorbaBinding" type="tns:EchoIor">
+
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="echo">
+      <soap:operation/>
+      <wsdl:input name="echo">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoIor">
+    <wsdl:port name="EchoIorCorbaPort" binding="tns:EchoIorCorbaBinding">
+
+      <soap:address location="http://localhost:8192/Service/test-provider-ior/"/>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoIor">
+<plnk:role name="EchoIorPortTypeRole" portType="tns:EchoIor"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

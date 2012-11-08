@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/smtp" xmlns:ns2="http://j2ee.netbeans.org/wsdl/trigger" xmlns:ns3="http://enterprise.netbeans.org/bpel/client" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="smtpPort" interface-name="ns1:smtpPortType" name="endpoint1" service-name="ns1:smtpService"/>
+<endpoint endpoint-name="triggerPort" interface-name="ns2:triggerPortType" name="endpoint2" service-name="ns2:triggerService"/>
+<endpoint endpoint-name="triggerPortTypeRole_myRole" interface-name="ns2:triggerPortType" name="endpoint3" service-name="ns3:Trigger"/>
+<endpoint endpoint-name="smtpPortTypeRole_partnerRole" interface-name="ns1:smtpPortType" name="endpoint4" service-name="ns3:smtpOp"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="contentNosubjectBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="contentNosubjectJbi-contentNosubjectBpel" unit-name="contentNosubjectBpel" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-smtp-binding.jar" component-name="sun-smtp-binding" description="Represents this Service Unit" name="contentNosubjectJbi-sun-smtp-binding" unit-name="sun-smtp-binding">
+<ports>
+<port x="0" y="150">
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/smtp.wsdl#xpointer(/definitions/service[@name='smtpService']/port[@name='smtpPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="contentNosubjectJbi-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="60">
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/trigger.wsdl#xpointer(/definitions/service[@name='triggerService']/port[@name='triggerPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/smtp.wsdl#xpointer(/definitions/portType[@name='smtpPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/trigger.wsdl#xpointer(/definitions/portType[@name='triggerPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/smtp.wsdl#xpointer(/definitions/binding[@name='smtpBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/trigger.wsdl#xpointer(/definitions/binding[@name='triggerBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/smtp.wsdl#xpointer(/definitions/service[@name='smtpService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/contentNosubjectBpel/trigger.wsdl#xpointer(/definitions/service[@name='triggerService'])" xlink:type="simple"/>
+</services>
+<regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilWaitPerf" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilWaitPerf"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilWaitPerf" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepeatUntilWait">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepeatUntilWait" location="RepeatUntilWaitPerf.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:RepeatMsg"/>
+        <variable name="Operation1In1" messageType="ns1:RepeatMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation12" portType="ns1:RepeatWaitPort12" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="part2" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                <copy>
+                <from>concat($Operation1In1.part1, ' before wait')</from><to part="part1" variable="Operation1In1"/>
+                </copy>
+                <copy>
+                <from> ( $Operation1In1.part2 + 1 ) </from><to part="part2" variable="Operation1In1"/>
+                </copy>
+            </assign>
+                <wait name="Wait1">
+                    <for>'P0Y0M0DT0H0M5S'</for>
+                </wait>
+                <assign name="Assign4">
+                    <copy>
+                    <from>concat($Operation1In1.part1, ' after wait ')</from><to part="part1" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $Operation1In1.part2 >= 2 ) </condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+            <from variable="Operation1In1" part="part1"/><to variable="Operation1Out1" part="part1"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="part2"/><to variable="Operation1Out1" part="part2"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation12" portType="ns1:RepeatWaitPort12" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

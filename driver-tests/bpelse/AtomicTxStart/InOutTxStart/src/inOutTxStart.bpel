@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="inOutTxStart"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOutTxStart/inOutTxStart"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InOutTxStart/inOutTxStart"
+    xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2"
+    xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema"
+    xmlns:sxtx="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Transaction"
+    sxtx:atomic="yes" sxtx:atomicTxType="Required">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" location="inout.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOutTxStart/CallInoutService" location="CallInoutService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ejbServPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/CallInoutService" partnerLinkType="tns:CallInoutService" partnerRole="CallInoutServicePTRole"/>
+        <partnerLink name="inoutPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" partnerLinkType="tns:inout" myRole="inoutPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CallInoutVarOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/CallInoutService" messageType="tns:CallInoutServiceOperResponse"/>
+        <variable name="CallInoutVarIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/CallInoutService" messageType="tns:CallInoutServiceOperRequest"/>
+        <variable name="InoutVarOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" messageType="tns:inoutOperResponse"/>
+        <variable name="InoutVarIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" messageType="tns:inoutOperRequest"/>
+    </variables>
+    <sequence>
+        <receive name="inoutRec" createInstance="yes" partnerLink="inoutPL" operation="inoutOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" portType="tns:inoutPT" variable="InoutVarIn"/>
+        <assign name="Assign1">
+            <copy sxat:binaryCopy="attachment">
+                <from>$InoutVarIn.part1/ns0:DETAIL_Record/ns0:NAME</from>
+                <to>$CallInoutVarIn.part1/ns0:DETAIL_Record/ns0:NAME</to>
+            </copy>
+            <copy>
+                <from>$InoutVarIn.part1/ns0:DETAIL_Record/ns0:ID</from>
+                <to>$CallInoutVarIn.part1/ns0:DETAIL_Record/ns0:ID</to>
+            </copy>
+        </assign>
+        <invoke name="invService" partnerLink="ejbServPL" operation="CallInoutServiceOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/CallInoutService" portType="tns:CallInoutServicePT" inputVariable="CallInoutVarIn" outputVariable="CallInoutVarOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$CallInoutVarOut.part1/ns0:DETAIL_Record/ns0:NAME</from>
+                <to>$InoutVarOut.part1/ns0:DETAIL_Record/ns0:NAME</to>
+            </copy>
+            <copy>
+                <from>$CallInoutVarOut.part1/ns0:DETAIL_Record/ns0:ID</from>
+                <to>$InoutVarOut.part1/ns0:DETAIL_Record/ns0:ID</to>
+            </copy>
+        </assign>
+        <reply name="inoutReply" partnerLink="inoutPL" operation="inoutOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutTxStart/inout" portType="tns:inoutPT" variable="InoutVarOut"/>
+    </sequence>
+</process>

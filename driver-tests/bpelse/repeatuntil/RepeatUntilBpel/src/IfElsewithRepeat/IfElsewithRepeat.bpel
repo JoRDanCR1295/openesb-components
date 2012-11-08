@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="IfElsewithRepeat" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/IfElsewithRepeat"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/IfElsewithRepeat" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IfElsewithRepeat">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IfElsewithRepeat" location="IfElsewithRepeat.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Operation1In1" messageType="ns1:RptMessage1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($Operation1In1.Name, 'Before IF.. ')</from>
+                <to part="Name" variable="Operation1In1"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to part="Counter" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition> ( $Operation1In1.TestVar &lt; 3 ) </condition>
+            <repeatUntil name="RepeatUntil1">
+                <assign name="Assign2">
+                    <copy>
+                        <from> ( $Operation1In1.Counter + 1 ) </from>
+                        <to part="Counter" variable="Operation1In1"/>
+                    </copy>
+                    <copy>
+                        <from>concat($Operation1In1.Name, ' In "IF"   ')</from>
+                        <to part="Name" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+                <condition> ( $Operation1In1.Counter >= 2 ) </condition>
+            </repeatUntil>
+            <elseif>
+                <condition> ( $Operation1In1.TestVar &lt; 6 ) </condition>
+                <repeatUntil name="RepeatUntil2">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>concat($Operation1In1.Name, 'In ElseIF ')</from>
+                            <to part="Name" variable="Operation1In1"/>
+                        </copy>
+                        <copy>
+                            <from> ( 1 + $Operation1In1.Counter ) </from>
+                            <to part="Counter" variable="Operation1In1"/>
+                        </copy>
+                    </assign>
+                    <condition> ( $Operation1In1.Counter >= 2 ) </condition>
+                </repeatUntil>
+            </elseif>
+            <else>
+                <assign name="Assign4">
+                    <copy>
+                        <from>concat($Operation1In1.Name, ' In "else" ')</from>
+                        <to part="Counter" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <assign name="Assign5">
+            <copy>
+                <from variable="Operation1In1" part="Name"/>
+                <to variable="Operation1Out1" part="Name"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="Counter"/>
+                <to variable="Operation1Out1" part="Counter"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="TestVar"/>
+                <to variable="Operation1Out1" part="TestVar"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

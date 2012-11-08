@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Divide"
+         targetNamespace="http://www.seebeyond.com/eInsight/Divide"
+         sbynpxp:end_YLoc="261.0"
+         sbynpxp:start_YLoc="257.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="69.0"
+         sbynpxp:end_XLoc="513.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Divide"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://services.opensoap.jp/samples/SimpleCalc/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://services.opensoap.jp/samples/SimpleCalc/"
+            location="zenquote.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="d1"
+                     partnerLinkType="ns0:operatorsLinkType"
+                     myRole="TestOperatorsRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Divide_Output"
+                  messageType="ns0:Divide"></variable>
+        <variable name="Divide_Input"
+                  messageType="ns0:DivideResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="Divide"
+                 partnerLink="d1"
+                 portType="ns0:SimpleCalcPortType"
+                 operation="Divide"
+                 variable="Divide_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="147.0"
+                 sbynpxp:YLoc="253.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="286.0"
+                sbynpxp:YLoc="224.0">
+            <copy>
+                <from>$Divide_Output.A div $Divide_Output.B</from>
+                <to variable="Divide_Input"
+                    part="return"/>
+            </copy>
+        </assign>
+        <reply name="Divide.Reply"
+               partnerLink="d1"
+               portType="ns0:SimpleCalcPortType"
+               operation="Divide"
+               variable="Divide_Input"
+               sbynpxp:XLoc="396.0"
+               sbynpxp:YLoc="259.0"></reply>
+    </sequence>
+</process>

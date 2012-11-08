@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="duke" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/duke"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/duke" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FTP">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FTP" location="FTP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:FTPPartner" myRole="FTPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FTPOperationOut" messageType="ns1:FTPOperationReply"/>
+        <bpws:variable name="FTPOperationIn" messageType="ns1:FTPOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FTPOperation" portType="ns1:FTPPortType" variable="FTPOperationIn"/>
+        <bpws:if name="If1">
+            <bpws:condition>starts-with($FTPOperationIn.part1, 'Hello Duke, this is ')</bpws:condition>
+            <bpws:assign name="Assign1">
+                <bpws:copy>
+                    <bpws:from>concat('Hello ', substring-after($FTPOperationIn.part1, 'Hello Duke, this is '), ', this is Duke')</bpws:from>
+                    <bpws:to part="part1" variable="FTPOperationOut"/>
+                </bpws:copy>
+            </bpws:assign>
+            <bpws:else>
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from>
+                            <bpws:literal>What was that?</bpws:literal>
+                        </bpws:from>
+                        <bpws:to part="part1" variable="FTPOperationOut"/>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:else>
+        </bpws:if>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="FTPOperation" portType="ns1:FTPPortType" variable="FTPOperationOut"/>
+   </sequence>
+   
+</process>

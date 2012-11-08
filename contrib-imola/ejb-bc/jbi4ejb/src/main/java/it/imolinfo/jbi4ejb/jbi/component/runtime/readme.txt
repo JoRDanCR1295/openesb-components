@@ -1,0 +1,1 @@
+All lthe classes on this package are generated using the Netbeans6.0 Binding component plugin

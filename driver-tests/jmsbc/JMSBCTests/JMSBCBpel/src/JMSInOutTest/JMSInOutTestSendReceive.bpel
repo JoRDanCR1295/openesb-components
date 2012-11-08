@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSInOutTestSendReceive"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSInOutTestSendReceive"
+         sbynpxp:end_YLoc="135.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="703.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSInOutTestSendReceive"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/bpel/JMSInOutTest"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/bpel/JMSInOutTest"
+            location="JMSInOutTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSInOutTestTriggerPartner"
+                     partnerLinkType="ns0:JMSInOutTestRequestReplyLnkType"
+                     myRole="roleJMSInOutTestTrigger"/>
+        <partnerLink name="JMSSendReceivePartner"
+                     partnerLinkType="ns0:JMSInOutTestSendRecvLnkType"
+                     partnerRole="roleJMSInOutTestSendRecv"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequest"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageReply"></variable>
+        <variable name="operationInOut_Input"
+                  messageType="ns0:messageRequestTextMessage"></variable>
+        <variable name="operationInOut_Output"
+                  messageType="ns0:messageReplyMapMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMSInOutTestTriggerPartner"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="160.0"
+                 sbynpxp:YLoc="229.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="284.0"
+                sbynpxp:YLoc="113.0">
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/correlationId</from>
+                <to variable="operationInOut_Input"
+                    part="partCorrelationID"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/textPayLoad</from>
+                <to variable="operationInOut_Input"
+                    part="partTextPayload"/>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/aProperty</from>
+                <to variable="operationInOut_Input"
+                    part="partProp1"/>
+            </copy>
+        </assign>
+        <invoke name="operationInOut"
+                partnerLink="JMSSendReceivePartner"
+                portType="ns0:portTypeInOut1"
+                operation="operationInOut"
+                inputVariable="operationInOut_Input"
+                outputVariable="operationInOut_Output"
+                sbynpxp:XLoc="363.0"
+                sbynpxp:YLoc="232.0"></invoke>
+        <assign name="Assign2"
+                sbynpxp:XLoc="472.0"
+                sbynpxp:YLoc="118.0">
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partCorrelationID"/>
+                <to>$operationRequestReply_Input.partReply/correlationId</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partBoolean"/>
+                <to>$operationRequestReply_Input.partReply/boolean</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partProp1"/>
+                <to>$operationRequestReply_Input.partReply/aProperty</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partChar"/>
+                <to>$operationRequestReply_Input.partReply/char</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partDouble"/>
+                <to>$operationRequestReply_Input.partReply/double</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partFloat"/>
+                <to>$operationRequestReply_Input.partReply/float</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partInt"/>
+                <to>$operationRequestReply_Input.partReply/int</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partLong"/>
+                <to>$operationRequestReply_Input.partReply/long</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partShort"/>
+                <to>$operationRequestReply_Input.partReply/short</to>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partString"/>
+                <to>$operationRequestReply_Input.partReply/string</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMSInOutTestTriggerPartner"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"
+               sbynpxp:XLoc="536.0"
+               sbynpxp:YLoc="219.0"></reply>
+    </sequence>
+</process>

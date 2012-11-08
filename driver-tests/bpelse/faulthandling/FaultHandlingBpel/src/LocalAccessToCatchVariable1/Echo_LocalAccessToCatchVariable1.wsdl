@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:EchoService/Echo_LocalAccessToCatchVariable1" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="urn:EchoService/Echo_LocalAccessToCatchVariable1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="urn:EchoService/Echo_LocalAccessToCatchVariable1">
+      <s:element name="SimpleMessage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="Message" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>      
+  </wsdl:types>
+  <wsdl:message name="EchoServiceRequest">
+    <wsdl:part name="parameters" element="tns:SimpleMessage" />
+  </wsdl:message>
+  <wsdl:message name="EchoServiceResponse">
+    <wsdl:part name="parameters" element="tns:SimpleMessage" />
+  </wsdl:message>
+  <wsdl:portType name="EchoService">
+    <wsdl:operation name="Echo">
+      <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Echoes the input</documentation>
+      <wsdl:input message="tns:EchoServiceRequest" />
+      <wsdl:output message="tns:EchoServiceResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoService" type="tns:EchoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <wsdl:operation name="Echo">
+      <soap:operation soapAction="urn:EchoService/Echo_LocalAccessToCatchVariable1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo_LocalAccessToCatchVariable1">
+    <wsdl:port name="EchoServicePort" binding="tns:EchoService">
+      <soap:address location="http://localhost:${HttpDefaultPort}/service/Echo_LocalAccessToCatchVariable1" />
+    </wsdl:port>
+  </wsdl:service>
+      
+  <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="EchoServiceLT">
+  	<plnk:role name="EchoServiceProvider" portType="tns:EchoService"/>
+   </plnk:partnerLinkType>
+  
+</wsdl:definitions>

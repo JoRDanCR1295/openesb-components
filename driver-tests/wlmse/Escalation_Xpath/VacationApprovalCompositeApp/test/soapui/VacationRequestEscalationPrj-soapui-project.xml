@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="VacationRequestEscalationPrj" soapui-version="2.0.2" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@projectRoot">/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/test/soapui</con:setting></con:settings><con:interface name="VacationSubmitBinding" bindingName="{http://j2ee.netbeans.org/wsdl/VacationApproval}VacationSubmitBinding" soapVersion="1_1" definition="file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalBpelModule/src/VacationApproval.wsdl"><con:settings/><con:endpoints><con:endpoint>http://localhost:18181/VacationSubmitService/VacationApprovalPort</con:endpoint></con:endpoints><con:operation isOneWay="true" action="" name="VacationApprovalOperation" bindingOperationName="VacationApprovalOperation" inputName="input1" sendsAttachments="false"><con:settings/><con:call name="BPRequest"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:18181/VacationSubmitService/VacationApprovalPort</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="http://xml.netbeans.org/schema/VacationApproval">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:vacationRequest>
+         <vac:employeeId>10839</vac:employeeId>
+         <vac:employeeName>Linda Chan</vac:employeeName>
+         <vac:startDate>08/09/2008</vac:startDate>
+         <vac:totalDays>10</vac:totalDays>
+         <!--Zero or more repetitions:-->
+         <vac:users>john</vac:users>
+	 <vac:users>mary</vac:users>
+         <!--Zero or more repetitions:-->
+         <vac:groups>CustomerServiceRep</vac:groups>
+      </vac:vacationRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalBpelModule/src/VacationApproval.wsdl" type="TEXT"><con:part><con:url>file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalBpelModule/src/VacationApproval.xsd</con:url><con:content><![CDATA[<xsd:schema targetNamespace="http://xml.netbeans.org/schema/VacationApproval" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xml.netbeans.org/schema/VacationApproval">
+  <xsd:complexType name="VocationRequestType">
+    <xsd:sequence>
+      <xsd:element name="employeeId" type="xsd:string"/>
+      <xsd:element name="employeeName" type="xsd:string"/>
+      <xsd:element name="startDate" type="xsd:date"/>
+      <xsd:element name="totalDays" type="xsd:int"/>
+      <xsd:element name="users" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xsd:element name="groups" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="vacationRequest" type="tns:VocationRequestType"></xsd:element>
+  <xsd:complexType name="VocationReplyType">
+    <xsd:sequence>
+      <xsd:element name="result" type="tns:ResultType"/>
+      <xsd:element name="approvedDays" type="xsd:int"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="vacationReply" type="tns:VocationReplyType"></xsd:element>
+  <xsd:simpleType name="ResultType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="APPROVED"/>
+      <xsd:enumeration value="REJECTED"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalBpelModule/src/VacationApproval.wsdl</con:url><con:content><![CDATA[<definitions name="VacationApproval" targetNamespace="http://j2ee.netbeans.org/wsdl/VacationApproval" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/VacationApproval" xmlns:ns="http://xml.netbeans.org/schema/VacationApproval" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+  <types>
+    <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/VacationApproval">
+      <xsd:import namespace="http://xml.netbeans.org/schema/VacationApproval" schemaLocation="VacationApproval.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="VacationApprovalOperationRequest">
+    <part name="part1" element="ns:vacationRequest"/>
+  </message>
+  <message name="VacationApprovalOperationReply">
+    <part name="part1" element="ns:vacationReply"/>
+  </message>
+  <portType name="submitVacationRequest">
+    <wsdl:operation name="VacationApprovalOperation">
+      <wsdl:input name="input1" message="tns:VacationApprovalOperationRequest"/>
+      <!--<wsdl:output name="output1" message="tns:VacationApprovalOperationReply"/>-->
+    </wsdl:operation>
+  </portType>
+  <portType name="approveVacationRequest">
+    <wsdl:operation name="VacationApprovalOperation">
+      <wsdl:input name="input1" message="tns:VacationApprovalOperationRequest"/>
+      <wsdl:output name="output1" message="tns:VacationApprovalOperationReply"/>
+    </wsdl:operation>
+  </portType>
+  <portType name="submitVacationRequestFileOut">
+    <wsdl:operation name="VacationApprovalOperation">
+      <wsdl:input name="output1" message="tns:VacationApprovalOperationReply"/>
+    </wsdl:operation>
+  </portType>
+  <binding name="VacationApprovalBinding" type="tns:approveVacationRequest">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="VacationApprovalOperation">
+      <soap:operation/>
+      <wsdl:input name="input1">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="output1">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </binding>
+  <binding name="VacationSubmitBinding" type="tns:submitVacationRequest">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="VacationApprovalOperation">
+      <soap:operation/>
+      <wsdl:input name="input1">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </binding>
+  <binding name="VacationApprovalFileOutBinding" type="tns:submitVacationRequestFileOut">
+    <file:binding/>
+    <operation name="VacationApprovalOperation">
+      <file:operation/>
+      <input name="output1">
+        <file:message use="literal" fileName="VacationApprovalOperationReply.xml" multipleRecordsPerFile="false" part="part1" fileNameIsPattern="false" addEOL="false"/>
+      </input>
+    </operation>
+  </binding>
+  <service name="VacationApprovalService">
+    <wsdl:port name="VacationApprovalPort" binding="tns:VacationApprovalBinding">
+      <soap:address location="http://localhost:18181/VacationApprovalService/VacationApprovalPort"/>
+    </wsdl:port>
+  </service>
+  <service name="VacationApprovalFileOutService">
+    <port name="VacationApprovalFileOutPort" binding="tns:VacationApprovalFileOutBinding">
+      <file:address fileDirectory="/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/soapui/output"/>
+    </port>
+  </service>
+  <service name="VacationSubmitService">
+    <port name="VacationSubmitPort" binding="tns:VacationSubmitBinding">
+      <soap:address location="http://localhost:18181/VacationSubmitService/VacationApprovalPort"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="VacationApproval1">
+    <!--A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+    <plnk:role name="approveVacationRequestRole" portType="tns:approveVacationRequest"/>
+  </plnk:partnerLinkType>
+  <plnk:partnerLinkType name="VacationSubmit1">
+    <!--A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+    <plnk:role name="submitVacationRequestRole" portType="tns:submitVacationRequest"/>
+  </plnk:partnerLinkType>
+  <plnk:partnerLinkType name="VacationOutPutFile">
+    <!--A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+    <plnk:role name="outputVacationReplyRole" portType="tns:submitVacationRequestFileOut"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="casaBinding1" bindingName="{VacationApprovalCompositeApp}casaBinding1" soapVersion="1_1" definition="file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/src/jbiasa/VacationApprovalCompositeApp.wsdl"><con:settings/><con:endpoints><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="ClaimTask" bindingOperationName="ClaimTask" inputName="ClaimTaskRequest" outputName="ClaimTaskResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:ClaimTask>
+         <taskId>?</taskId>
+         <userId>?</userId>
+      </vac:ClaimTask>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="CompleteTask" bindingOperationName="CompleteTask" inputName="CompleteTaskRequest" outputName="CompleteTaskResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:CompleteTask>
+         <taskId>?</taskId>
+         <userId>?</userId>
+      </vac:CompleteTask>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="GetTaskInput" bindingOperationName="GetTaskInput" inputName="GetTaskInputRequest" outputName="GetTaskInputResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskInput>
+         <taskId>?</taskId>
+         <userId>?</userId>
+      </vac:GetTaskInput>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="GetTaskList" bindingOperationName="GetTaskList" inputName="GetTaskListRequest" outputName="GetTaskListResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp" xmlns:tas="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT">
+            <tas:type>DEFAULT</tas:type>
+         </queryString>
+         <userId>?</userId>
+         <start>?</start>
+         <pageSize>?</pageSize>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call><con:call name="Backup of [Request 1]"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp" xmlns:tas="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT">
+            <!--Optional:-->
+            <tas:users>
+               <!--Zero or more repetitions:-->
+               <tas:user>?</tas:user>
+            </tas:users>
+            <!--Optional:-->
+            <tas:roles>
+               <!--Zero or more repetitions:-->
+               <tas:role>?</tas:role>
+            </tas:roles>
+            <!--Optional:-->
+            <tas:groups>
+               <!--Zero or more repetitions:-->
+               <tas:group>?</tas:group>
+            </tas:groups>
+            <!--Zero or more repetitions:-->
+            <tas:taskStatus>?</tas:taskStatus>
+         </queryString>
+         <userId>?</userId>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="GetTaskOutput" bindingOperationName="GetTaskOutput" inputName="GetTaskOutputRequest" outputName="GetTaskOutputResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskOutput>
+         <taskId>?</taskId>
+         <userId>?</userId>
+      </vac:GetTaskOutput>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="GetTaskXForm" bindingOperationName="GetTaskXForm" inputName="GetTaskXFormRequest" outputName="GetTaskXFormResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskXForm>
+         <taskId>?</taskId>
+      </vac:GetTaskXForm>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="ReassignTask" bindingOperationName="ReassignTask" inputName="ReassignTaskRequest" outputName="ReassignTaskResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:ReassignTask>
+         <taskId>?</taskId>
+         <role>?</role>
+         <user>?</user>
+         <userId>?</userId>
+      </vac:ReassignTask>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="RevokeTask" bindingOperationName="RevokeTask" inputName="RevokeTaskRequest" outputName="RevokeTaskResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:RevokeTask>
+         <taskId>?</taskId>
+         <userId>?</userId>
+      </vac:RevokeTask>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="" name="SetTaskOutput" bindingOperationName="SetTaskOutput" inputName="SetTaskOutputRequest" outputName="SetTaskOutputResponse" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:SetTaskOutput>
+         <taskId>?</taskId>
+         <outputMsg>?</outputMsg>
+         <userId>?</userId>
+      </vac:SetTaskOutput>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/src/jbiasa/VacationApprovalCompositeApp.wsdl" type="TEXT"><con:part><con:url>file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/src/jbiServiceUnits/VacationRequestWorklistApp/TaskCommon.wsdl</con:url><con:content><![CDATA[<definitions name="TaskStatic" targetNamespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns2="http://wlmse.sample/po" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+  <types>
+    <xsd:schema targetNamespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" elementFormDefault="qualified">
+      <xsd:complexType name="TaskListType">
+        <xsd:sequence>
+          <xsd:element name="totalRecords" type="xsd:int"/>
+          <xsd:element name="returnedRecords" type="xsd:int"/>
+          <xsd:element name="task" type="ns1:TaskType" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="taskList" type="ns1:TaskListType"></xsd:element>
+      <xsd:simpleType name="ResultCodeType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="SUCCESS"/>
+          <xsd:enumeration value="FAILED"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="TaskStatus">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="UNASSIGNED"/>
+          <xsd:enumeration value="ASSIGNED"/>
+          <xsd:enumeration value="CLAIMED"/>
+          <xsd:enumeration value="COMPLETED"/>
+          <xsd:enumeration value="EXPIRED"/>
+          <xsd:enumeration value="ESCALATED"/>
+          <xsd:enumeration value="ABORTED"/>
+          <xsd:enumeration value="FAILED"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="SortField">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="id"/>
+          <xsd:enumeration value="title"/>
+          <xsd:enumeration value="createDate"/>
+          <xsd:enumeration value="priority"/>
+          <xsd:enumeration value="status"/>
+          <xsd:enumeration value="assignedTo"/>
+          <xsd:enumeration value="owner"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:simpleType name="Direction">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="ASC"/>
+          <xsd:enumeration value="DESC"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      <xsd:element name="resultCode" type="ns1:ResultCodeType"></xsd:element>
+      <xsd:complexType name="FaultType">
+        <xsd:sequence>
+          <xsd:element name="FaultCode" type="xsd:string"></xsd:element>
+          <xsd:element name="FaultReason" type="xsd:string"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="fault" type="ns1:FaultType"></xsd:element>
+      <xsd:complexType name="TaskType">
+        <xsd:sequence>
+          <xsd:element name="taskId" type="xsd:long"></xsd:element>
+          <xsd:element name="title" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="client" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="priority" type="xsd:int" minOccurs="0"/>
+          <xsd:element name="claimedBy" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="assignedTo" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="submittedDate" type="xsd:dateTime" minOccurs="0"/>
+          <xsd:element name="status" type="ns1:TaskStatus" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="task" type="ns1:TaskType"></xsd:element>
+      <xsd:element name="content" type="xsd:anyType"></xsd:element>
+      <xsd:complexType name="AnyType">
+        <xsd:sequence>
+          <xsd:element name="content" type="xsd:anyType"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="ConnectInfoType">
+        <xsd:sequence>
+          <xsd:element name="userId" type="xsd:string"></xsd:element>
+          <xsd:element name="password" type="xsd:string"></xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="connectInfo" type="ns1:ConnectInfoType"></xsd:element>
+      <xsd:complexType name="QueryType">
+        <xsd:sequence>
+          <xsd:element name="type" default="DEFAULT">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="DEFAULT"/>
+                <xsd:enumeration value="FILTERED"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="users" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="roles" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="role" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="groups" minOccurs="0">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="group" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="taskStatus" type="ns1:TaskStatus" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element name="sort" type="ns1:SortField" minOccurs="0"/>
+          <xsd:element name="dir" type="ns1:Direction" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="query" type="ns1:QueryType"/>
+      <xsd:element name="taskIdentifer" type="xsd:int"></xsd:element>
+      <xsd:element name="AssigneeRole" type="xsd:string"></xsd:element>
+      <xsd:element name="AssigneeUser" type="xsd:string"></xsd:element>
+    </xsd:schema>
+  </types>
+  <message name="GetTaskListRequestMsg">
+    <part name="queryString" type="ns1:QueryType"/>
+    <part name="userId" type="xsd:string"/>
+    <part name="start" type="xsd:int"/>
+    <part name="pageSize" type="xsd:int"/>
+  </message>
+  <message name="GetTaskListResponseMsg">
+    <part name="taskList" type="ns1:TaskListType"/>
+  </message>
+  <message name="ClaimTaskRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="ClaimTaskResponseMsg">
+    <part name="resultCode" type="ns1:ResultCodeType"/>
+  </message>
+  <message name="RevokeTaskRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="RevokeTaskResponseMsg">
+    <part name="resultCode" type="ns1:ResultCodeType"/>
+  </message>
+  <message name="CompleteTaskRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="CompleteTaskResponseMsg">
+    <part name="resultCode" type="ns1:ResultCodeType"/>
+  </message>
+  <message name="ReassignTaskRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="role" type="xsd:string"/>
+    <part name="user" type="xsd:string"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="ReassignTaskResponseMsg">
+    <part name="resultCode" type="ns1:ResultCodeType"/>
+  </message>
+  <message name="GetTaskInputRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="GetTaskOutputResponseMsg">
+    <part name="outputMsg" type="xsd:anyType"/>
+  </message>
+  <message name="GetTaskInputResponseMsg">
+    <part name="inputMsg" type="xsd:anyType"/>
+  </message>
+  <message name="GetTaskOutputRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="SetTaskOutputRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+    <part name="outputMsg" type="xsd:anyType"/>
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="SetTaskOutputResponseMsg">
+    <part name="resultCode" type="ns1:ResultCodeType"/>
+  </message>
+  <message name="TaskFaultMsg">
+    <part name="fault" element="ns1:fault"/>
+  </message>
+  <message name="TaskIdMsg">
+    <part name="taskId" type="xsd:long"/>
+  </message>
+  <message name="GetTaskXFormRequestMsg">
+    <part name="taskId" type="xsd:long"/>
+  </message>
+  <message name="GetTaskXFormResponseMsg">
+    <part name="xForm" type="xsd:anyType"/>
+  </message>
+  <portType name="TaskCommonPortType">
+    <operation name="GetTaskList">
+      <input name="GetTaskListRequest" message="tns:GetTaskListRequestMsg"/>
+      <output name="GetTaskListResponse" message="tns:GetTaskListResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="ClaimTask">
+      <input name="ClaimTaskRequest" message="tns:ClaimTaskRequestMsg"/>
+      <output name="ClaimTaskResponse" message="tns:ClaimTaskResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="RevokeTask">
+      <input name="RevokeTaskRequest" message="tns:RevokeTaskRequestMsg"/>
+      <output name="RevokeTaskResponse" message="tns:RevokeTaskResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="CompleteTask">
+      <input name="CompleteTaskRequest" message="tns:CompleteTaskRequestMsg"/>
+      <output name="CompleteTaskResponse" message="tns:CompleteTaskResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="ReassignTask">
+      <input name="ReassignTaskRequest" message="tns:ReassignTaskRequestMsg"/>
+      <output name="ReassignTaskResponse" message="tns:ReassignTaskResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="GetTaskInput">
+      <input name="GetTaskInputRequest" message="tns:GetTaskInputRequestMsg"/>
+      <output name="GetTaskInputResponse" message="tns:GetTaskInputResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="GetTaskOutput">
+      <input name="GetTaskOutputRequest" message="tns:GetTaskOutputRequestMsg"/>
+      <output name="GetTaskOutputResponse" message="tns:GetTaskOutputResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="SetTaskOutput">
+      <input name="SetTaskOutputRequest" message="tns:SetTaskOutputRequestMsg"/>
+      <output name="SetTaskOutputResponse" message="tns:SetTaskOutputResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+    <operation name="GetTaskXForm">
+      <input name="GetTaskXFormRequest" message="tns:GetTaskXFormRequestMsg"/>
+      <output name="GetTaskXFormResponse" message="tns:GetTaskXFormResponseMsg"/>
+      <fault name="fault1" message="tns:TaskFaultMsg"/>
+    </operation>
+  </portType>
+  <binding name="TaskCommonBinding" type="tns:TaskCommonPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <operation name="GetTaskList">
+      <soap:operation soapAction="GetTaskList"/>
+      <input name="GetTaskListRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="GetTaskListResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="ClaimTask">
+      <soap:operation soapAction="ClaimTask"/>
+      <input name="ClaimTaskRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="ClaimTaskResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="RevokeTask">
+      <soap:operation soapAction="RevokeTask"/>
+      <input name="RevokeTaskRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="RevokeTaskResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="CompleteTask">
+      <soap:operation soapAction="CompleteTask"/>
+      <input name="CompleteTaskRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="CompleteTaskResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="ReassignTask">
+      <soap:operation soapAction="ReassignTask"/>
+      <input name="ReassignTaskRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="ReassignTaskResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskInput">
+      <soap:operation soapAction="GetOptInput"/>
+      <input name="GetTaskInputRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="GetTaskInputResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskOutput">
+      <soap:operation soapAction="GetOptOutput"/>
+      <input name="GetTaskOutputRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="GetTaskOutputResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="SetTaskOutput">
+      <soap:operation soapAction="SetOptOutput"/>
+      <input name="SetTaskOutputRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="SetTaskOutputResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskXForm">
+      <soap:operation soapAction="GetTaskXForm"/>
+      <input name="GetTaskXFormRequest">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </input>
+      <output name="GetTaskXFormResponse">
+        <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault name="fault1" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="TaskCommonService">
+    <port name="TaskCommonPort" binding="tns:TaskCommonBinding">
+      <soap:address location="http://localhost:18181/wfse/TaskCommon"/>
+    </port>
+  </service>
+  <plink:partnerLinkType name="TaskCommonPLT">
+    <plink:role name="TaskCommon_Server" portType="tns:TaskCommonPortType"/>
+  </plink:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>file:/home/mei/work/open-jbi-components/driver-tests/wlmse/Escalation_Xpath/VacationApprovalCompositeApp/src/jbiasa/VacationApprovalCompositeApp.wsdl</con:url><con:content><![CDATA[<!--This file is auto-generated by CASA. 
+  Edit its content manually may cause unrecoverable errors.-->
+<definitions targetNamespace="VacationApprovalCompositeApp" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="VacationApprovalCompositeApp" xmlns:ns="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <import namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" location="../jbiServiceUnits/VacationRequestWorklistApp/TaskCommon.wsdl"/>
+  <portType name="dummyCasaPortType"/>
+  <binding name="casaBinding1" type="ns:TaskCommonPortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetTaskList">
+      <soap:operation/>
+      <input name="GetTaskListRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="GetTaskListResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="ClaimTask">
+      <soap:operation/>
+      <input name="ClaimTaskRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="ClaimTaskResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="RevokeTask">
+      <soap:operation/>
+      <input name="RevokeTaskRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="RevokeTaskResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="CompleteTask">
+      <soap:operation/>
+      <input name="CompleteTaskRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="CompleteTaskResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="ReassignTask">
+      <soap:operation/>
+      <input name="ReassignTaskRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="ReassignTaskResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskInput">
+      <soap:operation/>
+      <input name="GetTaskInputRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="GetTaskInputResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskOutput">
+      <soap:operation/>
+      <input name="GetTaskOutputRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="GetTaskOutputResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="SetTaskOutput">
+      <soap:operation/>
+      <input name="SetTaskOutputRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="SetTaskOutputResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+    <operation name="GetTaskXForm">
+      <soap:operation/>
+      <input name="GetTaskXFormRequest">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </input>
+      <output name="GetTaskXFormResponse">
+        <soap:body use="literal" namespace="VacationApprovalCompositeApp"/>
+      </output>
+      <fault name="fault1">
+        <soap:fault use="literal" name="fault1" namespace="VacationApprovalCompositeApp"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="casaService1">
+    <port name="casaPort1" binding="tns:casaBinding1">
+      <soap:address location="http://localhost:${HttpDefaultPort}/casaService1/casaPort1"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:testSuite name="TestSuite 1"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="TestCase 1" searchProperties="true" id="ba59ceac-f95f-4019-b887-dfcca3c9fca3"><con:settings/><con:testStep type="request" name="BPInput"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>VacationSubmitBinding</con:interface><con:operation>VacationApprovalOperation</con:operation><con:request name="BPInput"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:18181/VacationSubmitService/VacationApprovalPort</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="http://xml.netbeans.org/schema/VacationApproval">
+   <soapenv:Header/>
+   <soapenv:Body>
+     <vac:vacationRequest>
+         <vac:employeeId>10839</vac:employeeId>
+         <vac:employeeName>Linda Chan</vac:employeeName>
+         <vac:startDate>08/09/2008</vac:startDate>
+         <vac:totalDays>10</vac:totalDays>
+         <!--Zero or more repetitions:-->
+         <vac:users>john</vac:users>
+	 <vac:users>mary</vac:users>
+         <!--Zero or more repetitions:-->
+         <vac:groups>CustomerServiceRep</vac:groups>
+      </vac:vacationRequest>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:request></con:config></con:testStep><con:testStep type="delay" name="Delay"><con:settings/><con:config><delay>2000</delay></con:config></con:testStep><con:testStep type="request" name="GetTaskForJohn"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="GetTaskForJohn"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp" xmlns:tas="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"><tas:type>DEFAULT</tas:type>
+         </queryString>
+         <userId>john#CustomerServiceRep</userId>
+         <start>0</start>
+         <pageSize>0</pageSize>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Groovy-PopulateProp"><con:settings/><con:config><script>def groovyUtils = new com.eviware.soapui.support.GroovyUtils (context);
+def holder = groovyUtils.getXmlHolder ("GetTaskForJohn#Response");
+holder.declareNamespace("task", "http://jbi.com.sun/wfse/wsdl/TaskCommon");
+def taskCount = holder.getNodeValue("//task:totalRecords");
+def taskEscalated = holder.getNodeValue("count(//task:task[task:status='ESCALATED'])");
+log.info("Escalated task:" + taskEscalated);
+
+log.info("Task count:" + taskCount);
+assert taskCount.toInteger() > 0;
+
+def taskId = holder.getNodeValue("//task:task[task:title='vacation request for Linda Chan'][task:status='ASSIGNED'][1]/task:taskId");
+log.info ("Task Id: " + taskId);
+groovyUtils.setPropertyValue ("Properties", "taskId", taskId);
+groovyUtils.setPropertyValue ("Properties", "taskEscalated", taskEscalated);
+groovyUtils.setPropertyValue ("Properties", "taskCount", taskCount);</script></con:config></con:testStep><con:testStep type="properties" name="Properties"><con:settings/><con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:properties><con:property><con:name>taskId</con:name><con:value>5</con:value></con:property><con:property><con:name>taskCount</con:name><con:value>4</con:value></con:property><con:property><con:name>taskEscalated</con:name><con:value>2</con:value></con:property></con:properties></con:config></con:testStep><con:testStep type="delay" name="Delay2"><con:settings/><con:config><delay>180000</delay></con:config></con:testStep><con:testStep type="request" name="GetTaskForJohn2"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="GetTaskForJohn2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp" xmlns:tas="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"><tas:type>DEFAULT</tas:type>
+         </queryString>
+         <userId>john#CustomerServiceRep</userId>
+         <start>0</start>
+         <pageSize>0</pageSize>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Groovy-CheckJohnTaskTransferred"><con:settings/><con:config><script>def groovyUtils = new com.eviware.soapui.support.GroovyUtils (context);
+def holder = groovyUtils.getXmlHolder ("GetTaskForJohn2#Response");
+holder.declareNamespace("task", "http://jbi.com.sun/wfse/wsdl/TaskCommon");
+def taskCount = holder.getNodeValue("//task:totalRecords");
+log.info("Task count:" + taskCount);
+
+
+def taskCountOld = groovyUtils.expand('${taskCount}');
+log.info("Task old count:" + taskCountOld);
+
+assert taskCount.toInteger() == taskCountOld.toInteger();
+
+def taskEscalated = holder.getNodeValue("count(//task:task[task:status='ESCALATED'])");
+log.info("Escalated task:" + taskEscalated);
+
+def taskEscCountOld = groovyUtils.expand('${taskEscalated}');
+log.info("Task old escalated count:" + taskEscCountOld);
+
+assert taskEscalated.toInteger () > taskEscCountOld.toInteger();
+</script></con:config></con:testStep><con:testStep type="request" name="GetTaskForDale"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="GetTaskForDale"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp" xmlns:tas="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"><tas:type>DEFAULT</tas:type>
+         </queryString>
+         <userId>dale#Manager</userId>
+         <start>0</start>
+         <pageSize>0</pageSize>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Groovy-CheckDaleTask"><con:settings/><con:config><script>def groovyUtils = new com.eviware.soapui.support.GroovyUtils (context);
+def holder = groovyUtils.getXmlHolder ("GetTaskForDale#Response");
+holder.declareNamespace("task", "http://jbi.com.sun/wfse/wsdl/TaskCommon");
+def taskId = groovyUtils.expand('${taskId}');
+def taskNode = holder.getDomNode("//task:task[task:taskId =" + taskId+"]");
+assert taskNode != null
+
+</script></con:config></con:testStep><con:testStep type="request" name="Backup of [GetTaskForJohn2]" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="Backup of [GetTaskForJohn2]"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"/>
+         <userId>john#CustomerServiceRep</userId>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:testStep type="request" name="Backup of [GetTaskForJohn]" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="Backup of [GetTaskForJohn]"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"/>
+         <userId>john#CustomerServiceRep</userId>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:testStep type="request" name="Backup of [GetTaskForDale]" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>casaBinding1</con:interface><con:operation>GetTaskList</con:operation><con:request name="Backup of [GetTaskForDale]"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:${HttpDefaultPort}/casaService1/casaPort1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:vac="VacationApprovalCompositeApp">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <vac:GetTaskList>
+         <queryString type="DEFAULT"/>
+         <userId>dale#Manager</userId>
+      </vac:GetTaskList>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/></con:soapui-project>

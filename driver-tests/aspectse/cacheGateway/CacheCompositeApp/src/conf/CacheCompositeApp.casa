@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://enterprise.netbeans.org/bpel/cacheBpel" xmlns:ns2="http://j2ee.netbeans.org/wsdl/cacheBpel" xmlns:ns3="http://j2ee.netbeans.org/wsdl/cache" xmlns:ns4="http://j2ee.netbeans.org/wsdl/helloPartner" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="cacheBpelPortTypeRole_myRole" interface-name="ns2:cacheBpelPortType" name="endpoint1" service-name="ns1:BpelPartnerLink"/>
+        <endpoint endpoint-name="cachePortTypeRole_partnerRole" interface-name="ns3:cachePortType" name="endpoint2" service-name="ns1:AspectPartnerLink"/>
+        <endpoint endpoint-name="cachePortTypeRole" interface-name="ns3:cachePortType" name="endpoint3" service-name="ns3:cachePartner"/>
+        <endpoint endpoint-name="helloPartnerPortTypeRole" interface-name="ns4:helloPartnerPortType" name="endpoint4" service-name="ns4:helloPartnerPartner"/>
+        <endpoint endpoint-name="helloPartnerPort" interface-name="ns4:helloPartnerPortType" name="endpoint5" service-name="ns4:helloPartnerService"/>
+        <endpoint endpoint-name="cachePort" interface-name="ns3:cachePortType" name="endpoint6" service-name="ns3:cacheService"/>
+        <endpoint endpoint-name="cacheBpelPort" interface-name="ns2:cacheBpelPortType" name="endpoint7" service-name="ns2:cacheBpelService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="CacheBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="CacheCompositeApp-CacheBpel" unit-name="CacheBpel" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint1"/>
+            <consumes endpoint="endpoint2"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="CacheAspectApp.jar" component-name="sun-aspect-engine" defined="true" description="Represents this Service Unit" internal="true" name="CacheCompositeApp-CacheAspectApp" unit-name="CacheAspectApp" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="CacheCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="60">
+                    <link xlink:href="../jbiServiceUnits/CacheAspectApp/cache.wsdl#xpointer(/definitions/service[@name='cacheService']/port[@name='cachePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                </port>
+                <port x="0" y="150">
+                    <link xlink:href="../jbiServiceUnits/CacheAspectApp/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService']/port[@name='helloPartnerPort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+                <port x="0" y="240">
+                    <link xlink:href="../jbiServiceUnits/CacheBpel/cache.wsdl#xpointer(/definitions/service[@name='cacheService']/port[@name='cachePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                </port>
+                <port x="0" y="330">
+                    <link xlink:href="../jbiServiceUnits/CacheBpel/cacheBpel.wsdl#xpointer(/definitions/service[@name='cacheBpelService']/port[@name='cacheBpelPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint7"/>
+                </port>
+                <port x="0" y="420">
+                    <link xlink:href="../jbiServiceUnits/CacheBpel/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService']/port[@name='helloPartnerPort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint5" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint7" provider="endpoint1" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/cache.wsdl#xpointer(/definitions/portType[@name='cachePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/cache.wsdl#xpointer(/definitions/binding[@name='cacheBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/cache.wsdl#xpointer(/definitions/service[@name='cacheService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/helloPartner.wsdl#xpointer(/definitions/portType[@name='helloPartnerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/helloPartner.wsdl#xpointer(/definitions/binding[@name='helloPartnerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheAspectApp/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cache.wsdl#xpointer(/definitions/portType[@name='cachePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cache.wsdl#xpointer(/definitions/binding[@name='cacheBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cache.wsdl#xpointer(/definitions/service[@name='cacheService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cacheBpel.wsdl#xpointer(/definitions/portType[@name='cacheBpelPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cacheBpel.wsdl#xpointer(/definitions/binding[@name='cacheBpelBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/cacheBpel.wsdl#xpointer(/definitions/service[@name='cacheBpelService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/helloPartner.wsdl#xpointer(/definitions/portType[@name='helloPartnerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/helloPartner.wsdl#xpointer(/definitions/binding[@name='helloPartnerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/CacheBpel/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings/>
+    <services/>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

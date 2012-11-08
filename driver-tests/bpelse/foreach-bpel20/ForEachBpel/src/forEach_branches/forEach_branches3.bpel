@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="forEach_branches3" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/forEach_branches3"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/forEach_branches3" 
+         xmlns:ns1="http://localhost/ForEachBpel/forEach_branches3">
+    <import namespace="http://localhost/ForEachBpel/forEach_branches3" 
+            location="forEach_branches3.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:forEach_branches3Partnerlinktype" 
+                     myRole="forEach_branches3Partnerlinktyperole3"/>
+    </partnerLinks>
+    <variables>
+        <variable name="output1" messageType="ns1:message_out"/>
+        <variable name="input1" messageType="ns1:message_in"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="forEach_branches3Operation" 
+                 portType="ns1:forEach_branches3PortType" variable="input1" createInstance="yes"/>
+        <forEach name="ForEach1" parallel="no" counterName="index">
+            <startCounterValue>$input1.part1</startCounterValue>
+            <finalCounterValue>$input1.part2</finalCounterValue>
+            <completionCondition>
+                <branches successfulBranchesOnly="yes">$input1.part3</branches>
+            </completionCondition>
+            <scope name="Scope1">
+                <!--bpws:faultHandlers>
+                    <bpws:catchAll>
+                        <bpws:assign name="Assign3"> TODO FIX: different types !!! unsignedInt and int
+                            <copy>
+                                <from>$index</from>
+                                <to part="part2" variable="output1"/>
+                            </copy>
+                        </bpws:assign>
+                    </bpws:catchAll>
+                </bpws:faultHandlers-->
+                <sequence name="Sequence1">
+                    <bpws:if name="If1">
+                        <bpws:condition> ( $index != 1 ) </bpws:condition>
+                        <bpws:sequence name="Sequence2">
+                            <bpws:assign name="Assign1">
+                                <bpws:copy>
+                                    <bpws:from>concat($output1.part1, 'GoLoop', ($index + 1))</bpws:from>
+                                    <bpws:to part="part1" variable="output1"/>
+                                </bpws:copy>
+                            </bpws:assign>
+                        </bpws:sequence>
+                        <bpws:else>
+                            <bpws:throw name="Throw1" faultName="bpws:myFault"/>
+                        </bpws:else>
+                    </bpws:if>
+                </sequence>
+            </scope>
+        </forEach>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="forEach_branches3Operation" 
+               portType="ns1:forEach_branches3PortType" variable="output1"/>
+    </sequence>
+</process>

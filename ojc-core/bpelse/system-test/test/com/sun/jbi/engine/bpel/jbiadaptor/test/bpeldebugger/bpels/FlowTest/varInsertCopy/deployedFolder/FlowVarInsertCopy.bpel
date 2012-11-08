@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="FlowVarInsertCopy" 
+         targetNamespace="http://sun.com/bpel/FlowVarInsertCopy"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://sun.com/wsdl/FlowVarInsertCopy">
+    <import namespace="http://sun.com/wsdl/FlowVarInsertCopy" location="FlowVarInsertCopy.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="ns1:FlowInvokePLT" 
+                     partnerRole="FlowInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowPartnerLinkType" 
+                     myRole="FlowPartnerLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FlowInMessage" messageType="ns1:FlowMessage"/>
+        <variable name="InvokeMessage" messageType="ns1:FlowMessage"/>
+        <variable name="FlowOutMessage" messageType="ns1:FlowMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" 
+                 operation="FlowOperation" portType="ns1:FlowPortType" 
+                 variable="FlowInMessage" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy><from>2</from><to part="number" variable="InvokeMessage"/></copy>
+            <copy>
+            	<from>'FlowVarInsertCopy'</from>
+            	<to part="string" variable="InvokeMessage"/>
+            </copy>
+            <copy>
+            	<from part="number" variable="FlowInMessage"/>
+            	<to part="number" variable="FlowOutMessage"/>
+            </copy>
+        </assign>
+        <flow name="Flow1">
+        	<sequence>
+        		<assign name="Assign2">
+        			<copy>
+        				<from> ( $FlowOutMessage.number + 1 ) </from>
+        				<to part="number" variable="FlowOutMessage"/>
+        			</copy>
+					<copy>
+						<from>concat($FlowInMessage.string,'Insert') </from>
+						<to part="string" variable="FlowOutMessage"/>
+					</copy>
+        		</assign>
+        		<invoke name="InvokeBranch" partnerLink="InvokePLT"
+						operation="oneWayInvokeOper" portType="ns1:invokePortType"
+						inputVariable="InvokeMessage"/>
+			</sequence>
+		</flow>
+        <assign name="Assign3">
+			<copy>
+				<from>concat($FlowOutMessage.string,'Copy') </from>
+				<to part="string" variable="FlowOutMessage"/>
+			</copy>
+			<copy>
+				<from> ( $FlowOutMessage.number + 1 ) </from>
+				<to part="number" variable="FlowOutMessage"/>
+			</copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="oneWayInvokeOper" portType="ns1:invokePortType"
+                inputVariable="FlowOutMessage"/>
+    </sequence>
+</process>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="conditions" targetNamespace="http://j2ee.netbeans.org/wsdl/conditions"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/conditionsSchema" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/schema/conditionsSchema" xmlns:tns="http://j2ee.netbeans.org/schema/conditionsSchema">
+            <xsd:complexType name="msgType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                    <xsd:element name="boolElem" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="msgElem" type="tns:msgType"></xsd:element>
+            <xsd:complexType name="xsdIntType">
+                <xsd:sequence>
+                    <xsd:element name="xsdIntElem" type="xsd:int"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="message">
+        <part name="mesgPart" element="ns0:msgElem"/>
+    </message>
+    <message name="XsdTypeMessage">
+        <part name="intPart" type="xsd:int"/>
+    </message>
+    <portType name="conditionsPortType">
+        <operation name="conditionsOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <portType name="typeConditionPT">
+        <operation name="typeConditionOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <portType name="elementConditionPT">
+        <operation name="elementConditionOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <portType name="intPropValPT">
+        <operation name="intPropValOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <binding name="conditionsPortTypeBinding" type="tns:conditionsPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="conditionsOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="typeConditionPTBinding" type="tns:typeConditionPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="typeConditionOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="elementConditionPTBinding" type="tns:elementConditionPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="elementConditionOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="intPropValPTBinding" type="tns:intPropValPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="intPropValOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="mesgPart"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="testService">
+        <port name="conditionsPortTypeBindingPort" binding="tns:conditionsPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/testService/conditionsPortTypeBindingPort"/>
+        </port>
+    </service>
+    <service name="typeCondService">
+        <port name="typeConditionPTBindingPort" binding="tns:typeConditionPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/typeCondService/typeConditionPTBindingPort"/>
+        </port>
+    </service>
+    <service name="elemCondService">
+        <port name="elementConditionPTBindingPort" binding="tns:elementConditionPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/elemCondService/elementConditionPTBindingPort"/>
+        </port>
+    </service>
+    <service name="intPropValService">
+        <port name="intPropValPTBindingPort" binding="tns:intPropValPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/intPropValService/intPropValPTBindingPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="testPLT">
+        <plnk:role name="conditionsPortTypeRole" portType="tns:conditionsPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="intProp" type="xsd:int"/>
+    <vprop:property name="booleanProp" type="xsd:boolean"/>
+    <vprop:propertyAlias propertyName="tns:intProp" messageType="tns:message" part="mesgPart">
+        <vprop:query>/ns0:msgElem/intElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:booleanProp" messageType="tns:message" part="mesgPart">
+        <vprop:query>/ns0:msgElem/boolElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:intProp" element="ns0:msgElem">
+        <vprop:query>intElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:booleanProp" type="ns0:msgType">
+        <vprop:query>boolElem</vprop:query>
+    </vprop:propertyAlias>
+    <plnk:partnerLinkType name="typeConditionPLT">
+        <plnk:role name="typeConditionPTRole" portType="tns:typeConditionPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="elementConditionPLT">
+        <plnk:role name="elementConditionPTRole" portType="tns:elementConditionPT"/>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias propertyName="tns:booleanProp" element="ns0:msgElem">
+        <vprop:query>boolElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:intProp" type="xsd:int"/>
+    <plnk:partnerLinkType name="intPropValPLT">
+        <plnk:role name="intPropValPTRole" portType="tns:intPropValPT"/>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias propertyName="tns:intProp" messageType="tns:XsdTypeMessage" part="intPart"/>
+    <vprop:property name="xsdIntBasedProp" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:xsdIntBasedProp" type="ns0:xsdIntType">
+        <vprop:query>xsdIntElem</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

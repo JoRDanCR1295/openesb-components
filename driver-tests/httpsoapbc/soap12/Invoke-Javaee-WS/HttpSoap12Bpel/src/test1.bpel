@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="test1"
+    targetNamespace="http://enterprise.netbeans.org/bpel/HttpSoap12Bpel/test1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/HttpSoap12Bpel/test1">
+   <import namespace="http://sample.sun.com/" location="HelloProxy.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://sample.sun.com/" location="localhost_8080/HelloWS/HelloService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink2" xmlns:tns="http://sample.sun.com/" partnerLinkType="tns:HelloService" partnerRole="HelloRole"/>
+      <partnerLink name="PartnerLink1" xmlns:tns="http://sample.sun.com/" partnerLinkType="tns:HelloProxyService" myRole="HelloProxyRole"/>
+   </partnerLinks>
+   <variables>
+         <variable name="Test1Out" xmlns:tns="http://sample.sun.com/" messageType="tns:test1Response"/>
+      <variable name="Test1In" xmlns:tns="http://sample.sun.com/" messageType="tns:test1"/>
+      <variable name="proxyTest1Out" xmlns:tns="http://sample.sun.com/" messageType="tns:proxytest1Response"/>
+      <variable name="proxyTest1In" xmlns:tns="http://sample.sun.com/" messageType="tns:proxytest1"/>
+   </variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="test1" xmlns:tns="http://sample.sun.com/" portType="tns:HelloProxy" variable="proxyTest1In"/>
+      <assign name="Assign1">
+         <copy>
+            <from>$proxyTest1In.parameters/parameter</from>
+            <to>$Test1In.parameters/parameter</to>
+         </copy>
+         <copy>
+            <from variable="proxyTest1In" part="myheader"/>
+            <to variable="Test1In" part="myheader"/>
+         </copy>
+      </assign>
+      <invoke name="Invoke1" partnerLink="PartnerLink2" operation="test1" xmlns:tns="http://sample.sun.com/" portType="tns:Hello" inputVariable="Test1In" outputVariable="Test1Out"/>
+      <assign name="Assign2">
+         <copy>
+            <from>$Test1Out.result/return</from>
+            <to>$proxyTest1Out.result/return</to>
+         </copy>
+         <copy>
+            <from variable="Test1Out" part="myheader"/>
+            <to variable="proxyTest1Out" part="myheader"/>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="test1" xmlns:tns="http://sample.sun.com/" portType="tns:HelloProxy" variable="proxyTest1Out"/>
+   </sequence>
+</process>

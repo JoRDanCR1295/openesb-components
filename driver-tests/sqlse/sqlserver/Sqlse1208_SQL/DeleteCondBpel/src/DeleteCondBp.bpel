@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DeleteCondBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DeleteCondBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DeleteCondBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/DeleteCondBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="DeleteCondSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/DeleteCondBpel" location="DeleteCondBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:DeleteCondBpelPartner" partnerRole="DeleteCondBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:DeleteCondSql_sqlsePartnerLinkType" myRole="DeleteCondSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="DeleteCondOut" messageType="ns1:DeleteCondResponse"/>
+      <bpws:variable name="DeleteCondBpelOperationOut" messageType="ns2:DeleteCondBpelOperationReply"/>
+      <bpws:variable name="DeleteCondBpelOperationIn" messageType="ns2:DeleteCondBpelOperationRequest"/>
+      <bpws:variable name="DeleteCondIn" messageType="ns1:DeleteCondRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DeleteCond" portType="ns1:DeleteCondSql_sqlsePortType" variable="DeleteCondIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="DeleteCondIn" part="DeleteCondRequestPart"/>
+            <bpws:to variable="DeleteCondBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="DeleteCondBpelOperation" portType="ns2:DeleteCondBpelPortType" inputVariable="DeleteCondBpelOperationIn" outputVariable="DeleteCondBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteCondBpelOperationOut" part="part1"/>
+            <bpws:to variable="DeleteCondOut" part="DeleteCondResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="DeleteCond" portType="ns1:DeleteCondSql_sqlsePortType" variable="DeleteCondOut"/>
+   </sequence>
+</process>

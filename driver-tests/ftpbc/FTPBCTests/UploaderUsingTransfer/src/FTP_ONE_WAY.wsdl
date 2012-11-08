@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FTP_ONE_WAY"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FTP_ONE_WAY" name="FTP_ONE_WAY" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/">
+    <wsdl:types/>
+    <wsdl:message name="FTP_ONE_WAYOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FTP_ONE_WAYPortType">
+        <wsdl:operation name="FTP_ONE_WAYOperation">
+            <wsdl:input name="input1" message="tns:FTP_ONE_WAYOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="FTP_ONE_WAYBinding" type="tns:FTP_ONE_WAYPortType">
+        <ftp:binding/>
+        <wsdl:operation name="FTP_ONE_WAYOperation">
+            <ftp:operation/>
+            <wsdl:input name="input1">
+                <ftp:transfer sendTo="UPLOAD_DOWNLOAD_TRANS/STAGE/placeholder" sendToHasPatterns="false" append="false" receiveFrom="" receiveFromHasRegexs="false" pollIntervalMillis="5000" preSendCommand="NONE" preSendLocation="" preSendLocationHasPatterns="false" preReceiveCommand="NONE" preReceiveLocation="" preReceiveLocationHasPatterns="false" postSendCommand="RENAME" postSendLocation="UPLOAD_DOWNLOAD_TRANS/TARGET/%f" postSendLocationHasPatterns="true" postReceiveCommand="NONE" postReceiveLocation="" postReceiveLocationHasPatterns="false" use="literal" encodingStyle="" messageCorrelate="true"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FTP_ONE_WAYService">
+        <wsdl:port name="FTP_ONE_WAYPort" binding="tns:FTP_ONE_WAYBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="FTP_ONE_WAYPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="FTP_ONE_WAYPortTypeRole" portType="tns:FTP_ONE_WAYPortType"/>
+    </plink:partnerLinkType>
+</definitions>

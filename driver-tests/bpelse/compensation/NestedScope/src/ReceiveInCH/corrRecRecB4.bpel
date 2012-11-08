@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrRecRecB4"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrRecRecTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns1="http://www.w3.org/2001/XMLSchema">
+    <import namespace="urn:corrRecRecTargetNamespace"
+            location="corrRecRecB4.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="RecReply"
+                     partnerLinkType="ns0:corrRecRecServiceLinkType"
+                     myRole="corrRecRecServerRole"/>
+        <partnerLink name="RecOnly"
+                     partnerLinkType="ns0:corrRecRecServiceLinkType"
+                     myRole="corrRecRecServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutVar" type="ns1:string"/>
+        <variable name="corrRecRecOperation_Output"
+                  messageType="ns0:corrRecRecMessage"></variable>
+        <variable name="corrRecRecOperation_Input"
+                  messageType="ns0:corrRecRecMessage"></variable>
+        <variable name="corrRecRecOperation1_Output"
+                  messageType="ns0:corrRecRecMessage"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corSet1"
+                        properties="ns0:propertyName1 "/>
+    </correlationSets>
+    <sequence>
+        <receive name="InitReceive"
+                 partnerLink="RecReply"
+                 portType="ns0:corrRecRecPortType"
+                 operation="corrRecRecOperation"
+                 variable="corrRecRecOperation_Output"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="corSet1"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="MainAssign">
+            <copy>
+                <from>$corrRecRecOperation_Output.corrRecRecPart/ns0:string</from>
+                <to variable="OutVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catch faultName="ns2:uninitializedVariable">
+                    <sequence name="FaultHandlerSeq">
+                        <assign name="AssignInFault">
+                            <copy>
+                                <from>concat($OutVar, ' :S1 In FH:')</from>
+                                <to variable="OutVar"/>
+                            </copy>
+                        </assign>
+                        <compensate/>
+                        <assign name="ReturnAfterS2CH">
+                            <copy>
+                                <from>concat($OutVar, ' :Return to S1 FH after S2 CH:')</from>
+                                <to variable="OutVar"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence name="S1Seq">
+                <assign name="S1Assign">
+                    <copy>
+                        <from>concat($OutVar, ' :S1 start:')</from>
+                        <to variable="OutVar"/>
+                    </copy>
+                </assign>
+                <scope name="Scope2">
+                    <compensationHandler>
+                        <sequence name="Scope2CHSeq">
+                            <assign name="S2CHStart">
+                                <copy>
+                                    <from>concat($OutVar, ' :S2 CH before REC:')</from>
+                                    <to variable="OutVar"/>
+                                </copy>
+                            </assign>
+                            <receive name="CorrReceiveinCH"
+                                     partnerLink="RecOnly"
+                                     portType="ns0:corrRecRecPortType1"
+                                     operation="corrRecRecOperation1"
+                                     variable="corrRecRecOperation1_Output">
+                                <correlations>
+                                    <correlation set="corSet1"/>
+                                </correlations>
+                            </receive>
+                            <assign name="S2CHEnd">
+                                <copy>
+                                    <from>concat($OutVar, ' :S2 CH after REC:')</from>
+                                    <to variable="OutVar"/>
+                                </copy>
+                            </assign>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="S2Seq">
+                        <assign name="S2Assign">
+                            <copy>
+                                <from>concat($OutVar, ' :S2 start:')</from>
+                                <to variable="OutVar"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </scope>
+                <assign name="AssignBeforeFault">
+                    <copy>
+                        <from>concat($OutVar, ' :S1 before Fault:')</from>
+                        <to variable="OutVar"/>
+                    </copy>
+                </assign>
+                <ns2:throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+        <assign name="replyAssign">
+            <copy>
+                <from variable="OutVar"/>
+                <to>$corrRecRecOperation_Input.corrRecRecPart/ns0:string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="RecReply"
+               portType="ns0:corrRecRecPortType"
+               operation="corrRecRecOperation"
+               variable="corrRecRecOperation_Input"></reply>
+    </sequence>
+</process>

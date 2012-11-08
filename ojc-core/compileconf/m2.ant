@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    name="compileconf" default="run">
+
+    <target name="create-compileconf" >
+        <!-- initialize properties for compileconf jar: -->
+        <pathconvert property="compileconf_dir">
+            <path>
+                <pathelement location="${maven.repo.local}/jbicompsplatform/compileconf/${jbicomps.currentVersion}"/>
+            </path>
+        </pathconvert>
+        <property name="compileconf_jar"
+            value="${project.build.directory}${file.separator}compileconf-${jbicomps.currentVersion}.jar"
+        />
+        <mkdir dir="${project.build.directory}"/>
+
+        <!--
+         # prime maven repository with appserver jars that we link against
+         # we do a clean install to avoid upgrade/downgrade issues:
+         -->
+        <delete dir="${compileconf_dir}" />
+        <copy todir="${compileconf_dir}" preservelastmodified="true" overwrite="false" >
+            <fileset dir="${gfbase}/lib" >
+                <!-- files common to ee81 and glassfish -->
+                <include name="activation.jar"/>
+                <include name="ant/lib/ant.jar"/>
+                <include name="appserv-admin.jar"/>
+                <include name="appserv-rt.jar"/>
+                <include name="j2ee.jar"/>
+                <include name="jmxremote_optional.jar"/>
+                <include name="mail.jar"/>
+
+                <!-- files specific to ee81 -->
+                <include name="dom.jar"/>
+                <include name="jaxrpc-impl.jar"/>
+                <include name="jmxremote.jar"/>
+                <include name="saaj-impl.jar"/>
+                <include name="xalan.jar"/>
+                <include name="xercesImpl.jar"/>
+
+                <!-- files specific to glassfish -->
+                <include name="appserv-deployment-client.jar"/>
+                <include name="appserv-ext.jar"/>
+                <include name="appserv-se.jar"/>
+                <include name="javaee.jar"/>
+                <include name="jsf-impl.jar"/>
+                <include name="webservices-rt.jar"/>
+            </fileset>
+        </copy>
+
+        <!-- prime maven repository with imq jars that we link against -->
+        <copy todir="${compileconf_dir}" preservelastmodified="true" overwrite="false" >
+            <fileset dir="${gfbase}/imq/lib" >
+                <!-- files common to ee81 and glassfish -->
+                <include name="imq.jar"/>
+            </fileset>
+        </copy>
+
+        <!-- prime maven repository with jbi jars that we link against -->
+<!--
+        <copy todir="${compileconf_dir}" preservelastmodified="true" overwrite="false" >
+            <fileset dir="${gfbase}/jbi/lib" >
+                <include name="jbi.jar"/>
+                <include name="jbi-admin-common.jar"/>
+            </fileset>
+        </copy>
+-->
+
+        <!--
+         # create compileconf.jar in 4 steps.
+         -->
+
+        <!-- 1. set list of jars to include in the manifest class-path: -->
+        <fileset id="jarlist" dir="${compileconf_dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+
+        <!-- 2. delete the old jar if it is there: -->
+        <delete file="${compileconf_jar}" />
+
+        <!-- 3. convert classpath to relative files names: -->
+        <pathconvert dirsep="/" pathsep=" " property="jarlist" refid="jarlist">
+            <!-- note: "from" attribute must be in local path format. RT 5/16/06 -->
+            <map from="${compileconf_dir}${file.separator}" to="" />
+        </pathconvert>
+
+        <!-- 4. create the jar.
+         # NOTE:  jar manifest classpaths are NOT recognized by javac prior to JDK 5.0.
+         #  See:  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4212732
+         -->
+        <jar destfile="${compileconf_jar}">
+            <manifest>
+                <attribute name="Class-Path" value= "${jarlist}" />
+            </manifest>
+        </jar>
+
+        <echo message="Compile Classpath is ${jarlist}, output is ${compileconf_jar}"  />
+    </target>
+</project>

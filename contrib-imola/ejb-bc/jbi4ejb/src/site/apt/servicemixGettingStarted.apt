@@ -1,0 +1,291 @@
+											---
+											Servicemix - Getting Started
+											---
+											Marco Piraccini
+											---
+											29/07/2007
+											
+Introduction
+
+  This getting started guide shows how to install Jbi4Ejb and a sample service assembly in {{{http://servicemix.org}ServiceMix}}.
+  This component has been tested with servicemix-3.1-incubating.
+  
+	{{{servicemixGettingStarted.html#Integration Scenario}Integration Scenario}}  
+
+	{{{servicemixGettingStarted.html#Installing tools.jar}Installing tools.jar}}
+	
+	{{{servicemixGettingStarted.html#Installing Jbi4Ejb Binding Component}Installing Jbi4Ejb Binding Component}}
+	
+	{{{servicemixGettingStarted.html#Creating a service assembly}Creating a service assembly}}
+	
+	{{{servicemixGettingStarted.html#Deploying a service assembly}Deploying a service assembly}}
+	
+{Integration Scenario}
+
+	A binding component using Jbi4Ejb exposes on the internal BUS an external service provided by a Stateless Session EJB.	
+	
+	Thus the integration scenario is shown in the following figure:
+
+[images/integrationScenario.jpg] Integration Scenario.		
+
+{Installing tools.jar}
+
+  To work, Jbi4Ejb needs the jdk's tools.jar in the component classpath. You can put this jar file in the \<SERVICEMIX_HOME\>/lib/optional.	
+	
+{Installing Jbi4Ejb Binding Component}
+
+  Download {{{http://sourceforge.net/projects/Jbi4Ejb}Jbi4Ejb}} and copy it into \<SERVICEMIX_HOME\>/install.
+  
+{Creating a service assembly}
+
+  A service assembly is a deployable item that configures one or more endpoint inside a JBI ESB.
+  We are going set up a configuration that take an EJB service and expose it a SOAP/HTTP Webservice.
+  The configuration is shown in the following figure:
+  
+[images/sampleConfiguration.jpg] An EJB service exposed as a SOAP/HTTP Webservice.
+
+  The Jbi4Ejb component is used to create an internal (i.e. visible inside the ESB) endpoint. 
+  This internal endpoint is then used to create an external endpoint with the servicemix-http Binding Component. 
+  The http component will proxy the incoming externall calls to the internal endpoint exploiting the JBI routing mechanisms.
+  
+  A Service Assembly (SA)  is a zip file containing one or more Service Unit (SU) file, each Service Unit defining one or more endpoint.
+  We need two endpoint so we're going to configure two SUs:
+  
+  * <<Jbi4EjbSU>> containing the definition for the Jbi4Ejb endpoint.
+  
+  * <<HttpSU>> containing the definition for the http endpoint.
+  
+  []
+  
+* Jbi4Ejb service unit
+
+  A Jbi4Ejb service unit must have the layout:
+  
++----------------------------------------------------------+
+
++- <SERVICE_WSDL.wsdl>
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+
+  where:
+  
+  * The <SERVICE_WSDL.wsdl> contains the interface declaration. For this component, is the EJB remote interface expressed in WSDL.
+  
+  * The jbi.xml contains the provided endpoint declaration.   
+  
+  []
+   The SERVICE_WSDL.wsdl can be generated using the {{{netbeansplugin.html}Netbeans plug-in}} or the {{{wsdlCommandLineTool.html}command-line tool}}.
+  This WSDL is extended using the Jbi4Ejb extensions (see the {{{wsdlExtensions.html} WSDL Extensions guide}} for the details ) which express:
+  
+  * The ORB parameters to use to connect with the EJB
+  
+  * The EJB corbaname (that depends from the Application server where the beans are deployed, see the {{{applicationServerConfiguration.html} configuration guide for the supported Application Servers}}).
+  
+  * The serialization UID for the value objects, return type and exceptions. Using the {{{netbeansplugin.html}Netbeans plug-in}} or the
+   {{{wsdlCommandLineTool.html}command-line tool}} the UID are automatically generated in the WSDL.
+ 
+  For example, the WSDL can have this form: 
+  
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://complex.test14.imolinfo.it" 
+	xmlns:tns="http://complex.test14.imolinfo.it" 
+	xmlns:imolaejb="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/" 
+	(...)
+  <wsdl:types>
+  	(...)
+  </wsdl:types>
+  <wsdl:message name="getUserProfileResponse">
+    	(...)
+  </wsdl:message>
+
+  <wsdl:portType name="<SERVICE_INTERFACE>">
+		(...)
+  </wsdl:portType>
+  <wsdl:binding name="TestComplexSessionRemoteBinding" type="tns:TestComplexSessionRemote">
+	<imolaejb:binding>
+		<imolaejb:orb>    
+    		<imolaejb:property name="org.omg.CORBA.ORBClass" value="com.ibm.CORBA.iiop.ORB"/>
+		</imolaejb:orb>
+	</imolaejb:binding>
+	(...)
+  </wsdl:binding>
+  <wsdl:service name="<SERVICE_NAME>">
+    <wsdl:port name="<ENDPOINT_NAME>" binding="tns:TestComplexSessionRemoteBinding">
+		<imolaejb:address name="corbaname:iiop:127.0.0.1:2809/NameServiceServerRoot#ejb/TestComplexSessionBean" 
+			localizationType="corbaname"/>    
+	</wsdl:port>
+  </wsdl:service>
+  
+  <imolaejb:types>
+	<imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfile" UID="8891581763048162223"/>
+	<imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfileException" UID="-5706164759540452783"/>
+  </imolaejb:types>
+  
+</wsdl:definitions>
+
++-----------------------------------------------------------+
+  
+  The jbi.xml must have the following content:
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?><jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+
+  <services xmlns:Jbi4Ejb-test="<SERVICE_NAMESPACE>"
+    <provides 
+    	endpoint-name="<ENDPOINT_NAME>" 
+    	interface-name="ns1:<SERVICE_INTERFACE>" 
+    	service-name="ns1:<SERVICE_NAME>"/>
+  </services>
+
+</jbi>
+
++-----------------------------------------------------------+  
+
+  This configuration specify that the Service Unit is a Binding Component.
+  
+  Zip all the files in the specified layout and name the archive Jbi4EjbSU.zip.
+  
+* Http service unit
+
+  A http service unit has the following layout:
+  
++----------------------------------------------------------+
+
++- xbean.xml
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+
+  where:
+  
+  * xbean.xml contains the informations for defining the endpoint.
+  
+  * jbi.xml is a JBI mandatory file but at the moment doesn't contains useful information.
+  
+  []
+  
+  the xbean.xml has the following format:
+  
++----------------------------------------------------------+
+
+<?xml version="1.0"?>
+<beans xmlns:http="http://servicemix.apache.org/http/1.0"
+  xmlns:ejb_urn="<SERVICE_NAMESPACE>">
+
+  <http:endpoint 
+    service="ejb_urn:<SERVICE_NAME>"
+    endpoint="<SERVICE_NAME>JBIPort" 
+    role="consumer"
+    locationURI="http://localhost:8192/Service/<SERVICE_NAME>"
+    defaultMep="http://www.w3.org/2004/08/wsdl/in-out" 
+    soap="true" />
+    
+</beans>
+
++----------------------------------------------------------+  
+  
+  where:
+    
+  * <SERVICE_NAMESPACE> is the service namespace as defined in the Jbi4Ejb su's jbi.xml
+  
+  * <SERVICE_NAME> is the consumed service name.
+  
+  * <ENDPOINT_NAME> is the consumed service endpoint name
+  
+  * <SERVICE_INTERFACE> is the consumed service interface
+
+  []
+    
+  
+  Zip all the files in the specified layout and name the archive HttpSU.zip.
+  
+* The service assembly
+
+	The service assembly is unit of deployable configuration in JBI, in our example it has the following layout:
+
++----------------------------------------------------------+
+
++- Jbi4EjbSU.zip
++- HttpSU.zip
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+	
+
+  where:
+  
+  * Jbi4EjbSU.zip and HttpSU.zip are the previously created service units.
+  
+  *	jbi.xml is the service assembly deployment descriptor.
+  
+  []
+  
+  The jbi.xml has the following format as described in the {{{http://jcp.org/en/jsr/detail?id=208}JBI Specification}}: 
+	 
++----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">	
+
+<service-assembly>
+
+	<identification>
+		<name><SA_NAME></name>
+		<description><SA_DESCRIPTION></description>
+	</identification>
+
+   <service-unit>
+		<identification>
+			<name><SU1_NAME></name>
+			<description><SU1_DESCRIPTION></description>
+		</identification>
+      	<target>
+        	<artifacts-zip>Jbi4EjbSU.zip</artifacts-zip>
+        	<component-name>Jbi4Ejb</component-name>
+      	</target>
+   </service-unit>
+
+   <service-unit>
+		<identification>
+			<name><SU2_NAME></name>
+			<description><SU2_DESCRIPTION></description>
+		</identification>
+		<target>
+			<artifacts-zip>HttpSU.zip</artifacts-zip>
+			<component-name>servicemix-http<</component-name>
+		</target>
+   </service-unit>
+</service-assembly>
+</jbi>
+
++----------------------------------------------------------+	 
+
+  where:
+  
+  * <SA_NAME> is the name of the service assembly for documentation purposes.
+  
+  * <SA_DESCRIPTION> is the service assembly desription for documentation purposes.
+  
+  * <SU1_NAME> and <SU2_NAME> are the service units names for documentation purposes.
+  
+  * <SU1_DESCRIPTION> and <SU2_DESCRIPTION> are the service units description for documentation purposes.
+        
+  []
+  
+  Notice that the BC filenames (Jbi4EjbSU.zip and HttpSU.zip) are specified with the respective component (Jbi4Ejb and servicemix-http).
+  Zip all the files in the specified layout and name the archive HttpToEJBSA.zip (the archive name is not important).
+ 
+  
+{Deploying a service assembly}
+
+  Copy the created service assembly in \<SERVICEMIX_HOME\>/deploy.

@@ -1,0 +1,49 @@
+<bpel_20:process name="FaultTestHeaderBC" targetNamespace="http://www.seebeyond.com/eInsight/FaultTestHeaderBC" sbynpxp:end_YLoc="312.0" sbynpxp:start_YLoc="213.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="50.0" sbynpxp:end_XLoc="843.0" xmlns:tns="http://www.seebeyond.com/eInsight/FaultTestHeaderBC" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:ns0="http://faulttest.webservice.namespace" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+	<bpel_20:import namespace="http://faulttest.webservice.namespace" location="FaultTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+	<bpel_20:partnerLinks>
+		<bpel_20:partnerLink name="partner" partnerLinkType="ns0:FaultTestIFServiceLink" myRole="MultiOpSameMsg2ElemElemIFRole"/>
+	</bpel_20:partnerLinks>
+	<bpel_20:variables>
+		<bpel_20:variable name="MyRole_operation1_Output" messageType="ns0:message1" sbyncreation:type="auto"/>
+		<bpel_20:variable name="MyRole_operation1_Input" messageType="ns0:message1Result" sbyncreation:type="auto"/>
+		<bpel_20:variable name="MyRole_operation1_Fault" messageType="ns0:message2_Fault" sbyncreation:type="auto"/>
+	</bpel_20:variables>
+	<sequence>
+		<bpel_20:receive name="MyRole.operation1.Receive" partnerLink="partner" portType="ns0:MultiOpSameMsg2ElemElemIF" operation="operation1" variable="MyRole_operation1_Output" createInstance="yes" sbynpxp:XLoc="115.0" sbynpxp:YLoc="203.0"/>
+		<bpel_20:assign name="assign" sbynpxp:XLoc="242.0" sbynpxp:YLoc="241.0">
+			<bpel_20:copy>
+				<bpel_20:from>&apos;Headerfault test&apos;</bpel_20:from>
+				<bpel_20:to>$MyRole_operation1_Fault.message2HeaderFault</bpel_20:to>
+			</bpel_20:copy>
+			<bpel_20:copy>
+				<bpel_20:from>$MyRole_operation1_Output.body/Field1_1</bpel_20:from>
+				<bpel_20:to>$MyRole_operation1_Input.result/Field1_1</bpel_20:to>
+			</bpel_20:copy>
+			<bpel_20:copy>
+				<bpel_20:from>$MyRole_operation1_Output.body/Field1_2</bpel_20:from>
+				<bpel_20:to>$MyRole_operation1_Input.result/Field1_2</bpel_20:to>
+			</bpel_20:copy>
+			<bpel_20:copy>
+				<bpel_20:from>&apos;Operation 1 was invoked.&apos;</bpel_20:from>
+				<bpel_20:to>$MyRole_operation1_Input.result/Field1_3</bpel_20:to>
+			</bpel_20:copy>
+		</bpel_20:assign>
+		<bpel_20:if name="Decision" sbynpxp:XLoc="366.0" sbynpxp:YLoc="177.0" sbynpxp:YLoc_MergeNode="241.0" sbynpxp:XLoc_MergeNode="540.0" sbynpx:lineLabel="Decision">
+			<bpel_20:condition>true()</bpel_20:condition>
+					<sequence>
+						<bpel_20:throw name="Throw" faultName="ns0:message2HeaderFault" sbynpxp:XLoc="548.0" sbynpxp:YLoc="142.0" faultVariable="MyRole_operation1_Fault"/>
+					</sequence>
+			<bpel_20:else sbynpx:lineLabel="Case 1">
+				<sequence>
+					<bpel_20:assign name="assign1" sbynpxp:XLoc="441.0" sbynpxp:YLoc="224.0">
+						<bpel_20:copy>
+							<bpel_20:from variable="MyRole_operation1_Fault" part="message2HeaderFault"/>
+							<bpel_20:to variable="MyRole_operation1_Fault" part="message2HeaderFault"/>
+						</bpel_20:copy>
+					</bpel_20:assign>
+				</sequence>
+			</bpel_20:else>
+		</bpel_20:if>
+		<bpel_20:reply name="MyRole.operation1.Reply" partnerLink="partner" portType="ns0:MultiOpSameMsg2ElemElemIF" operation="operation1" variable="MyRole_operation1_Input" sbynpxp:XLoc="668.0" sbynpxp:YLoc="197.0"/>
+	</sequence>
+</bpel_20:process>

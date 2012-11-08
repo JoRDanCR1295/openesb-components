@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OraDeleteBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OraDeleteBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/OraDeleteBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPDeleteOraTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SOAPDeleteOraTrigger" location="SOAPDeleteOraTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="JdbcDeleteOra.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SOAPDeleteOraTriggerPartner" myRole="SOAPDeleteOraTriggerPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SOAPDeleteOraTriggerOperationOut" messageType="ns1:SOAPDeleteOraTriggerOperationReply"/>
+      <bpws:variable name="DeleteOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="DeleteIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SOAPDeleteOraTriggerOperationIn" messageType="ns1:SOAPDeleteOraTriggerOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SOAPDeleteOraTriggerOperation" portType="ns1:SOAPDeleteOraTriggerPortType" variable="SOAPDeleteOraTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="SOAPDeleteOraTriggerOperationIn" part="part1"/>
+            <bpws:to>$DeleteIn.part/ns0:TestID</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="delete" portType="ns2:jdbcPortType" inputVariable="DeleteIn" outputVariable="DeleteOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteOut" part="part"/>
+            <bpws:to variable="SOAPDeleteOraTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SOAPDeleteOraTriggerOperation" portType="ns1:SOAPDeleteOraTriggerPortType" variable="SOAPDeleteOraTriggerOperationOut"/>
+   </sequence>
+</process>

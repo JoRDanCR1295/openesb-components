@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="ClaimTask" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/Task"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ClaimTask" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+    <bpws:import namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" location="TaskCommon.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:TaskCommonLT" myRole="TaskCommon_Server"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="var2" messageType="ns1:ClaimTask_Output"/>
+        <bpws:variable name="var1" messageType="ns1:ClaimTask_Input"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ClaimTask" portType="ns1:TaskCommOptPT" variable="var1"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="var1" part="taskId"/>
+                <bpws:to variable="var2" part="resultCode"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="ClaimTask" portType="ns1:TaskCommOptPT" variable="var2"/>
+    </sequence>
+   
+</process>

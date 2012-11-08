@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Invoke2Way" targetNamespace="http://localhost/Invoke2Way/Invoke2Way"
+    xmlns:ns1="http://localhost/Invoke2Way/Invoke2Way"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://localhost/Invoke2Way/Invoke2Way" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+  <!-- Type definitions -->
+  <types>
+    <xsd:schema targetNamespace="http://localhost/Invoke2Way/Invoke2Way" xmlns:tns="http://localhost/Invoke2Way/Invoke2Way">
+
+      <xsd:element name="myString" type="xsd:string"/>
+    </xsd:schema>
+  </types>
+  
+  <message name ="Invoke1WayRequest">
+    <part name="requestMsgPart" element="ns1:myString"/>
+  </message>
+
+  <message name ="Invoke1WayResponse">
+    <part name="responseMsgPart" element="ns1:myString"/>
+  </message>
+  
+  <message name ="Invoke2WayRequest">
+    <part name="requestMsgPart" element="ns1:myString"/>
+  </message>
+
+  <message name ="Invoke2WayResponse">
+    <part name="responseMsgPart" element="ns1:myString"/>
+  </message>
+  
+  <message name ="Invoke2WayError">
+    <part name="errorPart" element="ns1:myString"/>
+  </message>
+
+  <portType name="Invoke2WayPortType">
+    <operation name="Invoke2WayOperation">
+      <input message="tns:Invoke2WayRequest"/>
+      <output message="tns:Invoke2WayResponse"/>
+      <fault message="tns:Invoke2WayError" name="error"/>
+    </operation>
+  </portType>
+    <portType name="Invoke1WayRequestPortType">
+        <operation name="oneWayOper">
+            <input name="input1" message="ns1:Invoke1WayRequest"/>
+        </operation>
+    </portType>
+    <portType name="Invoke1WayCallBackPortType">
+        <operation name="callback">
+            <input name="input1" message="ns1:Invoke1WayResponse"/>
+        </operation>
+    </portType>
+    <binding name="Invoke2WayBinding" type="tns:Invoke2WayPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="Invoke2WayOperation">
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="error">
+        <soap:fault name="error" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+    <binding name="onewayrequest" type="ns1:Invoke1WayRequestPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="oneWayOper">
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="callbackBinding" type="ns1:Invoke1WayCallBackPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="callback">
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="Invoke2WayService">
+    <port name="Invoke2WayPort" binding="tns:Invoke2WayBinding">
+      <soap:address location="http://localhost:12400"/>
+    </port>
+    </service>
+    <plink:partnerLinkType name="twoWayPLinkType">
+        <plink:role name="myRole" portType="ns1:Invoke2WayPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="oneWayPLinkType">
+        <plink:role name="myRole" portType="ns1:Invoke1WayRequestPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="partnerlinktyperole1" portType="ns1:Invoke1WayCallBackPortType">
+        </plink:role>
+    </plink:partnerLinkType>
+</definitions>

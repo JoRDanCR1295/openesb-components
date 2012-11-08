@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="bpReqRes"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ReqResFile/bpReqRes"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ReqResFile/bpReqRes" xmlns:ns0="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sxtx="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Transaction" sxtx:atomic="yes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/fileInOut" location="fileInOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/fileOutErr" location="fileOutErr.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileOutErr" partnerLinkType="tns:fileOutErr" partnerRole="fileOutErrPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" partnerLinkType="tns:fileInOut" myRole="fileInOutPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FileOutErrOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileOutErr" messageType="tns:fileOutErrOperationRequest"/>
+        <variable name="FileInOutOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" messageType="tns:fileInOutOperationResponse"/>
+        <variable name="FileInOutOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" messageType="tns:fileInOutOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="fileInOutOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" portType="tns:fileInOutPortType" variable="FileInOutOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>"BP Invoked"</from>
+                <to variable="FileOutErrOperationIn" part="part1"/>
+            </copy>
+            <copy>
+                <from variable="FileInOutOperationIn" part="part1"/>
+                <to variable="FileInOutOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="fileOutErrOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileOutErr" portType="tns:fileOutErrPortType" inputVariable="FileOutErrOperationIn"/>
+        <throw name="Throw1" faultName="ns0:invalidVariables"/>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="fileInOutOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" portType="tns:fileInOutPortType" variable="FileInOutOperationOut"/>
+    </sequence>
+</process>

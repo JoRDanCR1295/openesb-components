@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="bplThrowError"
+    targetNamespace="http://enterprise.netbeans.org/bpel/bplThrowError/bplThrowError"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/bplThrowError/bplThrowError" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2">
+    <import namespace="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" location="throwError.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" location="NoSvc.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" partnerLinkType="tns:NoSvc" partnerRole="NoSvcPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" partnerLinkType="tns:throwError" myRole="throwErrorPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="NoSvcOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" messageType="tns:NoSvcOperationResponse"/>
+        <variable name="NoSvcOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" messageType="tns:NoSvcOperationRequest"/>
+        <variable name="ThrowErrorOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" messageType="tns:throwErrorOperationResponse"/>
+        <variable name="ThrowErrorOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" messageType="tns:throwErrorOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="throwErrorOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" portType="tns:throwErrorPortType" variable="ThrowErrorOperationIn">
+            <sxt:trace>
+                <sxt:log level="severe" location="onStart">
+                    <from>'BPEL Got Message:'</from>
+                </sxt:log>
+            </sxt:trace>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from variable="ThrowErrorOperationIn" part="part1"/>
+                <to variable="NoSvcOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="NoSvcOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/NoSvc" portType="tns:NoSvcPortType" inputVariable="NoSvcOperationIn" outputVariable="NoSvcOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="NoSvcOperationOut" part="part1"/>
+                <to variable="ThrowErrorOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="throwErrorOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bplThrowError/throwError" portType="tns:throwErrorPortType" variable="ThrowErrorOperationOut"/>
+    </sequence>
+</process>

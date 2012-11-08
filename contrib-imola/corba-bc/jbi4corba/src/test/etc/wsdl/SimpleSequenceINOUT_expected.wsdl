@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ENDPOINT_NAME" targetNamespace="NAME_SPACE" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="NAME_SPACE" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="NAME_SPACE" xmlns="NAME_SPACE" xmlns:ns1="http://foo/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://foo/"/>
+<xs:element name="bar">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="how_many" type="xs:int"/>
+<xs:element maxOccurs="unbounded" name="nameList" type="ns1:nameAndValueT"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="barResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+<xs:element maxOccurs="unbounded" name="nameList" type="ns1:nameAndValueT"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://foo/" xmlns="http://foo/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:complexType name="nameAndValueT">
+<xs:sequence>
+<xs:element name="name" type="xs:string"/>
+<xs:element name="value" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="bar">
+    <wsdl:part name="parameters" element="tns:bar">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="barResponse">
+    <wsdl:part name="parameters" element="tns:barResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ENDPOINT_NAME">
+    <wsdl:operation name="bar">
+      <wsdl:input name="bar" message="tns:bar">
+    </wsdl:input>
+      <wsdl:output name="barResponse" message="tns:barResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ENDPOINT_NAMECorbaBinding" type="tns:ENDPOINT_NAME">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="SimpleSequenceINOUT.idl" relativepath=".">
+#ifndef foo_idl
+#define foo_idl
+
+//#pragma prefix &quot;my.namespace&quot;
+module foo {
+    struct NameAndValue_T {
+      string name;
+      string value;
+    };
+    typedef sequence&lt;NameAndValue_T&gt; NameAndValueList_T;
+    typedef NameAndValueList_T Bar_T;
+    typedef sequence&lt;NameAndValueList_T&gt; BarList_T;
+    interface Foo_I {
+      boolean bar(in unsigned long how_many, inout NameAndValueList_T nameList);
+    };
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="bar">
+      <wsdl:input name="bar">
+      </wsdl:input>
+      <wsdl:output name="barResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ENDPOINT_NAME">
+    <wsdl:port name="ENDPOINT_NAMECorbaPort" binding="tns:ENDPOINT_NAMECorbaBinding">
+<imolacorba:address name="CORBA_SERVICE_NAME" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="quo" value="2"/>
+<imolacorba:property name="qua" value=""/>
+<imolacorba:property name="qui" value="1"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

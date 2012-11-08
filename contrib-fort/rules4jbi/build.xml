@@ -1,0 +1,833 @@
+<?xml version="1.0"?>
+<project name="rules4jbi" default="default" basedir=".">
+    <description>
+        Business rules service engine. Allows to integrate a JSR-94 compliant rules engine into a JBI container.
+    </description>
+    <property name="project.name" value="rules4jbi"/>
+    <property name="project.version" value="0.4"/>
+    
+    <property name="copyright.owner" value="Milan Fort"/>
+    <property name="copyright.date" value="2008, 2009"/>
+    <property name="copyright.message"
+              value="Copyright (c) ${copyright.date} ${copyright.owner}. All rights reserved."/>
+    
+    <!--property environment="env" />
+    <property name="glassfish.home" value="${env.GLASSFISH_HOME}"/-->
+    <property name="glassfish.home" value="/glassfish"/>
+    <property name="glassfish.host" value="localhost"/>
+    <property name="glassfish.domain" value="domain1"/>
+    <property name="glassfish.admin.port" value="4848"/>
+    <property name="glassfish.deploy.port" value="8080"/>
+    <property name="glassfish.admin.user" value="admin"/>
+    <property name="glassfish.admin.password" value="adminadmin"/>
+    
+    <property name="asadmin" value="${glassfish.home}/bin/asadmin" />
+    
+    <property name="javac.compiler" value="modern"/>
+    <property name="javac.debug" value="true"/>
+    <property name="javac.fork" value="false"/>
+    <property name="javac.optimize" value="false"/>
+    <property name="javac.deprecation" value="true"/>
+    <property name="javac.java.version" value="1.6"/>
+    
+    <property name="src.dir" location="src"/>
+    <property name="src.main.dir" location="${src.dir}/main"/>
+    <property name="src.test.dir" location="${src.dir}/test"/>
+    <property name="src.test4rules.dir" location="${src.dir}/test4rules"/>
+    <property name="src.config.dir" location="${src.dir}/config"/>
+    
+    <property name="build.dir" location="build"/>
+    <property name="build.classes.dir" location="${build.dir}/classes"/>
+    
+    <property name="build.predist.dir" location="${build.dir}/predist"/>
+    <property name="build.predist.lib.dir" location="${build.predist.dir}/lib"/>
+
+    <property name="build.predist.test.dir" location="${build.dir}/predist-test"/>
+    <property name="build.predist.test.lib.dir" location="${build.predist.test.dir}/lib" />
+    
+    <property name="build.unzip.dir" location="${build.dir}/unzip"/>
+    <property name="build.unzip.test.dir" location="${build.dir}/unzip-test"/>
+    
+    <property name="build.test.dir" location="${build.dir}/test"/>
+    <property name="build.test.classes.dir" location="${build.test.dir}/classes"/>
+    <property name="build.test.data.dir" location="${build.test.dir}/data"/>
+    <property name="build.test.reports.dir" location="${build.test.dir}/reports"/>
+    
+    <property name="build.cobertura.dir" location="${build.dir}/cobertura"/>
+    <property name="build.cobertura.classes.dir" location="${build.cobertura.dir}/classes"/>
+    <property name="build.cobertura.data.dir" location="${build.cobertura.dir}/data"/>
+    <property name="build.cobertura.datafile" location="${build.cobertura.data.dir}/cobertura.ser"/>
+    <property name="build.cobertura.reports.dir" location="${build.cobertura.dir}/reports"/>
+    
+    <property name="build.findbugs.dir" location="${build.dir}/findbugs"/>
+    <property name="build.findbugs.outputfile" location="${build.findbugs.dir}/output.xml"/>
+    
+    <property name="build.pmd.dir" location="${build.dir}/pmd"/>
+    <property name="build.pmd.outputfile" location="${build.pmd.dir}/output.xml"/>
+    
+    <property name="build.cpd.dir" location="${build.dir}/cpd"/>
+    <property name="build.cpd.outputfile" location="${build.cpd.dir}/output.xml"/>
+
+    <property name="build.checkstyle.dir" location="${build.dir}/checkstyle"/>
+    <property name="build.checkstyle.outputfile" location="${build.checkstyle.dir}/output.xml"/>
+    <property name="build.checkstyle.reportfile" location="${build.checkstyle.dir}/report.html"/>
+    
+    <property name="junit.jar.name" value="junit-4.4"/>
+    <property name="junit.jar" value="${junit.jar.name}.jar"/>
+    <property name="junit.jar.localion" location="${lib.dir}/${junit.jar}"/>
+    
+    <property name="docs.dir" location="docs"/>
+    <property name="docs.java.dir" location="${docs.dir}/api"/>
+    <property name="docs.api.overview" location="${docs.dir}/overview/overview.html"/>
+    
+    <property name="dist.dir" location="dist"/>
+    
+    <property name="component.name" value="fort-rules-engine" />
+    <property name="component.jar.name" value="brse" />
+    <property name="component.jar" value="${component.jar.name}.jar" />
+    <property name="component.jar.location" location="${build.predist.lib.dir}/${component.jar}" />
+
+    <property name="artifact.name" value="rules4jbi" />
+    <property name="artifact.zip" value="${artifact.name}.jar" />
+    <property name="artifact.zip.location" location="${dist.dir}/${artifact.zip}" />
+    
+    <property name="test.component.name" value="fort-test-engine" />
+    <property name="test.component.jar.name" value="testse" />
+    <property name="test.component.jar" value="${test.component.jar.name}.jar" />
+    <property name="test.component.jar.location" location="${build.predist.test.lib.dir}/${test.component.jar}"/>
+
+    <property name="test.artifact.name" value="test4rules" />
+    <property name="test.artifact.zip" value="${test.artifact.name}.zip" />
+    <property name="test.artifact.zip.location" location="${dist.dir}/${test.artifact.zip}" />
+    
+    <property name="data.dir" location="data"/>
+    <property name="data.test.dir" location="${data.dir}/test"/>
+    
+    <property name="etc.dir" location="etc"/>
+    <property name="logging.config.file" location="${etc.dir}/logging.properties" />
+    
+    <property name="lib.dir" location="lib"/>
+    
+    <!-- If the name of shared library gets changed, don't forget to change the name
+         in .cvsignore in lib folder as well and update the netbeans module, that depends on it -->
+    <property name="shared.library.jar.name" value="rules4jbi-shared" />
+    <property name="shared.library.jar" value="${shared.library.jar.name}.jar" />
+    <property name="shared.library.jar.location" location="${lib.dir}/${shared.library.jar}" />
+    
+    <property name="findbugs.home" value="/opt/findbugs-1.3.0" />
+    <property name="findbugs.jvmargs" value="-server -Xss1m -Xmx200m -Duser.language=en -Duser.region=EN -Dfindbugs.home=${findbugs.home}"/>
+    
+    <property name="pmd.home" value="/opt/pmd-4.1" />
+    
+    <property name="checkstyle.home" value="/opt/checkstyle-4.4"/>
+    <property name="checkstyle.config.file" location="${etc.dir}/checkstyle.xml"/>
+    <property name="checkstyle.header.file" location="${etc.dir}/checkstyle.header.txt"/>
+    
+    <!--property name="checkstyle.xsl.file" value="/opt/checkstyle-4.4/contrib/checkstyle-simple.xsl"/-->
+    <property name="checkstyle.xsl.file" value="/opt/checkstyle-4.4/contrib/checkstyle-noframes-sorted.xsl"/>
+    <!--property name="checkstyle.xsl.file" value="/opt/checkstyle-4.4/contrib/checkstyle-noframes.xsl"/-->
+    
+    <property name="cobertura.home" value="/opt/cobertura-1.9" />
+    
+    <path id="cobertura.classpath">
+        <fileset dir="${cobertura.home}">
+            <include name="cobertura.jar" />
+            <include name="lib/**/*.jar" />
+        </fileset>
+    </path>
+    
+    <path id="findbugs.classpath">
+        <fileset dir="${findbugs.home}/lib">
+            <include name="findbugs-ant.jar"/>
+        </fileset>
+    </path>
+    
+    <path id="pmd.classpath">
+        <fileset dir="${pmd.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="checkstyle.classpath">
+        <fileset dir="${checkstyle.home}">
+            <include name="checkstyle-all-4.4.jar"/>
+        </fileset>
+    </path>
+    
+    <path id="jbi.ant.tasks.classpath">
+        <pathelement location="${glassfish.home}/lib/sun-appserv-ant.jar"/>
+        <pathelement location="${glassfish.home}/jbi/lib/jbi-ant-tasks.jar"/>
+    </path>
+
+    <patternset id="excluded.jaxb.libraries">
+        <exclude name="jaxb*"/>
+        <exclude name="activation.jar"/>
+        <exclude name="jsr173_1.0_api.jar"/>
+    </patternset>
+    
+    <patternset id="excluded.runtime.libraries">
+        <exclude name="${shared.library.jar}"/>
+        <exclude name="${junit.jar}"/>
+        <exclude name="jbi.jar"/>
+        
+        <patternset refid="excluded.jaxb.libraries"/>
+    </patternset>
+    
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+            <exclude name="${shared.library.jar}"/>
+            <patternset refid="excluded.jaxb.libraries"/>
+        </fileset>
+    </path>
+    
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <!--pathelement location="${junit.jar.localion}"/-->
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${build.test.classes.dir}"/>
+    </path>
+
+    <path id="test4rules.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+    </path>
+
+    <path id="run.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${build.classes.dir}"/>
+    </path>
+    
+    <target name="clean" description="removes all generated files">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+        <delete dir="${docs.java.dir}"/>
+    </target>
+    
+    <target name="-init-jbi-ant-tasks">
+        <taskdef resource="com/sun/jbi/ui/ant/antlib.xml" classpathref="jbi.ant.tasks.classpath"/>
+    </target>
+    
+    <target name="init">
+        <tstamp/>
+        <echo message="Building project:"/>
+        <echo message="${project.name} v${project.version}, ${TODAY}."/>
+        <echo message="${copyright.message}"/>
+        
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${build.predist.dir}"/>
+        <mkdir dir="${build.predist.lib.dir}"/>
+        <mkdir dir="${build.unzip.dir}"/>
+
+        <mkdir dir="${build.predist.test.dir}"/>
+        <mkdir dir="${build.predist.test.lib.dir}"/>
+        <mkdir dir="${build.unzip.test.dir}"/>
+        
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${docs.java.dir}"/>
+        
+        <mkdir dir="${build.test.dir}"/>
+        <mkdir dir="${build.test.classes.dir}"/>
+        <mkdir dir="${build.test.data.dir}"/>
+        <mkdir dir="${build.test.reports.dir}"/>
+        
+        <mkdir dir="${build.cobertura.dir}"/>
+        <mkdir dir="${build.cobertura.classes.dir}"/>
+        <mkdir dir="${build.cobertura.data.dir}"/>
+        <mkdir dir="${build.cobertura.reports.dir}"/>
+        
+        <mkdir dir="${build.findbugs.dir}"/>
+        <mkdir dir="${build.pmd.dir}"/>
+        <mkdir dir="${build.cpd.dir}"/>
+        <mkdir dir="${build.checkstyle.dir}"/>
+        
+        <mkdir dir="${build.sa.dir}"/>
+    </target>
+    
+    <target name="compile" depends="init" description="compiles all production classes">
+        <javac srcdir="${src.main.dir}"
+               destdir="${build.classes.dir}"
+               debug="${javac.debug}"
+               deprecation="${javac.deprecation}"
+               optimize="${javac.optimize}"
+               fork="${javac.fork}"
+               includeAntRuntime="false"
+               target="${javac.java.version}"
+               source="${javac.java.version}">
+            
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="compile-test4rules" depends="compile" description="compiles all functional test classes">
+        <javac srcdir="${src.test4rules.dir}"
+               destdir="${build.classes.dir}"
+               debug="${javac.debug}"
+               deprecation="${javac.deprecation}"
+               optimize="${javac.optimize}"
+               fork="${javac.fork}"
+               includeAntRuntime="false"
+               target="${javac.java.version}"
+               source="${javac.java.version}">
+            
+            <classpath refid="test4rules.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="run-single" depends="compile" description="runs single file">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        
+        <echo message="Main class: ${run.class}"/>
+        
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <jvmarg value="-Djava.util.logging.config.file=${logging.config.file}"/>
+            
+            <assertions>
+                <enable/>
+            </assertions>
+            
+            <classpath refid="run.classpath"/> 
+        </java>
+    </target>
+    
+    <property name="main.class" value="org.openesb.components.rules4jbi.shared.logging.LoggerImpl"/>
+    <target name="debug">
+        <nbjpdastart addressproperty="jpda.address" name="rules4jbi" transport="dt_socket">
+            <classpath refid="run.classpath"/>
+        </nbjpdastart>
+
+        <java classname="${main.class}" fork="true">
+            <classpath refid="run.classpath"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+    
+    <target name="javadoc" depends="compile" description="generates api documentation">
+        <delete dir="${docs.java.dir}" failonerror="false"/>
+        <mkdir dir="${docs.java.dir}"/>
+        <javadoc 
+            packagenames="org.openesb.components.rules4jbi*"
+            destdir="${docs.java.dir}"
+            source="${javac.java.version}"
+            
+            author="false"
+            version="true"
+            use="true"
+            access="private"
+            
+            notree="false"
+            nonavbar="false"
+            noindex="false"
+            splitindex="true"
+            nodeprecatedlist="false"
+            nodeprecated="false"
+            doctitle="${project.name} API"
+            windowtitle="${project.name} API"
+            overview="${docs.api.overview}"
+            breakiterator="yes">
+            
+            <fileset dir="${src.main.dir}"/>
+            
+            <classpath refid="compile.classpath"/>
+            
+            <!--group title="Component">
+				<package name="org.openesb.components.rules4jbi.engine.component"/>
+			</group>
+
+			<group title="Logging">
+				<package name="org.openesb.components.rules4jbi.shared.logging"/>
+			</group-->
+			
+            <!--stylesheetfile="stylesheet.css"-->
+            <bottom>${copyright.message}</bottom>
+        </javadoc>	
+    </target>
+    
+    <target name="test-compile" depends="compile">
+        <javac srcdir="${src.test.dir}"
+               destdir="${build.test.classes.dir}"
+               debug="${javac.debug}"
+               deprecation="${javac.deprecation}"
+               optimize="${javac.optimize}"
+               fork="${javac.fork}"
+               includeAntRuntime="false"
+               target="${javac.java.version}"
+               source="${javac.java.version}">
+            
+            <classpath refid="test.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="test" depends="test-compile" description="runs all junit tests">
+        <junit printsummary="false"  haltonfailure="false" fork="true" forkmode="once"
+               errorProperty="test.failed" failureProperty="test.failed">
+                   
+            <assertions>
+                <enable/>
+            </assertions>
+            
+            <classpath>
+                <path refid="test.classpath"/>
+            </classpath>
+            
+            <sysproperty key="test.dir" value="${data.test.dir}"/>
+                        
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            
+            <batchtest todir="${build.test.data.dir}">
+                <fileset dir="${build.test.classes.dir}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        
+        <junitreport todir="${build.test.data.dir}">
+            <fileset dir="${build.test.data.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${build.test.reports.dir}"/>
+        </junitreport>
+        
+        <!--fail message="Tests failed. Check log and/or reports." if="test.failed"/-->
+		
+        <fail if="test.failed">
+            *
+            
+            *************************************
+            *************************************
+            ****                             ****
+            ****  ONE OR MORE TESTS FAILED!  ****
+            ****                             ****
+            *************************************
+            *************************************
+        </fail>
+    </target>
+    
+    <target name="cobertura" depends="test-compile" description="measures test coverage">
+        <taskdef resource="tasks.properties" classpathref="cobertura.classpath"/>
+        
+        <cobertura-instrument todir="${build.cobertura.classes.dir}" datafile="${build.cobertura.datafile}">
+            <fileset dir="${build.classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+        </cobertura-instrument>
+
+        <junit printsummary="false"  haltonfailure="false" fork="true" forkmode="once"
+               errorProperty="test.failed" failureProperty="test.failed">
+            
+            <assertions>
+                <enable/>
+            </assertions>
+            
+            <sysproperty key="net.sourceforge.cobertura.datafile"  file="${build.cobertura.datafile}" />
+            
+            <sysproperty key="test.dir" value="${data.test.dir}"/>
+            
+            <classpath location="${build.cobertura.classes.dir}" />
+            
+            <classpath>
+                <path refid="test.classpath"/>
+            </classpath>
+            
+            <classpath refid="cobertura.classpath" />
+            
+            <formatter type="brief" usefile="false"/>
+            <batchtest>
+                <fileset dir="${build.test.classes.dir}" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        
+        <cobertura-report format="xml"
+                          srcdir="${src.main.dir}" 
+                          destdir="${build.cobertura.data.dir}"
+                          datafile="${build.cobertura.datafile}"/>
+
+        <cobertura-report format="html"
+                          srcdir="${src.main.dir}" 
+                          destdir="${build.cobertura.reports.dir}"
+                          datafile="${build.cobertura.datafile}"/>
+                          
+        <fail message="Tests failed. Check log and/or reports." if="test.failed"/>
+    </target>
+    
+    <target name="findbugs" depends="compile" description="looks for bugs using static analysis">
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+            <classpath refid="findbugs.classpath" />
+        </taskdef>
+        
+        <findbugs home="${findbugs.home}"
+                  output="xml" 
+                  reportLevel="medium"
+                  workHard="true"
+                  effort="max"
+                  debug="false"
+                  failOnError="true"
+                  jvmargs="${findbugs.jvmargs}"
+                  outputFile="${build.findbugs.outputfile}">
+                      
+            <sourcePath path="${src.main.dir}" />
+            
+            <auxClasspath>
+                <path refid="compile.classpath"/>
+            </auxClasspath>
+                
+            <class location="${build.classes.dir}" />
+        </findbugs>
+    </target>
+    
+    <target name="pmd" depends="init" description="looks for potential problems using static analysis">
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
+        
+        <pmd failonerror="true" 
+             failOnRuleViolation="false" 
+             targetjdk="1.6">
+                 
+            <ruleset>etc/pmd.xml</ruleset>
+
+            
+            <!--ruleset>rulesets/basic.xml</ruleset>
+            <ruleset>rulesets/braces.xml</ruleset>
+            <ruleset>rulesets/javabeans.xml</ruleset>
+            <ruleset>rulesets/unusedcode.xml</ruleset>
+            <ruleset>rulesets/strings.xml</ruleset>
+            <ruleset>rulesets/design.xml</ruleset>
+            <ruleset>rulesets/coupling.xml</ruleset>
+            <ruleset>rulesets/codesize.xml</ruleset>
+            <ruleset>rulesets/imports.xml</ruleset>
+            <ruleset>rulesets/naming.xml</ruleset>
+            
+            <ruleset>rulesets/clone.xml</ruleset>
+            <ruleset>rulesets/sunsecure.xml</ruleset>
+            <ruleset>rulesets/migrating_to_junit4.xml</ruleset>
+            <ruleset>rulesets/migrating_to_15.xml</ruleset>
+            <ruleset>rulesets/optimizations.xml</ruleset>
+            <ruleset>rulesets/finalizers.xml</ruleset>
+            <ruleset>rulesets/strictexception.xml</ruleset>
+            <ruleset>rulesets/typeresolution.xml</ruleset-->
+            
+            
+            <!--ruleset>rulesets/junit.xml</ruleset-->
+            <!--ruleset>rulesets/logging-java.xml</ruleset-->
+            <!--ruleset>rulesets/controversial.xml</ruleset-->
+            
+            <formatter type="xml" toFile="${build.pmd.outputfile}" />
+            
+            <fileset dir="${src.main.dir}">
+                <include name="**/*.java" />
+            </fileset>
+        </pmd>
+    </target>
+    
+    <target name="cpd" depends="init"  description="looks for duplicated code using static analysis">
+        <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.classpath" />
+        
+        <cpd minimumTokenCount="100"
+             ignoreLiterals="true"
+             ignoreIdentifiers="true"
+             language="java"
+             format="xml"
+             outputFile="${build.cpd.outputfile}">
+            
+            <fileset dir="${src.main.dir}">
+                <include name="**/*.java" />
+            </fileset>
+        </cpd>
+    </target>
+    
+    <target name="checkstyle" depends="init" description="looks for coding standard violations">
+        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
+        
+        <checkstyle config="${checkstyle.config.file}" failOnViolation="false" classpathref="compile.classpath">
+            <!--formatter type="plain"/-->
+            
+            <formatter type="xml" toFile="${build.checkstyle.outputfile}" />
+            <fileset dir="${src.main.dir}" includes="**/*.java" />
+        </checkstyle>
+        
+        
+        <xslt taskname="checkstyle"
+              in="${build.checkstyle.outputfile}"
+              out="${build.checkstyle.reportfile}"
+              style="${checkstyle.xsl.file}" />
+    </target>
+    
+    <target name="jdepend" depends="compile" description="generates design quality metrics for each package">
+        <jdepend classpathref="compile.classpath">
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <exclude name="nu.*"/>
+            <exclude name="org.*"/>
+            <exclude name="com.google.*"/>
+            
+            <classespath>
+                <pathelement location="${build.classes.dir}"/>
+            </classespath>
+        </jdepend>
+    </target>
+    
+    <target name="build-shared" depends="init, compile" description="creates the shared library, used by netbeans project module">
+        <echo message="Creating ${shared.library.jar} in the lib directory" />
+        
+        <delete file="${shared.library.jar.location}" failonerror="false"/>
+        
+        <jar destfile="${shared.library.jar.location}">
+            <fileset dir="${build.classes.dir}">
+                <include name="**/shared/**"/>
+            </fileset>
+        </jar>
+    </target>
+    
+    <target name="dist" depends="init, compile" description="creates the distribution">
+        <echo message="Creating ${artifact.zip}" />
+     
+        <jar destfile="${component.jar.location}">
+            <fileset dir="${build.classes.dir}" />
+        </jar>
+             
+        <copy todir="${build.predist.dir}">
+            <fileset dir="${src.config.dir}">
+                <exclude name="**/test.jbi.xml"/>
+            </fileset>
+        </copy> 
+        
+        <copy todir="${build.predist.lib.dir}">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+                <patternset refid="excluded.runtime.libraries"/>
+            </fileset>
+        </copy> 
+
+        <jar destfile="${artifact.zip.location}" basedir="${build.predist.dir}"/>
+        
+        <unjar src="${artifact.zip.location}" dest="${build.unzip.dir}"/>
+    </target>
+
+    <target name="dist-test4rules" depends="init, compile-test4rules" description="creates the functional test distribution">
+        <echo message="Creating ${test.artifact.zip}" />
+     
+        <jar destfile="${test.component.jar.location}" 
+             basedir="${build.classes.dir}" />
+             
+        <copy todir="${build.predist.test.dir}">
+            <fileset dir="${src.config.dir}">
+                <exclude name="**/jbi.xml"/>
+            </fileset>
+        </copy> 
+
+        <move file="${build.predist.test.dir}/META-INF/test.jbi.xml" 
+            tofile="${build.predist.test.dir}/META-INF/jbi.xml" />
+        
+        <copy todir="${build.predist.test.lib.dir}">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+                <patternset refid="excluded.runtime.libraries"/>
+            </fileset>
+        </copy>
+        
+        <zip destfile="${test.artifact.zip.location}" basedir="${build.predist.test.dir}"/>
+        
+        <unzip src="${test.artifact.zip.location}" dest="${build.unzip.test.dir}"/>
+    </target>
+
+    <!--property name="engine.name" value="jamocha"/-->
+    <!--property name="engine.name" value="jess"/-->
+    <!--property name="engine.name" value="drools"/-->
+    
+    <property name="engine.name" value="drools"/>
+    
+    <property name="assemblies.dir" location="${data.dir}/assemblies"/>
+    <property name="sa.dir" location="${assemblies.dir}/${engine.name}"/>
+    <property name="sa.name" value="${engine.name}-jsr94-tck-sa"/>
+    
+    <property name="sa.http.dir" location="${sa.dir}/http-su"/>
+    <property name="sa.rule.dir" location="${sa.dir}/rule-su"/>
+    
+    <property name="build.sa.dir" location="${build.dir}/sa"/>
+
+    <property name="http-su.zip.location" location="${build.sa.dir}/http-su.zip" />
+    <property name="rule-su.zip.location" location="${build.sa.dir}/rule-su.zip" />
+    
+    <property name="sa.zip.location" location="${dist.dir}/${sa.name}.zip" />
+    
+    <target name="sa" depends="clean, init" description="TBD">
+        <echo message="Deploying ${sa.zip.location}" />
+        
+        <zip destfile="${http-su.zip.location}" basedir="${sa.http.dir}"/>
+        <!--unzip src="${su.zip.location}" dest="${build.su.unzip.dir}"/-->
+        
+        <zip destfile="${rule-su.zip.location}" basedir="${sa.rule.dir}"/>
+        
+        <copy todir="${build.sa.dir}">
+            <fileset dir="${sa.dir}">
+                <include name="META-INF/jbi.xml"/>
+            </fileset>
+        </copy> 
+        
+        <zip destfile="${sa.zip.location}" basedir="${build.sa.dir}"/>
+    </target>
+    
+    <target name="deploy-sa" depends="-init-jbi-ant-tasks, sa" description="TBD">
+        
+        <jbi-deploy-service-assembly 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" file="${sa.zip.location}"/>
+        
+        <jbi-start-service-assembly
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${sa.name}" /> <!-- failOnError="false" -->
+    </target>
+    
+    <target name="undeploy-sa" depends="-init-jbi-ant-tasks, sa" description="TBD" >
+        
+        <jbi-stop-service-assembly
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${sa.name}" failOnError="false"/>
+    
+        <jbi-shut-down-service-assembly
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${sa.name}" failOnError="false"/>
+        
+        <jbi-undeploy-service-assembly 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${sa.name}" failOnError="false"/>
+    </target> 
+    
+    <target name="list-sa" depends="-init-jbi-ant-tasks" description="TBD">
+        
+        <jbi-list-service-assemblies
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" serviceAssemblyName="${sa.name}" />
+    </target>
+    
+    <target name="run-sa" depends="deploy-sa, list-sa"  description="TBD" />
+    
+    <target name="redeploy-sa" depends="undeploy-sa, run-sa" description="TBD"/>
+    
+    <target name="full-redeploy" description="TBD">
+        <antcall target="undeploy-sa"/>
+        <antcall target="undeploy"/>
+        <antcall target="run"/>
+        <antcall target="run-sa"/>
+    </target>
+    
+    <target name="deploy" depends="-init-jbi-ant-tasks, dist" 
+            description="creates the distribution, installs and starts the jbi component" >
+                
+        <jbi-install-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" file="${artifact.zip.location}"/>
+        
+        <jbi-start-component 
+             host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+             password="${glassfish.admin.password}" name="${component.name}" /> <!-- failOnError="false" -->
+    </target>
+    
+    <target name="deploy-test" depends="-init-jbi-ant-tasks, dist-test4rules" 
+            description="creates the distribution, installs and starts the test jbi component" >
+        
+        <jbi-install-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" file="${test.artifact.zip.location}"/>
+        
+        <jbi-start-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${test.component.name}" /> <!-- failOnError="false" -->
+    </target> 
+    
+    <target name="run" depends="deploy, list"  description="deploys the jbi component and shows its status" />
+    
+    <target name="run-test" depends="deploy-test, list-test"  
+            description="deploys the test jbi component and shows its status" />
+    
+    <target name="undeploy" depends="-init-jbi-ant-tasks" 
+            description="stops, shuts down and uninstalls the jbi component" >
+        
+        <jbi-stop-component 
+             host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+             password="${glassfish.admin.password}" name="${component.name}" failOnError="false" />
+
+        <jbi-shut-down-component 
+             host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+             password="${glassfish.admin.password}" name="${component.name}" failOnError="false" />
+        
+        <jbi-uninstall-component 
+             host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+             password="${glassfish.admin.password}" name="${component.name}" failOnError="false" />
+    </target>    
+
+    <target name="undeploy-test" depends="-init-jbi-ant-tasks" 
+            description="stops, shuts down and uninstalls the test jbi component" >
+        
+        <jbi-stop-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${test.component.name}" failOnError="false" />
+        
+        <jbi-shut-down-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${test.component.name}" failOnError="false" />
+        
+        <jbi-uninstall-component 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" name="${test.component.name}" failOnError="false" />
+    </target>    
+    
+    <target name="redeploy" depends="undeploy, deploy"/>
+    
+    <target name="redeploy-test" depends="undeploy-test, deploy-test"/>
+    
+    <target name="list" depends="-init-jbi-ant-tasks" description="displays the runtime state of the jbi component">
+        
+        <jbi-list-service-engines 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" serviceEngineName="${component.name}" /> 
+    </target>
+    
+    <target name="list-test" depends="-init-jbi-ant-tasks" 
+            description="displays the runtime state of the test jbi component">
+        
+        <jbi-list-service-engines 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" serviceEngineName="${test.component.name}" /> 
+    </target>
+    
+    <target name="list-all" depends="-init-jbi-ant-tasks" 
+            description="displays the runtime state of all installed jbi components">
+        
+        <jbi-list-service-engines 
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" /> 
+        
+        <jbi-list-binding-components
+            host="${glassfish.host}" port="${glassfish.admin.port}" username="${glassfish.admin.user}"
+            password="${glassfish.admin.password}" /> 
+    </target>
+    
+    <target name="default" depends="dist, dist-test4rules"  description="default target; currently just creates the distribution"/>
+    
+    <!-- GlassFish Administration -->
+
+    <target name="start-glassfish">
+        <exec executable="${asadmin}" failonerror="false" spawn="true">
+            <arg value="start-domain" />
+            <arg value="${glassfish.domain}" />
+        </exec>
+    </target>
+    
+    <!-- start with debug listener on default port of 9009 -->
+    <target name="start-glassfish-debug">
+        <exec executable="${asadmin}" failonerror="false" spawn="true">
+            <arg value="start-domain" />
+            <arg line="--debug=true" />
+            <arg value="${glassfish.domain}" />
+        </exec>
+    </target>
+    
+    <target name="stop-glassfish">
+        <exec executable="${asadmin}" failonerror="false">
+            <arg line="stop-domain ${glassfish.domain}" />
+        </exec>
+    </target>
+    
+    <target name="restart-glassfish" depends="stop-glassfish, start-glassfish"/>
+</project>

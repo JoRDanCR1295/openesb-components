@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/fileOutErr" xmlns:ns2="http://j2ee.netbeans.org/wsdl/fileInOut" xmlns:ns3="http://enterprise.netbeans.org/bpel/ReqResFile/bpReqRes" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="fileOutErrPort" interface-name="ns1:fileOutErrPortType" name="endpoint1" service-name="ns1:fileOutErrService"/>
+<endpoint endpoint-name="fileInOutPort" interface-name="ns2:fileInOutPortType" name="endpoint2" service-name="ns2:fileInOutService"/>
+<endpoint display-name="PartnerLink1" endpoint-name="fileInOutPortTypeRole_myRole" file-path="bpReqRes.bpel" interface-name="ns2:fileInOutPortType" name="endpoint3" process-name="bpReqRes" service-name="ns3:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="fileOutErrPortTypeRole_partnerRole" file-path="bpReqRes.bpel" interface-name="ns1:fileOutErrPortType" name="endpoint4" process-name="bpReqRes" service-name="ns3:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="bpInOut.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="caInOut-bpInOut" unit-name="bpInOut" unknown="false" x="166" y="99">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="caInOut-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="118">
+<link xlink:href="../jbiServiceUnits/bpInOut/fileInOut.wsdl#xpointer(/definitions/service[@name='fileInOutService']/port[@name='fileInOutPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="67" y="39">
+<link xlink:href="../jbiServiceUnits/bpInOut/fileOutErr.wsdl#xpointer(/definitions/service[@name='fileOutErrService']/port[@name='fileOutErrPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint3" state="unchanged">
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="2" waitTime="3000">
+        <on-failure>
+          <suspend/>
+        </on-failure>
+    </redelivery>
+</connection>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiasa/http.wsdl#xpointer(/definitions/portType[@name='httpPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileInOut.wsdl#xpointer(/definitions/portType[@name='fileInOutPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileOutErr.wsdl#xpointer(/definitions/portType[@name='fileOutErrPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiasa/http.wsdl#xpointer(/definitions/binding[@name='httpBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileInOut.wsdl#xpointer(/definitions/binding[@name='fileInOutBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileOutErr.wsdl#xpointer(/definitions/binding[@name='fileOutErrBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiasa/http.wsdl#xpointer(/definitions/service[@name='httpService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileInOut.wsdl#xpointer(/definitions/service[@name='fileInOutService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOut/fileOutErr.wsdl#xpointer(/definitions/service[@name='fileOutErrService'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

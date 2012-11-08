@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://onewayerrortest.webservice.namespace" targetNamespace="http://onewayerrortest.webservice.namespace">
+	<types>
+		<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:y="http://onewayerrortest.webservice.namespace" targetNamespace="http://onewayerrortest.webservice.namespace">
+			<xs:element name="Elem1" type="y:CType1">
+				<xs:annotation>
+					<xs:documentation>Comment describing your root element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:complexType name="CType1">
+				<xs:sequence>
+					<xs:element name="Field1_1" type="xs:string"/>
+					<xs:element name="Field1_2" type="xs:int"/>
+					<xs:element name="Field1_3" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="CType2">
+				<xs:sequence>
+					<xs:element name="Field2_1" type="xs:boolean"/>
+					<xs:element name="Field2_2" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="Elem2" type="y:CType2"/>
+		</xs:schema>
+	</types>
+
+	<message name="message1">
+		<part element="y:Elem1" name="body"/>
+	</message>
+	<message name="message2">
+		<part element="y:Elem2" name="body"/>
+	</message>
+       
+	<message name="message1Result">
+		<part element="y:Elem1" name="result"/>
+	</message>
+	<message name="message2Result">
+		<part element="y:Elem2" name="result"/>
+	</message>
+        
+        
+	<portType name="MultiOpDiffMsgElemElemIF">
+        	<operation name="operation1">
+			<input message="y:message1"/>
+			<output message="y:message1Result"/>
+		</operation>
+        	<operation name="operation2">
+			<input message="y:message2"/>
+			<output message="y:message2Result"/>
+		</operation>
+	</portType>
+        
+        
+                
+	<binding name="MultiOpDiffMsgElemElemDiffActIFBinding" type="y:MultiOpDiffMsgElemElemIF">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="operation1">
+			<soap:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="result" use="literal"/>
+			</output>
+		</operation>
+		<operation name="operation2">
+			<soap:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+			<input>
+				<soap:body parts="body" use="literal"/>
+			</input>
+			<output>
+				<soap:body parts="result" use="literal"/>
+			</output>
+		</operation>
+	</binding>
+
+	<service name="MultiOpTestService">
+                        
+		<port binding="y:MultiOpDiffMsgElemElemDiffActIFBinding" name="MultiOpDiffMsgElemElemDiffActIFPort">
+			<soap:address location="http://localhost:12100/service/OneWayErrorTest_i18n"/>
+		</port>
+	</service>
+
+	<plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="MultiOpIFServiceLink">
+		
+                
+                
+		<plnk:role name="MultiOpDiffMsgElemElemIFRole" portType="y:MultiOpDiffMsgElemElemIF"/>
+	</plnk:partnerLinkType>
+</definitions>

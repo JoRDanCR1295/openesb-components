@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="cacheBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/cacheBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/cacheBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/cacheBpel" xmlns:ns2="http://j2ee.netbeans.org/wsdl/cache" xmlns:ns3="http://j2ee.netbeans.org/wsdl/helloPartner">
+    <import namespace="http://j2ee.netbeans.org/wsdl/cacheBpel" location="cacheBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/cache" location="cache.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/helloPartner" location="helloPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="AspectPartnerLink" partnerLinkType="ns2:cachePartner" partnerRole="cachePortTypeRole"/>
+        <bpws:partnerLink name="BpelPartnerLink" partnerLinkType="ns1:cacheBpelPartner" myRole="cacheBpelPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="CacheOperationOut" messageType="ns3:helloPartnerOperationReply"/>
+        <bpws:variable name="CacheOperationIn" messageType="ns3:helloPartnerOperationRequest"/>
+        <bpws:variable name="CacheBpelOperationOut" messageType="ns1:cacheBpelOperationReply"/>
+        <bpws:variable name="CacheBpelOperationIn" messageType="ns1:cacheBpelOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="BpelPartnerLink" operation="cacheBpelOperation" portType="ns1:cacheBpelPortType" variable="CacheBpelOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="CacheBpelOperationIn" part="part1"/>
+                <bpws:to variable="CacheOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="AspectPartnerLink" operation="cacheOperation" portType="ns2:cachePortType" inputVariable="CacheOperationIn" outputVariable="CacheOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="CacheOperationOut" part="part1"/>
+                <bpws:to variable="CacheBpelOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="BpelPartnerLink" operation="cacheBpelOperation" portType="ns1:cacheBpelPortType" variable="CacheBpelOperationOut"/>
+    </sequence>
+</process>

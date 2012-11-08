@@ -1,0 +1,181 @@
+<definitions targetNamespace="urn:corrRecRecTargetNamespace"
+             name="corrRecRecDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:corrRecRecTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWSDL" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <import location="SubBPWSDL.wsdl" namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL"/>
+    <types>
+        <xsd:schema targetNamespace="urn:corrRecRecTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:corrRecRecTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:corrRecRecTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+            
+            <xsd:complexType name="ReceiveType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string" name="string"></xsd:element>
+        </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="Message1">
+        <part name="Part1" type="tns:ReceiveType"></part>
+    </message>
+    <portType name="Receive1PortType">
+        <operation name="Operation1">
+            <input message="tns:Message1" name="input1"></input>
+        </operation>
+    </portType>
+    
+    <portType name="Receive2PortType">
+        <operation name="Operation1">
+            <input message="tns:Message1" name="input1"></input>
+        </operation>
+    </portType> 
+    
+    <portType name="Receive3PortType">
+        <operation name="Operation1">
+            <input message="tns:Message1" name="input1"></input>
+        </operation>
+    </portType>     
+    
+    <portType name="InvokePortType">
+        <operation name="Operation1">
+            <input name="input1" message="tns:Message1"/>
+        </operation>
+    </portType>
+    
+   <!-- <binding name="Receive1Binding" type="tns:Receive1PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Operation1">
+            <soap:operation soapAction="corrRecRecOperation1"/>
+            <input name="input1">
+                <soap:body parts="Part1" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="Receive2Binding" type="tns:Receive2PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Operation1">
+            <soap:operation soapAction="corrRecRecOperation2"/>
+            <input name="input1">
+                <soap:body parts="Part1" use="literal"/>
+            </input>
+            
+        </operation>
+    </binding>  
+    <binding name="Receive3Binding" type="tns:Receive3PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Operation1">
+            <soap:operation soapAction="corrRecRecOperation3"/>
+            <input  name="input1">
+                <soap:body parts="Part1" use="literal"/>
+            </input>
+        </operation>
+    </binding>     
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Operation1">
+            <soap:operation soapAction="corrInvokeB4Operation"/>
+            <input name="input1">
+                <soap:body parts="Part1" use="literal"/>
+            </input>
+            
+        </operation>
+    </binding> -->
+    <binding name="Receive1JMSBinding" type="tns:Receive1PortType">
+        <jms:binding></jms:binding>
+        <operation name="Operation1">
+            <jms:operation destination="Queue1In" destinationType="Queue" transaction="NoTransaction"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="Part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="Receive2JMSBinding" type="tns:Receive2PortType">
+        <jms:binding></jms:binding>
+        <operation name="Operation1">
+            <jms:operation destination="Queue2In" destinationType="Queue" transaction="NoTransaction"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="Part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="Receive3JMSBinding" type="tns:Receive3PortType">
+        <jms:binding></jms:binding>
+        <operation name="Operation1">
+            <jms:operation destination="Queue3In" destinationType="Queue" transaction="NoTransaction"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="Part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="InvokeJMSBinding" type="tns:InvokePortType">
+        <jms:binding></jms:binding>
+        <operation name="Operation1">
+            <jms:operation destination="QueueOut" destinationType="Queue" transaction="NoTransaction"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="Part1"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="corrRecRecService">
+        <!-- <port name="Receive1Port" binding="tns:Receive1Binding">
+            <soap:address location="http://localhost:18181/CorrelationInFlowWithMultipleIMA/MainBPWSDL/Receive1Port"/>
+        </port>
+        <port name="Receive2Port" binding="tns:Receive2Binding">
+            <soap:address location="http://localhost:18181/CorrelationInFlowWithMultipleIMA/MainBPWSDL/Receive2Port"/>
+        </port>
+        <port name="Receive3Port" binding="tns:Receive3Binding">
+            <soap:address location="http://localhost:18181/CorrelationInFlowWithMultipleIMA/MainBPWSDL/Receive3Port"/>
+        </port> -->
+        <port name="Receive1JMSPort" binding="tns:Receive1JMSBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+        <port name="Receive2JMSPort" binding="tns:Receive2JMSBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+        <port name="Receive3JMSPort" binding="tns:Receive3JMSBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+    </service>
+    <service name="corrInvokeClientService">
+        <!-- <port name="corrInvokeClientPort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:12100/service/corrInvokeClientPort"/>
+        </port> -->
+        <port name="InvokeJMSPort" binding="tns:InvokeJMSBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>        
+    </service>
+    
+    <vprop:property name="property1" type="xsd:string"/>
+    
+    <vprop:propertyAlias part="Part1" propertyName="tns:property1" messageType="tns:Message1">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    
+    <vprop:propertyAlias part="part1" propertyName="tns:property1" messageType="ns1:SubBPWSDLOperationReply"/>
+    
+    <plnk:partnerLinkType name="Receive1PartnerLinkType" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Receive1ServerRole"  portType="tns:Receive1PortType"></plnk:role>                   
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Receive2PartnerLinkType" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Receive2ServerRole"  portType="tns:Receive2PortType"></plnk:role>                   
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Receive3PartnerLinkType" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Receive3ServerRole"  portType="tns:Receive3PortType"></plnk:role>                   
+    </plnk:partnerLinkType>     
+    <slnk:partnerLinkType name="InvokePartnerlinktype">
+        <slnk:role name="InvokeClientRole" portType="tns:InvokePortType"/>
+    </slnk:partnerLinkType>
+    
+</definitions>

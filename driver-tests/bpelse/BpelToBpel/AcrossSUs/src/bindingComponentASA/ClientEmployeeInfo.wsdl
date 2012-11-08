@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ClientEmployeeInfo" targetNamespace="http://j2ee.netbeans.org/wsdl/ClientEmployeeInfo"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/ClientEmployeeInfo"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+
+  <!-- Message definitions -->
+  <message name ="ClientEmployeeInfoRequest">
+    <part name="id" type="xsd:string"/>
+  </message>
+
+  <message name ="ClientEmployeeInfoResponse">
+    <part name="item" type="xsd:string"/>
+  </message>
+  
+
+  <!-- Port type definitions -->
+  <portType name="ClientEmployeeInfoPortType">
+    <operation name="ClientEmployeeInfoOperation">
+      <input message="tns:ClientEmployeeInfoRequest"/>
+      <output message="tns:ClientEmployeeInfoResponse"/>
+    </operation>
+  </portType>
+  
+  <!-- Binding definitions -->
+  <binding name="ClientEmployeeInfoBinding" type="tns:ClientEmployeeInfoPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="ClientEmployeeInfoOperation">
+      <soap:operation soapAction="ClientEmployee"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      </operation>
+  </binding>
+  
+  <service name="ClientEmployeeInfoService">
+    <port name="ClientEmployeeInfoPort" binding="tns:ClientEmployeeInfoBinding">
+      <soap:address location="http://localhost:${HttpDefaultPort}/service/ClientEmployeeInfo"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="ClientEmployeeInfo">
+        <plink:role name="server" portType="tns:ClientEmployeeInfoPortType"/>
+    </plink:partnerLinkType>
+</definitions>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSPerf" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSPerf"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSPerf" xmlns:ns="http://xml.netbeans.org/schema/JMSPerfMessage" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSPerf">
+            <xsd:import namespace="http://xml.netbeans.org/schema/JMSPerfMessage" schemaLocation="JMSPerfMessage.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="JMSPerfOperationRequest">
+        <part name="part1" element="ns:Message"/>
+    </message>
+    <portType name="JMSPerfPortTypeIn">
+        <wsdl:operation name="JMSPerfOperation">
+            <wsdl:input name="input1" message="tns:JMSPerfOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSPerfPortTypeOut">
+        <wsdl:operation name="JMSPerfOperation">
+            <wsdl:input name="input1" message="tns:JMSPerfOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSPerfBindingIn" type="tns:JMSPerfPortTypeIn">
+        <jms:binding/>
+        <wsdl:operation name="JMSPerfOperation">
+	    <jms:operation destinationType="Queue"
+                       maxConcurrentConsumers="32"
+                       destination="jmsbc_echo_benchmark_publish" 
+                       transaction="NoTransaction">
+            </jms:operation>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSPerfBindingOut" type="tns:JMSPerfPortTypeOut">
+        <jms:binding/>
+        <wsdl:operation name="JMSPerfOperation">
+            <jms:operation deliveryMode="NON_PERSISTENT"
+                       disableMessageTimeStamp="true"
+                       disableMessageID="true"
+                       transaction="NoTransaction"
+                       destinationType="Queue"
+                       destination="jmsbc_echo_benchmark_consume"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSPerfService">
+        <wsdl:port name="JMSPerfPortIn" binding="tns:JMSPerfBindingIn">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSPerfPortOut" binding="tns:JMSPerfBindingOut">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="JMSPerfIn">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSPerfPortTypeInRole" portType="tns:JMSPerfPortTypeIn"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSPerfOut">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSPerfPortTypeOutRole" portType="tns:JMSPerfPortTypeOut"/>
+    </plnk:partnerLinkType>
+</definitions>

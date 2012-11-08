@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv" name="FileInOutMqPutrecv" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv" xmlns:tns1="http://j2ee.netbeans.org/wsdl/FileInOutMqPutrecv">
+            <xsd:complexType name="ComboMsgType">
+                <xsd:sequence>
+                    <xsd:element name="HexBinary" type="xsd:hexBinary"></xsd:element>
+                    <xsd:element name="StringMsg" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="ComboMsg" type="tns1:ComboMsgType"></xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="messageReq">
+        <wsdl:part name="part1Req" element="tns:ComboMsg"/>
+    </wsdl:message>
+    <wsdl:message name="message1Reply">
+        <wsdl:part name="part1Reply" element="tns:ComboMsg"/>
+    </wsdl:message>
+    <wsdl:portType name="MqPutPortType">
+        <wsdl:operation name="MqPutPortOperation">
+            <wsdl:input name="input1" message="tns:messageReq"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="MqRecvPortType">
+        <wsdl:operation name="MqRecvPortOperation">
+            <wsdl:input name="input1" message="tns:messageReq"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="FileInPortType">
+        <wsdl:operation name="FileInOperation">
+            <wsdl:input name="input1" message="tns:messageReq"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="FileOutPortType">
+        <wsdl:operation name="FileOutOperation">
+            <wsdl:input name="input1" message="tns:message1Reply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="binding1MqPut" type="tns:MqPutPortType">
+        <mq:binding/>
+        <wsdl:operation name="MqPutPortOperation">
+            <mq:operation queueName="baseqforalias" transaction="NoTransaction"/>
+            <wsdl:input name="input1">
+                <mq:body MessageBody="part1Req" use="literal" SyncPoint="false" MessageType="TextMessage"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="binding1MqRecv" type="tns:MqRecvPortType">
+        <mq:binding/>
+        <wsdl:operation name="MqRecvPortOperation">
+            <mq:operation queueName="aliasqueue" transaction="NoTransaction" queueOpenOptions="17" pollingInterval="500"/>
+            <wsdl:input name="input1">
+                <mq:body MessageBody="part1Req" use="literal" SyncPoint="false" MessageType="ByteMessage"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="binding1FileIn" type="tns:FileInPortType">
+        <file:binding/>
+        <wsdl:operation name="FileInOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="Input.xml" part="part1Req" pollingInterval="1000"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="binding1FileOut" type="tns:FileOutPortType">
+        <file:binding/>
+        <wsdl:operation name="FileOutOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="Output.xml"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="service1MqPut">
+        <wsdl:port name="port1MqPut" binding="tns:binding1MqPut">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="service1MqRecvAlias">
+        <wsdl:port name="port1MqRecv" binding="tns:binding1MqRecv">
+            <mq:address hostName="rchen-2k" portNumber="1414" queueManagerName="rchen2kmq6qmgr" channelName="svrconnchnl"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="service1FileIn">
+        <wsdl:port name="port1FileIn" binding="tns:binding1FileIn">
+            <file:address fileDirectory="@drivertest_dir@/mqbc/MQBCTests/MQBCJbi/test/TestCaseQAliasByteTextMsg/test" relativePath="false" pathRelativeTo="Current Working Dir"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="service1FileOut">
+        <wsdl:port name="port1FileOut" binding="tns:binding1FileOut">
+            <file:address fileDirectory="@drivertest_dir@/mqbc/MQBCTests/MQBCJbi/test/TestCaseQAliasByteTextMsg/output" relativePath="false" pathRelativeTo="Current Working Dir"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="partnerlinktype1MqPut">
+        <plnk:role name="partnerlinktyperole1MqPut" portType="tns:MqPutPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype2MqRecv">
+        <plnk:role name="partnerlinktyperole1MqRecv" portType="tns:MqRecvPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktypeFileIn">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="partnerlinktyperoleFileIn" portType="tns:FileInPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktypeFileOut">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="partnerlinktyperoleFileOut" portType="tns:FileOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

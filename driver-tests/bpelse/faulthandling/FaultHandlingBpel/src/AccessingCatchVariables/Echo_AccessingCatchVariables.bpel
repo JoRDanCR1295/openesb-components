@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Echo_AccessingCatchVariables"
+    targetNamespace="http://www.seebeyond.com/eInsight/Echo_AccessingCatchVariables"
+    xmlns:tns="http://www.seebeyond.com/eInsight/Echo_AccessingCatchVariables"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:EchoService/Echo_AccessingCatchVariables"
+    xmlns:ns1="urn:FaultService/FS_AccessingCatchVariables"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:EchoService/Echo_AccessingCatchVariables"
+    location="Echo_AccessingCatchVariables.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:FaultService/FS_AccessingCatchVariables"
+    location="FS_AccessingCatchVariables.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="EchoServiceLink1"
+        partnerLinkType="ns0:EchoServiceLT"
+        myRole="EchoServiceProvider"/>
+        <partnerLink name="FaultServiceLink1"
+        partnerLinkType="ns1:FaultServiceLT"
+        partnerRole="FaultServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Echo_Output"
+        messageType="ns0:EchoServiceRequest"></variable>
+        <variable name="Echo_Input"
+        messageType="ns0:EchoServiceResponse"></variable>
+        <variable name="FaultOperation_Input"
+        messageType="ns1:FaultServiceRequest"></variable>
+        <variable name="FaultOperation_Output"
+        messageType="ns1:FaultServiceResponse"></variable>
+        <variable name="FaultOperation_Fault1"
+        messageType="ns1:FaultServiceFaultResponse1"></variable>
+        <variable name="FaultOperation_Fault2"
+        messageType="ns1:FaultServiceFaultResponse2"></variable>
+        <variable name="FaultOperation_Fault3"
+        messageType="ns1:FaultServiceFaultResponse3"></variable>                    
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns1:Fault_Element"
+            faultVariable="FaultOperation_Fault1_Local" 
+            faultMessageType="ns1:FaultServiceFaultResponse1">
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>$FaultOperation_Fault1_Local.result/ChildElement1</from>
+                        <to>$Echo_Input.parameters/Message</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="EchoServiceLink1"
+                portType="ns0:EchoService"
+                operation="Echo"
+                variable="Echo_Input"/>
+            </sequence>
+        </catch>
+        <catch faultName="ns1:Fault_ComplexType"
+            faultVariable="FaultOperation_Fault2_Local" 
+            faultMessageType="ns1:FaultServiceFaultResponse2">
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>$FaultOperation_Fault2_Local.result/ChildElement1</from>
+                        <to>$Echo_Input.parameters/Message</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="EchoServiceLink1"
+                portType="ns0:EchoService"
+                operation="Echo"
+                variable="Echo_Input"/>
+            </sequence>
+        </catch>
+        <catch faultName="ns1:Fault_SimpleType"
+            faultVariable="FaultOperation_Fault3_Local" 
+            faultMessageType="ns1:FaultServiceFaultResponse3">
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>$FaultOperation_Fault3_Local.result</from>
+                        <to>$Echo_Input.parameters/Message</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="EchoServiceLink1"
+                portType="ns0:EchoService"
+                operation="Echo"
+                variable="Echo_Input"/>
+            </sequence>
+        </catch>        
+        <catchAll>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>&apos;Caught in catchAll.&apos;</from>
+                        <to>$Echo_Input.parameters/Message</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="EchoServiceLink1"
+                portType="ns0:EchoService"
+                operation="Echo"
+                variable="Echo_Input"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Echo"
+        partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Output"
+        createInstance="yes"/>
+
+        <if name="Decision">
+            <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element'</condition>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>$Echo_Output.parameters/Message</from>
+                        <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                    </copy>
+                </assign>
+                <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+            </sequence>            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_ComplexType'</condition>
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>$Echo_Output.parameters/Message</from>
+                            <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                        </copy>
+                    </assign>
+                    <throw faultName="ns1:Fault_ComplexType" faultVariable="FaultOperation_Fault2"/>
+                </sequence>            
+            </elseif>     
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_SimpleType'</condition>
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>$Echo_Output.parameters/Message</from>
+                            <to variable="FaultOperation_Fault3" part="result"></to>
+                        </copy>
+                    </assign>
+                    <throw faultName="ns1:Fault_SimpleType" faultVariable="FaultOperation_Fault3"/>
+                </sequence>                                        
+            </elseif>
+            <else>
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>$Echo_Output.parameters/Message/text()</from>
+                            <to variable="FaultOperation_Input" part="parameters"></to>
+                        </copy>
+                    </assign>                 
+                    <invoke name="FaultOperation"
+                    partnerLink="FaultServiceLink1"
+                    portType="ns1:FaultPortType"
+                    operation="FaultOperation"
+                    inputVariable="FaultOperation_Input"
+                    outputVariable="FaultOperation_Output"/>
+                </sequence>                                        
+            </else>
+        </if>
+        <assign>
+            <copy>
+                <from>'Passed through'</from>
+                <to>$Echo_Input.parameters/Message</to>
+            </copy>
+        </assign>
+        <reply partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Input"/>
+    </sequence>
+</process>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://enterprise.netbeans.org/bpel/RedirectOnFailure/RedirectHandler" xmlns:ns2="http://enterprise.netbeans.org/bpel/RedirectOnFailure/TestDriver" xmlns:ns3="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" version="1.0">
+    <service-assembly>
+        <identification>
+            <name>RedirectOnFailureJBI</name>
+            <description>Represents the Service Assembly of RedirectOnFailureJBI</description>
+        </identification>
+        <connections>
+            <connection>
+                <consumer endpoint-name="ConfirmRedirectPTRole_partnerRole" service-name="ns1:redirectToDriver"/>
+                <provider endpoint-name="ConfirmRedirectPTRole_myRole" service-name="ns2:RedirectReturn"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="ActualPartnerPTRole_partnerRole" service-name="ns2:ActualPartner"/>
+                <provider endpoint-name="javaee_ActualPartnerServiceBindingPort" service-name="ns3:ActualPartnerService"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="RedirectOnFailurePortTypeBindingPort" service-name="ns3:RedirectOnFailureService"/>
+                <provider endpoint-name="RedirectOnFailurePortTypeRole_myRole" service-name="ns1:redirectPartner"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="TestMsgServiceBindingPort" service-name="ns3:TestMsgService"/>
+                <provider endpoint-name="TestMsgPTRole_myRole" service-name="ns2:TestDriver"/>
+            </connection>
+        </connections>
+        <connections xmlns="http://www.sun.com/jbi/qos">
+            <connection>
+                <consumer endpoint-name="ActualPartnerPTRole_partnerRole" service-name="ns2:ActualPartner"/>
+                <provider endpoint-name="javaee_ActualPartnerServiceBindingPort" service-name="ns3:ActualPartnerService"/>
+                <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="2" waitTime="1000">
+                <on-failure>
+                    <redirect xmlns:ns1="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" endpoint-name="RedirectOnFailurePortTypeBindingPort" operation="RedirectOnFailureOperation" service-name="ns1:RedirectOnFailureService"/>
+                </on-failure>
+            </redelivery>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

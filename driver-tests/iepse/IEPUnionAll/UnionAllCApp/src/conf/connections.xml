@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="UnionAllCApp" xmlns:ns2="RelationAggregatorInputRelationStreamOut.test_iep" xmlns:ns3="RelationAggregatorInputSimple.test_iep" version="1.0">
+    <service-assembly>
+        <identification>
+            <name>UnionAllCApp</name>
+            <description>Represents the Service Assembly of UnionAllCApp</description>
+        </identification>
+        <connections>
+            <connection>
+                <consumer endpoint-name="casaPort4" service-name="ns1:casaService4"/>
+                <provider endpoint-name="InputRn" service-name="ns2:InputPl"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="casaPort2" service-name="ns1:casaService2"/>
+                <provider endpoint-name="InputRn" service-name="ns3:InputPl"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns3:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort1" service-name="ns1:casaService1"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns2:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort3" service-name="ns1:casaService3"/>
+            </connection>
+        </connections>
+        <connections xmlns="http://www.sun.com/jbi/qos">
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns3:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort1" service-name="ns1:casaService1"/>
+                <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+                <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="">
+                <on-failure/>
+            </redelivery>
+            </connection>
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns2:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort3" service-name="ns1:casaService3"/>
+                <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

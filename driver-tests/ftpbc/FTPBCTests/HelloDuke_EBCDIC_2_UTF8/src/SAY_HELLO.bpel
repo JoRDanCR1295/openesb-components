@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SAY_HELLO"
+    targetNamespace="http://enterprise.netbeans.org/bpel/HelloDuke_EBCDIC_2_UTF8/SAY_HELLO"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/HelloDuke_EBCDIC_2_UTF8/SAY_HELLO">
+    <import namespace="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" location="FILE_BIN_CP037.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_SAY_HELLO_BINARY_GET_UTF8" location="FTP_SAY_HELLO_BINARY_GET_UTF8.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_SAY_HELLO_BINARY_GET_UTF8" partnerLinkType="tns:FTP_SAY_HELLO_BINARY_GET_UTF8" partnerRole="OutboundRequestResponseMessagingPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" partnerLinkType="tns:FILE_BIN_CP037" myRole="FileInboundPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutboundRequestResponseMessagingOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_SAY_HELLO_BINARY_GET_UTF8" messageType="tns:OutboundRequestResponseMessagingOperationResponse"/>
+        <variable name="OutboundRequestResponseMessagingOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_SAY_HELLO_BINARY_GET_UTF8" messageType="tns:OutboundRequestResponseMessagingOperationRequest"/>
+        <variable name="PollOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" messageType="tns:PollOutputMessage"/>
+        <variable name="PollIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" messageType="tns:PollInputMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="poll" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" portType="tns:FileInboundPortType" variable="PollIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="PollIn" part="part1"/>
+                <to variable="OutboundRequestResponseMessagingOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="OutboundRequestResponseMessagingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_SAY_HELLO_BINARY_GET_UTF8" portType="tns:OutboundRequestResponseMessagingPortType" inputVariable="OutboundRequestResponseMessagingOperationIn" outputVariable="OutboundRequestResponseMessagingOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="OutboundRequestResponseMessagingOperationOut" part="part1"/>
+                <to variable="PollOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="poll" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FILE_BIN_CP037" portType="tns:FileInboundPortType" variable="PollOut"/>
+    </sequence>
+</process>

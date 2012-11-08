@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:echoAssignTNS" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoAssignWsdl" targetNamespace="urn:echoAssignTNS">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="urn:echoAssignTNS">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                        <xsd:element name="num1" type="xsd:int"/>
+                        <xsd:element name="num2" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoAssignMessage">
+        <part element="tns:item" name="echoAssignPart"/>
+    </message>
+    <portType name="echoAssignPortType">
+        <operation name="echoAssignOperation">
+            <input message="tns:echoAssignMessage"/>
+            <output message="tns:echoAssignMessage"/>
+        </operation>
+        <operation name="echoAssignOperation2">
+            <input message="tns:echoAssignMessage"/>
+            <output message="tns:echoAssignMessage"/>
+        </operation>
+    </portType>
+    <binding name="echoAssignBinding" type="tns:echoAssignPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoAssignOperation">
+            <soap:operation soapAction="echoAssignOperation"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="echoAssignOperation2">
+            <soap:operation soapAction="echoAssignOperation2"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoAssignService">
+        <port binding="tns:echoAssignBinding" name="echoAssignPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/echoAssign"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="echoAssignPLT">
+        <plnk:role name="server" portType="tns:echoAssignPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="echoAssignPLT2">
+        <plnk:role name="server" portType="tns:echoAssignPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

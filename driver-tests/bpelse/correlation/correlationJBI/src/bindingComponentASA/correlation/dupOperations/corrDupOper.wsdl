@@ -1,0 +1,106 @@
+<definitions targetNamespace="urn:corrDupOperTargetNamespace"
+             name="corrDupOperDefinition"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:tns="urn:corrDupOperTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <plnk:partnerLinkType name="corrDupOperServiceLinkType"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="corrDupOperServerRole"
+                   portType="tns:corrDupOperPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:property type="xsd:string"
+                   name="propertyName1"></bpws:property>
+    <bpws:property type="xsd:string"
+                   name="propertyName2"></bpws:property>
+    <bpws:propertyAlias part="corrDupOperPart"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:corrDupOperMessage">
+        <bpws:query>string</bpws:query>
+    </bpws:propertyAlias>
+    <bpws:propertyAlias part="corrDupOperPart"
+                        propertyName="tns:propertyName2"
+                        messageType="tns:corrDupOperMessage1">
+        <bpws:query>string</bpws:query>
+    </bpws:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:corrDupOperTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:corrDupOperTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:corrDupOperTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+
+                    <xsd:complexType name="corrDupOperType">
+                        <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="corrDupOperMessage">
+        <part name="corrDupOperPart"
+              type="tns:corrDupOperType"></part>
+    </message>
+    <message name="corrDupOperMessage1">
+        <part name="corrDupOperPart1"
+              type="tns:corrDupOperType"></part>
+    </message>
+    <portType name="corrDupOperPortType">
+        <operation name="corrDupOperOperation">
+            <input message="tns:corrDupOperMessage"></input>
+            <output message="tns:corrDupOperMessage"></output>
+        </operation>
+    </portType>
+    <portType name="corrDupOperPortType1">
+        <operation name="corrDupOperOperation1">
+            <input message="tns:corrDupOperMessage1"></input>
+        </operation>
+    </portType>
+    <binding name="corrDupOperBinding"
+             type="tns:corrDupOperPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrDupOperOperation">
+            <soap:operation soapAction="corrDupOperOperation"/>
+            <input>
+                <soap:body parts="corrDupOperPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="corrDupOperPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="corrDupOperBinding1"
+             type="tns:corrDupOperPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrDupOperOperation1">
+            <soap:operation soapAction="corrDupOperOperation1"/>
+            <input>
+                <soap:body parts="corrDupOperPart1"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="corrDupOperService">
+        <port name="corrDupOperPort"
+              binding="tns:corrDupOperBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrDupOperPort"/>
+        </port>
+        <port name="corrDupOperPort1"
+              binding="tns:corrDupOperBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrDupOperPort1"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="FHW_FaultsFromInvoke"
+         targetNamespace="http://www.seebeyond.com/eInsight/FHW_FaultsFromInvoke"
+         xmlns:tns="http://www.seebeyond.com/eInsight/FHW_FaultsFromInvoke"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:FaultService/FHW_FaultsFromInvoke"         
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:FaultService/FHW_FaultsFromInvoke"
+            location="FHW_FaultsFromInvoke.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="FHW_FaultServiceLink1"
+                     partnerLinkType="ns0:FHW_FaultServiceLT"
+                     myRole="FHW_FaultServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FaultOperation_Output"
+                  messageType="ns0:FaultServiceRequest"></variable>
+        <variable name="FaultOperation_Input"
+                  messageType="ns0:FaultServiceResponse"></variable>
+        <variable name="FaultOperation_Fault1"
+                  messageType="ns0:FaultServiceFaultResponse1"></variable>
+        <variable name="FaultOperation_Fault2"
+                  messageType="ns0:FaultServiceFaultResponse2"></variable>
+        <variable name="FaultOperation_Fault3"
+                  messageType="ns0:FaultServiceFaultResponse3"></variable>                  
+    </variables>
+    <sequence>
+        <receive name="FaultOperation"
+                 partnerLink="FHW_FaultServiceLink1"
+                 portType="ns0:FaultPortType"
+                 operation="FHW_FaultOperation"
+                 variable="FaultOperation_Output"
+                 createInstance="yes"/>
+                 
+        <if name="Decision">
+            <condition>$FaultOperation_Output.parameters = 'Fault_Element'</condition>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'Fault_Element'</from>
+                        <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="FHW_FaultServiceLink1"
+                       portType="ns0:FaultPortType"
+                       operation="FHW_FaultOperation"
+                       variable="FaultOperation_Fault1"
+                       faultName="ns0:Fault_Element"/>
+            </sequence>            
+	    <elseif>
+        	    <condition>$FaultOperation_Output.parameters = 'Fault_ComplexType'</condition>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'Fault_ComplexType'</from>
+                        <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="FHW_FaultServiceLink1"
+                       portType="ns0:FaultPortType"
+                       operation="FHW_FaultOperation"
+                       variable="FaultOperation_Fault2"
+                       faultName="ns0:Fault_ComplexType"/>
+            </sequence>            
+            </elseif>     
+	    <elseif>
+	            <condition>$FaultOperation_Output.parameters = 'Fault_SimpleType'</condition>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'Fault_SimpleType'</from>
+                        <to variable="FaultOperation_Fault3" part="result"></to>
+                    </copy>
+                </assign>
+                <reply partnerLink="FHW_FaultServiceLink1"
+                       portType="ns0:FaultPortType"
+                       operation="FHW_FaultOperation"
+                       variable="FaultOperation_Fault3"
+                       faultName="ns0:Fault_SimpleType"/>
+            </sequence>                                        
+            </elseif>
+	    <elseif>
+	            <condition>$FaultOperation_Output.parameters = 'Fault_Server_NoData'</condition>
+                <throw faultName="ns0:Fault_Server_NoData"/>
+            </elseif>            
+	    <else>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'No match'</from>
+                        <to>$FaultOperation_Input.result</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="FHW_FaultServiceLink1"
+                       portType="ns0:FaultPortType"
+                       operation="FHW_FaultOperation"
+                       variable="FaultOperation_Input"/>
+            </sequence>                                        
+            </else>
+        </if>    
+    </sequence>
+</process>

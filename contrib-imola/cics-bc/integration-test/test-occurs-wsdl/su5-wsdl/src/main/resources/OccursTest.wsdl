@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://wsdl.occurs.test.jbi4cics.imolinfo.it" xmlns:bean="http://occurs.test.jbi4cics.imolinfo.it" xmlns:imolacics="uri://schemas.imola.it/jbi/wsdl-extensions/cics/" xmlns:tns="http://wsdl.occurs.test.jbi4cics.imolinfo.it" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+  
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://occurs.test.jbi4cics.imolinfo.it">
+<xsd:complexType name="OccursServiceOutputBean">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="DFHCOMMAREA" nillable="true" type="bean:DFHCOMMAREA"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="DFHCOMMAREA">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CA_RETCODE" nillable="true" type="xsd:int"/>
+<xsd:element minOccurs="0" name="CA_SWSECI1_COMMAREA" nillable="true" type="bean:CA_SWSECI1_COMMAREA"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CA_SWSECI1_COMMAREA">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CA_CICS_ABSTIME" nillable="true" type="xsd:decimal"/>
+<xsd:element minOccurs="0" name="CA_CURRENT_DATE" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CA_CURRENT_TIME" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CA_ERROR_MESSAGE" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CA_NUMBER_OF_ROWS" nillable="true" type="xsd:int"/>
+<xsd:element minOccurs="0" name="CA_ROW_DATA" nillable="true" type="bean:ArrayOfCA_ROW_DATA"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ArrayOfCA_ROW_DATA">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" minOccurs="0" name="CA_ROW_DATA" nillable="true" type="bean:CA_ROW_DATA"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CA_ROW_DATA">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CA_DATA" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CA_ROW_NUMBER" nillable="true" type="xsd:int"/>
+<xsd:element minOccurs="0" name="CA_ROW_NUM_AS_CHAR" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wsdl.occurs.test.jbi4cics.imolinfo.it">
+
+<xsd:element name="execute">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="bean:OccursServiceOutputBean"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="executeResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="bean:OccursServiceOutputBean"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="executeResponse">
+    <wsdl:part name="parameters" element="tns:executeResponse"/>
+  </wsdl:message>
+  <wsdl:message name="executeRequest">
+    <wsdl:part name="parameters" element="tns:execute"/>
+  </wsdl:message>
+  <wsdl:portType name="OccursServiceWSDLPortType">
+    <wsdl:operation name="execute">
+      <wsdl:input name="executeRequest" message="tns:executeRequest"/>
+      <wsdl:output name="executeResponse" message="tns:executeResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  <wsdl:binding name="OccursServiceCICSBinding" type="tns:OccursServiceWSDLPortType">
+
+	<imolacics:binding servicePackageName="it.imolinfo.jbi4cics.test.occurs" codePage="CP037">
+		<imolacics:copyCobol>01 DFHCOMMAREA.
+     02  CA-RETCODE                 PIC 9(8) COMP.
+     02  CA-SWSECI1-COMMAREA.
+         05  CA-NUMBER-OF-ROWS      PIC 9999 COMP.
+         05  CA-ERROR-MESSAGE       PIC X(10).
+         05  CA-CURRENT-DATE        PIC X(8).
+         05  CA-CURRENT-TIME        PIC XXXXXXXX.
+         05  CA-CICS-ABSTIME        PIC S9(15) COMP-3. 
+         05  CA-ROW-DATA  OCCURS 10 TIMES.   
+             10  CA-ROW-NUMBER      PIC S9(4) COMP.     
+             10  CA-ROW-NUM-AS-CHAR PIC X(6).
+             10  CA-DATA           PIC X(10).</imolacics:copyCobol>
+		</imolacics:binding>     
+  
+    <wsdl:operation name="execute">
+      <wsdl:input name="executeRequest"/>
+      <wsdl:output name="executeResponse"/>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OccursService">
+    <wsdl:port name="OccursServiceCICSPort" binding="tns:OccursServiceCICSBinding">
+		<imolacics:address 
+			username="imola" 
+			password="imola"
+			connectionType="DUMMY"
+			JNDIConnectionName="test"			
+			programName="imola"
+			transactionName="imola"
+			tpn="false"	
+			/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

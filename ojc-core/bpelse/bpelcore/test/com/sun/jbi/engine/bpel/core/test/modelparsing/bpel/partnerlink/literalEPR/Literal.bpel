@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process 
+    name="SynchronousSample" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1" 
+    xmlns:ns1="http://localhost/SynchronousSample/SynchronousSample" 
+    xmlns:ns3="http://j2ee.netbeans.org/wsdl/stockQuote" 
+    xmlns:ns0="http://xml.netbeans.org/schema/SynchronousSample"
+    xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref" 
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+    <import location="SynchronousSample.xsd" importType="http://www.w3.org/2001/XMLSchema" namespace="http://xml.netbeans.org/schema/SynchronousSample"/>
+    <import namespace="http://localhost/SynchronousSample/SynchronousSample" location="SynchronousSample.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/stockQuote" location="stockQuote.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="plStockQuote" partnerLinkType="ns3:stockQuote1" partnerRole="stockQuotePortTypeRole"/>
+        <partnerLink name="SynchronousSample" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+
+    <variables>
+        <bpws:variable name="StockQuoteOperationOut" messageType="ns3:stockQuoteOperationReply"/>
+        <bpws:variable name="StockQuoteOperationIn" messageType="ns3:stockQuoteOperationRequest"/>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    <sequence>
+        <receive name="start" partnerLink="SynchronousSample" operation="operation1" portType="ns1:portType1" variable="inputVar" createInstance="yes"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                	<bpws:literal>hello</bpws:literal>
+                </bpws:from>
+                <bpws:to variable="StockQuoteOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>
+                        <sref:service-ref>
+                            <ns1:EndpointReference>
+                                <wsa:Address>
+                                http://localhost:8080/stockQuoteService/stockQuotePort
+                                </wsa:Address>
+                                <wsa:ServiceName PortName="stockQuotePort">
+                                    ns3:stockQuoteService
+                                </wsa:ServiceName>
+                            </ns1:EndpointReference>
+                         </sref:service-ref>
+                    </bpws:literal>
+                </bpws:from>
+                <bpws:to partnerLink="plStockQuote"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InvokeService" partnerLink="plStockQuote" operation="stockQuoteOperation" portType="ns3:stockQuotePortType" inputVariable="StockQuoteOperationIn" outputVariable="StockQuoteOperationOut"/>
+        <reply name="end" partnerLink="SynchronousSample" operation="operation1" portType="ns1:portType1" variable="outputVar"/>
+    </sequence>
+</process>

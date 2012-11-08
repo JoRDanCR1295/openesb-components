@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="iepStockVolumeAlert_iep" 
+    targetNamespace="iepStockVolumeAlert_iep"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="iepStockVolumeAlert_iep" xmlns:ns1="urn:FileOut" xmlns:ns2="iepStockVolumeAlert_iep">
+    <import location="fileOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="urn:FileOut"/>
+    <import location="bpel_1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="iepStockVolumeAlert_iep"/>
+    
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:OFServiceLink" partnerRole="OFRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:OutputPl_StreamOutput0" myRole="bpel_1Provider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutputOut1" messageType="ns1:OF_InputResponse"/>
+        <variable name="OutputIn1" messageType="ns1:OF_Input"/>
+        <variable name="StreamOutput0In1" messageType="wsdlNS:In_Msg"/>
+    </variables>
+    <sequence name="Sequence1">
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="StreamOutput0" portType="wsdlNS:MyPortType" variable="StreamOutput0In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>concat('OutPutFrom BPEL', $StreamOutput0In1.input/SYMB, $StreamOutput0In1.input/AVGVolumeA, $StreamOutput0In1.input/AVGVolumeB)</from><to>$OutputIn1.body/string</to>
+            </copy>
+            <copy>
+            <from>$StreamOutput0In1.input/AVGVolumeA</from><to variable="OutputOut1" part="result"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="Output" portType="ns1:OF" inputVariable="OutputIn1" outputVariable="OutputOut1"/>
+    </sequence>
+</process>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoWhile"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoWhile"
+         sbynpxp:end_YLoc="220.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="931.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoWhile"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/whileTest"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns1="http://stc.com/echoWhile"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/echoWhile"
+            location="echoWhile.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_echoWhile"
+                     partnerLinkType="ns1:SLT"
+                     myRole="echoWhileserver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="testwhileOperation_Output"
+                  messageType="ns1:testMsg"></variable>
+        <variable name="testwhileOperation_Input"
+                  messageType="ns1:testMsg"></variable>
+        <variable name="counterVar"
+                  messageType="ns1:counter"></variable>
+    </variables>
+    <sequence>
+        <receive name="testwhileOperation"
+                 partnerLink="plink_echoWhile"
+                 portType="ns1:testwhilePort"
+                 operation="testwhileOperation"
+                 variable="testwhileOperation_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="119.0"
+                 sbynpxp:YLoc="214.0"></receive>
+        <assign name="Assign2"
+                sbynpxp:XLoc="260.0"
+                sbynpxp:YLoc="99.0">
+            <copy>
+                <from>0</from>
+                <to variable="counterVar"
+                    part="counterPart"/>
+            </copy>
+        </assign>
+        <while name="While"
+               sbynpxp:XLoc="365.0"
+               sbynpxp:YLoc="127.0"
+               sbynpxp:isExpanded="true">
+            <condition>$counterVar.counterPart &lt;= 5</condition>
+            <sequence>
+                <assign name="Assign12"
+                        sbynpxp:XLoc="480.0"
+                        sbynpxp:YLoc="192.0">
+                    <copy>
+                        <from>$counterVar.counterPart + 1</from>
+                        <to variable="counterVar"
+                            part="counterPart"/>
+                    </copy>
+                    <copy>
+                        <from>concat(&apos;LOOP&apos;, $testwhileOperation_Output.part/value)</from>
+                        <to>$testwhileOperation_Output.part/value</to>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign"
+                sbynpxp:XLoc="700.0"
+                sbynpxp:YLoc="139.0">
+            <copy>
+                <from>$testwhileOperation_Output.part/value</from>
+                <to>$testwhileOperation_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="testwhileOperation.Reply"
+               partnerLink="plink_echoWhile"
+               portType="ns1:testwhilePort"
+               operation="testwhileOperation"
+               variable="testwhileOperation_Input"
+               sbynpxp:XLoc="815.0"
+               sbynpxp:YLoc="229.0"></reply>
+    </sequence>
+</process>

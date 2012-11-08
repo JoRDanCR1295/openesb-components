@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="ApprovePurchase_BPEL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/EmailNotificationHandler" xmlns:ns3="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL" xmlns:ns4="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns5="http://enterprise.netbeans.org/bpel/wlmseSample1PurchaseOrder" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="purchaseOrderPort" interface-name="ns1:purcharseOrderPT" name="endpoint1" service-name="ns1:purchaseOrderService"/>
+        <endpoint endpoint-name="NotificationHandlerPortTypeBindingPort" interface-name="ns2:NotificationHandlerPortType" name="endpoint2" service-name="ns2:EmailNotificationHandlerService"/>
+        <endpoint endpoint-name="ApprovePurchase" interface-name="ns3:ApprovePurchasePT" name="endpoint3" service-name="ns3:ApprovePurchasePT"/>
+        <endpoint endpoint-name="TaskCommonPort" interface-name="ns4:TaskCommonPortType" name="endpoint4" service-name="ns4:TaskCommonService"/>
+        <endpoint endpoint-name="emailPort" interface-name="ns2:NotificationHandlerPortType" name="endpoint5" service-name="ns2:NotificationHandler"/>
+        <endpoint display-name="purchasing" endpoint-name="purchaseOrderService_myRole" file-path="wlmseSample1PurchaseOrder.bpel" interface-name="ns1:purcharseOrderPT" name="endpoint6" process-name="wlmseSample1PurchaseOrder" service-name="ns5:purchasing"/>
+        <endpoint display-name="approveOrder" endpoint-name="ApprovePurchase_Server_partnerRole" file-path="wlmseSample1PurchaseOrder.bpel" interface-name="ns3:ApprovePurchasePT" name="endpoint7" process-name="wlmseSample1PurchaseOrder" service-name="ns5:approveOrder"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="PurchaseOrderWorklistAppNotification.jar" component-name="sun-wlm-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="PurchaseOrderCompositeAppNotification-PurchaseOrderWorklistAppNotification" unit-name="PurchaseOrderWorklistAppNotification" unknown="false" x="78" y="98">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="PurchaseOrderBpelModuleNotification.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="PurchaseOrderCompositeAppNotification-PurchaseOrderBpelModuleNotification" unit-name="PurchaseOrderBpelModuleNotification" unknown="false" x="79" y="257">
+            <provides endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="PurchaseOrderCompositeAppNotification-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModuleNotification/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-email-binding.jar" component-name="sun-email-binding" description="Represents this Service Unit" name="PurchaseOrderCompositeAppNotification-sun-email-binding" unit-name="sun-email-binding">
+            <ports>
+                <port x="67" y="40">
+                    <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/EmailNotificationHandler.wsdl#xpointer(/definitions/service[@name='EmailNotificationHandlerService']/port[@name='NotificationHandlerPortTypeBindingPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint5" provider="endpoint2" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint6" state="unchanged"/>
+        <connection consumer="endpoint7" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModuleNotification/ApprovePurchase.wsdl#xpointer(/definitions/portType[@name='purcharseOrderPT'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModuleNotification/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/portType[@name='ApprovePurchasePT'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/EmailNotificationHandler.wsdl#xpointer(/definitions/portType[@name='NotificationHandlerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/TaskCommon.wsdl#xpointer(/definitions/portType[@name='TaskCommonPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/ApprovePurchase_TM_BPEL.wsdl#xpointer(/definitions/portType[@name='ApprovePurchasePT'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModuleNotification/ApprovePurchase.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/EmailNotificationHandler.wsdl#xpointer(/definitions/binding[@name='NotificationHandlerPortTypeBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderBpelModuleNotification/ApprovePurchase.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PurchaseOrderWorklistAppNotification/EmailNotificationHandler.wsdl#xpointer(/definitions/service[@name='EmailNotificationHandlerService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

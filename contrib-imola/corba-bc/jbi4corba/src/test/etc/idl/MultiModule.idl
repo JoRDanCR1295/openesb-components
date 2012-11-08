@@ -1,0 +1,125 @@
+module si_stateless {
+
+  exception SIStatelessException {
+    string messaggio;
+    string stackTrace;
+  };
+  
+  module bo {
+      struct DatiAppIntegrare {
+        string applicativo;
+      };
+
+      struct DBKey {
+        long    loc;
+        long    id;
+      };
+
+      //The person is divided into 2 structures, the main one and one
+      //containing additional information (Person and PersonTwo)
+      struct SIPerson {
+            DBKey       tableKey;
+            long long   lastChanged;       //readonly -- seconds since 1/1/1970 00:00 GMT
+            long long   lastSynchronized;  //readonly -- seconds since 1/1/1970 00:00 GMT
+            long long   lastChangedPacket;       // Sincronizzazione: LastChanged del pacchetto person
+
+
+            long long   birthDate;    // in secondi
+            string      deathDay;      // giorno di morte 2 caratteri
+            string      deathMonth;    // mese di morte 2 caratteri
+            string      deathYear;     // anno di morte con 4 caratteri
+            long        isDead;       // flag per il decesso. 0 vivo - 1 deceduto
+            long        isFemale;     // true (1) if female, false (0) if male
+
+
+            long long   acQualification;  //Academic qualification: titolo di studio
+            string      codeAcQualification;
+            string      desAcQualification;
+            string      name;
+            string      surname;
+            string      husbandSurname;
+            string      fiscalCode;
+            string      placeOfBirth;          // comune di nascita nome
+            string      irpefOfBirth;          // codice irpef comune di nascita nome
+            string      desNationality;        // descrizione nazionalità 
+            long        isCEE;                 // flag valori 0 o 1
+            string      codeContinente;
+            string      desContinente;
+            string      codeMaritalStatus;
+            string      desMaritalStatus;
+            string      firstUnion;            // Anno di prima iscrizione a CGIL
+            long        sendingComunications;  // flag per indicare l'invio di comunicazioni
+                                              // 0 nessun invio - 1 invio comunicazioni
+            long long   dataIscrizionePrevidenza;
+
+            string      notes;
+            long        certainty;     //"autorevolezza"
+       };
+
+       struct SIAddress {
+            DBKey       tableKey;
+            long long   lastChanged;       //readonly -- seconds since 1/1/1970 00:00 GMT
+            long long   lastSynchronized;  //readonly -- seconds since 1/1/1970 00:00 GMT
+            long long   validFrom;
+            long long   validUntil;   // zero means no expiry
+            string      addrType;     // tipo indirizzo
+
+            string      desToponimo;
+            string      street;
+            string      co;
+            string      streetNumber;
+            string      streetNumberExt;
+            string      postCode;
+            string      postPlace;          // località postale
+            string      place;              // frazione
+            string      town;               // comune residenza
+            string      irpefTown;          // irpef comune residenza
+            string      province;
+            string        location;    // "azzonamento"
+            string      telephone;
+            string      altroTelefono;        // AOMDB : 59
+            string      cellulare;            // AOMDB : 59
+            string      fax;
+            string      descrizioneFax;       // Modifica della parte "Numeri di telefono" AOMDB59
+            string      fax2;                 // AOMDB : 59
+            string      descrizioneFax2;      // Modifica della parte "Numeri di telefono" AOMDB59
+            string      email;
+            string      notes;
+            string      foreignAddress;
+            DBKey       dbKeyAddress;
+            long        certainty;   //"autorevolezza"
+        };
+
+        struct SISLAnagrafica {
+            SIPerson     persona;
+            SIAddress    indirizzo;
+        };
+
+        struct EsitoSISLAnag {
+            string codiceFiscale;
+            boolean esito;
+//            SIStatelessException eccezione;
+            string messaggio;
+        };
+
+
+        typedef sequence <SISLAnagrafica>              SISLAnagraficaSeq;
+        typedef sequence <string>                      StringSeq;
+        typedef sequence <EsitoSISLAnag>               EsitoSISLAnagSeq;
+      };
+  
+  interface SIStateless {
+   
+   bo::SISLAnagrafica inserimentoAnagrafica(in bo::DatiAppIntegrare dati, in bo::SISLAnagrafica anagrafica) raises (SIStatelessException);
+  
+   bo::SISLAnagrafica aggiornamentoAnagrafica(in bo::DatiAppIntegrare dati, in bo::SISLAnagrafica anagrafica) raises (SIStatelessException);
+  
+   bo::SISLAnagrafica getAnagrafica(in bo::DatiAppIntegrare dati, in string codiceFiscale) raises (SIStatelessException);
+
+   bo::EsitoSISLAnagSeq cancellaAnagrafica(in bo::DatiAppIntegrare dati, in bo::StringSeq codiciFiscali) raises (SIStatelessException);
+   
+   boolean esisteAnagrafica(in bo::DatiAppIntegrare dati, in string codiceFiscale)  raises (SIStatelessException);
+
+  };
+
+};

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://enterprise.netbeans.org/bpel/clientProcess" xmlns:ns2="http://j2ee.netbeans.org/wsdl/triggerWSDL" xmlns:ns3="http://j2ee.netbeans.org/wsdl/smtpWSDL" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="triggerWSDLPortTypeRole_myRole" interface-name="ns2:triggerWSDLPortType" name="endpoint1" service-name="ns1:PartnerLink2"/>
+        <endpoint endpoint-name="smtpWSDLPortTypeRole_partnerRole" interface-name="ns3:smtpWSDLPortType" name="endpoint2" service-name="ns1:PartnerLink1"/>
+        <endpoint endpoint-name="smtpWSDLPort" interface-name="ns3:smtpWSDLPortType" name="endpoint3" service-name="ns3:smtpWSDLService"/>
+        <endpoint endpoint-name="triggerWSDLPort" interface-name="ns2:triggerWSDLPortType" name="endpoint4" service-name="ns2:triggerWSDLService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="fromAttributeBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="fromAttributeJbi-fromAttributeBpel" unit-name="fromAttributeBpel" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint1"/>
+            <consumes endpoint="endpoint2"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-smtp-binding.jar" component-name="sun-smtp-binding" description="Represents this Service Unit" name="fromAttributeJbi-sun-smtp-binding" unit-name="sun-smtp-binding">
+            <ports>
+                <port x="0" y="150">
+                    <link xlink:href="../jbiServiceUnits/fromAttributeBpel/smtpWSDL.wsdl#xpointer(/definitions/service[@name='smtpWSDLService']/port[@name='smtpWSDLPort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="fromAttributeJbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="60">
+                    <link xlink:href="../jbiServiceUnits/fromAttributeBpel/triggerWSDL.wsdl#xpointer(/definitions/service[@name='triggerWSDLService']/port[@name='triggerWSDLPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/smtpWSDL.wsdl#xpointer(/definitions/portType[@name='smtpWSDLPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/smtpWSDL.wsdl#xpointer(/definitions/binding[@name='smtpWSDLBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/smtpWSDL.wsdl#xpointer(/definitions/service[@name='smtpWSDLService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/triggerWSDL.wsdl#xpointer(/definitions/portType[@name='triggerWSDLPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/triggerWSDL.wsdl#xpointer(/definitions/binding[@name='triggerWSDLBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/fromAttributeBpel/triggerWSDL.wsdl#xpointer(/definitions/service[@name='triggerWSDLService'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings/>
+    <services/>
+    <regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

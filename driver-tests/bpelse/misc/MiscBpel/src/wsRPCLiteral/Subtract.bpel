@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Subtract"
+         targetNamespace="http://www.seebeyond.com/eInsight/Subtract"
+         sbynpxp:end_YLoc="201.0"
+         sbynpxp:start_YLoc="202.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="44.0"
+         sbynpxp:end_XLoc="500.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Subtract"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://services.opensoap.jp/samples/SimpleCalc/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://services.opensoap.jp/samples/SimpleCalc/"
+            location="zenquote.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="s1"
+                     partnerLinkType="ns0:operatorsLinkType"
+                     myRole="TestOperatorsRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Subtract_Output"
+                  messageType="ns0:Subtract"></variable>
+        <variable name="Subtract_Input"
+                  messageType="ns0:SubtractResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="Subtract"
+                 partnerLink="s1"
+                 portType="ns0:SimpleCalcPortType"
+                 operation="Subtract"
+                 variable="Subtract_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="106.0"
+                 sbynpxp:YLoc="207.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="226.0"
+                sbynpxp:YLoc="195.0">
+            <copy>
+                <from>$Subtract_Output.A - $Subtract_Output.B</from>
+                <to variable="Subtract_Input"
+                    part="return"/>
+            </copy>
+        </assign>
+        <reply name="Subtract.Reply"
+               partnerLink="s1"
+               portType="ns0:SimpleCalcPortType"
+               operation="Subtract"
+               variable="Subtract_Input"
+               sbynpxp:XLoc="365.0"
+               sbynpxp:YLoc="199.0"></reply>
+    </sequence>
+</process>

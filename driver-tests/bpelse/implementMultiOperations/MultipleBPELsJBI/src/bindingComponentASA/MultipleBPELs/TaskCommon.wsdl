@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="TaskStatic" targetNamespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://jbi.com.sun/wfse/wsdl/TaskCommon"
+             xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon"
+             xmlns:ns2="http://wlmse.sample/po" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">    
+     <types>
+        <xsd:schema targetNamespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" elementFormDefault="qualified">
+           
+            <xsd:complexType name="TaskListType">
+                <xsd:sequence>
+                    <xsd:element name="task" type="ns1:TaskType" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="taskList" type="ns1:TaskListType"></xsd:element>
+            <xsd:simpleType name="ResultCodeType">
+                <xsd:restriction base="xsd:string">
+                             <xsd:enumeration value="SUCCESS"/>
+                            <xsd:enumeration value="FAILED"/>
+                 </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType name="TaskPriority">
+                 <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="LOW"/>
+                     <xsd:enumeration value="MEDIUM"/>
+                     <xsd:enumeration value="HIGH"/>
+                  </xsd:restriction>
+            </xsd:simpleType>            
+            <xsd:simpleType name="TaskStatus">
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="UNASSIGNED"/>
+                    <xsd:enumeration value="ASSIGNED"/>
+                    <xsd:enumeration value="CLAIMED"/>
+                    <xsd:enumeration value="COMPLETED"/>
+                    <xsd:enumeration value="EXPIRED"/>
+                    <xsd:enumeration value="ESCALATED"/>
+                    <xsd:enumeration value="ABORTED"/>
+                    <xsd:enumeration value="FAILED"/>
+                </xsd:restriction>            
+            </xsd:simpleType>
+            <xsd:element name="resultCode" type="ns1:ResultCodeType"></xsd:element>          
+            <xsd:complexType name="FaultType">
+                <xsd:sequence>
+                    <xsd:element name="FaultCode" type="xsd:string"></xsd:element>
+                    <xsd:element name="FaultReason" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="fault" type="ns1:FaultType"></xsd:element>
+            <xsd:complexType name="TaskType">
+                <xsd:sequence>
+                    <xsd:element name="taskId" type="xsd:int"></xsd:element>
+                    <xsd:element name="title" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="client" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="priority" type="ns1:TaskPriority" minOccurs="0"/> 
+                    <xsd:element name="claimedBy" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="assignedTo" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="submittedDate" type="xsd:date" minOccurs="0"/> 
+                    <xsd:element name="status" type="ns1:TaskStatus" minOccurs="0" />      
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="task" type="ns1:TaskType"></xsd:element>
+            <xsd:element name="content" type="xsd:anyType"></xsd:element>
+            <xsd:complexType name="ConnectInfoType">
+                <xsd:sequence>
+                    <xsd:element name="userId" type="xsd:string"></xsd:element>
+                    <xsd:element name="password" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="connectInfo" type="ns1:ConnectInfoType"></xsd:element>  
+            <xsd:complexType name="QueryType">
+                <xsd:sequence>
+                    <xsd:element name="users" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="user"  type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="roles" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="role"  type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>        
+                    <xsd:element name="groups" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="group"  type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>                       
+                    <xsd:element name="taskStatus" type="ns1:TaskStatus" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+                <xsd:attribute name="type" default="DEFAULT">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="DEFAULT"/>
+                            <xsd:enumeration value="FILTERED"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>                    
+                </xsd:attribute>
+            </xsd:complexType>
+            <xsd:element  name="query" type="ns1:QueryType" />   
+            <xsd:element name="taskIdentifer" type="xsd:int"></xsd:element>
+            <xsd:element name="AssigneeRole" type="xsd:string"></xsd:element>
+            <xsd:element name="AssigneeUser" type="xsd:string"></xsd:element>
+        </xsd:schema>
+        
+        
+    </types>
+    <message name="GetTaskList_Input">
+        <part name="queryString" type="ns1:QueryType"/>
+    </message>
+    <message name="GetTaskList_Output">
+        <part name="taskList" type="ns1:TaskListType"/>
+    </message>
+    <message name="ClaimTask_Input">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    <message name="ClaimTask_Output">
+        <part name="resultCode" type="ns1:ResultCodeType"/>
+    </message>
+    <message name="RevokeTask_Input">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    <message name="RevokeTask_Output">
+        <part name="resultCode" type="ns1:ResultCodeType"/>
+    </message>
+    <message name="CompleteTask_Input">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    <message name="CompleteTask_Output">
+        <part name="resultCode" type="ns1:ResultCodeType"/>
+    </message>
+    <message name="ReassignTask_Input">
+        <part name="taskId" type="xsd:int"/>
+        <part name="role" type="xsd:string"/>
+        <part name="user" type="xsd:string"/>
+    </message>
+    <message name="ReassignTask_Output">
+        <part name="resultCode" type="ns1:ResultCodeType"/>
+    </message>
+    <message name="GetOptInput_Input">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    <message name="GetOptOutput_Output">
+        <part name="outputMsg" type="xsd:string"/>
+    </message>
+    <message name="GetOptInput_Output">
+        <part name="inputMsg" type="xsd:string"/>
+    </message>
+    <message name="GetOptOutput_Input">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    <message name="SetOptOutput_Input">
+        <part name="taskId" type="xsd:int"/>
+        <part name="outputMsg" type="xsd:string"/>
+    </message>
+    <message name="SetOptOutput_Output">
+        <part name="resultCode" type="ns1:ResultCodeType"/>
+    </message>  
+    <message name="OptFaultMsg">
+        <part name="fault" element="ns1:fault"/>
+    </message>
+    <message name="TaskIdMsg">
+        <part name="taskId" type="xsd:int"/>
+    </message>
+    
+    
+    <portType name="TaskCommOptPT">   
+        <operation name="GetTaskList">
+            <input name="getTaskList_input" message="tns:GetTaskList_Input"/>
+            <output name="getTaskList_output" message="tns:GetTaskList_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="ClaimTask">
+            <input name="claimTask_input" message="tns:ClaimTask_Input"/>
+            <output name="claimTask_output" message="tns:ClaimTask_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+      <operation name="RevokeTask">
+            <input name="revokeTask_input" message="tns:RevokeTask_Input"/>
+            <output name="revokeTask_output" message="tns:RevokeTask_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation> 
+        <operation name="CompleteTask">
+            <input name="completeTask_input" message="tns:CompleteTask_Input"/>
+            <output name="completeTask_output" message="tns:CompleteTask_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="ReassignTask">
+            <input name="reassignTask_input" message="tns:ReassignTask_Input"/>
+            <output name="reassignTask_output" message="tns:ReassignTask_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="GetOptInput">
+            <input name="getOptInput_input" message="tns:GetOptInput_Input"/>
+            <output name="getOptInput_output" message="tns:GetOptInput_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="GetOptOutput">
+            <input name="getOptOutput_input" message="tns:GetOptOutput_Input"/>
+            <output name="getOptOutput_output" message="tns:GetOptOutput_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="SetOptOutput">
+            <input name="setOptOutput_input" message="tns:SetOptOutput_Input"/>
+            <output name="setOptOutput_output" message="tns:SetOptOutput_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="GetOptInputSchema">
+            <input name="getOptInputSchema_input" message="tns:GetOptOutput_Input"/>
+            <output name="getOptInputSchema_output" message="tns:GetOptOutput_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>
+        <operation name="GetOptOutputSchema">
+            <input name="getOptOutputSchema_input" message="tns:GetOptOutput_Input"/>
+            <output name="getOptOutputSchema_output" message="tns:GetOptOutput_Output"/>
+            <fault name="fault1" message="tns:OptFaultMsg"/>
+        </operation>     
+    </portType>    
+
+    <binding name="TaskCommonBinding" type="tns:TaskCommOptPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+        <operation name="GetTaskList">
+            <soap:operation soapAction="GetTaskList"/>
+            <input name="getTaskList_input" >
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output name="getTaskList_output">
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>    
+        <operation name="ClaimTask">
+            <soap:operation soapAction="ClaimTask"/>
+            <input name="claimTask_input" >
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output name="claimTask_output" >
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>  
+        
+        <operation name="RevokeTask">
+            <soap:operation soapAction="RevokeTask"/>
+            <input name="revokeTask_input" >
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output name="revokeTask_output" >
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>      
+        
+        <operation name="CompleteTask">
+            <soap:operation soapAction="CompleteTask"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>       
+        
+        <operation name="ReassignTask">
+            <soap:operation soapAction="ReassignTask"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>     
+        
+        <operation name="GetOptInput">
+            <soap:operation soapAction="GetOptInput"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>        
+        
+        <operation name="GetOptOutput">
+            <soap:operation soapAction="GetOptOutput"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>        
+        
+        <operation name="SetOptOutput">
+            <soap:operation soapAction="SetOptOutput"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>            
+        </operation>      
+        
+        <operation name="GetOptInputSchema">
+            <soap:operation soapAction="GetOptInputSchema"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>        
+        
+        <operation name="GetOptOutputSchema">
+            <soap:operation soapAction="GetOptOutputSchema"/>
+            <input>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>           
+    </binding>        
+    <service name="TaskService">
+        <port name="TaskCommonPort" binding="tns:TaskCommonBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wfse/TaskCommon"/>
+        </port>
+    </service>        
+   
+    <plink:partnerLinkType name="TaskCommonLT">
+        <plink:role name="TaskCommon_Server" portType="tns:TaskCommOptPT"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:GetTaskList_Input" part="queryString">
+        <vprop:query>users/user</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:ClaimTask_Input" part="taskId"/>
+    <vprop:property name="property2" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:RevokeTask_Input" part="taskId"/>
+    
+</definitions>

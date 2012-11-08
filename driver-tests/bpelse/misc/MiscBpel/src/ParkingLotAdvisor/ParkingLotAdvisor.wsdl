@@ -1,0 +1,147 @@
+<definitions targetNamespace="stc:ParkingLotAdvisor/wsdl"
+             name="ParkingLotAdvisor"
+             xmlns:tns="stc:ParkingLotAdvisor/wsdl"
+             xmlns:tns0=":ParkingLotAdvisor/wsdl"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+              xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns2="stc:ParkingLotAdvisor/types"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <schema elementFormDefault="qualified" targetNamespace="stc:ParkingLotAdvisor/types"
+                xmlns:tns="stc:ParkingLotAdvisor/types"
+                xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                 xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                  xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link"
+                xmlns:ns2="stc:ParkingLotAdvisor/types"
+                xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+                <xsd:element name="GetEndorsingBoarderResponse" type="tns:GetEndorsingBoarderResponseType"/>
+             <xsd:complexType name="GetEndorsingBoarderResponseType">
+             <xsd:sequence>
+             <xsd:element name="endorsingBoarder" type="xsd:string"/>
+             </xsd:sequence>  
+                     
+             </xsd:complexType>                                            
+                  
+            <xsd:element type="ns2:isParkingAvailable" name="isParkingAvailable"/>
+              <xsd:complexType name="isParkingAvailable">
+                <xsd:sequence>
+                <xsd:element name="Availability" type="xsd:string"/>
+                </xsd:sequence>
+                 </xsd:complexType>
+                 
+                  <xsd:element type="ns2:isParkingAvailableResponse" name="isParkingAvailableResponse"/>
+            <xsd:complexType name="isParkingAvailableResponse">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string" name="result"/>
+                </xsd:sequence>
+            </xsd:complexType>
+           <xsd:element type="ns2:reserveParkingSpot" name="reserveParkingSpot"/>
+             <xsd:complexType name="reserveParkingSpot">
+                <xsd:sequence>
+                    <xsd:element type="xsd:int" name="int_1"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            
+             <xsd:element type="ns2:reserveParkingSpotResponse"
+                         name="reserveParkingSpotResponse"></xsd:element>
+            <xsd:complexType name="reserveParkingSpotResponse">
+                <xsd:sequence>
+                <xsd:element type="xsd:string" name="stringoutput"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element type="ns2:SpotNotAvailableException"
+                         name="SpotNotAvailableException"></xsd:element>
+            <xsd:complexType name="SpotNotAvailableException">
+                <xsd:sequence>
+                <xsd:element type="xsd:string" name="stringoutput"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </schema>
+    </types>
+    <message name="ParkingLotAdvisorSEI_isParkingAvailable">
+        <part name="parameters"
+              element="ns2:isParkingAvailable"></part>
+    </message>
+    <message name="ParkingLotAdvisorSEI_isParkingAvailableResponse">
+        <part name="result"
+              element="ns2:isParkingAvailableResponse"></part>
+    </message>
+    <message name="ParkingLotAdvisorSEI_reserveParkingSpot">
+        <part name="parameters"
+              element="ns2:reserveParkingSpot"></part>
+    </message>
+    <message name="ParkingLotAdvisorSEI_reserveParkingSpotResponse">
+        <part name="result"
+              element="ns2:reserveParkingSpotResponse"></part>
+    </message>
+    <message name="SpotNotAvailableException">
+        <part name="SpotNotAvailableException"
+              element="ns2:SpotNotAvailableException"></part>
+    </message>
+    <portType name="ParkingLotAdvisorSEI">
+        <operation name="isParkingAvailable">
+            <input message="tns:ParkingLotAdvisorSEI_isParkingAvailable"></input>
+            <output message="tns:ParkingLotAdvisorSEI_isParkingAvailableResponse"></output>
+        </operation>
+     </portType>
+     <portType name="ParkingLotAdvisorSEI_1">
+        <operation name="reserveParkingSpot">
+            <input message="tns:ParkingLotAdvisorSEI_reserveParkingSpot"></input>
+            <output message="tns:ParkingLotAdvisorSEI_reserveParkingSpotResponse"></output>
+            <fault name="SpotNotAvailableException"
+                   message="tns:SpotNotAvailableException"></fault>
+        </operation>
+    </portType>
+    <binding name="ParkingLotAdvisorSEIBinding"
+             type="tns:ParkingLotAdvisorSEI">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="isParkingAvailable">
+            <soap:operation soapAction="availabilitysearch"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        </binding>
+        <binding name="ParkingLotAdvisorSEIBinding_1" type="tns:ParkingLotAdvisorSEI_1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="reserveParkingSpot">
+            <soap:operation soapAction="parkingsearch"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+                       
+            <fault name="SpotNotAvailableException">
+                <soap:fault name="SpotNotAvailableException"
+                            use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="ParkingLotAdvisor">
+        <port name="ParkingLotAdvisorSEIport"
+              binding="tns:ParkingLotAdvisorSEIBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Availabilitysearch"/>
+        </port>
+        <port name="ParkingLotAdvisorSEI_1port"
+              binding="tns:ParkingLotAdvisorSEIBinding_1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/parkingsearch"/>
+        </port>
+      </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="ParkingPartner">
+        <plnk:role name="ParkingAvailabilityrole" portType="tns:ParkingLotAdvisorSEI"/>
+   <plnk:role name="ParkingSearchrole" portType="tns:ParkingLotAdvisorSEI_1"/>
+        </plnk:partnerLinkType>
+    </definitions>

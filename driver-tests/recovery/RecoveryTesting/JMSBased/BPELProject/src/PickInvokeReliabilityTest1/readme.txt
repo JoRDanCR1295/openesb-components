@@ -1,0 +1,1 @@
+This bpel has a pick with onMessage (createInstance=yes), assign and an invoke

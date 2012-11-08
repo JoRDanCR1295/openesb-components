@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions targetNamespace="urn:jbi4corba/test-consumer-fault" 
+             xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="urn:jbi4corba/test-consumer-fault" 
+             xmlns:ns="urn:jbi4corba/test-consumer-fault"
+             xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/">
+    <types>
+        <xsd:schema targetNamespace="urn:jbi4corba/test-consumer-fault" 
+                    elementFormDefault="qualified" attributeFormDefault="qualified" 
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+            <xsd:element name="echo"><xsd:complexType><xsd:sequence><xsd:element name="in0" type="xsd:string" nillable="true" minOccurs="1" maxOccurs="1"/></xsd:sequence></xsd:complexType></xsd:element>
+            <xsd:element name="echoResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="out" type="xsd:string" nillable="true" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="echoStruct">
+                <xsd:sequence>
+                    <xsd:element name="fieldBoolean" type="xsd:boolean"/>
+                    <xsd:element name="fieldChar" type="xsd:unsignedShort"/>
+                    <xsd:element name="fieldLong" type="xsd:int"/>
+                    <xsd:element minOccurs="0" name="fieldString" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+    <xsd:element name="EchoComplexException" type="tns:EchoComplexException"/>
+    <xsd:complexType name="EchoComplexException">
+        <xsd:sequence>
+            <xsd:element name="reason" nillable="true" type="tns:echoStruct"/>
+        </xsd:sequence>
+    </xsd:complexType>
+            <xsd:element name="EchoSimpleException">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="reason" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    
+    
+    <wsdl:message name="echo">
+        <wsdl:part element="tns:echo" name="parameters" />
+    </wsdl:message>
+    
+    <message name="echoResponse">
+        <part element="tns:echoResponse" name="parameters"/>
+    </message>
+    <message name="EchoExceptionSimple">
+        <part name="parameters" element="tns:EchoSimpleException"/>
+    </message>
+    <message name="EchoExceptionComplex">
+        <part name="parameters" element="tns:EchoComplexException"/>
+    </message>
+    <portType name="EchoFaultPortType">
+        <operation name="echo">
+            <input message="tns:echo" name="echo"/>
+            <output message="tns:echoResponse" name="echoResponse"/>
+            <fault name="EchoSimpleFault" message="tns:EchoExceptionSimple"/>
+            <fault name="EchoComplexFault" message="tns:EchoExceptionComplex"/>
+        </operation>
+    </portType>
+    
+    <binding name="EchoFaultBinding" type="tns:EchoFaultPortType">
+        <imolacorba:binding>
+            <imolacorba:idl/>
+        </imolacorba:binding>
+        <operation name="echo">
+            <input name="echo"></input>
+            <output name="echoResponse"></output>
+            <fault name="EchoSimpleFault"></fault>
+            <fault name="EchoComplexFault"></fault>
+        </operation>
+    </binding>
+    
+    <service name="EchoFault">
+        <port binding="tns:EchoFaultBinding" name="EchoFaultPort">
+            <imolacorba:address name="EchoFault" localizationType="NameService">
+                <imolacorba:orb/>
+            </imolacorba:address>
+        </port>
+    </service>
+</definitions>
+

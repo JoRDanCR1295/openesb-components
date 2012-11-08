@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2004-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../global-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>ojc-addons</artifactId>
+    <name>ojc-addons</name>
+    <version>${jbicomps.currentVersion}</version>
+    <description>Open Jbi Components Installer Addons</description>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/checkstyle.suppressions</exclude>
+                    <exclude>**/package.html</exclude>
+                    <exclude>**/.*.swp</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>setup-installer-package-dir</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="Setup installer package directory" />
+                                <mkdir dir="${project.build.directory}/package"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>setup-jbi-components-configurator-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="Making jbi_components_configurator.jar" />
+                                <mkdir dir="${project.build.directory}/stagedir"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/META-INF/services"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/xsltse"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/filebc"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/jmsbc"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/sqlse"/>
+                                <mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/bpelse"/>
+                                <!--mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/iepse"/-->
+                                <!--mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/jdbcbc"/-->
+                                <!--mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/smtpbc"/-->
+                                <!--mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/ftpbc"/-->
+                                <!--mkdir dir="${project.build.directory}/stagedir/configuratordir/templates/mqbc"/-->
+                                <copy todir="${project.build.directory}/stagedir/configuratordir">
+                                    <fileset dir="src/ant/configurator/"
+                                        includes="build.xml" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/META-INF/services">
+                                    <fileset dir="src/"
+                                        includes="com.sun.appserv.addons.Configurator" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/templates/xsltse/">
+                                    <fileset dir="src/templates/xsltse/"
+                                        includes="config.properties" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/templates/filebc/">
+                                    <fileset dir="src/templates/filebc/"
+                                        includes="config.properties" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/templates/jmsbc/">
+                                    <fileset dir="src/templates/jmsbc/"
+                                        includes="config.properties" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/templates/sqlse/">
+                                    <fileset dir="src/templates/sqlse/"
+                                        includes="config.properties" />
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/configuratordir/templates/bpelse/">
+                                    <fileset dir="src/templates/bpelse/"
+                                        includes="config.properties" />
+                                </copy>
+                                <!--copy todir="${project.build.directory}/stagedir/configuratordir/templates/iepse/">
+                                    <fileset dir="src/templates/iepse/"
+                                        includes="*.*" />
+                                </copy-->
+                                <!--copy todir="${project.build.directory}/stagedir/configuratordir/templates/jdbcbc/">
+                                    <fileset dir="src/templates/jdbcbc/"
+                                        includes="config.properties" />
+                                </copy-->
+                                <!--copy todir="${project.build.directory}/stagedir/configuratordir/templates/smtpbc/">
+                                    <fileset dir="src/templates/smtpbc/"
+                                        includes="config.properties" />
+                                </copy-->
+                                <!--copy todir="${project.build.directory}/stagedir/configuratordir/templates/ftpbc/">
+                                    <fileset dir="src/templates/ftpbc/"
+                                        includes="config.properties" />
+                                </copy-->
+                                <!--copy todir="${project.build.directory}/stagedir/configuratordir/templates/mqbc/">
+                                    <fileset dir="src/templates/mqbc/"
+                                        includes="config.properties" />
+                                </copy-->
+                                <copy todir="${project.build.directory}/stagedir/configuratordir">
+                                    <fileset dir="${project.build.directory}/classes/"
+                                        includes="com/**/*" />
+                                </copy>
+                                <jar destfile="${project.build.directory}/package/jbi_components_configurator.jar"
+                                     basedir="${project.build.directory}/stagedir/configuratordir" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>setup-install-util-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <jar destfile="${project.build.directory}/package/install-util.jar"
+                                     basedir="${project.build.directory}/classes"
+                                     includes="com/**/*"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>get-alaska-components-zip-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${project.build.directory}/stagedir/alaskadir"/>
+                                <mkdir dir="${project.build.directory}/stagedir/alaskadir/unzipdir"/>
+                                <mkdir dir="${project.build.directory}/stagedir/alaskadir/zipdir"/>
+                                <unzip src="${SRCROOT}/bld/release/ojc-components.zip"
+                                       dest="${project.build.directory}/stagedir/alaskadir/unzipdir" />
+
+                                <!--
+                                <copy overwrite="true" preservelastmodified="true" verbose="true"
+                                    file="../../runtime/version/shasta/bld/release/cmn/versionInfo.sh"
+                                tofile="${project.build.directory}/stagedir/alaskadir/zipdir/jbi_components.ver"
+                                />
+-->
+
+                                <copy todir="${project.build.directory}/stagedir/alaskadir/zipdir">
+                                    <fileset dir="license">
+                                        <include name="LICENSE.txt" />
+                                        <include name="3rdPartyLicenses.txt" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/stagedir/alaskadir/zipdir">
+                                    <fileset dir="${project.build.directory}/stagedir/alaskadir/unzipdir">
+                                        <include name="bpelserviceengine.jar"/>
+
+                                        <include name="xsltserviceengine.jar"/>
+                                        <include name="filebc.jar"/>
+                                        <include name="jmsbc.jar"/>
+                                        <include name="encoderlib.jar"/>
+                                        <include name="saxonlib.jar"/>
+                                        <include name="wsdlextlib.jar"/>
+                                        <include name="sqlse.jar"/>
+                                        <!--include name="jdbcbc.jar"/-->
+                                        <!--include name="smtpbc.jar"/-->
+                                        <!--include name="iepserviceengine.jar"/-->
+                                        <!--include name="ftpbc.jar"/-->
+                                        <!--include name="mqbc.jar"/-->
+                                        <include name="LICENSE.txt"/>
+                                        <include name="3rdPartyLicenses.txt"/>
+                                        <include name="ojc.ver"/>
+                                    </fileset>
+                                </copy>
+                                <zip destfile="${project.build.directory}/package/JBI_COMPONENTS.zip"
+                                      basedir="${project.build.directory}/stagedir/alaskadir/zipdir"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>setup-jbi-components-installer-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="Setup jbi-components-installer" />
+                                <mkdir dir="${project.build.directory}/package/META-INF/services"/>
+                                <copy todir="${project.build.directory}/package">
+                                    <fileset dir="src/ant" includes="build.xml" />
+                                </copy>
+                                <copy todir="${project.build.directory}/package/META-INF/services/">
+                                    <fileset dir="src/" includes="com.sun.appserv.addons.Installer" />
+                                </copy>
+                                <copy todir="${project.build.directory}/package">
+                                    <fileset dir="${project.build.directory}/classes/"
+                                        includes="com/**/*" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make-jbi-components-installer-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <jar destfile="${project.build.directory}/jbi_components_installer.jar"
+                                     basedir="${project.build.directory}/package">
+                                    <manifest>
+                                        <attribute name="Main-Class" value="com.sun.jbi.installer.JBIComponentsInstaller"/>
+                                    </manifest>
+                                </jar>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>jbicompsplatform</groupId>
+            <artifactId>compileconf</artifactId>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>open-esb</groupId>
+            <artifactId>base</artifactId>
+            <version>${openesb.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-esb</groupId>
+            <artifactId>jbi</artifactId>
+            <version>${openesb.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>jbiplatform</groupId>
+            <artifactId>jbi_compileconf</artifactId>
+            <version>${openesb.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>alaska_components</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>zip</type>
+        </dependency>
+-->
+    </dependencies>
+</project>

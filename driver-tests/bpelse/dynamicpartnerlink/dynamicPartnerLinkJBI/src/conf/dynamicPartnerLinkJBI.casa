@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/dynamicPartnerLink" xmlns:ns2="http://j2ee.netbeans.org/wsdl/provider" xmlns:ns3="http://enterprise.netbeans.org/bpel/dynamicPartnerLinkBPEL/parentBP" xmlns:ns4="http://enterprise.netbeans.org/bpel/dynamicPartnerLinkBPEL/providerBP" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="dynamicPartnerLinkPort" interface-name="ns1:dynamicPartnerLinkPortType" name="endpoint1" service-name="ns1:dynamicPartnerLinkService"/>
+        <endpoint endpoint-name="providerPort" interface-name="ns2:providerPortType" name="endpoint2" service-name="ns2:providerService"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="dynamicPartnerLinkPortTypeRole_myRole" file-path="parentBP.bpel" interface-name="ns1:dynamicPartnerLinkPortType" name="endpoint3" process-name="parentBP" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="providerPortTypeRole_myRole" file-path="providerBP.bpel" interface-name="ns2:providerPortType" name="endpoint4" process-name="providerBP" service-name="ns4:PartnerLink1"/>
+        <endpoint display-name="PartnerLink3" endpoint-name="providerPortTypeRole_partnerRole" file-path="parentBP.bpel" interface-name="ns2:providerPortType" name="endpoint5" process-name="parentBP" service-name="ns3:PartnerLink3"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="providerPortTypeRole_partnerRole" file-path="parentBP.bpel" interface-name="ns2:providerPortType" name="endpoint6" process-name="parentBP" service-name="ns3:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="dynamicPartnerLinkBPEL.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="dynamicPartnerLinkJBI-dynamicPartnerLinkBPEL" unit-name="dynamicPartnerLinkBPEL" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="dynamicPartnerLinkJBI-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/dynamicPartnerLink.wsdl#xpointer(/definitions/service[@name='dynamicPartnerLinkService']/port[@name='dynamicPartnerLinkPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/provider.wsdl#xpointer(/definitions/service[@name='providerService']/port[@name='providerPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/dynamicPartnerLink.wsdl#xpointer(/definitions/portType[@name='dynamicPartnerLinkPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/provider.wsdl#xpointer(/definitions/portType[@name='providerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkJBI.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/dynamicPartnerLink.wsdl#xpointer(/definitions/binding[@name='dynamicPartnerLinkBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/provider.wsdl#xpointer(/definitions/binding[@name='providerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkJBI.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/dynamicPartnerLink.wsdl#xpointer(/definitions/service[@name='dynamicPartnerLinkService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkBPEL/provider.wsdl#xpointer(/definitions/service[@name='providerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/dynamicPartnerLinkJBI.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

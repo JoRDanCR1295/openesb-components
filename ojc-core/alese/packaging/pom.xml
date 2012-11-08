@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>alese-installer</artifactId>
+    <name>sun-ale-engine</name>
+    <version>${alese.artifact.version}</version>
+    <description>ale packaging description</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-generate-i18n-descriptors</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- generate i18n jbi descriptors -->
+                                <taskdef name="i18n-xml" classname="${I18N_XML_TASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n-xml
+                                    file="${project.build.sourceDirectory}/jbi.xml"
+                                    properties="${project.build.sourceDirectory}/alese-config.properties"
+                                    outputDir="${project.build.outputDirectory}/META-INF">
+                                    <fileset dir="${project.build.sourceDirectory}"
+                                             includes="alese-config*.properties"/>
+                                    <namespace prefix="jbi" uri="http://java.sun.com/xml/ns/jbi"/>
+                                    <namespace prefix="cfg" uri="http://www.sun.com/jbi/Configuration/V1.0"/>
+                                    <expr query="//cfg:Property"
+                                          i18nAttr="displayName" keyAttr="name"/>
+                                    <expr query="//cfg:Property"
+                                          i18nAttr="displayDescription" keyAttr="name"/>
+                                    <expr query="/jbi:jbi/jbi:component/jbi:identification/jbi:description"/>
+                                </i18n-xml>
+                                <!-- build ALE service assembly -->
+                                <ant dir="${project.build.sourceDirectory}/deployment-artifacts">
+                                    <property name="output.dir" value="${project.build.outputDirectory}/../dist"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-rename-jars</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- rename ale-jbiadapter.jar to alese-jbiadapter.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/lib/ale-jbiadapter.jar"
+                                    tofile="${project.build.outputDirectory}/lib/alese-jbiadapter.jar" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-ale-engine</Bundle-SymbolicName>
+                        <Bundle-Name>ALE SE Component</Bundle-Name>
+                        <Bundle-Description>ALE Service Engine provides common services, such as logging, alerting, and error reporting.</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/tale.jar,
+                            lib/alese-jbiadapter.jar,
+                            lib/component-toolkit.jar,
+                            lib/common-util.jar,
+                            lib/qos.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>*</Import-Package>
+                    </instructions>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>tale</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>ale-jbiadapter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

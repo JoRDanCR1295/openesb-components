@@ -1,0 +1,87 @@
+<process name="correlationWithFlow3"
+         targetNamespace="http://www.seebeyond.com/eInsight/correlationWithFlow3"
+         sbynpxp:end_YLoc="122.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="691.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/correlationWithFlow3"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:correlationWithFlow3TargetNamespace"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:correlationWithFlow3TargetNamespace"
+            location="correlationWithFlow3.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="twoWayOperPLink"
+                     partnerLinkType="ns0:correlationWithFlow3ServiceLinkType"
+                     myRole="correlationWithFlow3ServerRole"/>
+        <partnerLink name="oneWayOperPLink"
+                     partnerLinkType="ns0:correlationWithFlow3ServiceLinkType"
+                     myRole="correlationWithFlow3ServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="correlationWithFlow3Operation_Output"
+                  messageType="ns0:correlationWithFlow3Message"></variable>
+        <variable name="correlationWithFlow3Operation_Input"
+                  messageType="ns0:correlationWithFlow3Message"></variable>
+        <variable name="correlationWithFlow3Operation1_Output"
+                  messageType="ns0:correlationWithFlow3Message"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns0:propertyName1"/>
+    </correlationSets>
+    <sequence>
+        <flow name="Flow"
+              sbynpxp:XLoc="104.0"
+              sbynpxp:YLoc="111.0"
+              sbynpxp:YLoc_MergeNode="114.0"
+              sbynpxp:XLoc_MergeNode="444.0">
+            <sequence>
+                <receive name="correlationWithFlow3Operation"
+                         partnerLink="twoWayOperPLink"
+                         portType="ns0:correlationWithFlow3PortType"
+                         operation="correlationWithFlow3Operation"
+                         variable="correlationWithFlow3Operation_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="217.0"
+                         sbynpxp:YLoc="48.0">
+                    <correlations>
+                        <correlation set="cSet1"
+                                     initiate="join"/>
+                    </correlations>
+                </receive>
+            </sequence>
+            <sequence>
+                <receive name="correlationWithFlow3Operation1"
+                         partnerLink="oneWayOperPLink"
+                         portType="ns0:correlationWithFlow3PortType1"
+                         operation="correlationWithFlow3Operation1"
+                         variable="correlationWithFlow3Operation1_Output"
+                         sbynpxp:XLoc="224.0"
+                         sbynpxp:YLoc="195.0">
+                    <correlations>
+                        <correlation set="cSet1"
+                                     initiate="join"/>
+                    </correlations>
+                </receive>
+            </sequence>
+        </flow>
+        <reply name="correlationWithFlow3Operation.Reply"
+               partnerLink="twoWayOperPLink"
+               portType="ns0:correlationWithFlow3PortType"
+               operation="correlationWithFlow3Operation"
+               variable="correlationWithFlow3Operation_Output"
+               sbynpxp:XLoc="548.0"
+               sbynpxp:YLoc="114.0"></reply>
+    </sequence>
+</process>

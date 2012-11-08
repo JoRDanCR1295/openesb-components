@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InvokeSAPBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeSAPBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InvokeSAPBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/echo" xmlns:ns2="urn:sap-com:document:sap:soap:functions:mc-style">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="urn:sap-com:document:sap:soap:functions:mc-style" location="Z_FlightWSD_EUC_SAP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:myPartnerLink" partnerRole="myPartnerRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:echoPartner" myRole="echoPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FlightGetDetailOut" messageType="ns2:FlightGetDetailResponse"/>
+        <bpws:variable name="FlightGetDetailIn" messageType="ns2:FlightGetDetail"/>
+        <bpws:variable name="EchoOperationOut" messageType="ns1:echoOperationReply"/>
+        <bpws:variable name="EchoOperationIn" messageType="ns1:echoOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="echoOperation" portType="ns1:echoPortType" variable="EchoOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>LH</bpws:literal>
+                </bpws:from>
+                <bpws:to>$FlightGetDetailIn.parameters/AirlineID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>400</bpws:literal>
+                </bpws:from>
+                <bpws:to>$FlightGetDetailIn.parameters/ConnectionID</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>1995-02-28</bpws:literal>
+                </bpws:from>
+                <bpws:to>$FlightGetDetailIn.parameters/FlightDate</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="FlightGetDetail" portType="ns2:Z_FlightWSD" inputVariable="FlightGetDetailIn" outputVariable="FlightGetDetailOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$FlightGetDetailOut.parameters/FlightData/Airline</bpws:from>
+                <bpws:to variable="EchoOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="echoOperation" portType="ns1:echoPortType" variable="EchoOperationOut"/>
+    </sequence>
+</process>

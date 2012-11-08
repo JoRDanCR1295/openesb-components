@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="addressSearch" targetNamespace="http://j2ee.netbeans.org/wsdl/testXPath/addressSearch"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/testXPath/addressSearch" xmlns:ns="http://xml.netbeans.org/schema/personAddress" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/testXPath/addressSearch">
+            <xsd:import namespace="http://xml.netbeans.org/schema/personAddress" schemaLocation="personAddress.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="addressSearchOperationRequest">
+        <part name="part1" element="ns:person"/>
+    </message>
+    <message name="addressSearchOperationResponse">
+        <part name="part1" element="ns:searchResultAddress"/>
+    </message>
+    <portType name="addressSearchPortType">
+        <operation name="addressSearchOperation">
+            <input name="input1" message="tns:addressSearchOperationRequest"/>
+            <output name="output1" message="tns:addressSearchOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="addressSearchBinding" type="tns:addressSearchPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="addressSearchOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="addressSearchService">
+        <port name="addressSearchPort" binding="tns:addressSearchBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/addressSearchService/addressSearchPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="addressSearch">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="addressSearchPortTypeRole" portType="tns:addressSearchPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

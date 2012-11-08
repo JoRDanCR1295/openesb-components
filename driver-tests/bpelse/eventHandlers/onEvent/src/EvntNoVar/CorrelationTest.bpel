@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="EvntHandlerNoVarTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnEvent/src/EvntNoVar/CorrelationTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/OnEvent/src/EvntNoVar/CorrelationTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/OnEvent/src/EvntNoVar/CorrelationTest" xmlns:ns0="http://xml.netbeans.org/schema/OnEvent/src/EvntNoVar/Message">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/OnEvent/src/EvntNoVar/CorrelationTest" location="CorrelationTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:EvntHandlerTestPartner" myRole="EvntHandlerTestPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+      <bpws:variable name="InitiateProcessOperationIn" messageType="ns1:Message"/>
+   </bpws:variables>
+   <bpws:correlationSets>
+      <bpws:correlationSet name="CorrelationSet" properties="ns1:CorrelationId1 ns1:CorrelationId2"/>
+   </bpws:correlationSets>
+    <bpws:eventHandlers>
+        <bpws:onEvent partnerLink="PartnerLinkA" operation="CorrelationTestOperation" portType="ns1:EvntHandlerTestPortType">
+            <bpws:correlations>
+               <bpws:correlation set="CorrelationSet" initiate="no"/>
+            </bpws:correlations>
+            <bpws:scope name="Scope1">
+                <bpws:assign name="Assign1">
+                    <bpws:copy>
+                        <bpws:from>
+                            <bpws:literal>Reply message set by OnEvent with no var.</bpws:literal>
+                        </bpws:from>
+                        <bpws:to>$InitiateProcessOperationIn.Data/ns0:Content</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:scope>
+        </bpws:onEvent>
+    </bpws:eventHandlers>
+    <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:EvntHandlerTestPortType" variable="InitiateProcessOperationIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet" initiate="yes"/>
+         </bpws:correlations>
+      </bpws:receive>
+        <bpws:wait name="Wait1">
+            <bpws:for>'P0Y0M0DT0H0M15S'</bpws:for>
+        </bpws:wait>
+        <bpws:reply name="Reply1" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:EvntHandlerTestPortType" variable="InitiateProcessOperationIn"/>
+   </sequence>
+</process>

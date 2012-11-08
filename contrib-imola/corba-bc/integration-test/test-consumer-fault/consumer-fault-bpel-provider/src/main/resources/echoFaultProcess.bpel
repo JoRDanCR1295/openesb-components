@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoFaultProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoFaultProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/echoFaultProcess" xmlns:ns0="http://enterprise.netbeans.org/bpel/EchoFaultWrapper" xmlns:ns1="urn:jbi4corba/test-consumer-fault">
+    <import namespace="http://enterprise.netbeans.org/bpel/EchoFaultWrapper" location="EchoFaultWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:jbi4corba/test-consumer-fault" location="EchoFault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="echoFaultProcess" partnerLinkType="ns0:echoFaultProcess" myRole="echoFaultProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoComplexFaultVar" messageType="ns1:EchoExceptionComplex"/>
+        <variable name="EchoSimpleFaultVar" messageType="ns1:EchoExceptionSimple"/>
+        <variable name="EchoOut" messageType="ns1:echoResponse"/>
+        <variable name="EchoIn" messageType="ns1:echo"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="echoFaultProcess" operation="echo" portType="ns1:EchoFaultPortType" variable="EchoIn"/>
+        <if name="If1">
+            <condition>'SIMPLE' = $EchoIn.parameters/ns1:in0</condition>
+            <sequence name="Sequence1">
+                <assign name="Assign1">
+                    <copy>
+                        <from>$EchoIn.parameters/ns1:in0</from>
+                        <to>$EchoSimpleFaultVar.parameters/ns1:reason</to>
+                    </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="echoFaultProcess" operation="echo" portType="ns1:EchoFaultPortType" faultName="ns1:EchoSimpleFault" variable="EchoSimpleFaultVar"/>
+            </sequence>
+            <elseif>
+                <condition>'COMPLEX' = $EchoIn.parameters/ns1:in0</condition>
+                <sequence name="Sequence2">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$EchoIn.parameters/ns1:in0</from>
+                            <to>$EchoComplexFaultVar.parameters/ns1:reason/ns1:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>true()</from>
+                            <to>$EchoComplexFaultVar.parameters/ns1:reason/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>'A'</from>
+                            <to>$EchoComplexFaultVar.parameters/ns1:reason/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>1.0</from>
+                            <to>$EchoComplexFaultVar.parameters/ns1:reason/ns1:fieldLong</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply2" partnerLink="echoFaultProcess" operation="echo" portType="ns1:EchoFaultPortType" faultName="ns1:EchoComplexFault" variable="EchoComplexFaultVar"/>
+                </sequence>
+            </elseif>
+        </if>
+        <assign name="Assign3">
+            <copy>
+                <from>$EchoIn.parameters/ns1:in0</from>
+                <to>$EchoOut.parameters/ns1:out</to>
+            </copy>
+        </assign>
+        <reply name="Reply3" partnerLink="echoFaultProcess" operation="echo" portType="ns1:EchoFaultPortType" variable="EchoOut"/>
+    </sequence>
+</process>

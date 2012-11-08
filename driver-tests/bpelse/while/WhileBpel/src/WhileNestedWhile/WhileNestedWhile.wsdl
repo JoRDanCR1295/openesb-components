@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="WhileNestedWhile"
+             targetNamespace="http://www.mycomp.org/NestedWhile/NestedWhileTest"
+             xmlns:tns="http://www.mycomp.org/NestedWhile/NestedWhileTest"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:message name="ReqMsg">
+        <wsdl:part name="Req" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="ResponseMsg">
+        <wsdl:part name="Res" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="Counter">
+        <wsdl:part name="Count" type="xsd:int"/>
+        <wsdl:part name="Count1" type="xsd:int"/>
+    </wsdl:message>
+    <wsdl:portType name="NestedPort">
+        <wsdl:operation name="NestedWhileOperation">
+            <wsdl:input name="input" message="tns:ReqMsg"/>
+            <wsdl:output name="output" message="tns:ResponseMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+        <binding name="NestedWhileBinding" type="tns:NestedPort">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                <operation name="NestedWhileOperation">
+                        <soap:operation style="document"/>
+                        <input name="input">
+                                <soap:body use="literal"/>
+                        </input><output name="output">
+    <soap:body use="literal"/>
+</output>
+                </operation>
+        </binding>
+
+   
+         <wsdl:service name="NestedWhileTestService">
+		<wsdl:port name="NestedWhileTestPortName" binding="tns:NestedWhileBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/NestedWhileTest"/>
+		</wsdl:port>
+                  
+         </wsdl:service>
+
+	<plnk:partnerLinkType name="NestedWhileTestPartnerLinkType">
+		<plnk:role name="NestedWhileTestProvider" portType="tns:NestedPort"/>
+	</plnk:partnerLinkType>
+
+</wsdl:definitions>

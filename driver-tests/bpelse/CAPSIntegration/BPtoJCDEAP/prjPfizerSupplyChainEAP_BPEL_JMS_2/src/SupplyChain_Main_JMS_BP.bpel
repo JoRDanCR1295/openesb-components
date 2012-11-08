@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SupplyChain_Main_JMS_BP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/prjPfizerSupplyChainEAP_BPEL/SupplyChain_Main_JMS_BP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/prjPfizerSupplyChainEAP_BPEL/SupplyChain_MainBP" xmlns:ns0="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" xmlns:ns="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace"
+    xmlns:ns1="http://xml.netbeans.org/schema/pfizer/OTDLoadAttributes" xmlns:sxxf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" location="SupplyChainMessageWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/LTS_SubBPWSDL" location="LTS_SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" location="WizardCorrelationProperties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/bpLSC_EuropeELCJMSWSDL" location="SupplyChain_MainBPJMSWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" location="LSP_SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="Invoke_LTSPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LTS_SubBPWSDL" partnerLinkType="tns:LTS_SubBPReceivePT" partnerRole="LTS_SubBPWSDLPortTypeRole"/>
+        <partnerLink name="JMSOutPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpLSC_EuropeELCJMSWSDL" partnerLinkType="tns:bpLSC_EuropeELCOutWSDL" partnerRole="bpLSC_EuropeELCOutWSDLPortTypeRole"/>
+        <partnerLink name="Invoke_LSPPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" partnerLinkType="tns:LSP_SubBPReceivePT" partnerRole="LSP_SubBPWSDLPortTypeRole"/>
+        <partnerLink name="LTSCallBackPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LTS_SubBPWSDL" partnerLinkType="tns:LTS_SubBPWSDLCallBackPT" myRole="LTS_SubBPWSDLCallBackPortTypeRole"/>
+        <partnerLink name="JMSInPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpLSC_EuropeELCJMSWSDL" partnerLinkType="tns:bpLSC_EuropeELCInWSDL" myRole="bpLSC_EuropeELCInWSDLPortTypeRole"/>
+        <partnerLink name="LSPCallBackPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" partnerLinkType="tns:LSP_SubBPWSDLCallBackPT" myRole="LSP_SubBPWSDLCallBackPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="LSP_SubBPWSDLCallBackOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_SubBPReply"/>
+        <variable name="BpLSC_EuropeELCJMSInWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_MainBPInput"/>
+        <variable name="LTS_SubBPWSDLCallBackOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_SubBPReply"/>
+        <variable name="BpLSC_EuropeELCWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_SubBPInput"/>
+        <variable name="BpLSC_EuropeELCJMSInWSDLOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_MainBPOutput"/>
+
+        
+    </variables>
+    <correlationSets>
+        <correlationSet name="wzrd_set_InvokeLTS_ReceiveCallBack_LTS" properties="ns0:wzrd_prop_LOAD_ID_LOAD_ID ns0:wzrd_prop_QUANTITY_LTS_QUANTITY_LTS"/>
+        <correlationSet name="wzrd_set_InvokeLSP_ReceiveCallBackFromLSP" properties="ns0:wzrd_prop_LOAD_ID_LOAD_ID"/>
+    </correlationSets>
+    <sequence>
+        <receive name="JMSIn" createInstance="yes" partnerLink="JMSInPL" operation="bpLSC_EuropeELCJMSInWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpLSC_EuropeELCJMSWSDL" portType="tns:bpLSC_EuropeELCJMSWSDLInPortType" variable="BpLSC_EuropeELCJMSInWSDLOperationIn">
+            <ns:trace>
+                <ns:log level="info" location="onComplete">
+                    <from>concat('Reiceived In Load Id:', string($BpLSC_EuropeELCJMSInWSDLOperationIn.part1))</from>
+                </ns:log>
+            </ns:trace>
+        </receive>
+        <assign name="init">
+            <ns:trace>
+                <ns:log level="info" location="onComplete">
+                    <from>concat('The Input to LSC subbp is :', sxxf:doMarshal($BpLSC_EuropeELCWSDLOperationIn.part1))</from>
+                </ns:log>
+            </ns:trace>
+            <copy>
+                <from variable="BpLSC_EuropeELCJMSInWSDLOperationIn" part="part2"/>
+                <to variable="BpLSC_EuropeELCWSDLOperationIn" part="part1"/>
+            </copy>
+            <copy>
+                <from>string($BpLSC_EuropeELCJMSInWSDLOperationIn.part1)</from>
+                <to>$BpLSC_EuropeELCWSDLOperationIn.part1/ns1:LOAD_ID</to>
+            </copy>
+            <copy>
+                <from>string($BpLSC_EuropeELCJMSInWSDLOperationIn.part1)</from>
+                <to>$BpLSC_EuropeELCJMSInWSDLOperationIn.part2/ns1:LOAD_ID</to>
+            </copy>
+
+        </assign>
+        <invoke name="InvokeLTS" partnerLink="Invoke_LTSPL" operation="LTS_SubBPWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LTS_SubBPWSDL" portType="tns:LTS_SubBPWSDLPortType" inputVariable="BpLSC_EuropeELCWSDLOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_InvokeLTS_ReceiveCallBack_LTS" initiate="yes"/>
+            </correlations>
+        </invoke>
+        <receive name="ReceiveCallBack_LTS" createInstance="no" partnerLink="LTSCallBackPL" operation="LTS_SubBPWSDLCallBackOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LTS_SubBPWSDL" portType="tns:LTS_SubBPWSDLCallBackPortType" variable="LTS_SubBPWSDLCallBackOperationIn">
+            <ns:trace>
+                <ns:log level="info" location="onComplete">
+                    <from>concat(concat('Load Id:', $LTS_SubBPWSDLCallBackOperationIn.part1/ns1:LOAD_ATTRIBUTES/ns1:LOAD_ID), concat(' Status:', $LTS_SubBPWSDLCallBackOperationIn.part1/ns1:Status))</from>
+                </ns:log>
+            </ns:trace>
+            <correlations>
+                <correlation set="wzrd_set_InvokeLTS_ReceiveCallBack_LTS" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="AssignToLSP">
+            <ns:trace>
+                <ns:log level="info" location="onComplete">
+                    <from>concat(concat('load_id:', $LTS_SubBPWSDLCallBackOperationIn.part1/ns1:LOAD_ATTRIBUTES/ns1:LOAD_ID), ' in LSP!')</from>
+                </ns:log>
+            </ns:trace>            
+            <copy>
+                <from>$LTS_SubBPWSDLCallBackOperationIn.part1/ns1:LOAD_ATTRIBUTES</from>
+                <to variable="BpLSC_EuropeELCWSDLOperationIn" part="part1"/>
+            </copy>            
+            <copy>
+                <from>$BpLSC_EuropeELCWSDLOperationIn.part1/ns1:DATE_LTS</from>
+                <to>$BpLSC_EuropeELCWSDLOperationIn.part1/ns1:DATE_LSP</to>
+            </copy>
+            <copy>
+                <from>$BpLSC_EuropeELCWSDLOperationIn.part1/ns1:QUANTITY_LTS</from>
+                <to>$BpLSC_EuropeELCWSDLOperationIn.part1/ns1:QUANTITY_LSP</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeLSP" partnerLink="Invoke_LSPPL" operation="LSP_SubBPWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" portType="tns:LSP_SubBPWSDLPortType" inputVariable="BpLSC_EuropeELCWSDLOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_InvokeLSP_ReceiveCallBackFromLSP" initiate="yes"/>
+            </correlations>
+        </invoke>
+        <receive name="ReceiveCallBackFromLSP" createInstance="no" partnerLink="LSPCallBackPL" operation="LSP_SubBPWSDLCallBackOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" portType="tns:LSP_SubBPWSDLCallBackPortType" variable="LSP_SubBPWSDLCallBackOperationIn">
+            <correlations>
+                <correlation set="wzrd_set_InvokeLSP_ReceiveCallBackFromLSP" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="AssignToJMS">
+            <ns:trace>
+                <ns:log level="info" location="onComplete">
+                    <from>concat(concat('JMSOut load_id:', string($BpLSC_EuropeELCJMSInWSDLOperationOut.part1/ns1:LOAD_ATTRIBUTES/ns1:LOAD_ID)), concat('  JMSOut text:', sxxf:doMarshal($BpLSC_EuropeELCJMSInWSDLOperationOut.part1)))</from>
+                </ns:log>
+            </ns:trace>
+<!--            <copy>
+                <from>number($LTS_SubBPWSDLCallBackOperationIn.part1/ns1:LOAD_ATTRIBUTES/ns1:LOAD_ID)</from>
+                <to variable="BpLSC_EuropeELCJMSInWSDLOperationIn" part="part1"/>
+            </copy>
+            -->
+            <copy>
+                <from>$LSP_SubBPWSDLCallBackOperationIn.part1/ns1:LOAD_ATTRIBUTES</from>
+                <to variable="BpLSC_EuropeELCJMSInWSDLOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="JMSOut" partnerLink="JMSOutPL" operation="bpLSC_EuropeELCJMSOutWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpLSC_EuropeELCJMSWSDL" portType="tns:bpLSC_EuropeELCJMSWSDLOutPortType" inputVariable="BpLSC_EuropeELCJMSInWSDLOperationOut">
+            <ns:trace>
+                <ns:log level="info" location="onStart">
+                    <from>concat('Main BP sends to JMS:part1', sxxf:doMarshal($BpLSC_EuropeELCJMSInWSDLOperationOut.part1))</from>
+                </ns:log>
+            </ns:trace>
+        </invoke>
+
+    </sequence>
+</process>

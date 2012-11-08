@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="current-date" targetNamespace="http://www.seebeyond.com/eInsight/current-date" xmlns:tns="http://www.seebeyond.com/eInsight/current-date" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://stc.com/current-date" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/current-date" location="current-date.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <variables>
+        <variable name="current-date_Output" messageType="ns0:current-date"/>
+        <variable name="current-date_Input" messageType="ns0:current-date"/>
+    </variables>
+    <sequence>
+        <receive name="current-date" partnerLink="Client2BP" portType="ns0:current-date" operation="current-date" variable="current-date_Output" createInstance="yes"/>
+        <assign name="Assign">
+            <copy>
+                <from>current-date()</from><to>$current-date_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="current-date.Reply" partnerLink="Client2BP" portType="ns0:current-date" operation="current-date" variable="current-date_Input"/>
+    </sequence>
+</process>

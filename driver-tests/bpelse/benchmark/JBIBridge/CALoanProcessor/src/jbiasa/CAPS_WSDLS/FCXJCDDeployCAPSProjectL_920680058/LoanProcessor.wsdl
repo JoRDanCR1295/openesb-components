@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CAPSProjectLoanProcessorFCX_LoanProcessor" targetNamespace="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX_LoanProcessor" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX_LoanProcessor" xmlns:inMsg="http://xml.netbeans.org/examples/LoanApplication" xmlns:errMsg="urn:stc:egate:jce:JavaException" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:outMsg="http://xml.netbeans.org/examples/LoanApplication" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <import namespace="http://xml.netbeans.org/examples/LoanApplication" location="loanApplication.xsd"/>
+  <types>
+    <xs:schema elementFormDefault="qualified" id="UID-13000000-BA486EDA180100-C0A80103-01" targetNamespace="urn:stc:egate:jce:JavaException" xmlns="urn:stc:egate:jce:JavaException" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="JavaException" type="JavaExceptionType"/>
+            <xs:complexType name="JavaExceptionType">
+                <xs:sequence>
+                    <xs:element name="Type" type="xs:string"/>
+                    <xs:element name="Message" type="xs:string"/>
+                    <xs:element name="Trace" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+  </types>
+  <message name="Output">
+    <part name="Body" element="inMsg:autoLoanApplication"/>
+  </message>
+  <message name="Input">
+    <part name="Body" element="inMsg:autoLoanApplication"/>
+  </message>
+  <message name="JavaExceptionMessage">
+    <part name="FaultDetails" element="errMsg:JavaException"/>
+  </message>
+  <portType name="ExecutePortType">
+    <operation name="processLoan">
+      <input name="Input" message="tns:Input"/>
+      <output name="Output" message="tns:Output"/>
+      <fault name="JavaException" message="tns:JavaExceptionMessage"/>
+    </operation>
+  </portType>
+  <binding name="ExecutePortTypeBinding" type="tns:ExecutePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="processLoan">
+      <soap:operation soapAction="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX:LoanProcessorWSDL:processLoan" style="document"/>
+      <input name="Input">
+        <soap:body parts="Body" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX:LoanProcessorWSDL"/>
+      </input>
+      <output name="Output">
+        <soap:body parts="Body" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX:LoanProcessorWSDL"/>
+      </output>
+      <fault name="JavaException">
+        <soap:fault name="JavaException" use="literal" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:stc:egate:jce:CAPSProjectLoanProcessorFCX:LoanProcessorWSDL"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="CAPSProjectLoanProcessorFCX_LoanProcessorService">
+    <port name="ExecutePortType" binding="tns:ExecutePortTypeBinding">
+      <soap:address location="http://localhost:${HttpDefaultPort}/CAPSProjectLoanProcessorFCX_LoanProcessorService/ExecutePortType"/>
+    </port>
+  </service>
+</definitions>

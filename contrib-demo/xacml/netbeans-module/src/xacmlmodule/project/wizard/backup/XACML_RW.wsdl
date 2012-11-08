@@ -1,0 +1,88 @@
+<definitions name="XACMLEnforcement"
+             targetNamespace="http://www.sun.com/jbi/test/sample-xacml/developer/"    
+             xmlns:tns="http://www.sun.com/jbi/test/sample-xacml/developer/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:xacml="http://www.sun.com/jbi/test/sample-xacml/developer/types/" >
+    <types>
+        <xsd:schema 
+        targetNamespace="http://www.sun.com/jbi/test/sample-xacml/developer/types/"
+        xmlns:xacml="http://www.sun.com/jbi/test/sample-xacml/developer/types/" 
+        elementFormDefault="qualified" >
+            <xsd:element name="user" type="xacml:UserType"/>
+            <xsd:element name="read" type="xacml:ActionType"/>
+            <xsd:element name="write" type="xacml:ActionType"/>            
+            <xsd:complexType name="UserType">
+                <xsd:sequence>
+                    <xsd:element name="first-name" type="xsd:string"/>
+                    <xsd:element name="last-name" type="xsd:string"/>
+                    <xsd:element name="group" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>                        
+            <xsd:complexType name="ActionType">
+                <xsd:sequence>
+                    <xsd:element name="group" type="xsd:string"/>
+                    <xsd:element name="action" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType> 
+        </xsd:schema>
+    </types>
+    
+    <message name="userMessage">
+        <part name="userPart"  element="xacml:user" />
+    </message>
+    
+    <message name="readMessage">
+        <part name="readPart" element="xacml:read" />
+    </message>
+
+    <message name="writeUserMessage">
+        <part name="userPart"  type="xacml:UserType" />
+    </message>
+    
+    <message name="writeMessage">          
+        <part name="writePart"  element="xacml:write" />             
+    </message>
+    
+    
+    <portType name="policy">
+        <operation name="read">
+            <input name="readInput" message="tns:userMessage"></input>
+            <output name="readOutput" message="tns:readMessage"></output>
+        </operation>
+        <operation name="write">
+            <input name="writeInput" message="tns:userMessage"></input>
+            <output name="writeOutput" message="tns:writeMessage"></output>
+        </operation>        
+    </portType>
+        
+    <binding name="Binding" type="tns:policy">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="read">
+            <soap:operation soapAction="read" />
+            <input name="readInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="readOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="write">
+            <soap:operation  soapAction="write" />
+            <input name="writeInput">
+                <soap:body use="literal"/>
+            </input>
+            <output name="writeOutput">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="XACMLService">
+        <port name="endpoint" binding="tns:Binding">
+            <soap:address location="http://localhost:12010/XACML-service-engine/XACMLService"/>
+        </port>
+    </service>
+    
+</definitions>

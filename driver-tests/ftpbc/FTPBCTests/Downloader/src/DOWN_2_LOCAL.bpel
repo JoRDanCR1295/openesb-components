@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="DOWN_2_LOCAL" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/DOWN_2_LOCAL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DOWN_2_LOCAL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FILE_WRITER" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FTP_IN_ONLY">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FILE_WRITER" location="FILE_WRITER.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FTP_IN_ONLY" location="FTP_IN_ONLY.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:FTP_IN_ONLYPartner" myRole="FTP_IN_ONLYPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:FILE_WRITERPartner" partnerRole="FILE_WRITERPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FILE_WRITEROperationIn" messageType="ns1:FILE_WRITEROperationRequest"/>
+        <bpws:variable name="FTP_IN_ONLYOperationIn" messageType="ns2:FTP_IN_ONLYOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink2" operation="FTP_IN_ONLYOperation" portType="ns2:FTP_IN_ONLYPortType" variable="FTP_IN_ONLYOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="FTP_IN_ONLYOperationIn" part="part1"/>
+                <bpws:to variable="FILE_WRITEROperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink1" operation="FILE_WRITEROperation" portType="ns1:FILE_WRITERPortType" inputVariable="FILE_WRITEROperationIn"/>
+   </sequence>
+   
+</process>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinPickOnAlarmProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinPickOnAlarmProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinPickOnAlarmProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinPickOnAlarm" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinPickOnAlarm" location="WithinPickOnAlarm.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:MainBPIOPLink" myRole="WithinPickOnAlarmPortTypeRole"/>
+        <partnerLink name="CorrelPlink" partnerLinkType="ns1:MainBPOneWayPLink" myRole="MainBPOneWayWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WithinPickOnAlarmOperationOut" messageType="ns1:WithinPickOnAlarmOperationReply"/>
+        <variable name="WithinPickOnAlarmOperationIn" messageType="ns1:WithinPickOnAlarmOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVariable"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinPickOnAlarmOperationReply" faultVariable="WithinPickOnAlarmOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinPickOnAlarmOperation" portType="ns1:WithinPickOnAlarmPortType" variable="WithinPickOnAlarmOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinPickOnAlarmOperation" portType="ns1:WithinPickOnAlarmPortType" variable="WithinPickOnAlarmOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <scope name="Scope1">
+            <variables>
+                <variable name="MainBPOneWayWSDLOperationIn" messageType="ns1:MainBPOneWayRequest"/>
+            </variables>
+            <faultHandlers>
+                <catch faultName="tns:catchFault" faultMessageType="ns1:WithinPickOnAlarmOperationReply" faultVariable="WithinPickOnAlarmOperationOut">
+                    <pick name="Pick2">
+                        <onMessage partnerLink="CorrelPlink" operation="MainBPOneWayWSDLOperation" portType="ns1:MainBPOneWayWSDLPortType" variable="MainBPOneWayWSDLOperationIn">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <empty name="Empty2"/>
+                        </onMessage>
+                        <onAlarm>
+                            <for>'P0Y0M0DT0H0M1S'</for>
+                            <rethrow name="Rethrow2"/>
+                        </onAlarm>
+                    </pick>
+                </catch>
+                <catchAll>
+                    <pick name="Pick1">
+                        <onMessage partnerLink="CorrelPlink" operation="MainBPOneWayWSDLOperation" portType="ns1:MainBPOneWayWSDLPortType" variable="MainBPOneWayWSDLOperationIn">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <empty name="Empty1"/>
+                        </onMessage>
+                        <onAlarm>
+                            <for>'P0Y0M0DT0H0M1S'</for>
+                            <rethrow name="Rethrow1">
+                                                    </rethrow>
+                        </onAlarm>
+                    </pick>
+                </catchAll>
+            </faultHandlers>
+            <if name="If">
+                <condition> $WithinPickOnAlarmOperationIn.InputPart = 'catchAll' </condition>
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>concat($WithinPickOnAlarmOperationIn.InputPart, '-catchAll-')</from>
+                            <to part="OutputPart" variable="WithinPickOnAlarmOperationOut"/>
+                        </copy>
+                    </assign>
+                    <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinPickOnAlarmOperationOut"/>
+                </sequence>
+                <else>
+                    <sequence name="Sequence2">
+                        <assign name="Assign2">
+                            <copy>
+                                <from>concat($WithinPickOnAlarmOperationIn.InputPart, '-catch-')</from>
+                                <to part="OutputPart" variable="WithinPickOnAlarmOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinPickOnAlarmOperationOut"/>
+                    </sequence>
+                </else>
+            </if>
+        </scope>
+    </sequence>
+</process>

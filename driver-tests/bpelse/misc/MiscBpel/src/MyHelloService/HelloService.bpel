@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="HelloService"
+         targetNamespace="http://www.seebeyond.com/eInsight/HelloService"
+         sbynpxp:end_YLoc="271.0"
+         sbynpxp:start_YLoc="279.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="52.0"
+         sbynpxp:end_XLoc="562.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/HelloService"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/services/soapHeaderUsage"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/services/soapHeaderUsage"
+            location="MyHelloService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="HeaderUsageplink"
+                     partnerLinkType="ns0:soapHeaderUsageLinkType"
+                     myRole="HeaderUsageRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="sayHello_Output"
+                  messageType="ns0:HelloIF_sayHello"></variable>
+        <variable name="sayHello_Input"
+                  messageType="ns0:HelloIF_sayHelloResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="sayHello"
+                 partnerLink="HeaderUsageplink"
+                 portType="ns0:HelloIF"
+                 operation="sayHello"
+                 variable="sayHello_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="138.0"
+                 sbynpxp:YLoc="266.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="263.0"
+                sbynpxp:YLoc="263.0">
+            <copy>
+                <from>$sayHello_Output.body/hello1</from>
+                <to>$sayHello_Input.result/hello1</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.body/hello2</from>
+                <to>$sayHello_Input.result/hello2</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.header/hello1</from>
+                <to>$sayHello_Input.header/hello1</to>
+            </copy>
+            <copy>
+                <from>$sayHello_Output.header/hello2</from>
+                <to>$sayHello_Input.header/hello2</to>
+            </copy>
+        </assign>
+        <reply name="sayHello.Reply"
+               partnerLink="HeaderUsageplink"
+               portType="ns0:HelloIF"
+               operation="sayHello"
+               variable="sayHello_Input"
+               sbynpxp:XLoc="419.0"
+               sbynpxp:YLoc="266.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://j2ee.netbeans.org/wsdl/fileInOut" xmlns:ns2="http://enterprise.netbeans.org/bpel/ReqResFile/bpReqRes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/fileOutErr" version="1.0">
+<service-assembly>
+<identification>
+<name>caInOut</name>
+<description>Represents the Service Assembly of caInOut</description>
+</identification>
+<connections>
+<connection>
+<consumer endpoint-name="fileInOutPort" service-name="ns1:fileInOutService"/>
+<provider endpoint-name="fileInOutPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+</connection>
+<connection>
+<consumer endpoint-name="fileOutErrPortTypeRole_partnerRole" service-name="ns2:PartnerLink2"/>
+<provider endpoint-name="fileOutErrPort" service-name="ns3:fileOutErrService"/>
+</connection>
+</connections>
+<connections xmlns="http://www.sun.com/jbi/qos">
+<connection>
+<consumer endpoint-name="fileInOutPort" service-name="ns1:fileInOutService"/>
+<provider endpoint-name="fileInOutPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="2" waitTime="3000">
+        <on-failure>
+          <suspend/>
+        </on-failure>
+    </redelivery>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

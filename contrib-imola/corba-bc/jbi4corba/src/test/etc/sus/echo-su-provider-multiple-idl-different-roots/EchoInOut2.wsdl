@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoInOut2" targetNamespace="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="echo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="msg" type="xs:string"/>
+                <xs:element name="msgstr" type="xs:short"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:string"/>
+                <xs:element name="msg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns="http://it.imolinfo.jbi4corba.test.webservice.generator.testclasses.EchoInOut2" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="echo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="msg" type="xs:string"/>
+                <xs:element name="msgstr" type="xs:short"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="xs:string"/>
+                <xs:element name="msg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoInOut2">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoInOut2CorbaBinding" type="tns:EchoInOut2">
+<imolacorba:binding>
+<imolacorba:idl root="false" relativepath="dir" filename="second.idl">
+module second{
+typedef string second_string;
+};
+</imolacorba:idl>
+<imolacorba:idl root="true" relativepath="." filename="first.idl">
+#include &quot;dir/second.idl&quot;
+#include &lt;./dir2/./third.idl&gt;
+
+
+module it{
+    module imolinfo{
+        module jbi4corba{
+        	module test{
+				module webservice{
+					module generator{
+                        module testclasses{
+                            interface EchoInOut {
+                                string echo(inout second::second_string msg, in third::third_int msgstr);
+						     };
+					     };
+				     };
+                };
+            };
+        };
+    };
+};
+</imolacorba:idl>
+<imolacorba:idl root="false" relativepath="./dir2/." filename="third.idl">
+module third{
+typedef short third_int;
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoInOut2">
+    <wsdl:port name="EchoInOut2CorbaPort" binding="tns:EchoInOut2CorbaBinding">
+<imolacorba:address name="EchoInOut2" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoInOut2">
+<plnk:role name="EchoInOut2PortTypeRole" portType="tns:EchoInOut2"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

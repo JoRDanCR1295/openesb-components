@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SecondItemDetail"
+    targetNamespace="http://enterprise.netbeans.org/bpel/VariableProperty/SecondItemDetail"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/VariableProperty/SecondItemDetail" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/properties" 
+    xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/properties" 
+    location="properties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" partnerLinkType="tns:orderPLT" myRole="orderPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="xsdIntVar" type="xsd:int"/>
+        <variable name="OrderOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" messageType="tns:orderMsg"/>
+        <variable name="OrderOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" messageType="tns:orderMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:intProp"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="orderOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" portType="tns:orderPortType" variable="OrderOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>2</from>
+                <to variable="xsdIntVar"/>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>$OrderOperationIn.orderPart/item</from>
+                <to>$OrderOperationOut.orderPart/item</to>
+            </copy>
+            <copy>
+                <!--from>$OrderOperationIn.orderPart/itemDetail[$xsdIntVar]</from-->
+                <from>$OrderOperationIn.orderPart/itemDetail[ns1:getVariableProperty('xsdIntVar', 'ns0:intProp')]</from>
+                <to>$OrderOperationOut.orderPart/itemDetail</to>
+            </copy>
+            <copy>
+                <from>$OrderOperationIn.orderPart/price</from>
+                <to>$OrderOperationOut.orderPart/price</to>
+            </copy>
+            <copy>
+                <from>$OrderOperationIn.orderPart/itemNum</from>
+                <to>$OrderOperationOut.orderPart/itemNum</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="orderOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" portType="tns:orderPortType" variable="OrderOperationOut"/>
+    </sequence>
+</process>

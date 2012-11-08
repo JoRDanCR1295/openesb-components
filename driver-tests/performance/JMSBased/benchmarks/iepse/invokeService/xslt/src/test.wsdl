@@ -1,0 +1,65 @@
+<definitions targetNamespace="test_iep"
+             xmlns:tns="test_iep"
+             xmlns:typens="test_iep"
+             xmlns:defns="test_iep"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:types>
+    <xsd:schema targetNamespace="test_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="InvokeService0_RequestObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="InvokeService0_ResponseObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="InvokeService0_ResponseItem" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="msgNid" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</wsdl:types>
+
+<wsdl:message name="InvokeService0_Request">
+    <wsdl:part name="request" element="typens:InvokeService0_RequestObj"/>
+</wsdl:message>
+<wsdl:message name="InvokeService0_Response">
+    <wsdl:part name="response" element="typens:InvokeService0_ResponseObj"/>
+</wsdl:message>
+
+<wsdl:portType name="RequestReplyPt_InvokeService0">
+    <wsdl:operation name="InvokeService0">
+        <wsdl:input message="tns:InvokeService0_Request"/>
+        <wsdl:output message="tns:InvokeService0_Response"/>
+    </wsdl:operation>
+</wsdl:portType>
+
+<plnk:partnerLinkType name="RequestReplyPlt_InvokeService0" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "RequestReplyRn_InvokeService0" portType="tns:RequestReplyPt_InvokeService0"/>
+</plnk:partnerLinkType>
+
+<wsdl:binding name="RequestReplyBinding_InvokeService0" type="defns:RequestReplyPt_InvokeService0">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="InvokeService0">
+        <wsdl:input>
+            <soap:body parts="request" use="literal"/>
+        </wsdl:input>
+        <wsdl:output>
+            <soap:body parts="response" use="literal"/>
+        </wsdl:output>
+    </wsdl:operation>
+</wsdl:binding>
+
+</definitions>

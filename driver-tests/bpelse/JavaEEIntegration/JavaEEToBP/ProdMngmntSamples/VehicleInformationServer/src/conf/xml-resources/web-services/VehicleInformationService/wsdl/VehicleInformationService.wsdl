@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://vehicle.fs.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://vehicle.fs.com/" name="VehicleInformationServerService" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://vehicle.fs.com/" 
+      schemaLocation="VehicleInformationService.xsd" 
+      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+      xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"/>
+    </xsd:schema>
+  </types>
+  <message name="getVehicleData">
+    <part name="parameters" element="tns:getVehicleData"/>
+  </message>
+  <message name="getVehicleDataResponse">
+    <part name="parameters" element="tns:getVehicleDataResponse"/>
+  </message>
+  <portType name="VehicleInformationServer">
+    <operation name="getVehicleData">
+      <input message="tns:getVehicleData"/>
+      <output message="tns:getVehicleDataResponse"/>
+    </operation>
+  </portType>
+  <binding name="VehicleInformationServerPortBinding" type="tns:VehicleInformationServer">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="getVehicleData">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="VehicleInformationServerService">
+    <port name="VehicleInformationServerPort" binding="tns:VehicleInformationServerPortBinding">
+      <soap:address location="http://localhost:${HttpDefaultPort}/VehicleInformationServerService/VehicleInformationServer" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="VehicleInformationPartnerLinkType">
+        <plink:role name="VehicleInformationRole" portType="tns:VehicleInformationServer"/>
+    </plink:partnerLinkType>
+</definitions>

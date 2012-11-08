@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SAP" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SAP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SAP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SapHttpBasicAuth" xmlns:ns2="urn:sap-com:document:sap:soap:functions:mc-style">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SapHttpBasicAuth" location="SapHttpBasicAuth.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="urn:sap-com:document:sap:soap:functions:mc-style" location="Z_FlightWSD_BA.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns2:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:SapHttpBasicAuthPartner" myRole="SapHttpBasicAuthPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="SapHttpBasicAuthOperationOut1" messageType="ns1:SapHttpBasicAuthOperationReply"/>
+      <variable name="FlightGetDetailOut1" messageType="ns2:FlightGetDetailResponse"/>
+      <variable name="FlightGetDetailIn1" messageType="ns2:FlightGetDetail"/>
+      <variable name="FlightCheckAvailibilityOut1" messageType="ns2:FlightCheckAvailibilityResponse"/>
+      <variable name="FlightCheckAvailibilityIn1" messageType="ns2:FlightCheckAvailibility"/>
+      <variable name="SapHttpBasicAuthOperationIn1" messageType="ns1:SapHttpBasicAuthOperationRequest"/>
+   </variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SapHttpBasicAuthOperation" portType="ns1:SapHttpBasicAuthPortType" variable="SapHttpBasicAuthOperationIn1"/>
+      <assign name="Assign1">
+         <copy>
+            <from variable="SapHttpBasicAuthOperationIn1" part="AirlineID"/>
+            <to>$FlightGetDetailIn1.parameters/AirlineID</to>
+         </copy>
+         <copy>
+            <from variable="SapHttpBasicAuthOperationIn1" part="ConnectionID"/>
+            <to>$FlightGetDetailIn1.parameters/ConnectionID</to>
+         </copy>
+         <copy>
+            <from variable="SapHttpBasicAuthOperationIn1" part="FlightDate"/>
+            <to>$FlightGetDetailIn1.parameters/FlightDate</to>
+         </copy>
+      </assign>
+      <invoke name="Invoke1" partnerLink="PartnerLink2" operation="FlightGetDetail" portType="ns2:Z_FlightWSD_BA" inputVariable="FlightGetDetailIn1" outputVariable="FlightGetDetailOut1"/>
+      <assign name="Assign2">
+         <copy>
+            <from>$FlightGetDetailOut1.parameters/FlightData/Airline</from>
+            <to variable="SapHttpBasicAuthOperationOut1" part="Airline"/>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="SapHttpBasicAuthOperation" portType="ns1:SapHttpBasicAuthPortType" variable="SapHttpBasicAuthOperationOut1"/>
+   </sequence>
+   
+</process>

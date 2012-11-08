@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://xml.sun.jbi.aspects/schema/AspectMap"
+            xmlns:tns="http://xml.sun.jbi.aspects/schema/AspectMap"
+            elementFormDefault="qualified">
+    
+    <!-- Aspect Map Element -->
+    <xsd:element name="aspectmap" type="tns:aspectmapType"/>
+    
+    <!-- Aspect Map Type -->
+    <xsd:complexType name="aspectmapType">
+        <xsd:sequence>
+            <xsd:element type="tns:aspectType" name="aspect" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>The aspect map</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <!-- Aspect Type -->
+    <xsd:complexType name="aspectType" mixed="true">
+        <xsd:sequence>
+            <xsd:element type="tns:inputType" name="input"/>
+            <xsd:element type="tns:outputType" name="output" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element type="tns:adviceType" name="advice" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute type="tns:ExchangeSimpleType" name="exchangeType" use="required"/>
+        <xsd:attribute type="xsd:string" name="ID" use="required"/>
+    </xsd:complexType>
+    
+    <!-- Exchange Simple Type -->
+    <xsd:simpleType name="ExchangeSimpleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="filterRequestReply"/>
+            <xsd:enumeration value="filterOneWay"/>
+            <xsd:enumeration value="requestReply"/>
+        </xsd:restriction>
+    </xsd:simpleType>  
+    
+    <!-- Input Type -->
+    <xsd:complexType name="inputType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute type="xsd:string" name="partnerLink" use="optional"/>
+                <xsd:attribute type="xsd:string" name="roleName" use="optional"/>
+                <xsd:attribute type="xsd:string" name="portType" use="required"/>
+                <xsd:attribute type="xsd:string" name="operation" use="required"/>
+                <xsd:attribute type="xsd:string" name="messageType" use="required"/>
+                <xsd:attribute type="xsd:string" name="file" use="required"/>
+                <xsd:attribute type="xsd:string" name="transformJBI" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <!-- Output Type -->
+    <xsd:complexType name="outputType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute type="xsd:string" name="ID" use="required"/>
+                <xsd:attribute type="xsd:string" name="serviceName" use="optional"/>
+                <xsd:attribute type="xsd:string" name="portName" use="optional"/>
+                <xsd:attribute type="xsd:string" name="portType" use="required"/>
+                <xsd:attribute type="xsd:string" name="operation" use="required"/>
+                <xsd:attribute type="xsd:string" name="messageType" use="optional"/>
+                <xsd:attribute type="xsd:string" name="file" use="optional"/>
+                <xsd:attribute type="xsd:string" name="transformJBI" use="optional"/>
+                <xsd:attribute type="xsd:string" name="partnerLink" use="optional"/>
+                <xsd:attribute type="xsd:string" name="roleName" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <!-- Advice Type -->
+    <xsd:complexType name="adviceType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute type="xsd:string" name="type" use="optional"/>
+                <xsd:attribute type="xsd:string" name="configurationFile" use="optional"/>
+                <xsd:attribute type="xsd:string" name="order" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+</xsd:schema>

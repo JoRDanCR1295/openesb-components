@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process 
+    name="ReceiveInScope" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/ReceiveInScope/ReceiveInScope_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ReceiveInScope/ReceiveInScope_1" xmlns:ns1="http://localhost/ReceiveInScope/ReceiveInScope">
+    <import namespace="http://localhost/ReceiveInScope/ReceiveInScope" location="ReceiveInScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+
+    <partnerLinks>
+        <partnerLink name="ReceiveInScope" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+
+    <sequence>
+    	<scope>
+            <receive name="start" partnerLink="ReceiveInScope" operation="operation1" portType="ns1:portType1" variable="inputVar" createInstance="yes"/>
+    	</scope>        
+        <assign name="Assign1">
+            <copy>
+            <from>$inputVar.inputType/paramA</from><to>$outputVar.resultType/paramA</to>
+            </copy>
+        </assign>
+        <reply name="end" partnerLink="ReceiveInScope" operation="operation1" portType="ns1:portType1" variable="outputVar"/>
+    </sequence>
+</process>

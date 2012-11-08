@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="nestedquerySQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="nestedqueryRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="nestedqueryResponse"><xsd:complexType><xsd:sequence><xsd:element name="CITY" type="xsd:string"/><xsd:element name="CREDIT_LIMIT" type="xsd:int"/><xsd:element name="DISCOUNT_CODE" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="nestedqueryRequest">
+    <part name="nestedqueryRequestPart" element="tns:nestedqueryRequest"/>
+  </message>
+  <message name="nestedqueryResponse">
+    <part name="nestedqueryResponsePart" element="tns:nestedqueryResponse"/>
+  </message>
+  <portType name="nestedquerySQL_sqlsePortType">
+    <operation name="nestedquery">
+      <input name="nestedqueryRequest" message="tns:nestedqueryRequest"/>
+      <output name="nestedqueryResponse" message="tns:nestedqueryResponse"/>
+    </operation>
+  </portType>
+  <binding name="nestedquerySQLBinding" type="tns:nestedquerySQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="nestedquery">
+      <soap:operation style="document"/>
+      <input name="nestedqueryRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="nestedqueryResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="nestedquerySQL_sqlseService">
+    <port name="nestedquerySQL_sqlsePort" binding="tns:nestedquerySQLBinding">
+      <soap:address location="http://localhost:18181/nestedquerySQL/nestedquerySQL/nestedquerySQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="nestedquerySQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="nestedquerySQL_myrole" portType="tns:nestedquerySQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

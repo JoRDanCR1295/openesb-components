@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="XslTransformQual"
+    targetNamespace="http://enterprise.netbeans.org/bpel/XslTransformQual"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/XslTransformQual" xmlns:ns1="http://j2ee.netbeans.org/wsdl/XslTransformQual">
+   <import namespace="http://j2ee.netbeans.org/wsdl/XslTransformQual" location="XslTransformQual.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:XslTransformQualPartner" myRole="XslTransformQualPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="var1" type="xsd:string"/>
+      <bpws:variable name="output" messageType="ns1:XslTransformQualOperationReply"/>
+      <bpws:variable name="input" messageType="ns1:XslTransformQualOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="XslTransformQualOperation" portType="ns1:XslTransformQualPortType" variable="input"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>Code Monkey</bpws:literal>
+            </bpws:from>
+            <bpws:to variable="var1"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>bpws:doXslTransform("urn:stylesheets:Empl-Input2Output.xsl", $input.part1, "var1", $var1)</bpws:from>
+            <bpws:to variable="output" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="XslTransformQualOperation" portType="ns1:XslTransformQualPortType" variable="output"/>
+   </sequence>
+</process>

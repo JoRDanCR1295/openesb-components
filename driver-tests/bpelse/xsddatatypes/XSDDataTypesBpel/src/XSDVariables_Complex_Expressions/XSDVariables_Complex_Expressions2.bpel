@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="XSDVariables_Complex_Expressions2"
+    targetNamespace="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions2"
+    xmlns:tns="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions2"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="http://stc.com/XSDVariables_Complex_Expressions2"
+    xmlns:ns1="urn:SampleXSD"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/XSDVariables_Complex_Expressions2"
+        location="XSDVariables_Complex_Expressions2.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD"
+        location="SampleXSD.xsd"
+    importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+        messageType="ns0:XSDVariables_Complex_Expressions2"></variable>
+        <variable name="messageType_Input"
+        messageType="ns0:XSDVariables_Complex_Expressions2"></variable>        
+    </variables>
+    <sequence>
+        <receive name="XSDVariables_Complex_Expressions2"
+            partnerLink="Client2BP"
+            portType="ns0:XSDVariables_Complex_Expressions2"
+            operation="XSDVariables_Complex_Expressions2"
+            variable="messageType_Input"
+        createInstance="yes"></receive>
+        <if name="If1">
+            <condition> ( $messageType_Input.part/item[1]/productName = 'char siu' ) </condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>$messageType_Input.part/item[1]/productName</from>
+                    <to>$messageType_Output.part/item[1]/productName</to>
+                </copy>
+                <copy>
+                    <from>$messageType_Input.part/item[1]/USPrice</from>
+                    <to>$messageType_Output.part/item[1]/USPrice</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                    <from>$messageType_Input.part/item[2]/productName</from>
+                    <to>$messageType_Output.part/item[2]/productName</to>
+                </copy>
+                <copy>
+                    <from>$messageType_Input.part/item[2]/USPrice</from>
+                    <to>$messageType_Output.part/item[2]/USPrice</to>
+                </copy>
+                </assign>            
+            </else>
+        </if>        
+        
+        <reply name="XSDVariables_Complex_Expressions2.Reply"
+            partnerLink="Client2BP"
+            portType="ns0:XSDVariables_Complex_Expressions2"
+            operation="XSDVariables_Complex_Expressions2"
+        variable="messageType_Output"></reply>
+    </sequence>
+</process>

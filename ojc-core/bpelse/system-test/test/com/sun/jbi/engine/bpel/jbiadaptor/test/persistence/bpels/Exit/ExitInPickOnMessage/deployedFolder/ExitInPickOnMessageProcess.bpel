@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInPickOnMessageProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInPickOnMessageProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInPickOnMessageProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ExitInPickOnMessage" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/ExitInPickOnMessage1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ExitInPickOnMessage" location="ExitInPickOnMessage.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:ExitInPickOnMessagePlink" myRole="ExitInPickOnMessagePortTypeRole"/>
+         <partnerLink name="CorrelationPlink" partnerLinkType="ns1:CorrelationPlink" myRole="CorrelationPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="ExitInPickOnMessageOperationIn" messageType="ns1:ExitInPickOnMessageOperationRequest"/>
+        <variable name="ExitInPickOnMessageOperationOut" messageType="ns1:ExitInPickOnMessageOperationReply"/>
+    </variables>
+     <correlationSets>
+          <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVar"/>
+     </correlationSets>
+     <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="ExitInPickOnMessageOperation" portType="ns1:ExitInPickOnMessagePortType" variable="ExitInPickOnMessageOperationIn">
+             <correlations>
+                  <correlation set="CorrelationSet1" initiate="yes"/>
+             </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $ExitInPickOnMessageOperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="GlobalScope">
+            <faultHandlers>
+                <catch faultName="ns2:someFault">
+                    <sequence name="Sequence8">
+                        <assign name="Assign7">
+                            <copy>
+                                <from>concat($outputString, ' \n 6. Caught someFault. Sending Output from FH')</from>
+                                <to variable="ExitInPickOnMessageOperationOut" part="OutputPart"/>
+                            </copy>
+                            </assign>
+                            <reply name="Reply2" partnerLink="PartnerLinkInOut" operation="ExitInPickOnMessageOperation" portType="ns1:ExitInPickOnMessagePortType" variable="ExitInPickOnMessageOperationOut"/>
+                    </sequence>
+                </catch>
+                <catchAll>
+                    <sequence name="Sequence9">
+                        <assign name="Assign8">
+                            <copy>
+                                <from>
+                                    <literal>Incorrect execution. This fault handler should not have executed.</literal>
+                                </from>
+                                <to part="OutputPart" variable="ExitInPickOnMessageOperationOut"/>
+                            </copy>
+                        </assign>
+                        <reply name="Reply3" partnerLink="PartnerLinkInOut" operation="ExitInPickOnMessageOperation" portType="ns1:ExitInPickOnMessagePortType" variable="ExitInPickOnMessageOperationOut"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence1">
+                <scope name="SimpleScope">
+                     <variables>
+                          <variable name="CorrelationOperationIn" messageType="ns1:ExitInPickOnMessageOperationRequest"/>
+                     </variables>
+                        <sequence name="Sequence2">
+                            <flow name="MainFlow">
+                                <sequence name="Sequence5">
+                                        <pick name="Pick_OnAlarm">
+                                             <onMessage partnerLink="CorrelationPlink" operation="CorrelationOperation" portType="ns1:CorrelationPortType" variable="CorrelationOperationIn">
+                                                  <correlations>
+                                                       <correlation set="CorrelationSet1" initiate="no"/>
+                                                  </correlations>
+                                                  <exit name="Exit1"/>
+                                             </onMessage>
+                                             <onAlarm>
+                                                        <for>'P0Y0M0DT0H0M40S'</for>
+                                                            <sequence name="Sequence6">
+                                                                <assign name="Assign3">
+                                                        <copy>
+                                                            <from>concat($outputString, ' \n 3. In Branch1: Pick ')</from>
+                                                            <to variable="outputString"/>
+                                                        </copy>
+                                                                </assign>
+                                                                <wait name="Wait2">
+                                                                    <for>'P0Y0M0DT0H0M20S'</for>
+                                                                </wait>
+                                                            </sequence>
+                                                    </onAlarm>
+                                            </pick>
+                                    </sequence>
+                                <sequence name="Sequence3">
+                                    <scope name="ScopeToBeTerminated">
+                                        <sequence name="Sequence4">
+                                                <assign name="Assign2">
+                                                        <copy>
+                                                            <from>concat($outputString, ' \n 2. In Branch2 ')</from>
+                                                            <to variable="outputString"/>
+                                                        </copy>
+                                                    </assign>
+                                                    <wait name="Wait_35Secs">
+                                                        <for>'P0Y0M0DT0H0M35S'</for>
+                                                    </wait>
+                                            </sequence>
+                                            <terminationHandler>
+                                                        <assign name="Assign5">
+                                                        <copy>
+                                                            <from>concat($outputString, ' \n 5. In TH of ScopeToBeTerminated ')</from>
+                                                            <to variable="outputString"/>
+                                                        </copy>                                                            
+                                                        </assign>
+                                            </terminationHandler>
+                                    </scope>
+                                </sequence>
+                            </flow>
+                        </sequence>
+                        <terminationHandler>
+                            <assign name="Assign6">
+                                                        <copy>
+                                                            <from>concat($outputString, 'This will not get executed bcoz TH will not be called for SimpleScope')</from>
+                                                            <to variable="outputString"/>
+                                                        </copy>                                           
+                                </assign>
+                        </terminationHandler>
+                </scope>
+                <assign name="Assign9">
+                    <copy>
+                            <from variable="IntVariable"/>
+                                <to variable="ExitInPickOnMessageOperationOut" part="OutputPart"/>
+                        </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="PartnerLinkInOut" operation="ExitInPickOnMessageOperation" portType="ns1:ExitInPickOnMessagePortType" variable="ExitInPickOnMessageOperationOut"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

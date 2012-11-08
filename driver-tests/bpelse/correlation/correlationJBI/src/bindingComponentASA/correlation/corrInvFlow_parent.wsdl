@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="InvFlowparent"
+             name="InvFlowparent"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:tns="InvFlowparent"
+             xmlns:childtns="urn:InvFlowchildTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <import namespace="urn:InvFlowchildTargetNamespace"
+            location="corrInvFlow_child.wsdl"></import>
+    <types>
+        <xsd:schema targetNamespace="InvFlowparent"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="InvFlowparent"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element type="tns:InvFlowparentType"
+                         name="InvFlowparentElement"></xsd:element>
+            <xsd:complexType name="InvFlowparentType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InvFlowparentMessage">
+        <part name="InvFlowparentPart"
+              element="tns:InvFlowparentElement"></part>
+    </message>
+    <message name="InvFlowparentMessage1">
+        <part name="InvFlowparentPart"
+              element="tns:InvFlowparentElement"></part>
+    </message>
+    <portType name="InvFlowparentPortType">
+        <operation name="InvFlowparentOperation">
+            <input message="tns:InvFlowparentMessage"></input>
+            <output message="tns:InvFlowparentMessage"></output>
+        </operation>
+    </portType>
+    <portType name="InvFlowparentPortType1">
+        <operation name="InvFlowparentOperation1">
+            <input message="tns:InvFlowparentMessage1"></input>
+        </operation>
+    </portType>
+    <binding name="InvFlowparentBinding"
+             type="tns:InvFlowparentPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="InvFlowparentOperation">
+            <soap:operation soapAction="InvFlowparentOperation"/>
+            <input>
+                <soap:body parts="InvFlowparentPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="InvFlowparentPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="InvFlowparentBinding1"
+             type="tns:InvFlowparentPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="InvFlowparentOperation1">
+            <soap:operation soapAction="InvFlowparentOperation1"/>
+            <input>
+                <soap:body parts="InvFlowparentPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="InvFlowparentService">
+        <port name="InvFlowparentPort"
+              binding="tns:InvFlowparentBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/InvFlowparentService"/>
+        </port>
+        <port name="InvFlowparentPort1"
+              binding="tns:InvFlowparentBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/InvFlowparentService1"/>
+        </port>
+    </service>
+
+    <plnk:partnerLinkType name="InvFlowparentServiceLinkType"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="Server"
+                   portType="tns:InvFlowparentPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="InvFlowparentServiceLinkType1"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="Server"
+                   portType="tns:InvFlowparentPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:property name="property"
+                   type="xsd:string"/>
+    <bpws:propertyAlias propertyName="tns:property"
+                        messageType="tns:InvFlowparentMessage1"
+                        part="InvFlowparentPart">
+        <bpws:query>string</bpws:query>                            
+    </bpws:propertyAlias>
+        <bpws:propertyAlias propertyName="tns:property"
+                        messageType="childtns:InvFlowchildMessage"
+                        part="InvFlowchildPart">
+                <bpws:query>string</bpws:query>
+    </bpws:propertyAlias>
+
+</definitions>

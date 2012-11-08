@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="BP2BPReliabilityTest1_Feeder" targetNamespace="http://j2ee.netbeans.org/wsdl/BP2BPReliabilityTest1_Feeder"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://j2ee.netbeans.org/wsdl/BP2BPReliabilityTest1_Feeder" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    
+    <message name="TextMessage">
+        <part name="TextPart" type="xsd:string"></part>
+    </message>
+    
+    <portType name="JMSReceiverPortType">
+        <operation name="MessageInOperation">
+            <input name="InMessage" message="tns:TextMessage"/>
+        </operation>
+    </portType>
+    
+    <portType name="PostReplyToJMSPortType">
+        <operation name="PostReplyToJMSOperation">
+            <input name="OutMessage" message="tns:TextMessage"/>
+        </operation>
+    </portType>
+    
+    
+    <binding name="JMSReceiverBinding" type="tns:JMSReceiverPortType">
+        <jms:binding></jms:binding>
+        <operation name="MessageInOperation">
+            <jms:operation destinationType="Queue"
+                           maxConcurrentConsumers="1"
+                           destination="Client_Publish_BP2BPReliabilityTest1_Feeder" 
+                           transaction="XATransaction">
+            </jms:operation>
+            <input name="InMessage">
+                <jms:message messageType="TextMessage" textPart="TextPart"/>
+            </input>
+        </operation>
+    </binding>
+    
+    <binding name="PostReplyToJMSBinding" type="tns:PostReplyToJMSPortType">
+        <jms:binding></jms:binding>
+        <operation name="PostReplyToJMSOperation">
+            <jms:operation deliveryMode="PERSISTENT"
+                           disableMessageTimeStamp="true"
+                           disableMessageID="true"
+                           transaction="XATransaction"
+                           destinationType="Queue"
+                           destination="Client_Consume_BP2BPReliabilityTest1_Feeder"/>
+            <input name="OutMessage">
+                <jms:message messageType="TextMessage" textPart="TextPart"/>
+            </input>
+        </operation>
+    </binding>
+    
+    <service name="JMSReceiverService">
+        <port name="SenderPort" binding="tns:JMSReceiverBinding">
+            <jms:address password="admin" username="admin" connectionURL="mq://localhost:20000" />
+        </port>
+    </service>
+    
+    <service name="PostReplyToJMSService">
+        <port name="PostReplyToJMSPort" binding="tns:PostReplyToJMSBinding">
+            <jms:address password="admin" username="admin" connectionURL="mq://localhost:20000" />
+        </port>
+    </service>
+    
+    
+    <plink:partnerLinkType name="JMSReceiverPartner">
+        <plink:role name="JMSReceiverRole" portType="tns:JMSReceiverPortType"/>
+    </plink:partnerLinkType>
+    
+    <plink:partnerLinkType name="PostReplyToJMSPartner">
+        <plink:role name="PostReplyToJMSPortTypeRole" portType="tns:PostReplyToJMSPortType"/>
+    </plink:partnerLinkType>
+    
+</definitions>

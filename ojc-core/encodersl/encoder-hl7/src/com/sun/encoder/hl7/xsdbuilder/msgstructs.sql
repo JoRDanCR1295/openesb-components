@@ -1,0 +1,1 @@
+SELECT HL7MsgStructIDs.message_structure as msg_struct FROM HL7Versions INNER JOIN HL7MsgStructIDs ON HL7Versions.version_id = HL7MsgStructIDs.version_id WHERE (((HL7MsgStructIDs.message_structure) <> 'NUL') AND ((HL7Versions.hl7_version) = ?))

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="AsyncCalcPOTotalValue"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOnlyService/AsyncCalcPOTotalValue"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InOnlyService/AsyncCalcPOTotalValue"
+    xmlns:ns0="http://xml.netbeans.org/schema/POSchema"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/InOutService/calcPOTotalValue">
+        
+    <import namespace="http://j2ee.netbeans.org/wsdl/InOutService/calcPOTotalValue" location="InOutService/calcPOTotalValue.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:AsyncCalcTotalValuePOPLT" myRole="provider" partnerRole="consumer"/>
+    </partnerLinks>
+    <variables>
+        <variable name="poVariable" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutService/calcPOTotalValue" messageType="tns:poMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="calcPOTotalValueOperation" portType="ns1:submitCalcTotalValuePO" variable="poVariable"/>
+        <forEach name="ForEach1" parallel="no" counterName="ForEach1Counter">
+            <startCounterValue>1</startCounterValue>
+            <finalCounterValue>count($poVariable.part1/ns0:item)</finalCounterValue>
+            <scope name="Scope1">
+                <assign name="Assign2">
+                    <copy>
+                        <from>$poVariable.part1/ns0:totalValue + $poVariable.part1/ns0:item[$ForEach1Counter]/ns0:price * $poVariable.part1/ns0:item[$ForEach1Counter]/ns0:qty
+                            <sxed:editor>
+                                <sxed:predicate path="$poVariable.part1/ns0:item[$ForEach1Counter]" source="from"/>
+                            </sxed:editor>
+                        </from>
+                        <to>$poVariable.part1/ns0:totalValue</to>
+                    </copy>
+                </assign>
+            </scope>
+        </forEach>
+
+        <invoke name="Invoke1" partnerLink="PartnerLink1" operation="getPO" xmlns:tns="http://j2ee.netbeans.org/wsdl/InOutService/calcPOTotalValue" portType="tns:callbackCalcTotalValuePO" inputVariable="poVariable"/>
+    </sequence>
+</process>

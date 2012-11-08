@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="setSOAPHeader"
+    targetNamespace="http://enterprise.netbeans.org/bpel/accessSOAPHeader/setSOAPHeader"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/accessSOAPHeader/setSOAPHeader" xmlns:ns0="http://enterprise.netbeans.org/bpel/accessSOAPHeader/accessSOAPHeader/nmPropertiesDefinitions" xmlns:ns1="http://localhost/person">
+   <import namespace="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" location="setSOAPHeader.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://enterprise.netbeans.org/bpel/accessSOAPHeader/accessSOAPHeader/nmPropertiesDefinitions" location="nmPropertiesDefinitions.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/accessSOAPHeader" location="accessSOAPHeader.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/accessSOAPHeaderLeaf" location="accessSOAPHeaderLeaf.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" partnerLinkType="tns:setSOAPHeader" myRole="setSOAPHeaderPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="SetSOAPHeaderOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" messageType="tns:setSOAPHeaderOperationResponse"/>
+      <variable name="SetSOAPHeaderOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" messageType="tns:setSOAPHeaderOperationRequest"/>
+   </variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="setSOAPHeaderOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" portType="tns:setSOAPHeaderPortType" variable="SetSOAPHeaderOperationIn"/>
+      <assign name="Assign1">
+         <copy>
+            <from variable="SetSOAPHeaderOperationIn" part="part1"/>
+            <to variable="SetSOAPHeaderOperationOut" part="part1"/>
+         </copy>
+      </assign>
+      <assign name="Assign2">
+         <copy>
+            <from>$SetSOAPHeaderOperationIn.part1/ns1:home</from>
+            <to variable="SetSOAPHeaderOperationOut" property="ns0:header_address"/>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="setSOAPHeaderOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/accessSOAPHeader/setSOAPHeader" portType="tns:setSOAPHeaderPortType" variable="SetSOAPHeaderOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,51 @@
+<definitions targetNamespace="urn:Foo"
+             name="MyHelloService"
+             xmlns:tns="urn:Foo"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="HelloIFServiceLink"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="HelloIFRole"
+                   portType="HelloIF"></plnk:role>
+    </plnk:partnerLinkType>
+    <message name="HelloIF_sayHello">
+        <part name="body"
+              element="tns:helloObj"></part>
+    </message>
+    <message name="HelloIF_sayHelloResponse">
+        <part name="result"
+              element="tns:helloObj"></part>
+    </message>
+    <portType name="HelloIF">
+        <operation name="sayHello">
+            <input message="tns:HelloIF_sayHello"></input>
+            <output message="tns:HelloIF_sayHelloResponse"></output>
+        </operation>
+    </portType>
+    <binding name="HelloIFBinding"
+             type="tns:HelloIF">
+        <soap:binding style="rpc"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="result"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MyHelloService">
+        <port name="HelloIFPort"
+              binding="tns:HelloIFBinding">
+            <soap:address location="http://localhost:12100/service/Hello"/>
+        </port>
+    </service>
+    <import namespace="urn:Foo"
+            location="echo.xsd"></import>
+</definitions>

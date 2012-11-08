@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="purchaseOrderCoordinator" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/purchaseOrderCoordinator"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/purchaseOrderCoordinator" xmlns:ns1="http://j2ee.netbeans.org/wsdl/purchaseOrderCoordinator" xmlns:ns2="http://j2ee.netbeans.org/wsdl/purchaseOrder">
+    <import namespace="http://j2ee.netbeans.org/wsdl/purchaseOrderCoordinator" location="purchaseOrderCoordinator.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/purchaseOrder" location="purchaseOrder.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:purchaseOrderPartner" partnerRole="purchaseOrderPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:purchaseOrderCoordinatorPartner" myRole="purchaseOrderCoordinatorPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var2" messageType="ns2:purchaseOrderMsg"/>
+        <variable name="var1" messageType="ns1:purchaseOrderMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="purchaseOrderOperation" portType="ns1:purchaseOrderPortType" variable="var1"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="var1" part="part1"/>
+                <to variable="var2" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="purchaseOrderOperation" portType="ns2:purchaseOrderPortType" inputVariable="var2" outputVariable="var2"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="var2" part="part1"/>
+                <to variable="var1" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="purchaseOrderOperation" portType="ns1:purchaseOrderPortType" variable="var1"/>
+    </sequence>
+   
+</process>

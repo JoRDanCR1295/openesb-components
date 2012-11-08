@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoText2Bytes"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoText2Bytes"
+         sbynpxp:end_YLoc="341.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="840.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoText2Bytes"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/echoText2Bytes"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/echoText2Bytes"
+            location="echoText2Bytes.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BPLiink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoText2Bytes_Output"
+                  messageType="ns0:echoText2Bytes"></variable>
+        <variable name="echoText2Bytes_Input"
+                  messageType="ns0:echoText2Bytes"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoText2Bytes"
+                 partnerLink="Client2BPLiink"
+                 portType="ns0:echoText2Bytes"
+                 operation="echoText2Bytes"
+                 variable="echoText2Bytes_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="184.0"
+                 sbynpxp:YLoc="198.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="289.0"
+                sbynpxp:YLoc="113.0">
+            <copy>
+                <from>stringToBytes($echoText2Bytes_Output.part/value, &apos;&apos;)</from>
+                <to>$echoText2Bytes_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="echoText2Bytes.Reply"
+               partnerLink="Client2BPLiink"
+               portType="ns0:echoText2Bytes"
+               operation="echoText2Bytes"
+               variable="echoText2Bytes_Input"
+               sbynpxp:XLoc="461.0"
+               sbynpxp:YLoc="221.0"></reply>
+    </sequence>
+</process>

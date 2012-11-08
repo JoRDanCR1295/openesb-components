@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cdk" default="help" basedir=".">
+
+    <property environment="env"/>
+    <property name="gf.home" value="${env.JV_GFBASE}"/>
+    <property name="ojc" value="${env.JV_SRCROOT}"/>
+    <property file="build.properties"/>
+
+    <patternset id="ojc.jar.set">
+        <include name="lib/common-util.jar"/>
+        <include name="lib/qos.jar"/>
+        <include name="lib/component-toolkit.jar"/>
+        <include name="lib/wsdl4jext.jar"/>
+        <include name="lib/jbi.jar"/>
+        <include name="lib/cdk.jar"/>
+    </patternset>
+    <path id="ojc.classpath">
+        <fileset dir="${basedir}/packaging">
+            <patternset refid="ojc.jar.set"/>
+        </fileset>
+    </path>
+
+    <target name="open">
+        <java classname="${proj.clz}" fork="true" failonerror="true">
+        	<arg value="open"/>
+        	<arg path="${ant.home}"/>
+            <arg path="${env.JV_SRCROOT}"/>
+            <arg path="${env.JV_GFBASE}"/>
+        	<arg path="${basedir}"/>
+        	<arg path="emailbc.jbic"/>
+            <classpath refid="ojc.classpath"/>
+        </java>
+    </target>
+
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${bld}"/>
+        <mkdir dir="${dist}"/>
+    </target>
+
+    <target name="build-installer" depends="init">
+    	<xmlproperty file="pom.xml"/>
+    	<xslt style="packaging/compile.xsl" in="pom.xml" out="${bld}/compile.xml">
+    		<param name="compile.depends" expression="${project.modules.module}"/>
+    	</xslt>
+    	<ant antfile="${bld}/compile.xml" target="compile-project"/>
+    </target>
+
+    <target name="service-unit">
+    	<!-- args passed by cli or cdk console are prefixed with "arg." -->
+        <property name="su.root" location="${arg.root}"/>
+        <property name="su.desc" location="${arg.desc}"/>
+    	<property name="su.temp.jar" value="${arg.temp}"/>
+    	<property name="su.jar" value="${arg.jar}"/>
+    	
+    	<basename file="${su.root}" property="artifact.root"/>
+    	<condition property="su.bld.path"
+    		       value="${su.root}/../build"
+    		       else="${su.root}/build">
+    		<equals arg1="src" arg2="${artifact.root}" casesensitive="true"/>
+    	</condition>
+    	<property name="su.bld" location="${su.bld.path}"/>
+    	
+    	<echo>Creating SU build directory at ${su.bld}</echo>
+    	<mkdir dir="${su.bld}"/>
+    	<mkdir dir="${su.bld}/META-INF"/>
+    	
+    	<copy todir="${su.bld}">
+    		<fileset dir="${su.root}">
+    			<include name="*.*"/>
+    			<exclude name="build"/>
+    		</fileset>
+        </copy>
+    	<copy tofile="${su.bld}/META-INF/jbi.xml" file="${su.desc}"/>
+    	
+        <mkdir dir="${bld}/units"/>
+        <!-- A zip file cannot include itself -->
+        <jar destfile="${bld}/units/${su.jar}"
+             basedir="${su.bld}"/>
+        <copy tofile="${su.bld}/${su.temp.jar}" file="${bld}/units/${su.jar}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${bld}"/>
+    </target>
+
+    <target name="help" description="Displays instructions for Component Development Kit build script.">
+        <echo>The following commands are available from this Ant script:</echo>
+<!--
+        <echo/>
+        <echo>    create           Creates a new JBI component project.</echo>
+        <echo/>
+        <echo>    open             Displays a JBI component project in the JBIC Editor.</echo>
+-->
+        <echo/>
+        <echo>    help             Displays this set of instructions.</echo>
+        <echo/>
+    </target>
+</project>

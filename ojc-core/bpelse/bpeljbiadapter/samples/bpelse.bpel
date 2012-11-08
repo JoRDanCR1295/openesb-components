@@ -1,0 +1,123 @@
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)bpelse.bpel 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+
+<process name="BusinessProcess1"
+         targetNamespace="http://Ckuo-Gx270:12000/repository/testrep/Project1/testrep/BusinessProcess1"
+         sbynpxp:end_YLoc="332.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="768.0"
+         xmlns:tns="http://Ckuo-Gx270:12000/repository/testrep/Project1/testrep/BusinessProcess1"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/fa078f:10029a07ef4:-8000"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:Foo"
+         xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns:cor="Correlation/SeeBeyond/eInsight/1437a04:10052f1ab74:-7fff"
+         xmlns="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/1437a04:10052f1ab74:-8000"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <!-- partners definition -->
+    <partners>
+        <partner name="Partner0"
+                 serviceLinkType="slink:ns0-HelloIFServiceLink"
+                 myRole="ns0-HelloIFRole"
+                 sbyncreation:type="auto"/>
+    </partners>
+    <!-- containers definition -->
+    <containers>
+        <container name="HelloIF.sayHello.Input"
+                   messageType="ns0:HelloIF_sayHello"
+                   sbyncreation:type="auto"></container>
+        <container name="HelloIF.sayHello.Output"
+                   messageType="ns0:HelloIF_sayHelloResponse"
+                   sbyncreation:type="auto"></container>
+    </containers>
+    <!-- activities definition -->
+    <sequence>
+        <receive name="HelloIF.sayHello"
+                 partner="Partner0"
+                 portType="ns0:HelloIF"
+                 operation="sayHello"
+                 container="HelloIF.sayHello.Input"
+                 createInstance="yes"
+                 sbynpxp:XLoc="178.0"
+                 sbynpxp:YLoc="145.0"
+                 sbynpx:businessProcessCallable="PXUID-{09000000-6DBE9129000100-0A124354-01}"></receive>
+        <assign name="Business Rule"
+                sbynpxp:XLoc="396.0"
+                sbynpxp:YLoc="205.0"
+                sbynpx:lineLabel="ASSIGN_INLINE">
+            <copy>
+                <from container="HelloIF.sayHello.Input"
+                      part="helloObj"
+                      query="/helloObj/hello1"/>
+                <to container="HelloIF.sayHello.Output"
+                    part="helloObj"
+                    query="/helloObj/hello2"/>
+            </copy>
+            <copy>
+                <from container="HelloIF.sayHello.Input"
+                      part="helloObj"
+                      query="/helloObj/hello2"/>
+                <to container="HelloIF.sayHello.Output"
+                    part="helloObj"
+                    query="/helloObj/hello1"/>
+            </copy>
+            <copy>
+                <from container="HelloIF.sayHello.Input"
+                      part="headerObj"
+                      query="/headerObj/hello1"/>
+                <to container="HelloIF.sayHello.Output"
+                    part="headerObj"
+                    query="/headerObj/hello2"/>
+            </copy>
+            <copy>
+                <from container="HelloIF.sayHello.Input"
+                      part="headerObj"
+                      query="/headerObj/hello2"/>
+                <to container="HelloIF.sayHello.Output"
+                    part="headerObj"
+                    query="/headerObj/hello1"/>
+            </copy>
+        </assign>
+        <reply name="HelloIF.sayHello.Reply"
+               partner="Partner0"
+               portType="ns0:HelloIF"
+               operation="sayHello"
+               container="HelloIF.sayHello.Output"
+               sbynpxp:XLoc="556.0"
+               sbynpxp:YLoc="254.0"
+               sbynpx:businessProcessCallable="PXUID-{0A000000-6DBE9129000100-0A124354-01}"></reply>
+    </sequence>
+</process>

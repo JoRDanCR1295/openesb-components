@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/loanRequestorBpel/loanRequestor"
+             name="loanRequestor"
+             xmlns:tns="http://localhost/loanRequestorBpel/loanRequestor"
+             xmlns:sLink="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plink:partnerLinkType name="loanRequestorPartnerLinkType"
+                           xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="loanRequestorRole"
+                    portType="tns:IRequestLoan"></plink:role>
+    </plink:partnerLinkType>
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://localhost/loanRequestorBpel/loanRequestor">
+            <xsd:element type="tns:loanRequestType"
+                         name="loanRequest"></xsd:element>
+            <xsd:element type="tns:loanRequestResponseType"
+                         name="loanRequestResponse"></xsd:element>
+            <xsd:complexType name="loanRequestResponseType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="result"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="loanRequestType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 nillable="false"
+                                 name="applicantSocialSecurityNumber"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="applicantName"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 nillable="false"
+                                 name="applicantAddress"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="applicantEmailAddress"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="applicantAge"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="applicantGender"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="applicantAnnualSalary"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="amountRequested"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="requestLoanMessage">
+        <part name="requestPart"
+              element="tns:loanRequest"></part>
+    </message>
+    <message name="requestLoanResponseMessage">
+        <part name="responsePart"
+              element="tns:loanRequestResponse"></part>
+    </message>
+    <portType name="IRequestLoan">
+        <operation name="requestLoan">
+            <input name="input"
+                   message="tns:requestLoanMessage"></input>
+            <output name="output"
+                    message="tns:requestLoanResponseMessage"></output>
+        </operation>
+    </portType>
+    <binding name="Binding"
+             type="tns:IRequestLoan">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="requestLoan">
+            <soap:operation soapAction="requestLoan"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="loanRequestorService">
+        <port name="port"
+
+              binding="tns:Binding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/loanRequestor"/>
+        </port>
+    </service>
+</definitions>

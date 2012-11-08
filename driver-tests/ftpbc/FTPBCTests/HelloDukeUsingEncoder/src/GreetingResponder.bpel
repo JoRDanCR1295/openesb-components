@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="GreetingResponder"
+    targetNamespace="http://enterprise.netbeans.org/bpel/GreetingResponder"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/GreetingResponder" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ResponseHelloEncoderService" xmlns:ns0="http://xml.netbeans.org/schema/Greeting">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ResponseHelloEncoderService" location="ResponseHelloEncoderService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:ResponseHelloEncoderService1" myRole="ResponseHelloEncoderServicePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="ResponseHelloEncoderServiceOperationOut" messageType="ns1:ResponseHelloEncoderServiceOperationReply"/>
+        <bpws:variable name="ResponseHelloEncoderServiceOperationIn" messageType="ns1:ResponseHelloEncoderServiceOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ResponseHelloEncoderServiceOperation" portType="ns1:ResponseHelloEncoderServicePortType" variable="ResponseHelloEncoderServiceOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$ResponseHelloEncoderServiceOperationIn.part1/ns0:helloElement/ns0:helloVerb</bpws:from>
+                <bpws:to>$ResponseHelloEncoderServiceOperationOut.part1/ns0:helloElement/ns0:helloVerb</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$ResponseHelloEncoderServiceOperationIn.part1/ns0:introElement/ns0:object</bpws:from>
+                <bpws:to>$ResponseHelloEncoderServiceOperationOut.part1/ns0:helloElement/ns0:subject</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$ResponseHelloEncoderServiceOperationIn.part1/ns0:introElement/ns0:pronoun</bpws:from>
+                <bpws:to>$ResponseHelloEncoderServiceOperationOut.part1/ns0:introElement/ns0:pronoun</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$ResponseHelloEncoderServiceOperationIn.part1/ns0:introElement/ns0:tobeVerb</bpws:from>
+                <bpws:to>$ResponseHelloEncoderServiceOperationOut.part1/ns0:introElement/ns0:tobeVerb</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$ResponseHelloEncoderServiceOperationIn.part1/ns0:helloElement/ns0:subject</bpws:from>
+                <bpws:to>$ResponseHelloEncoderServiceOperationOut.part1/ns0:introElement/ns0:object</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="ResponseHelloEncoderServiceOperation" portType="ns1:ResponseHelloEncoderServicePortType" variable="ResponseHelloEncoderServiceOperationOut"/>
+    </sequence>
+</process>

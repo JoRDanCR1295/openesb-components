@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="PreSaveStreamApp" xmlns:ns2="PreSaveStream.TimeBasedAggregator.TimeBasedAggregator_iep" xmlns:ns3="PreSaveStream.StreamProjectionAndFilter.StreamProjectionAndFilter_iep" xmlns:ns4="PreSaveStream.InsertStream.InsertStream_iep" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="casaPort1" interface-name="ns2:OutputPt_StreamOutput0" name="endpoint1" service-name="ns1:casaService1"/>
+        <endpoint endpoint-name="casaPort2" interface-name="ns2:InputPt" name="endpoint2" service-name="ns1:casaService2"/>
+        <endpoint endpoint-name="casaPort3" interface-name="ns3:InputPt" name="endpoint3" service-name="ns1:casaService3"/>
+        <endpoint endpoint-name="casaPort4" interface-name="ns3:OutputPt_StreamOutput0" name="endpoint4" service-name="ns1:casaService4"/>
+        <endpoint endpoint-name="casaPort5" interface-name="ns4:InputPt" name="endpoint5" service-name="ns1:casaService5"/>
+        <endpoint endpoint-name="casaPort6" interface-name="ns4:OutputPt_StreamOutput0" name="endpoint6" service-name="ns1:casaService6"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="PreSaveStream\InsertStream\InsertStream.iep" interface-name="ns4:InputPt" name="endpoint7" process-name="InsertStream" service-name="ns4:InputPl"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="PreSaveStream\StreamProjectionAndFilter\StreamProjectionAndFilter.iep" interface-name="ns3:InputPt" name="endpoint8" process-name="StreamProjectionAndFilter" service-name="ns3:InputPl"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="PreSaveStream\TimeBasedAggregator\TimeBasedAggregator.iep" interface-name="ns2:InputPt" name="endpoint9" process-name="TimeBasedAggregator" service-name="ns2:InputPl"/>
+        <endpoint display-name="OutputRn_StreamOutput0" endpoint-name="OutputRn_StreamOutput0" file-path="PreSaveStream\InsertStream\InsertStream.iep" interface-name="ns4:OutputPt_StreamOutput0" name="endpoint10" process-name="InsertStream" service-name="ns4:OutputPl_StreamOutput0"/>
+        <endpoint display-name="OutputRn_StreamOutput0" endpoint-name="OutputRn_StreamOutput0" file-path="PreSaveStream\StreamProjectionAndFilter\StreamProjectionAndFilter.iep" interface-name="ns3:OutputPt_StreamOutput0" name="endpoint11" process-name="StreamProjectionAndFilter" service-name="ns3:OutputPl_StreamOutput0"/>
+        <endpoint display-name="OutputRn_StreamOutput0" endpoint-name="OutputRn_StreamOutput0" file-path="PreSaveStream\TimeBasedAggregator\TimeBasedAggregator.iep" interface-name="ns2:OutputPt_StreamOutput0" name="endpoint12" process-name="TimeBasedAggregator" service-name="ns2:OutputPl_StreamOutput0"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="PreSaveStreamIep.jar" component-name="sun-iep-engine" defined="true" description="This Represents the IEP Service Unit" internal="true" name="PreSaveStreamApp-PreSaveStreamIep" unit-name="PreSaveStreamIep" unknown="false" x="133" y="99">
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+            <provides endpoint="endpoint9"/>
+            <consumes endpoint="endpoint10"/>
+            <consumes endpoint="endpoint11"/>
+            <consumes endpoint="endpoint12"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="PreSaveStreamApp-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port bindingType="file" x="67" y="282">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService1']/port[@name='casaPort1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port bindingType="file" x="67" y="361">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService4']/port[@name='casaPort4'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+                <port bindingType="file" x="67" y="447">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService6']/port[@name='casaPort6'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                    <provides endpoint="endpoint6"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="PreSaveStreamApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port bindingType="soap" x="67" y="203">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService2']/port[@name='casaPort2'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port bindingType="soap" x="67" y="124">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService3']/port[@name='casaPort3'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port bindingType="soap" x="67" y="45">
+                    <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService5']/port[@name='casaPort5'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint9" state="new"/>
+        <connection consumer="endpoint12" provider="endpoint1" state="new">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint5" provider="endpoint7" state="new"/>
+        <connection consumer="endpoint10" provider="endpoint6" state="new">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint3" provider="endpoint8" state="new"/>
+        <connection consumer="endpoint11" provider="endpoint4" state="new">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/InsertStream/InsertStream.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/InsertStream/InsertStream.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/StreamProjectionAndFilter/StreamProjectionAndFilter.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/StreamProjectionAndFilter/StreamProjectionAndFilter.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/TimeBasedAggregator/TimeBasedAggregator.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamIep/PreSaveStream/TimeBasedAggregator/TimeBasedAggregator.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding5'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding6'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding5'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/binding[@name='casaBinding6'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService5'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService6'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService5'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/PreSaveStreamApp.wsdl#xpointer(/definitions/service[@name='casaService6'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

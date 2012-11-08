@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="insertoneparamfullqualSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="insertoneparamfullqualRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:string"/><xsd:element name="param2" type="xsd:decimal"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="insertoneparamfullqualRequest">
+    <part name="insertoneparamfullqualRequestPart" element="tns:insertoneparamfullqualRequest"/>
+  </message>
+  <message name="insertoneparamfullqualResponse">
+    <part name="insertoneparamfullqualResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="insertoneparamfullqualSQL_sqlsePortType">
+    <operation name="insertoneparamfullqual">
+      <input name="insertoneparamfullqualRequest" message="tns:insertoneparamfullqualRequest"/>
+      <output name="insertoneparamfullqualResponse" message="tns:insertoneparamfullqualResponse"/>
+    </operation>
+  </portType>
+  <binding name="insertoneparamfullqualSQLBinding" type="tns:insertoneparamfullqualSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="insertoneparamfullqual">
+      <soap:operation style="document"/>
+      <input name="insertoneparamfullqualRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="insertoneparamfullqualResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="insertoneparamfullqualSQL_sqlseService">
+    <port name="insertoneparamfullqualSQL_sqlsePort" binding="tns:insertoneparamfullqualSQLBinding">
+      <soap:address location="http://localhost:18181/insertoneparamfullqualSQL/insertoneparamfullqualSQL/insertoneparamfullqualSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="insertoneparamfullqualSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="insertoneparamfullqualSQL_myrole" portType="tns:insertoneparamfullqualSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

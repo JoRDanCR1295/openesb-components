@@ -1,0 +1,1 @@
+This test tests wait termination in a catch all without flow. The termination happens because an exit is encountered elsewhere. The wait in catch all is 30 secs and test timeout is 5 secs. If the wait is not terminated, the process would not proceed and no respose (error in this case) will be sent. The test would timeout. 

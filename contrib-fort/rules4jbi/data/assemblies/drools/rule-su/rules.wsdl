@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="DroolsWSDL"
+                  targetNamespace="http://www.example.org/rules/drools/definitions"
+                  xmlns:tns="http://www.example.org/rules/drools/definitions"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+                  xmlns:types="http://www.milanfort.com/xml/ns/jbi/rules/types" 
+                  xmlns:jbi="http://java.sun.com/xml/ns/jbi/binding/service+engine"
+                  xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+                      
+    <wsdl:types>
+        <xs:schema targetNamespace="http://www.example.org/xml/ns/class" version="1.0" 
+                   xmlns:tns="http://www.example.org/xml/ns/class"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            
+            <xs:element name="bill" type="tns:billType"/>
+            
+            <xs:complexType name="billType">
+                <xs:sequence>
+                    <xs:element form="qualified" name="description" type="xs:string"/>
+                    <xs:element form="qualified" name="status" type="xs:string"/>
+                </xs:sequence>
+                <xs:attribute name="amount" type="xs:int" use="required"/>
+            </xs:complexType>
+        </xs:schema>
+        
+        <xs:schema elementFormDefault="qualified" version="1.0" 
+                   targetNamespace="http://www.example.org/xml/ns/package-info.java" 
+                   xmlns:tns="http://www.example.org/xml/ns/package-info.java" 
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                       
+            <xs:element name="customer" type="tns:customer"/>
+            
+            <xs:complexType name="customer">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="creditLimit" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+
+        <xs:schema elementFormDefault="qualified" version="1.0" 
+                   targetNamespace="http://www.milanfort.com/xml/ns/jbi/rules/types" 
+                   xmlns:tns="http://www.milanfort.com/xml/ns/jbi/rules/types" 
+                   xmlns:ns1="http://www.example.org/xml/ns/package-info.java" 
+                   xmlns:ns2="http://www.example.org/xml/ns/class" 
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            
+            <xs:import namespace="http://www.example.org/xml/ns/class"/>
+            <xs:import namespace="http://www.example.org/xml/ns/package-info.java"/>
+            
+            <xs:element name="InputData">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns1:customer"/>
+                        <xs:element ref="ns2:bill"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="OutputData">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns1:customer"/>
+                        <xs:element ref="ns2:bill"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    
+    <wsdl:message name="OutputMessage">
+        <wsdl:part name="OutputPart" element="types:OutputData">
+        </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="InputMessage">
+        <wsdl:part name="InputPart" element="types:InputData">
+        </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="DroolsPortType">
+        <wsdl:operation name="execute">
+            <wsdl:input name="executeInput" message="tns:InputMessage">
+            </wsdl:input>
+            <wsdl:output name="executeOutput" message="tns:OutputMessage">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="RuleBinding" type="tns:DroolsPortType">
+        <jbi:binding/>
+    </wsdl:binding>
+    
+    <wsdl:service name="DroolsService">
+        <wsdl:port name="DroolsPort" binding="tns:RuleBinding">
+        </wsdl:port>
+    </wsdl:service>
+    
+    <plnk:partnerLinkType name="DroolsServiceType">
+        <plnk:role name="DroolsServiceProvider" portType="tns:DroolsPortType"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DropAllRows"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DropAllRows"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DropAllRows" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SoapWSDL" location="SoapWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="DropAllRowsSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:DropAllRowsSql_sqlsePartnerLinkType" partnerRole="DropAllRowsSql_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:SoapWSDLPartner" myRole="SoapWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="DropAllRowsOut" messageType="ns2:DropAllRowsResponse"/>
+        <bpws:variable name="DropAllRowsIn" messageType="ns2:DropAllRowsRequest"/>
+        <bpws:variable name="SoapWSDLOperationOut" messageType="ns1:SoapWSDLOperationReply"/>
+        <bpws:variable name="SoapWSDLOperationIn" messageType="ns1:SoapWSDLOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapWSDLOperationIn" part="part1"/>
+                <bpws:to variable="DropAllRowsIn" part="DropAllRowsRequestPart"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="DropAllRows" portType="ns2:DropAllRowsSql_sqlsePortType" inputVariable="DropAllRowsIn" outputVariable="DropAllRowsOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="DropAllRowsOut" part="DropAllRowsResponsePart"/>
+                <bpws:to variable="SoapWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationOut"/>
+    </sequence>
+</process>

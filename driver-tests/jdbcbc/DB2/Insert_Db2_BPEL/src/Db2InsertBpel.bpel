@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Db2InsertBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Db2InsertBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Db2InsertBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPInsertDb2Trigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SOAPInsertDb2Trigger" location="SOAPInsertDb2Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="JdbcDb2Insert.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SOAPInsertDb2TriggerPartner" myRole="SOAPInsertDb2TriggerPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SOAPInsertDb2TriggerOperationOut" messageType="ns1:SOAPInsertDb2TriggerOperationReply"/>
+      <bpws:variable name="InsertOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="InsertIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SOAPInsertDb2TriggerOperationIn" messageType="ns1:SOAPInsertDb2TriggerOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SOAPInsertDb2TriggerOperation" portType="ns1:SOAPInsertDb2TriggerPortType" variable="SOAPInsertDb2TriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="SOAPInsertDb2TriggerOperationIn" part="part1"/>
+            <bpws:to variable="InsertIn" part="part"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="insert" portType="ns2:jdbcPortType" inputVariable="InsertIn" outputVariable="InsertOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="InsertOut" part="part"/>
+            <bpws:to variable="SOAPInsertDb2TriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SOAPInsertDb2TriggerOperation" portType="ns1:SOAPInsertDb2TriggerPortType" variable="SOAPInsertDb2TriggerOperationOut"/>
+   </sequence>
+</process>

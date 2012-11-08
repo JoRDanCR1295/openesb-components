@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://sun.com/JbiMsgTest"
+             name="JbiMsgTest"
+             xmlns:tns="http://sun.com/JbiMsgTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:nsInput="http://sun.com/EmplInput"
+             xmlns:nsOutput="http://sun.com/EmplOutput"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <xsd:schema targetNamespace="http://sun.com/JbiMsgTest" xmlns:ns2="http://sun.com/EmplOutput">
+            <xsd:import namespace="http://sun.com/EmplInput" schemaLocation="EmployeeInput.xsd"/>
+            <xsd:import namespace="http://sun.com/EmplOutput" schemaLocation="EmployeeOutput.xsd"/>
+			<xsd:element name="dblstr">
+                <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                    <xsd:sequence>
+                        <xsd:element name="str1" type="xsd:string"></xsd:element>
+                        <xsd:element name="str2" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="input-msg">
+        <part name="empl-in" element="nsInput:EmployeeInput" />
+    </message>
+    <message name="output-msg">
+        <part name="empl-out" element="nsOutput:EmployeeOutput" />
+    </message>
+    <message name="multipart-msg">
+    	<part name="part1" element="nsInput:EmployeeInput"/>
+    	<part name="part2" element="tns:dblstr"/>
+    	<part name="part3" element="nsOutput:EmployeeOutput" />
+    </message>
+    <portType name="jbimsgPort">
+        <operation name="copyEmpl">
+            <input message="tns:input-msg"/>
+            <output message="tns:output-msg"/>
+        </operation>
+        <operation name="copyMulti">
+        	<input message="tns:multipart-msg"/>
+			<output message="tns:multipart-msg"/>
+		</operation>
+    </portType>
+    <binding name="jbimsgBinding" type="tns:jbimsgPort">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="copyEmpl">
+            <soap:operation soapAction=""/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+    <service name="jbimsgService">
+        <port binding="tns:jbimsgBinding" name="port">
+            <soap:address location="http://localhost:13011/jbimsgPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+                          name="pltJbiMsgTest">
+        <plnk:role name="server" portType="tns:jbimsgPort"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="AS_ProcLevelFaultFromInvoke1"
+    targetNamespace="http://www.seebeyond.com/eInsight/AS_InvokeLevelCatch1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/AS_InvokeLevelCatch1"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:AdditionService/AS_InvokeLevelCatch1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:AdditionService/AS_InvokeLevelCatch1"
+    location="AS_InvokeLevelCatch1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="AdditionServiceLink1"
+        partnerLinkType="ns0:AdditionServiceLT"
+        myRole="AdditionServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Add_Output"
+        messageType="ns0:AdditionServiceRequest"></variable>
+        <variable name="Add_Input"
+        messageType="ns0:AdditionServiceResponse"></variable>
+        <variable name="Add_Fault"
+        messageType="ns0:AdditionServiceFaultResponse"></variable>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>&apos;Fault Occured. Please check the input&apos;</from>
+                        <to variable="Add_Fault"
+                        part="result"/>
+                    </copy>
+                </assign>
+                <reply partnerLink="AdditionServiceLink1"
+                portType="ns0:AdditionPortType"
+                operation="Add"
+                variable="Add_Fault"
+                faultName="ns0:InvalidInput"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive partnerLink="AdditionServiceLink1"
+        portType="ns0:AdditionPortType"
+        operation="Add"
+        variable="Add_Output"
+        createInstance="yes"/>
+        <scope name="S">
+            <sequence>
+                <throw faultName="tns:Fault1"/>
+            </sequence>
+        </scope>
+        <assign>
+            <copy>
+                <from>0</from>
+                <to variable="Add_Input" part="result"/>
+            </copy>
+        </assign>
+        <reply partnerLink="AdditionServiceLink1"
+        portType="ns0:AdditionPortType"
+        operation="Add"
+        variable="Add_Input"/>
+    </sequence>
+</process>

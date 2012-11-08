@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/client"/>
+        <mkdir dir="${build.generated.dir}/wsimport/service"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-client-check-JMSOut" depends="wsimport-init">
+        <condition property="wsimport-client-JMSOut.notRequired">
+            <available file="${build.generated.dir}/wsimport/client/com/sun/jmsbc/test/javaeese" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-client-JMSOut" depends="wsimport-init,wsimport-client-check-JMSOut" unless="wsimport-client-JMSOut.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/client" extension="true" package="com.sun.jmsbc.test.javaeese" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/${meta.inf}/xml-resources/web-service-references/JMSOut/wsdl/JMSOut.wsdl" wsdlLocation="file:/@SRCROOT@Projects/JMSBCJavaEESETest/JMSBCJavaeeSETestEJBModule/src/java/JMSOut.wsdl" catalog="catalog.xml"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${build.generated.dir}/wsimport/binaries" includes="**/*.xml"/>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-JMSOut" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/client/com/sun/jmsbc/test/javaeese"/>
+    </target>
+    <target name="wsimport-service-check-JMSBCjavaeeseTest" depends="wsimport-init">
+        <condition property="wsimport-service-JMSBCjavaeeseTest.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/jmsin" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-JMSBCjavaeeseTest" depends="wsimport-init,wsimport-service-check-JMSBCjavaeeseTest" unless="wsimport-service-JMSBCjavaeeseTest.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/service" extension="true" verbose="true" destdir="${classes.dir}" wsdl="${basedir}/${meta.inf}/xml-resources/web-services/JMSBCjavaeeseTest/wsdl/JMSIn.wsdl" catalog="catalog.xml"/>
+        <copy todir="${basedir}/${meta.inf}/wsdl/JMSBCjavaeeseTest">
+            <fileset dir="${basedir}/${meta.inf}/xml-resources/web-services/JMSBCjavaeeseTest/wsdl/"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-JMSBCjavaeeseTest" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/jmsin"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-JMSOut"/>
+    <target name="wsimport-client-compile" depends="wsimport-client-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/client" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}" javac.compilerargs.jaxws="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'"/>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-JMSBCjavaeeseTest"/>
+    <target name="wsimport-service-compile" depends="wsimport-service-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/service" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}" javac.compilerargs.jaxws="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'"/>
+    </target>
+</project>

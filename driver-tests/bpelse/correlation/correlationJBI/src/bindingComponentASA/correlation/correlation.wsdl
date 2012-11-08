@@ -1,0 +1,97 @@
+<definitions targetNamespace="urn:correlationTargetNamespace"
+             name="correlationDefinition"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:tns="urn:correlationTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <plnk:partnerLinkType name="correlationServiceLinkType"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="correlationServerRole"
+                   portType="tns:correlationPortType"></plnk:role>
+        <plnk:role name="correlationServerRole1"
+                   portType="tns:correlationPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:property type="xsd:string"
+                   name="propertyName1"></bpws:property>
+    <bpws:propertyAlias part="correlationPart"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:correlationMessage">
+        <bpws:query>string</bpws:query>
+    </bpws:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:correlationTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:correlationTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:correlationTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+
+                    <xsd:complexType name="correlationType">
+                        <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="correlationMessage">
+        <part name="correlationPart"
+              type="tns:correlationType"></part>
+    </message>
+    <portType name="correlationPortType">
+        <operation name="correlationOperation">
+            <input message="tns:correlationMessage"></input>
+            <output message="tns:correlationMessage"></output>
+        </operation>
+    </portType>
+    <portType name="correlationPortType1">
+        <operation name="correlationOperation1">
+            <input message="tns:correlationMessage"></input>
+        </operation>
+    </portType>
+    <binding name="correlationBinding"
+             type="tns:correlationPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="correlationOperation">
+            <soap:operation soapAction="correlationOperation"/>
+            <input>
+                <soap:body parts="correlationPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="correlationPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="correlationBinding1"
+             type="tns:correlationPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="correlationOperation1">
+            <soap:operation soapAction="correlationOperation1"/>
+            <input>
+                <soap:body parts="correlationPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="correlationService">
+        <port name="correlationPort"
+              binding="tns:correlationBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/correlationPort"/>
+        </port>
+        <port name="correlationPort1"
+              binding="tns:correlationBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/correlationPort1"/>
+        </port>
+    </service>
+</definitions>

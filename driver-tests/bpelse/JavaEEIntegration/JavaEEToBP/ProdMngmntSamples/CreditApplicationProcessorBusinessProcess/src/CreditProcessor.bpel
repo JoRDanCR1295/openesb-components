@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CreditProcessor"
+    targetNamespace="http://enterprise.netbeans.org/bpel/CreditProcessor"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/CreditProcessor" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CreditProcessor" xmlns:ns2="http://application.fs.com/" xmlns:ns3="http://vehicle.fs.com/" xmlns:ns4="http://finance.fs.com/" xmlns:ns5="http://approver.fs.com/" xmlns:ns0="http://xml.netbeans.org/schema/CreditProcessor">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/CreditProcessor" location="Partners/CreditProcessor/CreditProcessor.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://application.fs.com/" location="Partners/ApplicantEvaluator/ApplicantEvaluator.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://vehicle.fs.com/" location="Partners/VehicleInformationService/VehicleInformationService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://finance.fs.com/" location="Partners/FinancialIndexService/FinancialIndexService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://approver.fs.com/" location="Partners/LoanApproverService/LoanApproverService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="LoanApproverPartnerLink" partnerLinkType="ns5:LoanApproverPartnerLinkType" partnerRole="LoanApproverRole"/>
+        <bpws:partnerLink name="FinancialIndexPartnerLink" partnerLinkType="ns4:FinancialIndexPartnerLinkType" partnerRole="FinancialIndexRole"/>
+        <bpws:partnerLink name="VehicleInformationPartnerLink" partnerLinkType="ns3:VehicleInformationPartnerLinkType" partnerRole="VehicleInformationRole"/>
+        <bpws:partnerLink name="ApplicantEvaluatorPartnerLink" partnerLinkType="ns2:ApplicantEvaluatorPartnerLinkType" partnerRole="ApplicantEvaluatorRole"/>
+        <bpws:partnerLink name="CreditApplicationPartnerLink" partnerLinkType="ns1:CreditProcessorPartner" myRole="CreditProcessorPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="SubmitCreditApplicationOut" messageType="ns1:CreditProcessorOperationReply"/>
+        <bpws:variable name="GetDecisionOut" messageType="ns5:getDecisionResponse"/>
+        <bpws:variable name="GetDecisionIn" messageType="ns5:getDecision"/>
+        <bpws:variable name="GetFinancialIndexOut" messageType="ns4:getFinancialIndexResponse"/>
+        <bpws:variable name="GetFinancialIndexIn" messageType="ns4:getFinancialIndex"/>
+        <bpws:variable name="GetVehicleDataOut" messageType="ns3:getVehicleDataResponse"/>
+        <bpws:variable name="GetVehicleDataIn" messageType="ns3:getVehicleData"/>
+        <bpws:variable name="GetApplicantReportOut" messageType="ns2:getApplicantReportResponse"/>
+        <bpws:variable name="GetApplicantReportIn" messageType="ns2:getApplicantReport"/>
+        <bpws:variable name="SubmitCreditApplicationIn" messageType="ns1:CreditProcessorOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="ReceiveApplication" createInstance="yes" partnerLink="CreditApplicationPartnerLink" operation="submitCreditApplication" portType="ns1:CreditProcessorPortType" variable="SubmitCreditApplicationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:socialSecurityNumber</bpws:from>
+                <bpws:to>$GetApplicantReportIn.parameters/socialSecurityNumber</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:fistName</bpws:from>
+                <bpws:to>$GetApplicantReportIn.parameters/firstName</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:lastName</bpws:from>
+                <bpws:to>$GetApplicantReportIn.parameters/lastName</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="GetApplicantWorthiness" partnerLink="ApplicantEvaluatorPartnerLink" operation="getApplicantReport" portType="ns2:ApplicantEvaluator" inputVariable="GetApplicantReportIn" outputVariable="GetApplicantReportOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:vehicleIdentificationNumber</bpws:from>
+                <bpws:to>$GetVehicleDataIn.parameters/vehicleIdentificationNumber</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:make</bpws:from>
+                <bpws:to>$GetVehicleDataIn.parameters/make</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:model</bpws:from>
+                <bpws:to>$GetVehicleDataIn.parameters/model</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubmitCreditApplicationIn.requestMessage/ns0:year</bpws:from>
+                <bpws:to>$GetVehicleDataIn.parameters/year</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="GetVehicleWorthiness" partnerLink="VehicleInformationPartnerLink" operation="getVehicleData" portType="ns3:VehicleInformationServer" inputVariable="GetVehicleDataIn" outputVariable="GetVehicleDataOut"/>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>$GetApplicantReportOut.parameters/return</bpws:from>
+                <bpws:to>$GetFinancialIndexIn.parameters/category</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="GetCurrentFinancialIndex" partnerLink="FinancialIndexPartnerLink" operation="getFinancialIndex" portType="ns4:FinancialIndex" inputVariable="GetFinancialIndexIn" outputVariable="GetFinancialIndexOut"/>
+        <bpws:assign name="Assign4">
+            <bpws:copy>
+                <bpws:from>concat($GetFinancialIndexOut.parameters/return, $GetVehicleDataOut.parameters/return, $GetApplicantReportOut.parameters/return)</bpws:from>
+                <bpws:to>$GetDecisionIn.parameters/report</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="GetDecision" partnerLink="LoanApproverPartnerLink" operation="getDecision" portType="ns5:LoanApprover" inputVariable="GetDecisionIn" outputVariable="GetDecisionOut"/>
+        <bpws:assign name="Assign5">
+            <bpws:copy>
+                <bpws:from>$GetDecisionOut.parameters/return</bpws:from>
+                <bpws:to>$SubmitCreditApplicationOut.responseMessage/ns0:decisionMessage</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="ReturnDecision" partnerLink="CreditApplicationPartnerLink" operation="submitCreditApplication" portType="ns1:CreditProcessorPortType" variable="SubmitCreditApplicationOut"/>
+    </sequence>
+</process>

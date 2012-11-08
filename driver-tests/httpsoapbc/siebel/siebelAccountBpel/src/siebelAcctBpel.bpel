@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="siebelAcctBpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/siebelAcctBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelAcctBpel" xmlns:ns1="http://stc.com/echo" xmlns:ns2="http://siebel.com/asi/" xmlns:ns0="http://www.siebel.com/xml/Account%20Interface">
+    <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://siebel.com/asi/" location="SiebelAccount.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="siebelPartnerLink" partnerLinkType="ns2:SiebelAcccountpartnerlinktyperole1" partnerRole="SiebelAccountpartnerlink"/>
+        <partnerLink name="echoPartnerLink" partnerLinkType="ns1:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOut1" messageType="ns1:echo"/>
+        <variable name="SiebelAccountQueryByIdOut1" messageType="ns2:Siebel_spcAccount_SiebelAccountQueryById_Output"/>
+        <variable name="SiebelAccountQueryByIdIn1" messageType="ns2:Siebel_spcAccount_SiebelAccountQueryById_Input"/>
+        <variable name="EchoIn1" messageType="ns1:echo"/>
+    </variables>
+    <sequence>
+        <receive name="echoReceive" createInstance="yes" partnerLink="echoPartnerLink" operation="echo" portType="ns1:echo" variable="EchoIn1"/>
+        <assign name="AssignSiebelAccountID">
+            <copy>
+                <from>'1-2YL0'</from>
+                <to part="PrimaryRowId" variable="SiebelAccountQueryByIdIn1"/>
+            </copy>
+        </assign>
+        <invoke name="InvokeSiebelQueryByID" partnerLink="siebelPartnerLink" operation="SiebelAccountQueryById" portType="ns2:Default" inputVariable="SiebelAccountQueryByIdIn1" outputVariable="SiebelAccountQueryByIdOut1"/>
+        <assign name="AssignSiebelAccountName">
+            <copy>
+                <from>$SiebelAccountQueryByIdOut1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:Name</from>
+                <to>$EchoOut1.part/ns1:value</to>
+            </copy>
+        </assign>
+        <reply name="echoReply" partnerLink="echoPartnerLink" operation="echo" portType="ns1:echo" variable="EchoOut1"/>
+   </sequence>
+   
+</process>

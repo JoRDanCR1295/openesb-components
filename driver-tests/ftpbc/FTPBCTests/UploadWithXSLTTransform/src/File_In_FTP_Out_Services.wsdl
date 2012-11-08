@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/File_In_FTP_Out_Services"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/File_In_FTP_Out_Services" name="File_In_FTP_Out_Services" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:ns="http://sun.com/UploadTest/EmplInput" xmlns:ns1="http://sun.com/UploadTest/EmplOutput" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <import namespace="http://sun.com/UploadTest/EmplInput" location="EmployeeInput.xsd"/>
+    <import namespace="http://sun.com/UploadTest/EmplOutput" location="EmployeeOutput.xsd"/>
+    <types/>
+    <message name="FILE_IN_MSG">
+        <wsdl:part name="part1" element="ns:EmployeeInput"/>
+    </message>
+    <message name="FTP_OUT_MSG">
+        <wsdl:part name="part1" element="ns1:EmployeeOutput"/>
+    </message>
+    <portType name="FILE_READ">
+        <wsdl:operation name="FILE_READ_OP">
+            <wsdl:input name="input1" message="tns:FILE_IN_MSG"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="FTP_PUT">
+        <wsdl:operation name="FTP_PUT_OP">
+            <wsdl:input name="input1" message="tns:FTP_OUT_MSG"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="FILE_IN_BIND" type="tns:FILE_READ">
+        <file:binding/>
+        <wsdl:operation name="FILE_READ_OP">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="input%d.txt" fileNameIsPattern="true"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="FTP_PUT_BIND" type="tns:FTP_PUT">
+        <ftp:binding/>
+        <wsdl:operation name="FTP_PUT_OP">
+            <ftp:operation/>
+            <wsdl:input name="input1">
+                <ftp:message messageRepository="TEST_XSLT" use="literal" stage="true" protect="true" archive="true" messageCorrelate="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="Local2RemoteService">
+        <wsdl:port name="LocalPort" binding="tns:FILE_IN_BIND">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/UpXSLT_DownXSLT_CompApp/test/Up_Down_With_XSLT_Test/in_out"/>
+        </wsdl:port>
+        <wsdl:port name="RemotePort" binding="tns:FTP_PUT_BIND">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" cmdChannelTimeout="45000" dataChannelTimeout="45000"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="LocalFileServicesPartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FILE_In_PortTypeRole" portType="tns:FILE_READ"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="RemoteFTPServicePartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FTP_Out_PortTypeRole" portType="tns:FTP_PUT"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSIn-MQBCOut" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSIn-MQBCOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSIn-MQBCOut" xmlns:ns0="http://xml.netbeans.org/schema/MqMsg" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSIn-MQBCOut">
+            <xsd:import namespace="http://xml.netbeans.org/schema/MqMsg" schemaLocation="MqMsg.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="message_JMSIn">
+        <part name="part_JMSIn"
+              type="xsd:string"></part>
+        <part name="IdProperty" type="xsd:long"/>   
+    </message>
+    <message name="mqmessage">
+        <wsdl:part name="part1mqmsg" element="ns0:MqMessage"/>
+    </message>
+    <portType name="JMSInPortType">
+        <wsdl:operation name="JMSInOperation">
+            <wsdl:input name="input1" message="tns:message_JMSIn"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="MQBCOutPortType">
+        <wsdl:operation name="MQBCOutOperation">
+            <wsdl:input name="input1" message="tns:mqmessage"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="binding1JmsIn" type="tns:JMSInPortType">
+        <jms:binding/>
+        <wsdl:operation name="JMSInOperation">
+            <jms:operation destination="ext_client_publish_mqbcRelibilityTest1" destinationType="Queue" transaction="XATransaction" maxConcurrentConsumers="1"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part_JMSIn">
+                    <jms:properties>
+                        <jms:property part="IdProperty" type="long" name="counter"/>
+                    </jms:properties>
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="binding1MqPut" type="tns:MQBCOutPortType">
+        <mq:binding/>
+        <wsdl:operation name="MQBCOutOperation">
+            <mq:operation queueName="Client_Publish_BP2BPReliabilityTest1_Feeder" transaction="XATransaction" queueOpenOptions="17" pollingInterval="500"/>
+            <wsdl:input name="input1">
+                <mq:body MessageBody="part1mqmsg" use="literal" MessageType="TextMessage" SyncPoint="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="service1JmsIn">
+        <wsdl:port name="port1JmsIn" binding="tns:binding1JmsIn">
+            <jms:address connectionURL="mq://localhost:20000" username="admin" password="admin"/>
+        </wsdl:port>
+    </service>
+    <service name="service1MqPut">
+        <wsdl:port name="port1MqPut" binding="tns:binding1MqPut">
+            <mq:address portNumber="1418" queueManagerName="rchen2kmq6qmgr3" channelName="svrconnchnl3" hostName="rchen-2k"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="partnerlinktype1JmsIn">
+        <plnk:role name="role1JmsIn" portType="tns:JMSInPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1MqPut">
+        <plnk:role name="role1MqPut" portType="tns:MQBCOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

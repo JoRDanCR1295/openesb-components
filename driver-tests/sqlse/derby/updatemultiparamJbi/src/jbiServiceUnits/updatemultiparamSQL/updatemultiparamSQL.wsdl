@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="updatemultiparamSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="updatemultiparamRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:int"/><xsd:element name="param2" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="updatemultiparamResponse">
+    <part name="updatemultiparamResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="updatemultiparamRequest">
+    <part name="updatemultiparamRequestPart" element="tns:updatemultiparamRequest"/>
+  </message>
+  <portType name="updatemultiparamSQL_sqlsePortType">
+    <operation name="updatemultiparam">
+      <input name="updatemultiparamRequest" message="tns:updatemultiparamRequest"/>
+      <output name="updatemultiparamResponse" message="tns:updatemultiparamResponse"/>
+    </operation>
+  </portType>
+  <binding name="updatemultiparamSQLBinding" type="tns:updatemultiparamSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="updatemultiparam">
+      <soap:operation style="document"/>
+      <input name="updatemultiparamRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="updatemultiparamResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="updatemultiparamSQL_sqlseService">
+    <port name="updatemultiparamSQL_sqlsePort" binding="tns:updatemultiparamSQLBinding">
+      <soap:address location="http://localhost:18181/updatemultiparamSQL/updatemultiparamSQL/updatemultiparamSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="updatemultiparamSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="updatemultiparamSQL_myrole" portType="tns:updatemultiparamSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

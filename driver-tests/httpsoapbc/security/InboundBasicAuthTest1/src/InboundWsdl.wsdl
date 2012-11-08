@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InboundWsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/InboundWsdl"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://j2ee.netbeans.org/wsdl/InboundWsdl" 
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+             xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+             xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+             xmlns:mysp="http://sun.com/ws/httpbc/security/BasicauthSecurityPolicy" >
+    <types/>
+    <message name="InboundWsdlOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="InboundWsdlOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="InboundWsdlPortType">
+        <wsdl:operation name="InboundWsdlOperation">
+            <wsdl:input name="input1" message="tns:InboundWsdlOperationRequest"/>
+            <wsdl:output name="output1" message="tns:InboundWsdlOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="InboundWsdlBinding" type="tns:InboundWsdlPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="InboundWsdlOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/InboundWsdl"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/InboundWsdl"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="InboundWsdlService">
+        <wsdl:port name="InboundWsdlPort" binding="tns:InboundWsdlBinding">
+            <soap:address location="http://localhost:18181/InboundWsdlService/InboundWsdlPort"/>
+            <wsp:PolicyReference URI="#HttpBasicAuthBindingBindingPolicy"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="InboundWsdl1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="InboundWsdlPortTypeRole" portType="tns:InboundWsdlPortType"/>
+    </plnk:partnerLinkType>
+    <wsp:Policy wsu:Id="HttpBasicAuthBindingBindingPolicy">
+        <mysp:MustSupportBasicAuthentication>true</mysp:MustSupportBasicAuthentication>
+        <mysp:UsernameToken mysp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+            <wsp:Policy>
+                <sp:WssUsernameToken10>wilma</sp:WssUsernameToken10>
+                <sp:WssPassword>pebbles</sp:WssPassword>
+            </wsp:Policy>
+        </mysp:UsernameToken>
+    </wsp:Policy>
+</definitions>

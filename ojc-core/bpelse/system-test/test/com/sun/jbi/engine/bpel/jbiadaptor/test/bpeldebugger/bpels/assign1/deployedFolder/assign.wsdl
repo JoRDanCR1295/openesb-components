@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="urn:assign:assignService"
+             xmlns:tns="urn:assign:assignService"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <plink:partnerLinkType name="assignSLT">
+        <plink:role portType="tns:assignPT"
+                    name="caller"></plink:role>
+    </plink:partnerLinkType>
+        <plink:partnerLinkType name="AssignInvokePLT">
+        <plink:role name="AssignInvokeRole" portType="tns:invokePortType"/>
+    </plink:partnerLinkType>
+    <import namespace="urn:assign:assignService"
+            location="assign.xsd"></import>
+    <message name="AssignMessageType">
+        <part name="strPart"
+              type="xsd:string"></part>
+    </message>
+    <portType name="assignPT">
+        <operation name="assign">
+            <input message="tns:AssignMessageType"></input>
+            <output message="tns:AssignMessageType"></output>
+        </operation>
+    </portType>
+    <portType name="invokePortType">
+        <operation name="oneWayInvokeOper">
+            <input name="input" message="tns:AssignMessageType"/>
+        </operation>
+    </portType>
+    <binding name="InvokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="oneWayInvokeOper">
+            <input name="input"><soap:body/></input>
+        </operation>
+    </binding>    
+    <binding name="AssignIFBinding"
+             type="tns:assignPT">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="assign">
+            <soap:operation soapAction="assign"
+                            style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </wsdl:operation>
+    </binding>
+    <service name="AssignTest">
+        <port name="AssignIFPort"
+              binding="tns:AssignIFBinding">
+            <soap:address location="http://localhost:12100/service/Hello"/>
+        </port>
+        <port name="invokePortType" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:12101/service/Hello1"/>
+        </port>        
+    </service>
+</definitions>

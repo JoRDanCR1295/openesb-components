@@ -1,0 +1,1 @@
+select empname from empview

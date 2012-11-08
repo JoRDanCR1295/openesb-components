@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FromPropSpec" targetNamespace="http://j2ee.netbeans.org/wsdl/FromPropSpec"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/FromPropSpec" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/FromSpecSchema" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/schema/FromSpecSchema" 
+        xmlns:tns="http://j2ee.netbeans.org/schema/FromSpecSchema">
+            <xsd:complexType name="compType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                    <xsd:element name="boolElem" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="globalElem" type="tns:compType"></xsd:element>
+            <xsd:element name="IntegerElem" type="xsd:int"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="message">
+        <part name="part1" element="ns0:globalElem"/>
+    </message>
+    <message name="intMsg">
+        <part name="intPart" element="ns0:IntegerElem"/>
+    </message>
+    <portType name="FromPropSpecPortType">
+        <operation name="FromPropSpecOperation">
+            <input name="input1" message="tns:message"/>
+            <output name="output1" message="tns:message"/>
+        </operation>
+    </portType>
+    <binding name="FromPropSpecPortTypeBinding" type="tns:FromPropSpecPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="FromPropSpecOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="FromPropSpecService">
+        <port name="FromPropSpecPortTypeBindingPort" binding="tns:FromPropSpecPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/FromPropSpecService/FromPropSpecPortTypeBindingPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FromPropSpecPLT">
+        <plnk:role name="FromPropSpecPortTypeRole" portType="tns:FromPropSpecPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="intProp" type="xsd:int"/>
+    <vprop:property name="strProp" type="xsd:string"/>
+    <vprop:property name="booleanProp" type="xsd:boolean"/>
+    <vprop:propertyAlias propertyName="tns:intProp" messageType="tns:message" part="part1">
+        <vprop:query>/ns0:globalElem/intElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:strProp" messageType="tns:message" part="part1">
+        <vprop:query>/ns0:globalElem/strElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:booleanProp" messageType="tns:message" part="part1">
+        <vprop:query>/ns0:globalElem/boolElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:intProp" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:intProp" messageType="tns:intMsg" part="intPart"/>
+    <vprop:propertyAlias propertyName="tns:intProp" element="ns0:globalElem">
+        <vprop:query>/ns0:globalElem/intElem</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:strProp" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:booleanProp" type="xsd:boolean"/>
+    
+    <vprop:property name="jmsProp" type="xsd:int"/>
+    
+    <vprop:propertyAlias propertyName="tns:jmsProp"
+                                 nmProperty="com.sun.jms.transport.properties.corrID"/>
+                                 
+    <vprop:property name="fileProp" type="xsd:string"/>
+    
+    <vprop:propertyAlias propertyName="tns:fileProp"
+                                 nmProperty="com.sun.file.transport.properties.fileName"/>
+    
+    <vprop:property name="headerSOAP" xmlns:sht="http://soap-header-test" element="sht:HeaderElement"/>
+    <vprop:propertyAlias propertyName="tns:headerSOAP"
+                                 nmProperty="org.glassfish.openesb.headers.soap">
+        <vprop:query xmlns:sht="http://soap-header-test">/sht:HeaderElement</vprop:query>
+    </vprop:propertyAlias>                                     
+
+<!--
+    <vprop:propertyAlias propertyName="tns:strProp2"
+                                 nmProperty="com.sun.file.transport.properties.fileNameRead"/>
+-->                                     
+</definitions>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoSwitch" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoSwitch" targetNamespace="http://stc.com/echoSwitch">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoSwitch">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoSwitch">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoSwitch">
+        <operation name="echoSwitch">
+            <input message="tns:echoSwitch"/>
+            <output message="tns:echoSwitch"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoSwitch">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoSwitch">
+            <soap:operation soapAction="echoSwitch"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoSwitchService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoSwitch"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoSwitch"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="parentBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/correlationBPEL2/parentBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/correlationBPEL2/parentBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/parentWS" xmlns:ns2="http://j2ee.netbeans.org/wsdl/subWS" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+   <import namespace="http://j2ee.netbeans.org/wsdl/parentWS" location="parentWS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/subWS" location="subWS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink5" partnerLinkType="ns2:subWS14" partnerRole="endSubBPRole"/>
+      <partnerLink name="PartnerLink4" partnerLinkType="ns2:subWS13" partnerRole="callWrongInstanceRole"/>
+      <partnerLink name="PartnerLink3" partnerLinkType="ns2:subWS12" partnerRole="associateCorrelationWithInstance2Role"/>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns2:subWS1" partnerRole="createInstanceRole"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:parentWS1" myRole="parentWSPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="EndSubBPIn" messageType="ns2:subWSOperationRequest"/>
+      <variable name="CallWrongInstanceOut" messageType="ns2:callWrongInstanceReply"/>
+      <variable name="CallWrongInstanceIn" messageType="ns2:callWrongInstanceRequest"/>
+      <variable name="AssociateCorrelationWithInstance2In" messageType="ns2:associateCorrelationWithInstance2"/>
+      <variable name="CreateInstanceIn" messageType="ns2:createInstanceRequest"/>
+      <variable name="ParentWSOperationOut" messageType="ns1:parentWSOperationReply"/>
+      <variable name="ParentWSOperationIn" messageType="ns1:parentWSOperationRequest"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="CorrelationSet1" properties="ns1:parentCorr"/>
+   </correlationSets>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="parentWSOperation" portType="ns1:parentWSPortType" variable="ParentWSOperationIn">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="yes"/>
+         </correlations>
+      </receive>
+      <assign name="Assign7">
+         <copy>
+            <from>
+               <literal>Create Instance 1</literal>
+            </from>
+            <to part="part1" variable="CreateInstanceIn"/>
+         </copy>
+      </assign>
+      <invoke name="create-subBP-Instance1" partnerLink="PartnerLink2" operation="createInstance" portType="ns2:createInstance" inputVariable="CreateInstanceIn"/>
+      <assign name="Assign8">
+         <copy>
+            <from>
+               <literal>Create Instance 2</literal>
+            </from>
+            <to part="part1" variable="CreateInstanceIn"/>
+         </copy>
+      </assign>
+      <invoke name="create-subBP-Instance2" partnerLink="PartnerLink2" operation="createInstance" portType="ns2:createInstance" inputVariable="CreateInstanceIn"/>
+      <assign name="Assign9">
+         <copy>
+            <from>
+               <literal>Corr ID</literal>
+            </from>
+            <to part="part1" variable="CallWrongInstanceIn"/>
+         </copy>
+         <copy>
+            <from>
+               <literal>Corr ID</literal>
+            </from>
+            <to part="part1" variable="AssociateCorrelationWithInstance2In"/>
+         </copy>
+         <copy>
+            <from>
+               <literal>Create Instance 1</literal>
+            </from>
+            <to part="correlatingPart" variable="CallWrongInstanceIn"/>
+         </copy>
+         <copy>
+            <from>
+               <literal>Create Instance 2</literal>
+            </from>
+            <to part="correlatingPart" variable="AssociateCorrelationWithInstance2In"/>
+         </copy>
+      </assign>
+      <invoke name="call-subBP-Instance2" partnerLink="PartnerLink3" operation="associateCorrelationWithInstance2" portType="ns2:associateCorrelationWithInstance2" inputVariable="AssociateCorrelationWithInstance2In"/>
+      <invoke name="call-wrongInstance-Instance1" partnerLink="PartnerLink4" operation="callWrongInstance" portType="ns2:callWrongInstance" inputVariable="CallWrongInstanceIn" outputVariable="CallWrongInstanceOut"/>
+      <assign name="Assign2">
+         <copy>
+               <from>
+                     <literal>Create Instance 2</literal>
+                  </from>
+                  <to part="part1" variable="EndSubBPIn"/>
+            </copy>
+      </assign>
+      <invoke name="finish-instance2" partnerLink="PartnerLink5" operation="endSubBP" portType="ns2:endSubBP" inputVariable="EndSubBPIn"/>
+      <assign name="Assign10">
+         <copy>
+            <from variable="CallWrongInstanceOut" part="part1"/>
+            <to variable="ParentWSOperationOut" part="part1"/>
+         </copy>
+      </assign>
+      <reply name="Reply2" partnerLink="PartnerLink1" operation="parentWSOperation" portType="ns1:parentWSPortType" variable="ParentWSOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2007, Sun Microsystems, Inc. All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+  * Neither the name of Sun Microsystems, Inc. nor the names of its contributors
+    may be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+  THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<process name="SynchronousSample"
+         targetNamespace="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+         xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1"
+         xmlns:ns1="http://localhost/SynchronousSample/SynchronousSample"
+         xmlns:ns2="http://xml.netbeans.org/schema/SynchronousSample"
+         xmlns:ns3="http://www.sun.com/ALE/1.0/ALETypes.xsd"
+         xmlns:sxxf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions"
+         xmlns:ns4="http://www.sun.com/ALE/1.0/ALEService.wsdl">
+    
+    <documentation>
+        The synchronous BPEL process illustrates a simple synchronous flow. The process receives an input message and sends it back synchronously. A client starts the synchronous process by invoking a request-response operation. After invoking a synchronous process, the client is blocked until the process finishes and returns the result.
+    </documentation>
+
+    <import namespace="http://xml.netbeans.org/schema/SynchronousSample"
+            location="SynchronousSample.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"/>
+
+    <import namespace="http://localhost/SynchronousSample/SynchronousSample"
+            location="SynchronousSample.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/ALEServiceWrapper" location="ALEServiceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.sun.com/ALE/1.0/ALEService.wsdl" location="ALEService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://enterprise.netbeans.org/bpel/ALEServiceWrapper" partnerLinkType="tns:ALEServiceLoggingLinkType" partnerRole="ALEServiceLoggingRole"/>
+        <partnerLink
+            name="SynchronousSample"
+            partnerLinkType="ns1:partnerlinktype1"
+            myRole="partnerlinktyperole1">
+            
+            <documentation>
+                This partner link represents the client who sends an input message to the process and receives the response.
+            </documentation>
+        </partnerLink>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="SendLogwithPayloadIn" messageType="ns4:ALEwithPayloadMessage"/>
+        <variable name="SendLogIn" messageType="ns4:ALEMessage"/>
+
+        <variable name="outputVar" messageType="ns1:responseMessage">
+            <documentation>Output variable.</documentation>
+        </variable>
+
+        <variable name="inputVar" messageType="ns1:requestMessage">
+            <documentation>Input variable.</documentation>
+        </variable>
+    </variables>
+    
+    <sequence>
+        <documentation>
+            The sequence includes several activities which are executed in lexical order.
+        </documentation>
+
+        <receive
+            name="start"
+            partnerLink="SynchronousSample"
+            operation="operation1"
+            portType="ns1:portType1"
+            variable="inputVar"
+            createInstance="yes">
+
+            <documentation>
+                The Receive activity makes the process to wait for the incoming message to arrive.
+            </documentation>
+        </receive>
+
+        <assign name="Assign1">
+            <documentation>
+                The Assign activity copies data from the input variable to the output variable.
+            </documentation>
+
+            <copy>
+                <from>$inputVar.inputType/ns2:paramA</from>
+                <to>$outputVar.resultType/ns2:paramA</to>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>'Project-A'</from>
+                <to>$SendLogIn.SourceInfo/ns3:ProjectName</to>
+            </copy>
+            <copy>
+                <from>'myBP'</from>
+                <to>$SendLogIn.SourceInfo/ns3:ApplicationName</to>
+            </copy>
+            <copy>
+                <from>'100'</from>
+                <to>$SendLogIn.aleRequest/ns3:code</to>
+            </copy>
+            <copy>
+                <from>'Detail Message'</from>
+                <to>$SendLogIn.aleRequest/ns3:details</to>
+            </copy>
+            <copy>
+                <from>'Display Message'</from>
+                <to>$SendLogIn.aleRequest/ns3:displayMessage</to>
+            </copy>
+            <copy>
+                <from>'AT'</from>
+                <to>$SendLogIn.SourceInfo/ns3:ApplicationType</to>
+            </copy>
+            <copy>
+                <from>'SN'</from>
+                <to>$SendLogIn.SourceInfo/ns3:ServiceName</to>
+            </copy>
+            <copy>
+                <from>'MN'</from>
+                <to>$SendLogIn.SourceInfo/ns3:ModuleName</to>
+            </copy>
+            <copy>
+                <from>'UN'</from>
+                <to>$SendLogIn.SourceInfo/ns3:UnitName</to>
+            </copy>
+            <copy>
+                <from>sxxf:current-dateTime()</from>
+                <to>$SendLogIn.SourceInfo/ns3:DateTimeStamp</to>
+            </copy>
+            <copy>
+                <from>'9999'</from>
+                <to>$SendLogIn.SourceInfo/ns3:MessageID</to>
+            </copy>
+        </assign>
+        <assign name="Assign3">
+            <copy>
+                    <from variable="SendLogIn" part="SourceInfo"/>
+                        <to variable="SendLogwithPayloadIn" part="SourceInfo"/>
+                </copy>
+                <copy>
+                    <from variable="SendLogIn" part="aleRequest"/>
+                        <to variable="SendLogwithPayloadIn" part="aleRequest"/>
+                </copy>
+                <copy>
+                    <from>sxxf:doMarshal($inputVar.inputType)</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:OriginalMessage</to>
+                </copy>
+                <copy>
+                    <from>'ORIGINAL_MSG'</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:PayloadType</to>
+                </copy>
+                <copy>
+                    <from>'ASCII'</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:EncodeMode</to>
+                </copy>
+                <copy>
+                    <from>'N'</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:EncodeFlag</to>
+                </copy>
+                <copy>
+                    <from>'Y'</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:PersistFlag</to>
+                </copy>
+                <copy>
+                    <from>'DATABASE'</from>
+                        <to>$SendLogwithPayloadIn.alePayload/ns3:PersistMode</to>
+                </copy>
+        </assign>
+        <if name="If1">
+                <condition>contains('SOAPRequest', $inputVar.inputType/ns2:paramA)</condition>
+                <invoke name="Invoke3" partnerLink="PartnerLink1" operation="sendLog" portType="ns4:ALEServiceLoggingPortType" inputVariable="SendLogIn"/>
+            <elseif>
+                <condition>contains('SOAPRequestPayLoad', $inputVar.inputType/ns2:paramA)</condition>
+                <invoke name="Invoke4" partnerLink="PartnerLink1" operation="sendLogwithPayload" portType="ns4:ALEServiceLoggingPortType" inputVariable="SendLogwithPayloadIn"/>
+            </elseif>
+        </if>
+        <reply
+            name="end"
+            partnerLink="SynchronousSample"
+            operation="operation1"
+            portType="ns1:portType1"
+            variable="outputVar">
+            
+            <documentation>
+                The Reply activity returns a message from the process to the  partner which initiated the communication.
+            </documentation>
+        </reply>
+    </sequence>
+</process>

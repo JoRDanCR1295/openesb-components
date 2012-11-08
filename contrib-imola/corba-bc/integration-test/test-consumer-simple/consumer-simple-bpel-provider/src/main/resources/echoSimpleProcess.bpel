@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoSimpleProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoSimpleProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/echoSimpleProcess" xmlns:ns1="http://enterprise.netbeans.org/bpel/EchoSimpleWrapper" xmlns:ns2="urn:jbi4corba/test-consumer-simple">
+    <import namespace="http://enterprise.netbeans.org/bpel/EchoSimpleWrapper" location="EchoSimpleWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:jbi4corba/test-consumer-simple" location="EchoSimple.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="echoSimpleProcess" partnerLinkType="ns1:echoSimpleProcess" myRole="echoSimpleProcess"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="EchoOut" messageType="ns2:echoResponse"/>
+        <bpws:variable name="EchoIn" messageType="ns2:echoRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="echoSimpleProcess" operation="echo" portType="ns2:EchoSimplePortType" variable="EchoIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$EchoIn.parameters/ns2:in0</bpws:from>
+                <bpws:to>$EchoOut.parameters/ns2:out</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="echoSimpleProcess" operation="echo" portType="ns2:EchoSimplePortType" variable="EchoOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CompensateTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/CompensateTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/CompensateTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CompensateTerminationInScope" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/CompensateTerminationInScope1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/CompensateTerminationInScope" location="CompensateTerminationInScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:CompensateTerminationInScopePlink" myRole="CompensateTerminationInScopePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="CompensateTerminationInScopeOperationIn" messageType="ns1:CompensateTerminationInScopeOperationRequest"/>
+        <variable name="CompensateTerminationInScopeOperationOut" messageType="ns1:CompensateTerminationInScopeOperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="CompensateTerminationInScopeOperation" portType="ns1:CompensateTerminationInScopePortType" variable="CompensateTerminationInScopeOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $CompensateTerminationInScopeOperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <ns2:scope name="GlobalScope">
+            <ns2:faultHandlers>
+                <ns2:catch faultName="ns2:someFault">
+                    <ns2:sequence name="Sequence4">
+                        <ns2:assign name="Assign7">
+                            <ns2:copy>
+                                <ns2:from>concat($outputString, ' \n 8. Caught someFault. Sending Output from FH')</ns2:from>
+                                <ns2:to variable="CompensateTerminationInScopeOperationOut" part="OutputPart"/>
+                            </ns2:copy>
+                        </ns2:assign>
+                        <ns2:reply name="Reply2" partnerLink="PartnerLinkInOut" operation="CompensateTerminationInScopeOperation" portType="ns1:CompensateTerminationInScopePortType" variable="CompensateTerminationInScopeOperationOut"/>
+                    </ns2:sequence>
+                </ns2:catch>
+            </ns2:faultHandlers>
+            <ns2:sequence name="Sequence">
+                <ns2:flow name="Flow1">
+                        <ns2:sequence name="Sequence2">
+                            <ns2:scope name="RunningScope">
+                                <ns2:variables>
+                                    <ns2:variable name="UnintVariable" type="xsd:string"/>
+                                </ns2:variables>
+                                <ns2:faultHandlers>
+                                    <ns2:catchAll>
+                                        <ns2:sequence name="Sequence6">
+                                            <ns2:assign name="Assign4">
+                                                    <ns2:copy>
+                                                            <ns2:from>concat($outputString, ' \n 3. In FH: Before compensate ')</ns2:from>
+                                                                <ns2:to variable="outputString"/>
+                                                        </ns2:copy>
+                                                </ns2:assign>
+                                                <ns2:compensate></ns2:compensate>
+                                                <ns2:assign name="Assign6">
+                                                    <ns2:copy>
+                                                            <ns2:from>concat($outputString, ' \n 7. In FH: After compensate')</ns2:from>
+                                                                <ns2:to variable="outputString"/>
+                                                        </ns2:copy>
+                                                </ns2:assign>
+                                        </ns2:sequence>
+                                    </ns2:catchAll>
+                                </ns2:faultHandlers>
+                                <ns2:sequence name="Sequence3">
+                                            <ns2:scope name="InnerScope">
+                                                    <ns2:assign name="Assign2">
+                                                        <ns2:copy>
+                                                            <ns2:from>concat($outputString, ' \n 2. In Branch2. A fault is thrown after this assign. ')</ns2:from>
+                                                            <ns2:to variable="outputString"/>
+                                                        </ns2:copy>
+                                                        </ns2:assign>
+                                                        <ns2:compensationHandler>
+                                                            <ns2:sequence name="Sequence7">
+                                                                <ns2:assign name="Assign_Before">
+                                                                    <ns2:copy>
+                                                                            <ns2:from>concat($outputString, ' \n 4. In CH. Before LongWait ')</ns2:from>
+                                                                                <ns2:to variable="outputString"/>
+                                                                        </ns2:copy>
+                                                                </ns2:assign>
+                                                                  <ns2:assign name="Assign_After">
+                                                                        <ns2:copy>
+                                                                              <ns2:from>concat($outputString, ' \n 6. In CH. After LongWait ')</ns2:from>
+                                                                              <ns2:to variable="outputString"/>
+                                                                        </ns2:copy>
+                                                                  </ns2:assign>
+                                                            </ns2:sequence>
+                                                        </ns2:compensationHandler>
+                                                </ns2:scope>
+                                    <ns2:assign name="Assign_ThrowsUninitVarFault">
+                                        <ns2:copy>
+                                            <ns2:from>concat($UnintVariable, ' is an uninit variable')</ns2:from>
+                                            <ns2:to variable="UnintVariable"/>
+                                        </ns2:copy>
+                                    </ns2:assign>
+                                        </ns2:sequence>
+                                </ns2:scope>
+                        </ns2:sequence>
+                    <ns2:throw name="Throw1" faultName="ns2:someFault"/>
+                </ns2:flow>
+                <ns2:assign name="Assign8">
+                    <ns2:copy>
+                        <ns2:from variable="outputString"/>
+                        <ns2:to variable="CompensateTerminationInScopeOperationOut" part="OutputPart"/>
+                    </ns2:copy>
+                </ns2:assign>
+                <ns2:reply name="Reply1" partnerLink="PartnerLinkInOut" operation="CompensateTerminationInScopeOperation" portType="ns1:CompensateTerminationInScopePortType" variable="CompensateTerminationInScopeOperationOut"/>
+            </ns2:sequence>
+        </ns2:scope>
+    </sequence>
+</process>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="ReadResult"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/ReadResult"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/ReadResult"
+    xmlns:ns="http://xml.netbeans.org/schema/TestCustomEncoder/OutputEnvelope"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/ReadResult">
+            <xsd:import namespace="http://xml.netbeans.org/schema/TestCustomEncoder/OutputEnvelope"
+                schemaLocation="../DecodeEncode/OutputEnvelope.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ReadResultOperationRequest">
+        <part name="rroIn" element="ns:Envelope"/>
+    </message>
+    <portType name="ReadResultPortType">
+        <wsdl:operation name="ReadResultOperation">
+            <wsdl:input name="input1" message="tns:ReadResultOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="ReadResultBinding" type="tns:ReadResultPortType">
+        <file:binding/>
+        <wsdl:operation name="ReadResultOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="output.xml"
+                    pollingInterval="1000"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="ReadResultService">
+        <wsdl:port name="ReadResultPort" binding="tns:ReadResultBinding">
+            <file:address fileDirectory="testcustomencoder" relativePath="true"
+                pathRelativeTo="Default System Temp Dir"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="ReadResult1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ReadResultPortTypeRole" portType="tns:ReadResultPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>execbcimpl</artifactId>
+    <name>execbcimpl</name>
+    <version>${execbc.artifact.version}</version>
+    <description>execbcimpl description</description>
+    <!--<repositories>
+        <repository>
+            <id>ws-zones</id>
+            <name>ibiblio.org maven repository</name>
+            <url>http://www.ibiblio.org/maven/ch.ethz.ganymed/</url>
+            <layout>legacy</layout>
+            <releases> <enabled>true</enabled> </releases>
+            <snapshots> <enabled>false</enabled> </snapshots>
+        </repository>
+    </repositories>-->
+    <build>
+        <testOutputDirectory>bld/test</testOutputDirectory>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <!-- 
+                     ! need to replace the @variables@ in the .wsdl and .xml files
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                    <exclude>**/*.wsdl</exclude>
+                    <exclude>**/*.pom</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- use ant junit instead of surefire. -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-substitute-ant-variables</id>
+                        <phase>process-test-resources</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <property name="project.build.directory" value="${project.build.directory}" />
+                                <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                <property name="SRCROOT" value="${SRCROOT}" />
+
+                                <!-- create global filter rules: -->
+                                <echo file="${project.build.directory}/filter" append="false">
+                        SRCROOT=${SRCROOT}
+                        alaska_root=${SRCROOT}/ojc-core
+                        alaska_sharedlibrary=${SRCROOT}/ojc-core/component-common
+                        asadmin_cmd=bin/asadmin
+                        asant_cmd=bin/asant
+                        drivertest_dir=${SRCROOT}/ojc-core/driver-tests
+                        encoder_sharedlibrary=${SRCROOT}/ojc-core/encodersl/encoder-
+                        shell_cmd=sh
+                        jbicomps_home=${SRCROOT}/ojc-core
+                        tempdir=/tmp
+                                </echo>
+                                <filter filtersfile="${project.build.directory}/filter" />
+
+                                <copy todir="${project.build.directory}/test" overwrite="true" filtering="true" verbose="true" failonerror="false" >
+                                     <fileset dir="${project.build.testSourceDirectory}">
+                                         <include name="**/*.xml" />
+                                         <include name="**/*.wsdl" />
+                                         <include name="**/*.properties" />
+                                     </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-ant-junit</id>
+                        <phase>test</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <patternset id="jbicomps.junit.test.patternset" >
+                                    <include name="**/*Test*.java"/>
+                                    <!-- exclude failing test.  see IN=107976. RT 4/30/07 -->
+                                    <exclude name="**/com/sun/jbi/execbc/util/XmlUtilTest.java"/>
+                                </patternset>
+
+                                <ant antfile="${SRCROOT}/global-common/m2.ant"
+                                    dir="${project.build.sourceDirectory}/.." target="run_junit" >
+                                    <property name="maven.test.skip" value="${maven.test.skip}" />
+                                    <property name="maven.repo.local" value="${maven.repo.local}" />
+                                    <property name="project.artifactId" value="${project.artifactId}" />
+                                    <property name="project.build.directory" value="${project.build.directory}" />
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}" />
+                                    <property name="work.dir" value="${project.build.directory}" />
+
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties" />
+
+                                    <reference refid="maven.test.classpath"/>
+                                    <reference refid="jbicomps.junit.sysproperties"/>
+                                    <reference refid="jbicomps.junit.test.patternset"/>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-fw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4jext</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId> 
+            <artifactId>ganymed-ssh2</artifactId> 
+            <version>build210</version>
+        </dependency>
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>jbicompsplatform</groupId>
+            <artifactId>compileconf</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock-cglib</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

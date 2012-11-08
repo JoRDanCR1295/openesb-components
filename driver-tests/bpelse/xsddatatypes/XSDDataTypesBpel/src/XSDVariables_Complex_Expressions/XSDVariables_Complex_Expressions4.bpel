@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="XSDVariables_Complex_Expressions4"
+    targetNamespace="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions4"
+    xmlns:tns="http://www.seebeyond.com/eInsight/XSDVariables_Complex_Expressions4"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="http://stc.com/XSDVariables_Complex_Expressions4"
+    xmlns:ns1="urn:SampleXSD"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/XSDVariables_Complex_Expressions4"
+        location="XSDVariables_Complex_Expressions4.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD"
+        location="SampleXSD.xsd"
+    importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+        messageType="ns0:XSDVariables_Complex_Expressions4"></variable>
+        <variable name="messageType_Input"
+        messageType="ns0:XSDVariables_Complex_Expressions4"></variable>        
+    </variables>
+    <sequence>
+        <receive name="XSDVariables_Complex_Expressions4"
+            partnerLink="Client2BP"
+            portType="ns0:XSDVariables_Complex_Expressions4"
+            operation="XSDVariables_Complex_Expressions4"
+            variable="messageType_Input"
+        createInstance="yes"></receive>
+        <if name="If1">
+            <condition> ( $messageType_Input.part/value = '99999' ) </condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>concat($messageType_Input.part/value, 'BooleanPositive')</from>
+                    <to>$messageType_Output.part/value</to>
+                </copy>                
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat($messageType_Input.part/value,'BooleanNegative')</from>
+                    <to>$messageType_Output.part/value</to>
+                </copy>
+                </assign>            
+            </else>
+        </if>        
+        
+        <reply name="XSDVariables_Complex_Expressions4.Reply"
+            partnerLink="Client2BP"
+            portType="ns0:XSDVariables_Complex_Expressions4"
+            operation="XSDVariables_Complex_Expressions4"
+        variable="messageType_Output"></reply>
+    </sequence>
+</process>

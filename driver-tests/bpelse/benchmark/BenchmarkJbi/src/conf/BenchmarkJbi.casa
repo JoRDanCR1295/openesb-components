@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://localhost/MultiDepBpel/benchMark" xmlns:ns2="http://www.seebeyond.com/eInsight/parentBP" xmlns:ns3="http://www.seebeyond.com/eInsight/subBP" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="benchMarkPort" interface-name="ns1:benchMarkPortType" name="endpoint1" service-name="ns1:benchMarkService"/>
+        <endpoint endpoint-name="benchMarkPort" interface-name="ns1:benchMarkSubBPPortType" name="endpoint2" service-name="ns1:benchMarkSubBPService"/>
+        <endpoint endpoint-name="Server_myRole" interface-name="ns1:benchMarkPortType" name="endpoint3" service-name="ns2:benchMark"/>
+        <endpoint endpoint-name="Server_myRole" interface-name="ns1:benchMarkSubBPPortType" name="endpoint4" service-name="ns3:subBPPartnerLink"/>
+        <endpoint endpoint-name="Server_partnerRole" interface-name="ns1:benchMarkSubBPPortType" name="endpoint5" service-name="ns2:benchMarkSubBP"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="BenchmarkBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="BenchmarkJbi-BenchmarkBpel" unit-name="BenchmarkBpel" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BenchmarkJbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="-1" y="-1">
+                    <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="-1" y="-1">
+                    <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkSubBPPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkSubBPBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BenchmarkBpel/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

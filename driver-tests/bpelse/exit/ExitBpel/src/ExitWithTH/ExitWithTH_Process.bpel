@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitWithTH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitWithTH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitWithTH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL1" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL11" xmlns:ns4="http://j2ee.netbeans.org/wsdl/IOWSDL1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL1" location="IOWSDL1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns4:IOWSDL1Plink" myRole="IOWSDL1PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="IOWSDL1OperationIn" messageType="ns4:IOWSDL1OperationRequest"/>
+        <variable name="IOWSDL1OperationOut" messageType="ns4:IOWSDL1OperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL1Operation" portType="ns4:IOWSDL1PortType" variable="IOWSDL1OperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL1OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <ns2:sequence name="Sequence6">
+            <ns2:flow name="FaultingFlow">
+                <ns2:sequence name="Sequence1">
+                    <ns2:wait name="Wait1">
+                        <ns2:for>'P0Y0M0DT0H0M2S'</ns2:for>
+                    </ns2:wait>
+                    <ns2:assign name="Assign4">
+                        <ns2:copy>
+                            <ns2:from>concat($outputString, ' \n 6. In Branch1: Another fault occurs here ')</ns2:from>
+                            <ns2:to variable="outputString"/>
+                        </ns2:copy>
+                    </ns2:assign>
+                    <ns2:exit/>
+                </ns2:sequence>
+                <ns2:sequence name="Sequence2">
+                    <ns2:scope name="RunningScope">
+                        <ns2:sequence name="FaultGeneratingSequence">
+                            <ns2:flow name="Flow1">
+                                <ns2:scope name="InnerScope">
+                                    <ns2:terminationHandler>
+                                        <ns2:sequence>
+                                            <ns2:assign name="InnerScopeTHAssign" >
+                                                <ns2:copy>
+                                                    <ns2:from>concat($outputString, ' \n 4. In TH of InnerScope in Branch2-1 ')</ns2:from>
+                                                    <ns2:to variable="outputString"/>
+                                                </ns2:copy>
+                                            </ns2:assign>
+                                            <ns2:wait name="Wait3">
+                                                <ns2:for>'P0Y0M0DT0H0M2S'</ns2:for>
+                                            </ns2:wait>
+                                            <ns2:reply name="Reply3" partnerLink="PartnerLinkInOut" operation="IOWSDL1Operation" portType="ns4:IOWSDL1PortType" variable="IOWSDL1OperationOut"/>
+                                        </ns2:sequence>
+                                    </ns2:terminationHandler>
+                                    <ns2:sequence name="Sequence7">
+                                        <ns2:assign name="Assign2">
+                                            <ns2:copy>
+                                                <ns2:from>concat($outputString, ' \n 2. In Branch2-1 ')</ns2:from>
+                                                <ns2:to variable="outputString"/>
+                                            </ns2:copy>
+                                        </ns2:assign>
+                                        <ns2:wait name="Wait4">
+                                            <ns2:for>'P0Y0M0DT0H0M2S'</ns2:for>
+                                        </ns2:wait>
+                                    </ns2:sequence>
+                                </ns2:scope>
+                                <ns2:sequence name="Sequence8">
+                                    <ns2:wait name="Wait5">
+                                        <ns2:for>'P0Y0M0DT0H0M1S'</ns2:for>
+                                    </ns2:wait>
+                                    <ns2:assign name="Assign3">
+                                        <ns2:copy>
+                                            <ns2:from>concat($outputString, ' \n 3. In Branch2-2: Fault occurs here ')</ns2:from>
+                                            <ns2:to variable="outputString"/>
+                                        </ns2:copy>                                                        
+                                    </ns2:assign>
+                                    <ns2:throw name="InnerScopeThrow" faultName="ns2:secondFault"/>
+                                </ns2:sequence>
+                            </ns2:flow>
+                        </ns2:sequence>
+                    </ns2:scope>
+                </ns2:sequence>
+            </ns2:flow>
+            <!--ns2:assign name="Assign6"> TODO FIX: different types !!!
+                <ns2:copy>
+                    <ns2:from variable="IntVariable"/>
+                    <ns2:to variable="IOWSDL1OperationOut" part="OutputPart"/>
+                </ns2:copy>
+            </ns2:assign-->
+
+            <ns2:assign name="Assign6"> <!-- hot fix -->
+                <ns2:copy>
+                    <ns2:from variable="IOWSDL1OperationOut"/>
+                    <ns2:to variable="IOWSDL1OperationOut"/>
+                </ns2:copy>
+            </ns2:assign>
+
+            <ns2:reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL1Operation" portType="ns4:IOWSDL1PortType" variable="IOWSDL1OperationOut"/>
+        </ns2:sequence>
+    </sequence>
+</process>

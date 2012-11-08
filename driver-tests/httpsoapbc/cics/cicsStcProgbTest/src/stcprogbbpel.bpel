@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="stcprogbbpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/stcprogbbpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/stcprogbbpel" xmlns:ns1="http://stc.com/trigger" xmlns:ns2="http://www.STCPROGB.PROGBTST.com" xmlns:ns0="http://www.STCPROGB.PROGBTST.Request.com" xmlns:ns3="http://www.STCPROGB.PROGBTST.Response.com">
+    <import namespace="http://stc.com/trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.STCPROGB.PROGBTST.com" location="stcprogb.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TriggerIn1" messageType="ns1:trigger"/>
+        <variable name="TriggerOut1" messageType="ns1:triggerResponse"/>
+        <variable name="STCPROGBOperationOut1" messageType="ns2:STCPROGBOperationResponse"/>
+        <variable name="STCPROGBOperationIn1" messageType="ns2:STCPROGBOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="trigger" portType="ns1:trigger" variable="TriggerIn1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>'Test STCPROGB'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_a</to>
+            </copy>
+            <copy>
+                <from>'BBBBBBB'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_b</to>
+            </copy>
+            <copy>
+                <from>'999'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_c</to>
+            </copy>
+            <copy>
+                <from>'DDDDDDD'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_d</to>
+            </copy>
+            <copy>
+                <from>'999'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_e</to>
+            </copy>
+            <copy>
+                <from>'FFFFFFF'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_f</to>
+            </copy>
+            <copy>
+                <from>'999'</from>
+                <to>$STCPROGBOperationIn1.RequestPart/ns0:ws_output/ns0:field_g</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="STCPROGBOperation" portType="ns2:STCPROGBPort" inputVariable="STCPROGBOperationIn1" outputVariable="STCPROGBOperationOut1"/>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_a, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_b, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_c, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_d, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_e, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_f, ',', $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:field_g, $STCPROGBOperationOut1.ResponsePart/ns3:ws_output/ns3:ws_output_blob)</from>
+                <to>$TriggerOut1.part/ns1:response</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="trigger" portType="ns1:trigger" variable="TriggerOut1"/>
+    </sequence>
+   
+</process>

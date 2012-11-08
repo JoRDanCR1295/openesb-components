@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="modelScopeBased"
+                 targetNamespace="http://www.seebeyond.com/eInsight/modelScopeBased"
+                 sbynpxp:end_YLoc="717.0"
+                 sbynpxp:start_YLoc="-72.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="-174.0"
+                 sbynpxp:end_XLoc="1656.0"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/modelScopeBased"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="https://hhws.portamedic.com/DocumentService/"
+                 xmlns:ns1="urn:Foo"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <bpel_20:import namespace="https://hhws.portamedic.com/DocumentService/"
+                    location="ORDER.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:import namespace="urn:Foo"
+                    location="echo.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="p1"
+                             partnerLinkType="ns0:SLT"
+                             myRole="Server"/>
+        <partnerLink name="p2"
+                     partnerLinkType="ns1:HelloIFServiceLink"
+                     myRole="HelloIFRole"
+                     partnerRole="HelloIFRole"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="v1"
+                          messageType="ns1:HelloIF_sayHello"></bpel_20:variable>
+        <bpel_20:variable name="v2"
+                          messageType="ns1:HelloIF_sayHelloResponse"></bpel_20:variable>
+        <bpel_20:variable name="v3"
+                          messageType="ns0:SubmitOrderDataSoapIn"></bpel_20:variable>
+        <bpel_20:variable name="v4"
+                          messageType="ns0:SubmitOrderDataWSSecurity"></bpel_20:variable>
+    </bpel_20:variables>
+    <bpel_20:sequence>
+        <bpel_20:receive name="Receive"
+                         partnerLink="p2"
+                         portType="ns1:HelloIF"
+                         operation="sayHello"
+                         variable="v1"
+                         createInstance="yes"
+                         sbynpxp:XLoc="-60.0"
+                         sbynpxp:YLoc="-72.0"></bpel_20:receive>
+        <bpel_20:scope name="Scope1"
+                       isolated="no"
+                       sbynpxp:XLoc="12.0"
+                       sbynpxp:YLoc="-45.0"
+                       sbynpxp:isExpanded="true">
+            <bpel_20:faultHandlers>
+                <bpel_20:catch faultName="bpws:selectionFailure"
+                               faultVariable="v4"
+                               faultMessageType="ns0:SubmitOrderDataWSSecurity"
+                               sbynpxp:XLoc="-21.0"
+                               sbynpxp:YLoc="848.0"
+                               sbynpxp:isExpanded="false">
+                    <bpel_20:sequence>
+                        <bpel_20:invoke name="Activityb"
+                                        partnerLink="p2"
+                                        portType="ns1:HelloIF"
+                                        operation="sayHello"
+                                        inputVariable="v1"
+                                        outputVariable="v2"
+                                        sbynpxp:XLoc="39.0"
+                                        sbynpxp:YLoc="878.0"></bpel_20:invoke>
+                        <bpel_20:empty name="Emptya"
+                                       sbynpxp:XLoc="80.0"
+                                       sbynpxp:YLoc="938.0"></bpel_20:empty>
+                        <bpel_20:wait name="Wait"
+                                      sbynpxp:XLoc="110.0"
+                                      sbynpxp:YLoc="885.0">
+                            <bpel_20:for>&apos;P1Y0D&apos;</bpel_20:for>
+                        </bpel_20:wait>
+                    </bpel_20:sequence>
+                </bpel_20:catch>
+                <bpel_20:catchAll sbynpxp:XLoc="41.0"
+                                  sbynpxp:YLoc="733.0"
+                                  sbynpxp:isExpanded="false">
+                    <bpel_20:compensate name="Compensate"
+                                        sbynpxp:XLoc="101.0"
+                                        sbynpxp:YLoc="763.0"></bpel_20:compensate>
+                </bpel_20:catchAll>
+            </bpel_20:faultHandlers>
+            <bpel_20:compensationHandler sbynpxp:XLoc="-151.0"
+                                         sbynpxp:YLoc="744.0"
+                                         sbynpxp:isExpanded="false">
+                <bpel_20:sequence>
+                    <bpel_20:empty name="Empty"
+                                   sbynpxp:XLoc="-91.0"
+                                   sbynpxp:YLoc="840.0"></bpel_20:empty>
+                    <bpel_20:receive name="Receive"
+                                     partnerLink="p2"
+                                     portType="ns1:HelloIF"
+                                     operation="sayHello"
+                                     variable="v1"
+                                     createInstance="no"
+                                     sbynpxp:XLoc="-45.0"
+                                     sbynpxp:YLoc="816.0"></bpel_20:receive>
+                    <bpel_20:invoke name="Activity"
+                                    partnerLink="p2"
+                                    portType="ns1:HelloIF"
+                                    operation="sayHello"
+                                    inputVariable="v1"
+                                    outputVariable="v2"
+                                    sbynpxp:XLoc="-24.0"
+                                    sbynpxp:YLoc="774.0"></bpel_20:invoke>
+                    <bpel_20:reply name="Reply"
+                                   partnerLink="p1"
+                                   portType="ns0:SubmitOrderSoap"
+                                   operation="SubmitOrderData"
+                                   variable="v1"
+                                   sbynpxp:XLoc="-4.0"
+                                   sbynpxp:YLoc="867.0"></bpel_20:reply>
+                </bpel_20:sequence>
+            </bpel_20:compensationHandler>
+            <bpel_20:sequence>
+                <bpel_20:invoke name="Activity1"
+                                partnerLink="p2"
+                                portType="ns1:HelloIF"
+                                operation="sayHello"
+                                inputVariable="v1"
+                                outputVariable="v2"
+                                sbynpxp:XLoc="72.0"
+                                sbynpxp:YLoc="-15.0"></bpel_20:invoke>
+                <bpel_20:receive name="Receive1"
+                                 partnerLink="p2"
+                                 portType="ns1:HelloIF"
+                                 operation="sayHello"
+                                 variable="v1"
+                                 createInstance="no"
+                                 sbynpxp:XLoc="141.0"
+                                 sbynpxp:YLoc="6.0"></bpel_20:receive>
+                <bpel_20:assign name="Assign1"
+                                sbynpxp:XLoc="246.0"
+                                sbynpxp:YLoc="13.0">
+                    <bpel_20:copy>
+                        <bpel_20:from>$v1.body/string</bpel_20:from>
+                        <bpel_20:to>$v1.body/string</bpel_20:to>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+            </bpel_20:sequence>
+        </bpel_20:scope>
+        <bpel_20:scope name="Scope2"
+                       isolated="no"
+                       sbynpxp:XLoc="339.0"
+                       sbynpxp:YLoc="58.0"
+                       sbynpxp:isExpanded="true">
+            <bpel_20:sequence>
+                <bpel_20:while name="While2"
+                               sbynpxp:XLoc="399.0"
+                               sbynpxp:YLoc="162.0"
+                               sbynpxp:isExpanded="true">
+                    <bpel_20:condition>&apos;true&apos;</bpel_20:condition>
+                    <bpel_20:sequence>
+                        <bpel_20:receive name="Receive"
+                                         partnerLink="p2"
+                                         portType="ns1:HelloIF"
+                                         operation="sayHello"
+                                         variable="v1"
+                                         sbynpxp:XLoc="459.0"
+                                         sbynpxp:YLoc="192.0"></bpel_20:receive>
+                        <bpel_20:assign name="Assign"
+                                        sbynpxp:XLoc="503.0"
+                                        sbynpxp:YLoc="207.0">
+                            <bpel_20:copy>
+                                <bpel_20:from>$v1.body/string</bpel_20:from>
+                                <bpel_20:to>$v2.result/string</bpel_20:to>
+                            </bpel_20:copy>
+                        </bpel_20:assign>
+                        <bpel_20:reply name="Reply"
+                                       partnerLink="p2"
+                                       portType="ns1:HelloIF"
+                                       operation="sayHello"
+                                       variable="v2"
+                                       sbynpxp:XLoc="617.0"
+                                       sbynpxp:YLoc="218.0"></bpel_20:reply>
+                    </bpel_20:sequence>
+                </bpel_20:while>
+        <bpel_20:if name="If1">
+          <bpel_20:condition>&apos;a&apos;</bpel_20:condition>
+            <bpel_20:sequence>
+               <bpel_20:invoke name="Activity2a"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="872.0"
+                                            sbynpxp:YLoc="88.0"></bpel_20:invoke>
+                </bpel_20:sequence>
+             <bpel_20:elseif>
+              <bpel_20:condition>&apos;a&apos;</bpel_20:condition>
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activity2b"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="871.0"
+                                            sbynpxp:YLoc="230.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+             </bpel_20:elseif>
+             <bpel_20:elseif>
+                <bpel_20:condition>&apos;a&apos;</bpel_20:condition>
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activity2c"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="871.0"
+                                            sbynpxp:YLoc="294.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+         </bpel_20:elseif>
+         </bpel_20:if>                 
+            </bpel_20:sequence>
+        </bpel_20:scope>
+        <bpel_20:scope name="Scope3"
+                       isolated="no"
+                       sbynpxp:XLoc="1043.0"
+                       sbynpxp:YLoc="344.0"
+                       sbynpxp:isExpanded="true">
+            <bpel_20:sequence>
+                <bpel_20:pick name="pick3"
+                              createInstance="no"
+                              sbynpxp:XLoc="1178.0"
+                              sbynpxp:YLoc="502.0"
+                              sbynpxp:YLoc_MergeNode="521.0"
+                              sbynpxp:XLoc_MergeNode="1528.0"
+                              sbynpx:lineLabel="pick3">
+                    <bpel_20:onMessage partnerLink="p1"
+                                       portType="ns0:SubmitOrderSoap"
+                                       operation="SubmitOrderData"
+                                       variable="v3"
+                                       sbynpxp:XLoc="1508.0"
+                                       sbynpxp:YLoc="422.0"
+                                       sbynpx:lineLabel="OnMsg3_1">
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activityn"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="1393.0"
+                                            sbynpxp:YLoc="374.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+                    </bpel_20:onMessage>
+                    <bpel_20:onMessage partnerLink="p1"
+                                       portType="ns0:SubmitOrderSoap"
+                                       operation="SubmitOrderData"
+                                       variable="v3"
+                                       sbynpxp:XLoc="1502.0"
+                                       sbynpxp:YLoc="527.0"
+                                       sbynpx:lineLabel="OnMsg3_2">
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activityas"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="1381.0"
+                                            sbynpxp:YLoc="584.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+                    </bpel_20:onMessage>
+                    <bpel_20:onAlarm sbynpxp:XLoc="1510.0"
+                                     sbynpxp:YLoc="476.0"
+                                     sbynpx:lineLabel="OnAlarm3_1">
+                        <for>&apos;P1Y0D&apos;</for>
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activitya"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="1404.0"
+                                            sbynpxp:YLoc="482.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+                    </bpel_20:onAlarm>
+                    <bpel_20:onAlarm sbynpxp:XLoc="1463.0"
+                                     sbynpxp:YLoc="566.0"
+                                     sbynpx:lineLabel="OnAlarm3_2">
+                        <for>&apos;P1Y0D&apos;</for>
+                        <bpel_20:sequence>
+                            <bpel_20:invoke name="Activityb"
+                                            partnerLink="p2"
+                                            portType="ns1:HelloIF"
+                                            operation="sayHello"
+                                            inputVariable="v1"
+                                            outputVariable="v2"
+                                            sbynpxp:XLoc="1311.0"
+                                            sbynpxp:YLoc="676.0"></bpel_20:invoke>
+                        </bpel_20:sequence>
+                    </bpel_20:onAlarm>
+                </bpel_20:pick>
+            </bpel_20:sequence>
+        </bpel_20:scope>
+    </bpel_20:sequence>
+</bpel_20:process>

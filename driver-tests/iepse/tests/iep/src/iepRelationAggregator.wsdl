@@ -1,0 +1,160 @@
+<definitions targetNamespace="iepRelationAggregator_iep"
+             xmlns:tns="iepRelationAggregator_iep"
+             xmlns:typens="iepRelationAggregator_iep"
+             xmlns:defns="iepRelationAggregator_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="iepRelationAggregator_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0Batch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="name" type="xsd:string"/>
+                                <xsd:element name="value" type="xsd:double"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="All_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="name" type="xsd:string"/>
+                   <xsd:element name="min0" type="xsd:double"/>
+                   <xsd:element name="avg0" type="xsd:double"/>
+                   <xsd:element name="max0" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="IBM_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="min0" type="xsd:double"/>
+                   <xsd:element name="avg0" type="xsd:double"/>
+                   <xsd:element name="max0" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamInput0Batch_Msg">
+    <part name="input" element="typens:StreamInput0Batch_MsgObj"/>
+</message>
+<message name="All_Msg">
+    <part name="output" element="typens:All_MsgObj"/>
+</message>
+<message name="IBM_Msg">
+    <part name="output" element="typens:IBM_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <input message="tns:StreamInput0Batch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_All">
+    <operation name="All">
+        <input message="tns:All_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_IBM">
+    <operation name="IBM">
+        <input message="tns:IBM_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_All" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_All" portType="tns:OutputPt_All"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_IBM" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_IBM" portType="tns:OutputPt_IBM"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="StreamInput0">
+        <soap:operation soapAction="StreamInput0"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <soap:operation soapAction="StreamInput0Batch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- output binding -->
+<binding name="OutputBinding_All" type="defns:OutputPt_All">
+    <file:binding/>
+    <operation name="All">
+        <file:operation/>
+        <input>
+            <file:message fileName="actualAll.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+            </file:message>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_IBM" type="defns:OutputPt_IBM">
+    <file:binding/>
+    <operation name="IBM">
+        <file:operation/>
+        <input>
+            <file:message fileName="actualIBM.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal">
+            </file:message>
+        </input>
+    </operation>
+</binding>
+
+<!-- The service name and the tns represent my service ID QName -->
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/iepRelationAggregator_iep"/>
+    </port>
+</service>
+<!-- output service -->
+<service name="OutputService_All">
+    <port name="OutputPort_All" binding="tns:OutputBinding_All">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/tests/jbi/test/IepRelationAggregator"/>
+    </port>
+</service>
+<service name="OutputService_IBM">
+    <port name="OutputPort_IBM" binding="tns:OutputBinding_IBM">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/tests/jbi/test/IepRelationAggregator"/>
+    </port>
+</service>
+</definitions>

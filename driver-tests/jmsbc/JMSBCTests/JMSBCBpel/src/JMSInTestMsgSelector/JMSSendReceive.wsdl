@@ -1,0 +1,149 @@
+<definitions targetNamespace="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             name="JMSSendReceive"
+             xmlns:tns="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns:tns3="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns2="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slink="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:tns0="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:tns4="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:tns1="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link">
+    <types>
+        <xsd:schema targetNamespace="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns3="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+                    xmlns:tns="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:tns2="http://localhost/JMS/JMSInTestClientAck/JMSSendReceive"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:slink="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+                    xmlns:ns1="http://localhost/JMS/JMSInTestClientAck/JMSSendReceive"
+                    xmlns:tns0="http://localhost/JMS/JMSInTestClientAck/JMSSendReceive"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:tns4="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+                    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+                    xmlns:tns1="http://localhost/JMS/JMSInTestMsgSelector/JMSSendReceive"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+                    
+            
+                    
+            
+                    
+            
+                    
+            
+                    
+            
+                    <xsd:element type="tns:helloObjType"
+                         name="helloObj"></xsd:element>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                    <xsd:element type="xsd:nonNegativeInteger"
+                                 name="nonNegativeInteger"></xsd:element>
+                    <xsd:element type="xsd:byte"
+                                 name="byte"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                    <xsd:element type="xsd:negativeInteger"
+                                 name="negativeInteger"></xsd:element>
+                    <xsd:element type="xsd:dateTime"
+                                 name="dateTime"></xsd:element>
+                    <xsd:element type="xsd:nonPositiveInteger"
+                                 name="nonPositiveInteger"></xsd:element>
+                    <xsd:element type="xsd:duration"
+                                 name="duration"></xsd:element>
+                    <xsd:element type="xsd:ENTITIES"
+                                 name="ENTITIES"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="double"></xsd:element>
+                    <xsd:element type="xsd:ENTITY"
+                                 name="ENTITY"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="messageJMSOut">
+        <part name="partJMS"
+              element="tns:helloObj"/>
+        <part name="partType" type="xsd:string"/>
+        <part name="partCorrelationId" type="xsd:string"/>
+    </message>
+    <message name="messageJMS">
+        <part name="partJMS"
+              element="tns:helloObj"></part>
+    </message>
+    <portType name="portTypeJMSOut">
+        <operation name="operationJMSOut">
+            <input name="input"
+                   message="tns:messageJMSOut"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeJMSIn">
+        <operation name="operationJMSIn">
+            <input name="input"
+                   message="tns:messageJMS"></input>
+        </operation>
+    </portType>
+    <binding name="bindingJMSOut"
+             type="tns:portTypeJMSOut">
+        <jms:binding></jms:binding>
+        <operation name="operationJMSOut">
+            <jms:operation destination="MsgSelectorTestDestination" destinationType="Queue" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partJMS" correlationIdPart="partCorrelationId" typePart="partType" />
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSIn"
+             type="tns:portTypeJMSIn">
+        <jms:binding></jms:binding>
+        <operation name="operationJMSIn">
+            <jms:operation destination="MsgSelectorTestDestination" destinationType="Queue" transaction="NoTransaction" messageSelector="JMSCorrelationID=&apos;88888888&apos; AND JMSType=&apos;SUN&apos;" >
+                <jms:options>
+                    <jms:option name="endpointPoolMaxSize" value="1"/>
+                </jms:options>
+            </jms:operation>
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partJMS" />
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceJMSOutMsgSelector">
+        <port name="portJMSOutMsgSelector"
+              binding="tns:bindingJMSOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+    <service name="serviceJMSInMsgSelector">
+        <port name="portJMSInMsgSelector"
+              binding="tns:bindingJMSIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="JMSOutLNK"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="JMSOutClient"
+                   portType="tns:portTypeJMSOut"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSInLNK"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="JMSInServer"
+                   portType="tns:portTypeJMSIn"></plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

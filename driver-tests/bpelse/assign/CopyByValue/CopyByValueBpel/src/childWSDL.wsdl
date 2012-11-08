@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="childWSDL" targetNamespace="http://j2ee.netbeans.org/wsdl/childWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="urn:SampleXSD" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://j2ee.netbeans.org/wsdl/childWSDL">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/childWSDL">
+            <xsd:import namespace="urn:SampleXSD" schemaLocation="SampleXSD.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="childWSDLOperationMessage">
+        <part name="part1" element="ns:person"/>
+    </message>
+    <portType name="childWSDLPortType">
+        <operation name="childWSDLOperation">
+            <input name="input1" message="tns:childWSDLOperationMessage"/>
+        </operation>
+    </portType>
+    <binding name="childWSDLBinding" type="tns:childWSDLPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="childWSDLOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="childWSDLService">
+        <port name="childWSDLPort" binding="tns:childWSDLBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/childWSDLService/childWSDLPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="childWSDL1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="childWSDLPortTypeRole" portType="tns:childWSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

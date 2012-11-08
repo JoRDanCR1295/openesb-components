@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+           DO NOT EDIT!
+           *** GENERATED - To build POJO based project ***
+ -->
+<project name="pojoAnnotationProcessor" default="pojo-annotation-processor" basedir="...">
+    <property name="pojo.customprop.file" value="nbproject/pojocustom.properties"/>
+        <property file="${pojo.customprop.file}"/>
+    <condition property="pojo.properties.available">
+        <available file="${pojo.customprop.file}"/>
+    </condition>
+    
+   
+    <condition property="packagealljar">
+        <not>
+            <isset property="pojo.properties.available"/>
+        </not>
+    </condition>
+    <target name="pojo-init-taskdefs" unless="netbeans.home" >
+        <path id="ant.task.classpath.models" >
+            <pathelement location="${caps.netbeans.home}/soa2/modules/org-netbeans-modules-soa-pojo.jar"/>
+            <pathelement location="${caps.netbeans.home}/soa2/modules/ext/jbi/jbi.jar"/>
+            <pathelement location="${caps.netbeans.home}/soa2/modules/ext/jbi/openesb-pojo-engine-api.jar"/>
+            <pathelement location="${caps.netbeans.home}/soa2/ant/nblib/org-netbeans-modules-soa-pojo.jar"/>
+            <pathelement location="${caps.netbeans.home}/ide9/modules/org-netbeans-modules-classfile.jar"/>
+            <fileset dir="${basedir}">
+                <include name="dist/*.jar"/>
+            </fileset>
+        </path>
+        <taskdef name="pojo-generate-jbi-descriptor" classname="org.netbeans.modules.soa.pojo.anttasks.ide.IdePOJOGenerateJbiDescriptorTask">
+            <classpath refid="ant.task.classpath.models"/>
+        </taskdef>
+    </target>
+    <target name="pojo-typedef-target" depends="-init-project,pojo-init-taskdefs,-pre-pre-jar">
+        <pojo-generate-jbi-descriptor buildDirectory="${basedir}/${build.classes.dir}" sourceDirectory="${basedir}/${src.dir}" projectClassPath="${javac.classpath}" classpathRef="ant.task.classpath.models"/>
+    </target>
+    <target name="pojo-annotation-processor" depends="pojo-typedef-target">
+     <condition property="packagealljar">
+            <equals arg1="${pojo.packageall}" arg2="true"/>
+        </condition>        
+        <antcall target="-pojo-package-jar"/>
+    </target>
+    <target  name="-pojo-package-jar" if="packagealljar">
+        <property location="${build.classes.dir}" name="build.classes.dir.resolved"/>
+        <pathconvert property="run.classpath.without.build.classes.dir">
+            <path path="${run.classpath}"/>
+            <map from="${build.classes.dir.resolved}" to=""/>
+        </pathconvert>
+        <pathconvert pathsep=" " property="jar.classpath">
+            <path path="${run.classpath.without.build.classes.dir}"/>
+            <chainedmapper>
+                <flattenmapper/>
+                <globmapper from="*" to="${build.classes.dir}/*"/>
+            </chainedmapper>
+        </pathconvert>
+        <taskdef classname="org.netbeans.modules.java.j2seproject.copylibstask.CopyLibs" classpath="${libs.CopyLibs.classpath}" name="copylibs"/>
+        <copylibs compress="${jar.compress}" basedir="${build.classes.dir}"
+        jarfile="${dist.jar}" manifest="${manifest.file}" runtimeclasspath="${run.classpath.without.build.classes.dir}">
+            <fileset dir="${build.classes.dir}"/>
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${jar.classpath}"/>
+            </manifest>
+        </copylibs>
+        <delete file="${dist.jar}"/>
+        <copy todir="${build.classes.dir}">
+            <fileset dir="${dist.dir}">
+                <exclude name="**/jbi.jar"/>
+                <exclude name="**/openesb-pojo-engine-api*.jar"/>
+                <exclude name="*.properties"/>
+                <exclude name="*.txt"/>
+            </fileset>
+        </copy>
+        <echo>To run this application from the command line without Ant, try:</echo>
+        <property location="${dist.jar}" name="dist.jar.resolved"/>
+        <echo>java -jar "${dist.jar.resolved}"</echo>
+    </target>
+    <target name="dist_se" depends="jar"/>
+</project>

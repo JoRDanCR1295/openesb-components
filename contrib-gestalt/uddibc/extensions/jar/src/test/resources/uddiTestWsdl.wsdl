@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="uddiWsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/uddiWsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/uddiWsdl" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:uddi="http://schemas.sun.com/jbi/wsdl-extensions/uddi/">
+    <types/>
+    <message name="uddiWsdlOperationRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+    </message>
+    <message name="uddiWsdlOperationReply">
+        <part name="part1" type="xsd:anyURI"/>
+    </message>
+    <portType name="uddiWsdlPortType">
+        <wsdl:operation name="uddiWsdlOperation">
+            <wsdl:input name="input1" message="tns:uddiWsdlOperationRequest"/>
+            <wsdl:output name="output1" message="tns:uddiWsdlOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="uddiWsdlBinding" type="tns:uddiWsdlPortType">
+        <uddi:binding/>
+        <wsdl:operation name="uddiWsdlOperation">
+            <uddi:operation name="search"/>
+            <wsdl:input name="input1">
+                <uddi:input businessName="part1" serviceName="part2"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <uddi:output/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="uddiWsdlService">
+        <wsdl:port name="uddiWsdlPort" binding="tns:uddiWsdlBinding">
+            <uddi:address publishUri="http://localhost/publish" inquiryUri="http://test.uddi.microsoft.com/inquire"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="uddiWsdl1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="uddiWsdlPortTypeRole" portType="tns:uddiWsdlPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

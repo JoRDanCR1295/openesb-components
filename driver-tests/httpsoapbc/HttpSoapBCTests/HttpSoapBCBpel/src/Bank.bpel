@@ -1,0 +1,38 @@
+<bpel_20:process name="Bank" targetNamespace="http://www.seebeyond.com/eInsight/Bank" sbynpxp:end_YLoc="298.0" sbynpxp:start_YLoc="319.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="128.0" sbynpxp:end_XLoc="791.0" xmlns:tns="http://www.seebeyond.com/eInsight/Bank" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:ns0="urn:bank" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:ns1="ns0">
+	<bpel_20:import namespace="urn:bank" location="bank.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+	<bpel_20:partnerLinks>
+		<bpel_20:partnerLink name="test" partnerLinkType="ns0:BankServiceLink" myRole="BankRole"/>
+	</bpel_20:partnerLinks>
+	<bpel_20:variables>
+		<bpel_20:variable name="MyRole_withdraw_Output" messageType="ns0:withdrawRequest" sbyncreation:type="auto"/>
+		<bpel_20:variable name="MyRole_withdraw_Input" messageType="ns0:withdrawResponse" sbyncreation:type="auto"/>
+		<bpel_20:variable name="MyRole_withdraw_Fault" messageType="ns0:InsufficientFundFaultMessage" sbyncreation:type="auto"/>
+		<bpel_20:variable name="MyRole_withdraw_Fault1" messageType="ns0:AccountNotExistFaultMessage" sbyncreation:type="auto"/>
+	</bpel_20:variables>
+	<sequence>
+		<bpel_20:receive name="MyRole.withdraw.Receive" partnerLink="test" portType="ns0:Bank" operation="withdraw" variable="MyRole_withdraw_Output" createInstance="yes" sbynpxp:XLoc="217.0" sbynpxp:YLoc="337.0"/>
+		<bpel_20:if name="Decision">
+			<bpel_20:condition>$MyRole_withdraw_Output.parameters/account = &apos;12345&apos;</bpel_20:condition>
+				<sequence>
+					<bpel_20:assign name="assign" sbynpxp:XLoc="438.0" sbynpxp:YLoc="251.0">
+						<bpel_20:copy>
+							<bpel_20:from>true()</bpel_20:from>
+							<bpel_20:to>$MyRole_withdraw_Input.return/accepted</bpel_20:to>
+						</bpel_20:copy>
+					</bpel_20:assign>
+                                        <bpel_20:reply name="MyRole.withdraw.Reply" partnerLink="test" portType="ns0:Bank" operation="withdraw" variable="MyRole_withdraw_Input" sbynpxp:XLoc="648.0" sbynpxp:YLoc="250.0"/>
+				</sequence>
+			<bpel_20:else>
+				<sequence>
+                                   <bpel_20:assign name="Assign1">
+				   <bpel_20:copy>
+				       <bpel_20:from>'ns0:AccountNotExistException'</bpel_20:from>
+                                       <bpel_20:to part="fault" variable="MyRole_withdraw_Fault1"/>
+				   </bpel_20:copy>
+				  </bpel_20:assign>
+				  <bpel_20:reply name="MyRole.withdraw.Reply1" faultName="ns0:AccountNotExistException" partnerLink="test" portType="ns0:Bank" operation="withdraw" variable="MyRole_withdraw_Fault1"/>
+				</sequence>
+			</bpel_20:else>
+		</bpel_20:if>	
+	</sequence>
+</bpel_20:process>

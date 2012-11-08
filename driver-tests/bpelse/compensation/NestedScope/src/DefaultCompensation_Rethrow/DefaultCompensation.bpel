@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DefaultCompensation"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestScopeProj/DefaultCompensation"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TestScopeProj/DefaultCompensation" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/ScopeInterface"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ScopeInterface" location="ScopeInterface.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InboundPL" partnerLinkType="ns1:InboundPLT" myRole="InboundPTRole"/>
+        <partnerLink name="OneWayInvPL" partnerLinkType="ns1:OneWayPLT" partnerRole="OneWayPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InRecVar" messageType="ns1:InputMsg"/>
+        <variable name="FinalInvVar" messageType="ns1:InputMsg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns2:uninitializedVariable">
+            <sequence name="ProcFHSeq">
+                <assign name="ProcFHAssign">
+                    <copy>
+                        <from>concat($InRecVar.InputPart, ' :In Process FH:')</from>
+                        <to part="InputPart" variable="InRecVar"/>
+                    </copy>
+                    <copy>
+                        <from variable="InRecVar" part="InputPart"/>
+                        <to variable="FinalInvVar" part="InputPart"/>
+                    </copy>
+                </assign>
+                <reply name="finalReply" partnerLink="InboundPL" operation="InboundOper" 
+                       portType="ns1:InboundPT" variable="FinalInvVar"/>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="InRec" createInstance="yes" partnerLink="InboundPL" operation="InboundOper" portType="ns1:InboundPT" variable="InRecVar"/>
+        <assign name="StartAssign">
+            <copy>
+                <from>concat($InRecVar.InputPart, ' :In Process:')</from>
+                <to part="InputPart" variable="InRecVar"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <variables>
+                <variable name="S1InvVar" messageType="ns1:InputMsg"/>
+            </variables>
+            <sequence name="Sequence1">
+                <assign name="S1Start">
+                    <copy>
+                        <from>
+                            <literal> :S1 Start</literal>
+                        </from>
+                        <to part="InputPart" variable="S1InvVar"/>
+                    </copy>
+                    <copy>
+                        <from>concat($InRecVar.InputPart, ' :S1 Start:')</from>
+                        <to part="InputPart" variable="InRecVar"/>
+                    </copy>
+                </assign>
+                <scope name="Scope2">
+                    <variables>
+                        <variable name="S2InvVar" messageType="ns1:InputMsg"/>
+                    </variables>
+                    <sequence name="Sequence2">
+                        <assign name="S2Start">
+                            <copy>
+                                <from>
+                                    <literal> :S2 Start</literal>
+                                </from>
+                                <to part="InputPart" variable="S2InvVar"/>
+                            </copy>
+                            <copy>
+                                <from>concat($InRecVar.InputPart, ' :S2 Start:')</from>
+                                <to part="InputPart" variable="InRecVar"/>
+                            </copy>
+                        </assign>
+                        <scope name="Scope3">
+                            <variables>
+                                <variable name="S3InvVar" messageType="ns1:InputMsg"/>
+                                <variable name="S3CHInvVar" messageType="ns1:InputMsg"/>
+                            </variables>
+                            <compensationHandler>
+                                <sequence name="S3CHSeq">
+                                    <assign name="S3CHAssign">
+                                        <copy>
+                                            <from>concat($InRecVar.InputPart, ' :S3CH called by Default FCH:')</from>
+                                            <to variable="InRecVar" part="InputPart"/>
+                                        </copy>
+                                        
+                                        <copy>
+                                            <from variable="InRecVar" part="InputPart"/>
+                                            <to variable="S3CHInvVar" part="InputPart"/>
+                                        </copy>
+                                    </assign>
+                                    <invoke name="S1CHInv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                            portType="ns1:OneWayPT" inputVariable="S3CHInvVar"/>
+                                </sequence>
+                            </compensationHandler>
+                            <sequence name="Sequence3">
+                                <assign name="S3Start">
+                                    <copy>
+                                        <from>concat($InRecVar.InputPart, ' :S3 Start:')</from>
+                                        <to part="InputPart" variable="InRecVar"/>
+                                    </copy>
+                                </assign>
+                                <assign name="S3End">
+                                    <copy>
+                                        <from>
+                                            <literal> :S3 End:</literal>
+                                        </from>
+                                        <to part="InputPart" variable="S3InvVar"/>
+                                    </copy>
+                                    <copy>
+                                        <from>concat($InRecVar.InputPart, ' :S3 End:')</from>
+                                        <to part="InputPart" variable="InRecVar"/>
+                                    </copy>
+                                </assign>
+                                <invoke name="S3Invoke" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                        portType="ns1:OneWayPT" inputVariable="S3InvVar"/>
+                            </sequence>
+                        </scope>
+                        <assign name="S2End">
+                            <copy>
+                                <from>
+                                    <literal> :S2 End:</literal>
+                                </from>
+                                <to part="InputPart" variable="S2InvVar"/>
+                            </copy>
+                            <copy>
+                                <from>concat($InRecVar.InputPart, ' :S2 End:')</from>
+                                <to part="InputPart" variable="InRecVar"/>
+                            </copy>
+                        </assign>
+                        <invoke name="S2Invoke" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                portType="ns1:OneWayPT" inputVariable="S2InvVar"/>
+                    </sequence>
+                </scope>
+                <assign name="S1End">
+                    <copy>
+                        <from>
+                            <literal> :S1 Before fault:</literal>
+                        </from>
+                        <to part="InputPart" variable="S1InvVar"/>
+                    </copy>
+                    <copy>
+                        <from>concat($InRecVar.InputPart, ' :S1 Before fault:')</from>
+                        <to part="InputPart" variable="InRecVar"/>
+                    </copy>
+                </assign>
+                <invoke name="S1Invoke" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                        portType="ns1:OneWayPT" inputVariable="S1InvVar"/>
+                <throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

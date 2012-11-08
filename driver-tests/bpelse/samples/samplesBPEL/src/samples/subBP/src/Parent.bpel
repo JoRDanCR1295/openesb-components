@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0" xmlns:ns0="urn:jmsservice" xmlns:ns1="http://webservices.Parent.com/websvc" xmlns:ns2="Parent" xmlns:ns3="https://webservices.Parent.com/websvc" xmlns:ns4="urn:ChildTargetNamespace" xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1" xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2" xmlns:tns="http://www.seebeyond.com/eInsight/Parent" name="Parent" sbynpxp:end_XLoc="865.0" sbynpxp:end_YLoc="13.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="-11.0" sbynpxp:start_YLoc="43.0" targetNamespace="http://www.seebeyond.com/eInsight/Parent">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="Parent.wsdl" namespace="Parent"/>
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="Child.wsdl" namespace="urn:ChildTargetNamespace"/>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="Server" name="ParentServiceLink" partnerLinkType="ns2:ParentServiceLinkType"/>
+        <bpel_20:partnerLink name="ChildPartner" partnerLinkType="ns4:ChildServiceLinkType" partnerRole="ChildServerRole"/>
+    </bpel_20:partnerLinks>
+    
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns2:ParentMessage" name="MyRole_ParentOperation_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns4:ChildMessage" name="ChildContainer"/>
+        <bpel_20:variable messageType="ns2:ParentMessage" name="MyRole_ParentOperation_Input" sbyncreation:type="auto"/>
+    </bpel_20:variables>
+    
+    
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="MyRole.ParentOperation.Receive" operation="ParentOperation" partnerLink="ParentServiceLink" portType="ns2:ParentPortType" sbynpxp:XLoc="22.0" sbynpxp:YLoc="37.0" variable="MyRole_ParentOperation_Output"/>
+        <bpel_20:assign name="Assign1" sbynpxp:XLoc="96.0" sbynpxp:YLoc="111.0">
+            <bpel_20:copy>
+                <bpel_20:from>'output'</bpel_20:from>
+                <bpel_20:to>$ChildContainer.ChildPart/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:invoke inputVariable="ChildContainer" name="Activity" operation="ChildOperation" outputVariable="ChildContainer" partnerLink="ChildPartner" portType="ns4:ChildPortType" sbynpxp:XLoc="217.0" sbynpxp:YLoc="125.0"/>
+        <bpel_20:assign name="Assign2" sbynpxp:XLoc="325.0" sbynpxp:YLoc="117.0">
+            <bpel_20:copy>
+                <bpel_20:from>'output'</bpel_20:from>
+                <bpel_20:to>$MyRole_ParentOperation_Input.ParentPart/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:reply name="MyRole.ParentOperation.Reply" operation="ParentOperation" partnerLink="ParentServiceLink" portType="ns2:ParentPortType" sbynpxp:XLoc="429.0" sbynpxp:YLoc="76.0" variable="MyRole_ParentOperation_Input"/>
+    </bpel_20:sequence>
+</bpel_20:process>

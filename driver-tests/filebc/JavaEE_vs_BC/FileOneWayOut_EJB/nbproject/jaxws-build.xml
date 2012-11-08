@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/client"/>
+        <mkdir dir="${build.generated.dir}/wsimport/service"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-client-check-FileOneWayOut" depends="wsimport-init">
+        <condition property="wsimport-client-FileOneWayOut.notRequired">
+            <available file="${build.generated.dir}/wsimport/client/org/netbeans/j2ee/wsdl/fileonewayout/FileOneWayOut.java"/>
+        </condition>
+    </target>
+    <target name="wsimport-client-FileOneWayOut" depends="wsimport-init,wsimport-client-check-FileOneWayOut" unless="wsimport-client-FileOneWayOut.notRequired">
+        <property name="wsdl-FileOneWayOut" location="${meta.inf}/xml-resources/web-service-references/FileOneWayOut/wsdl/FileOneWayOut.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/wsimport/client" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${wsdl-FileOneWayOut}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/C:/open-jbi-components/driver-tests/filebc/JavaEE_vs_BC/FileOneWayOut_EJB/src/conf/wsdl/client/FileOneWayOut/FileOneWayOut.wsdl" xnocompile="true"/>
+    </target>
+    <target name="wsimport-client-clean-FileOneWayOut" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/client/org/netbeans/j2ee/wsdl/fileonewayout"/>
+    </target>
+    <target name="wsimport-service-check-WS_SoapTrigger4FileOneWayOut" depends="wsimport-init">
+        <condition property="wsimport-service-WS_SoapTrigger4FileOneWayOut.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soaptrigger4fileonewayout/SoapTrigger4FileOneWayOutService.java"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-WS_SoapTrigger4FileOneWayOut" depends="wsimport-init,wsimport-service-check-WS_SoapTrigger4FileOneWayOut" unless="wsimport-service-WS_SoapTrigger4FileOneWayOut.notRequired">
+        <property name="service-wsdl-WS_SoapTrigger4FileOneWayOut" location="${meta.inf}/xml-resources/web-services/WS_SoapTrigger4FileOneWayOut/wsdl/SoapTrigger4FileOneWayOut.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/wsimport/service" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${service-wsdl-WS_SoapTrigger4FileOneWayOut}" catalog="catalog.xml" extension="true" verbose="true" xnocompile="true" xendorsed="true"/>
+        <property name="targetLocation-WS_SoapTrigger4FileOneWayOut" location="${meta.inf}/wsdl/WS_SoapTrigger4FileOneWayOut"/>
+        <property name="sourceLocation-WS_SoapTrigger4FileOneWayOut" location="${meta.inf}/xml-resources/web-services/WS_SoapTrigger4FileOneWayOut/wsdl/"/>
+        <copy todir="${targetLocation-WS_SoapTrigger4FileOneWayOut}">
+            <fileset dir="${sourceLocation-WS_SoapTrigger4FileOneWayOut}"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-WS_SoapTrigger4FileOneWayOut" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/soaptrigger4fileonewayout"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-FileOneWayOut"/>
+    <target name="wsimport-client-compile" depends="wsimport-client-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/client" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${build.generated.dir}/wsimport/binaries" includes="**/*.xml"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-WS_SoapTrigger4FileOneWayOut"/>
+    <target name="wsimport-service-compile" depends="wsimport-service-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/service" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}"/>
+    </target>
+</project>

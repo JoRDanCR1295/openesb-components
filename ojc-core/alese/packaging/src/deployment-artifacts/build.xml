@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="service-assembly" name="ALEServiceAssembly">
+    <description>Builds a JBI Service Assembly for the ALE Service Engine.</description>
+    
+	<property name="sa.dir" value="assembly"/>
+    <property name="jbi.file" value="META-INF/jbi.xml"/>
+	
+    <target name="init">
+    	<mkdir dir="${output.dir}/${sa.dir}"/>
+    	<mkdir dir="${output.dir}/${sa.dir}/META-INF"/>
+    </target>
+    
+	<target name="service-assembly" depends="jar-units">
+		<copy file="assembly-descriptor.xml"
+			  tofile="${output.dir}/${sa.dir}/${jbi.file}"/>
+        <jar basedir="${output.dir}/${sa.dir}" 
+        	 destfile="${output.dir}/../${ant.project.name}.zip" 
+        	 update="true"/>
+	</target>
+	
+    <target name="jar-units" depends="init">
+        <antcall target="service-unit">
+            <param name="comp" value="httpbc"/>
+        	<param name="jar"  value="sun-http-binding"/>
+        </antcall>
+        <antcall target="service-unit">
+            <param name="comp" value="alese"/>
+        	<param name="jar"  value="sun-ale-engine"/>
+        </antcall>
+    </target>
+
+    <target name="service-unit">
+    	<property name="comp.dir" value="${output.dir}/${comp}"/>
+    	<mkdir dir="${comp.dir}"/>
+    	<mkdir dir="${comp.dir}/META-INF"/>
+        <!-- copy .xml and .xsd files into every SU -->
+        <copy todir="${comp.dir}">
+			<fileset dir="${basedir}">
+			    <include name="**/*.xsd"/>
+			    <include name="**/*.wsdl"/>
+		    </fileset>		
+		</copy>
+    	<copy file="${comp}-service-unit-descriptor.xml" 
+    	      tofile="${comp.dir}/${jbi.file}"/>
+        <!-- jar service unit files -->
+        <jar basedir="${comp.dir}" 
+        	 destfile="${output.dir}/${sa.dir}/${jar}.jar" 
+        	 update="true"/>
+    </target>
+</project>

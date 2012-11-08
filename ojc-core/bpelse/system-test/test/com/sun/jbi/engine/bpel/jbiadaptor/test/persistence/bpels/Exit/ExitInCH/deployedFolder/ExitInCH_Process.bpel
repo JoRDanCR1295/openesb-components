@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInCH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitInCH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitInCH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL5" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL51" xmlns:ns4="http://j2ee.netbeans.org/wsdl/IOWSDL5">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL5" location="IOWSDL5.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns4:IOWSDL5Plink" myRole="IOWSDL5PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="IOWSDL5OperationIn" messageType="ns4:IOWSDL5OperationRequest"/>
+        <variable name="IOWSDL5OperationOut" messageType="ns4:IOWSDL5OperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL5Operation" portType="ns4:IOWSDL5PortType" variable="IOWSDL5OperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL5OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <flow name="Flow1">
+            <scope name="Scope1">
+                <flow name="Flow2">
+                    <scope name="InnerScope">
+                        <compensationHandler>
+                            <sequence>
+                                <assign name="Assign3" >
+                                    <copy>
+                                        <from>concat($outputString, ' \n Assign3 ')</from>
+                                        <to variable="outputString"/>
+                                    </copy>
+                                </assign>
+                                <exit/>
+                            </sequence>
+                        </compensationHandler>
+                        <assign name="Assign2" >
+                            <copy>
+                                <from>concat($outputString, ' \n Assign2 ')</from>
+                                <to variable="outputString"/>
+                            </copy>
+                        </assign>
+                    </scope>
+                    <sequence name="Sequence8">
+                        <assign name="Assign4">
+                            <copy>
+                                <from>concat($outputString, ' \n Assign4 ')</from>
+                                <to variable="outputString"/>
+                            </copy>                                                        
+                        </assign>
+                        <throw name="Throw1" faultName="secondFault"/>
+                    </sequence>
+                </flow>
+            </scope>
+            <sequence name="Sequence1">
+                <assign name="Assign5">
+                    <copy>
+                        <from>concat($outputString, ' \n Assign5 ')</from>
+                        <to variable="outputString"/>
+                    </copy>
+                </assign>
+                <wait name="Wait3">
+                    <for>'P0Y0M0DT0H1M0S'</for>
+                </wait>
+                <reply name="Reply3" partnerLink="PartnerLinkInOut" operation="IOWSDL5Operation" portType="ns4:IOWSDL5PortType" variable="IOWSDL5OperationOut"/>
+            </sequence>
+        </flow>
+        <assign name="Assign6">
+            <copy>
+                <from variable="IntVariable"/>
+                <to variable="IOWSDL5OperationOut" part="OutputPart"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL5Operation" portType="ns4:IOWSDL5PortType" variable="IOWSDL5OperationOut"/>
+    </sequence>
+</process>

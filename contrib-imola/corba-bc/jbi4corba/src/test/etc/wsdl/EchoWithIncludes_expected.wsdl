@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoAny" targetNamespace="it.imolinfo.jbi4corba.test" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="it.imolinfo.jbi4corba.test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://test1/" xmlns="http://test1/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:complexType name="echoStruct">
+<xs:sequence>
+<xs:element name="fieldBoolean" type="xs:boolean"/>
+<xs:element name="fieldString" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="it.imolinfo.jbi4corba.test" xmlns="it.imolinfo.jbi4corba.test" xmlns:ns1="http://test1/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://test1/"/>
+<xs:element name="echo2">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="param" type="ns1:echoStruct"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo2Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo2Response">
+    <wsdl:part name="parameters" element="tns:echo2Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo2">
+    <wsdl:part name="parameters" element="tns:echo2">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoAny">
+    <wsdl:operation name="echo2">
+      <wsdl:input name="echo2" message="tns:echo2">
+    </wsdl:input>
+      <wsdl:output name="echo2Response" message="tns:echo2Response">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoAnyCorbaBinding" type="tns:EchoAny">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoWithIncludes.idl" relativepath=".">
+#include &quot;EchoWithIncludesStruct.idl&quot;
+module test{
+    interface Echo2 {string echo2(in test1::EchoStruct param);};
+};
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="EchoWithIncludesStruct.idl" relativepath="">
+module test1{
+	
+	struct EchoStruct {
+            boolean            fieldBoolean;                                
+            string             fieldString;
+	};            
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo2">
+      <wsdl:input name="echo2">
+      </wsdl:input>
+      <wsdl:output name="echo2Response">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoAny">
+    <wsdl:port name="EchoAnyCorbaPort" binding="tns:EchoAnyCorbaBinding">
+<imolacorba:address name="EchoAny" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

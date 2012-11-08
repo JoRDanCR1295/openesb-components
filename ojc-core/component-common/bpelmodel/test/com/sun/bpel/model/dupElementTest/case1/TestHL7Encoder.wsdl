@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestHL7Encoder" name="TestHL7Encoder" xmlns:ns="urn:hl7-org:v2xml" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder">
+            <xsd:import namespace="urn:hl7-org:v2xml" schemaLocation="ADT_A01.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="TestHL7EncoderOperationRequest">
+        <wsdl:part name="part1" element="ns:ADT_A01"/>
+    </wsdl:message>
+    <wsdl:message name="TestHL7EncoderOperationReply">
+        <wsdl:part name="part1" element="ns:ADT_A01"/>
+    </wsdl:message>
+    <wsdl:portType name="TestHL7EncoderPortType">
+        <wsdl:operation name="TestHL7EncoderOperation">
+            <wsdl:input name="input1" message="tns:TestHL7EncoderOperationRequest"/>
+            <wsdl:output name="output1" message="tns:TestHL7EncoderOperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="TestHL7EncoderBinding" type="tns:TestHL7EncoderPortType">
+        <file:binding/>
+        <wsdl:operation name="TestHL7EncoderOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="encoded" encodingStyle="hl7encoder-1.0" fileName="TestHL7_input.txt" pollingInterval="1000"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <file:message use="encoded" encodingStyle="hl7encoder-1.0" fileName="TestHL7_output.txt"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="TestHL7EncoderService">
+        <wsdl:port name="TestHL7EncoderPort" binding="tns:TestHL7EncoderBinding">
+            <file:address fileDirectory="C:\Temp"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="TestHL7EncoderPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="TestHL7EncoderPortTypeRole" portType="tns:TestHL7EncoderPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

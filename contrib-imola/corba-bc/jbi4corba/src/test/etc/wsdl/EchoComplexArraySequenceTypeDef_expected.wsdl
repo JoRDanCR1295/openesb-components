@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ENDPOINT_NAME" targetNamespace="NAME_SPACE" xmlns:tns="NAME_SPACE" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="NAME_SPACE" xmlns="NAME_SPACE" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="msg" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ENDPOINT_NAME">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ENDPOINT_NAMECorbaBinding" type="tns:ENDPOINT_NAME">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoComplexArraySequenceTypeDef.idl" relativepath=".">
+//IDL
+module it{
+module imolinfo{
+module jbi4corba{
+module test{
+module webservice{
+module generator{
+module echocomplex{
+
+  // value type
+  valuetype EchoVT {
+    public  short publicShort;
+    private long  privateLong;
+  };
+    
+  // value type (boxed) - complex
+  valuetype MySequenceVT {
+    public sequence&lt;long&gt; data;
+  };
+
+  // struct
+  struct EchoStruct {
+    boolean            fieldBoolean;
+    char               fieldChar;
+    wchar              fieldWChar;
+    // http://jira.codehaus.org/browse/XFIRE-462
+    octet              fieldOctet;
+    string             fieldString;
+    wstring            fieldWString;
+    short              fieldShort;
+    unsigned short     fieldUnsignedShort;
+    long               fieldLong;
+    unsigned long      fieldUnsignedLong;
+    long long          fieldLongLong;
+    unsigned long long fieldUnsignedLongLong;
+    float              fieldFloat;
+    double             fieldDouble;
+  };
+
+  // Sequences
+  typedef sequence&lt;EchoStruct&gt; EchoStructSeq;   
+  typedef sequence&lt;EchoVT&gt; EchoVTSeq; 
+  typedef sequence&lt;MySequenceVT&gt; MySequenceVTSeq;
+  typedef sequence&lt;long&gt; myintSeq;
+  typedef sequence&lt;myintSeq&gt; myintSeqOfSeq;
+
+  // Arrays
+  typedef string StringArray[3][3];
+  typedef string StringMatrix[3][3];
+  typedef long LongArray[3][3];
+
+  typedef EchoStruct EchoStructArr[2];   
+  typedef EchoStruct EchoStructMatrix[2][2];   
+  typedef EchoVT EchoVTArr[2];   
+  typedef StringArray MySequenceArr[2];   
+
+  //==================================================
+  //                                         INTERFACE
+  //==================================================
+  interface EchoComplex {
+    string echo(in any msg);
+  };
+
+};
+};
+};
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ENDPOINT_NAME">
+    <wsdl:port name="ENDPOINT_NAMECorbaPort" binding="tns:ENDPOINT_NAMECorbaBinding">
+<imolacorba:address name="CORBA_SERVICE_NAME" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="quo" value="2"/>
+<imolacorba:property name="qua" value=""/>
+<imolacorba:property name="qui" value="1"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

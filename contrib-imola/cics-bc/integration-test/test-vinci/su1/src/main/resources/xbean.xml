@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<beans>
+  <bean name="VinciEndpoint" class="it.imolinfo.jbi4cics.jbi.Jbi4cicsEndpoint">
+  	<property name="copyCobolFileName" value="VinciCommarea.txt"/>
+ 	<property name="codePage" value="CP037"/>
+    <property name="serviceDescriptor">    
+      <bean class="it.imolinfo.jbi4cics.webservices.descriptor.ServiceDescriptor">
+      	<property name="serviceName" value="VinciService"/>
+      	<property name="operationName" value="vinciOperation"/>
+      	<property name="serviceInterfacePackageName" value="it.imolinfo.jbi4cics.test.vinci"/>
+     	  <property name="serviceInterfaceName" value="VinciService"/>
+     	  <property name="inputBeanClassName" value="VinciInputBean"/>
+     	  <property name="outputBeanClassName" value="VinciOutputBean"/>     	
+     	  <property name="account">
+      		<bean class="it.imolinfo.jbi4cics.security.J2CAccount">    		  
+            <property name="username" value="*****"/>
+            <property name="password" value="*****"/>                        
+      		</bean>
+      	</property>	
+     	<property name="serviceLocation">
+      		<bean class="it.imolinfo.jbi4cics.locator.SimpleLocation">
+      			<property name="connectionTypeName" value="CICS"/>
+      		  <property name="locationName" value="eis/jbi4cics-cics"/>
+      		</bean>
+      	</property> 
+      	<property name="interactionDescription">
+      		<bean class="it.imolinfo.jbi4cics.connection.jca.cics.CICSInteractionDescription">
+      			<property name="programName" value="MCBRMTS9"/>
+      		  <property name="transactionName" value="MCT0"/>
+      		  <property name="tpn" value="true"/>      		  
+      		</bean>
+      	</property>     	
+      </bean>
+    </property>
+  </bean>
+</beans>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns2="http://generators.utils.webservices.test.iif.imolinfo.it" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:tns="it.imolinfo.iif" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="it.imolinfo.iif">
+  <wsdl:types xmlns:ns1="http://math.java">
+    <xsd:schema targetNamespace="http://generators.utils.webservices.test.iif.imolinfo.it" elementFormDefault="qualified" attributeFormDefault="qualified">
+      <xsd:complexType name="ProvaServiceBean">
+        <xsd:sequence>
+          <xsd:element name="CA_CICS_ABSTIME" type="xsd:decimal" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_CURRENT_DATE" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_CURRENT_TIME" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_DATA" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_ERROR_MESSAGE" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_NUMBER_OF_ROWS" type="ns1:BigInteger" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_RETCODE" type="ns1:BigInteger" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_ROW_DATA" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_ROW_NUMBER" type="ns1:BigInteger" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_ROW_NUM_AS_CHAR" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="CA_SWSECI1_COMMAREA" type="xsd:string" minOccurs="0" nillable="true" />
+          <xsd:element name="DFHCOMMAREA" type="xsd:string" minOccurs="0" nillable="true" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+    <xsd:schema targetNamespace="http://math.java" elementFormDefault="qualified" attributeFormDefault="qualified">
+      <xsd:complexType name="BigInteger">
+        <xsd:sequence>
+          <xsd:element name="lowestSetBit" type="xsd:int" minOccurs="0" />
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+    <xsd:schema targetNamespace="it.imolinfo.iif" elementFormDefault="qualified" attributeFormDefault="qualified">
+      <xsd:element name="provaOperation">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="in0" type="ns2:ProvaServiceBean" nillable="true" minOccurs="1" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="provaOperationResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="out" type="ns2:ProvaServiceBean" nillable="true" minOccurs="1" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="provaOperationRequest">
+    <wsdl:part element="tns:provaOperation" name="parameters" />
+  </wsdl:message>
+  <wsdl:message name="provaOperationResponse">
+    <wsdl:part element="tns:provaOperationResponse" name="parameters" />
+  </wsdl:message>
+  <wsdl:portType name="ProvaServicePortType">
+    <wsdl:operation name="provaOperation">
+      <wsdl:input message="tns:provaOperationRequest" name="provaOperationRequest" />
+      <wsdl:output message="tns:provaOperationResponse" name="provaOperationResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ProvaServiceHttpBinding" type="tns:ProvaServicePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="provaOperation">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="provaOperationRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="provaOperationResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ProvaService">
+    <wsdl:port binding="tns:ProvaServiceHttpBinding" name="ProvaServiceHttpPort">
+      <wsdlsoap:address location="http://localhost/services/ProvaService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

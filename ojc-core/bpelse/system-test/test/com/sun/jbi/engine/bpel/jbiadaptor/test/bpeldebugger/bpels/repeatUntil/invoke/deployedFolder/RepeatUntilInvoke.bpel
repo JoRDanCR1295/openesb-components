@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="RepeatUntilInvoke" 
+         targetNamespace="http://sun.com/bpel/RepeatUntilInvoke"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://sun.com/wsdl/RepeatUntilInvoke">
+    <import namespace="http://sun.com/wsdl/RepeatUntilInvoke" location="RepeatUntilInvoke.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="ns1:RepeatUntilInvokePLT" 
+                     partnerRole="RepeatUntilInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:RepeatUntilPartnerLinkType" 
+                     myRole="RepeatUntilPartnerLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="RepeatUntilCounter" type="xsd:int"/>
+        <variable name="RepeatUntilOutMessage" messageType="ns1:RepeatUntilMessage"/>
+        <variable name="RepeatUntilInMessage" messageType="ns1:RepeatUntilMessage"/>
+        <variable name="LoopMessage" messageType="ns1:RepeatUntilMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" 
+                 operation="RepeatUntilInvokeOperation" portType="ns1:RepeatUntilPortType" 
+                 variable="RepeatUntilInMessage" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy><from>0</from><to variable="RepeatUntilCounter"/></copy>
+            <copy><from>2</from><to part="counter" variable="LoopMessage"/></copy>
+            <copy>
+            	<from>concat('RepeatUntil***Loop1','***Loop2***Loop3')</from>
+            	<to part="string" variable="LoopMessage"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence2">
+				<invoke name="InvokeLoop" partnerLink="InvokePLT"
+						operation="oneWayInvokeOper" portType="ns1:invokePortType"
+						inputVariable="LoopMessage"/>
+                <assign name="IncrementCounter">
+                    <copy>
+                        <from>  ( $RepeatUntilCounter + 1 )  </from>
+                        <to variable="RepeatUntilCounter"/>
+                    </copy>
+                </assign>
+                <assign name="ConcatString">
+                    <copy>
+                        <from>concat($RepeatUntilInMessage.string, '***Loop', $RepeatUntilCounter)</from>
+                        <to part="string" variable="RepeatUntilInMessage"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition>( $RepeatUntilCounter &gt; $RepeatUntilInMessage.counter )</condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+                <from variable="RepeatUntilInMessage" part="string"/>
+                <to variable="RepeatUntilOutMessage" part="string"/>
+            </copy>
+            <copy>
+                <from variable="RepeatUntilInMessage" part="counter"/>
+                <to variable="RepeatUntilOutMessage" part="counter"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="oneWayInvokeOper" portType="ns1:invokePortType"
+                inputVariable="RepeatUntilOutMessage"/>
+    </sequence>
+</process>

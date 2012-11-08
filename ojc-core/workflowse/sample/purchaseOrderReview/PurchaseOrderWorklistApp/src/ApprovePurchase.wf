@@ -1,0 +1,32 @@
+<task name="ApprovePurchase" portType="wsdl:ApprovePurchasePT" operation="ApprovePurchase"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase"
+xmlns="http://jbi.com.sun/wfse" 
+xmlns:cur="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions" 
+xmlns:wsdl="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL"
+ xmlns:po="http://wlmse.sample/po">
+    <import namespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL" 
+                location="ApprovePurchase_TM_BPEL.wsdl"/>
+        <!-- Make sure to use single quotes for literal value in xpath enabled expression -->
+    <title expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">'This is a purchase order'</title>
+        <!-- priority is in 1-10 scale with 10 to be the highest -->
+    <priority expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">'5'</priority>
+    <assignment>
+        <group>'CustomerServiceRep'</group>
+        <!--
+        <excluded>
+            <user>'mary'</user>
+        </excluded>
+        -->
+    </assignment>
+    <action type="Completed" name="Complete">
+            <changeVariables>
+                <copy>
+                    <from>current-dateTime()</from>
+                    <to>$TaskOutput.part1/po:approveDate</to>
+                </copy>     
+                <copy>
+                    <from>$TaskInput.part1/po:orderId</from>
+                    <to>$TaskOutput.part1/po:orderId</to>
+                </copy>                
+            </changeVariables>
+    </action>
+</task>

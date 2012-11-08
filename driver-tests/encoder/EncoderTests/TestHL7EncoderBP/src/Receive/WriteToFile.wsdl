@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="WriteToFile"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/WriteToFile"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/WriteToFile"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types/>
+    <message name="WriteToFileOperationRequest">
+        <part name="wtfoIn" type="xsd:string"/>
+    </message>
+    <portType name="WriteToFilePortType">
+        <wsdl:operation name="WriteToFileOperation">
+            <wsdl:input name="input1" message="tns:WriteToFileOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="WriteToFileBinding" type="tns:WriteToFilePortType">
+        <file:binding/>
+        <wsdl:operation name="WriteToFileOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="input.txt"
+                    pollingInterval="1000"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="WriteToFileService">
+        <wsdl:port name="WriteToFilePort" binding="tns:WriteToFileBinding">
+            <file:address fileDirectory="testhl7encoder"
+                relativePath="true" pathRelativeTo="Default System Temp Dir"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="WriteToFile1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="WriteToFilePortTypeRole" portType="tns:WriteToFilePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

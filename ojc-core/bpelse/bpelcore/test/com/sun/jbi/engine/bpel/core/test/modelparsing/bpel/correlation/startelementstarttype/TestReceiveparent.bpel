@@ -1,0 +1,254 @@
+<bpel_20:process name="TestReceiveparent"
+                 targetNamespace="http://www.seebeyond.com/eInsight/TestReceiveparent"
+                 sbynpxp:end_YLoc="103.0"
+                 sbynpxp:start_YLoc="43.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="-11.0"
+                 sbynpxp:end_XLoc="688.0"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/TestReceiveparent"
+                 xmlns:ns4="urn:TestReceivechildTargetNamespace"
+                 xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="urn:jmsservice"
+                 xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel"
+                 xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2"
+                 xmlns:ns1="http://webservices.TestReceiveparent.com/websvc"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns3="https://webservices.TestReceiveparent.com/websvc"
+                 xmlns:ns2="TestReceiveparent"
+                 xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1">
+    <bpel_20:import namespace="TestReceiveparent"
+                    location="TestReceiveparent.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:import namespace="urn:TestReceivechildTargetNamespace"
+                    location="TestReceivechild.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="TestReceiveparentServiceLink"
+                             partnerLinkType="ns2:TestReceiveparentServiceLinkType"
+                             myRole="Server"/>
+        <bpel_20:partnerLink name="TestReceivechildPartner"
+                             partnerLinkType="ns4:TestReceivechildServiceLinkType"
+                             partnerRole="TestReceivechildServerRole"/>
+        <partnerLink name="TestReceiveparentServiceLink1"
+                     partnerLinkType="ns2:TestReceiveparentServiceLinkType1"
+                     myRole="Server"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="MyRole_TestReceiveparentOperation_Output"
+                          messageType="ns2:TestReceiveparentMessage"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="TestReceivechildContainer"
+                          messageType="ns4:TestReceivechildMessage"></bpel_20:variable>
+        <bpel_20:variable name="MyRole_TestReceiveparentOperation_Input"
+                          messageType="ns2:TestReceiveparentMessage"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <variable name="TestReceiveparentOperation1_Output"
+                  messageType="ns2:TestReceiveparentMessage1"></variable>
+    </bpel_20:variables>
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns2:property ns4:TestReceivechildProp "/>
+        <correlationSet name="cSet2"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>
+        <correlationSet name="cSet3"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>
+        <correlationSet name="cSet4"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>
+        <correlationSet name="cSet5"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/> 
+        <correlationSet name="cSet6"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>
+        <correlationSet name="cSet7"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>      
+        <correlationSet name="cSet8"
+                        properties="ns2:property1 ns4:TestReceivechildProp "/>                                                                                                                                                                 
+    </correlationSets>
+    <sequence>
+        <bpel_20:receive name="MyRole.TestReceiveparentOperation.Receive"
+                         partnerLink="TestReceiveparentServiceLink"
+                         portType="ns2:TestReceiveparentPortType"
+                         operation="TestReceiveparentOperation"
+                         variable="MyRole_TestReceiveparentOperation_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="22.0"
+                         sbynpxp:YLoc="37.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="join"/>
+            </correlations>
+        </bpel_20:receive>
+        <bpel_20:assign name="Assigna"
+                        sbynpxp:XLoc="134.0"
+                        sbynpxp:YLoc="77.0">
+            <bpel_20:copy>
+                <bpel_20:from>&apos;output&apos;</bpel_20:from>
+                <bpel_20:to>$TestReceivechildContainer.TestReceivechildPart/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:invoke name="Activity"
+                        partnerLink="TestReceivechildPartner"
+                        portType="ns4:TestReceivechildPortType"
+                        operation="TestReceivechildOperation"
+                        inputVariable="TestReceivechildContainer"
+                        outputVariable="TestReceivechildContainer"
+                        sbynpxp:XLoc="232.0"
+                        sbynpxp:YLoc="92.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="no"
+                             pattern="response"/>
+                <correlation set="cSet2"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </bpel_20:invoke>
+        <bpel_20:assign name="Assign"
+                        sbynpxp:XLoc="338.0"
+                        sbynpxp:YLoc="92.0">
+            <bpel_20:copy>
+                <bpel_20:from>&apos;output&apos;</bpel_20:from>
+                <bpel_20:to>$MyRole_TestReceiveparentOperation_Input.TestReceiveparentPart/string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <receive name="Corr_No"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet2"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+                <receive name="Corr_Yes"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet3"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="Corr_No_Yes"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet3"
+                             initiate="no"/>
+                <correlation set="cSet4"
+                             initiate="yes"/>                             
+            </correlations>
+        </receive>
+        <receive name="Corr_No_Join"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet3"
+                             initiate="no"/>
+                <correlation set="cSet4"
+                             initiate="join"/>                                                           
+            </correlations>
+        </receive>  
+        <receive name="Corr_Yes_Join"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet5"
+                             initiate="yes"/>
+                <correlation set="cSet4"
+                             initiate="join"/>                                                           
+            </correlations>
+        </receive>        
+        <receive name="Corr_Join_Join"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet6"
+                             initiate="join"/>
+                <correlation set="cSet4"
+                             initiate="join"/>                                                           
+            </correlations>
+        </receive>   
+        <receive name="Corr_Join"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet7"
+                             initiate="join"/>                                                          
+            </correlations>
+        </receive> 
+        <receive name="Corr_Yes_Join_No"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet8"
+                             initiate="yes"/>
+                <correlation set="cSet7"
+                             initiate="join"/>
+                <correlation set="cSet6"
+                             initiate="no"/>                                                                                        
+            </correlations>
+        </receive>    
+        <receive name="Random_Routing"
+                 partnerLink="TestReceiveparentServiceLink1"
+                 portType="ns2:TestReceiveparentPortType1"
+                 operation="TestReceiveparentOperation1"
+                 variable="TestReceiveparentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+		</receive>                                  
+        <bpel_20:reply name="MyRole.TestReceiveparentOperation.Reply"
+                       partnerLink="TestReceiveparentServiceLink"
+                       portType="ns2:TestReceiveparentPortType"
+                       operation="TestReceiveparentOperation"
+                       variable="MyRole_TestReceiveparentOperation_Output"
+                       sbynpxp:XLoc="573.0"
+                       sbynpxp:YLoc="91.0"></bpel_20:reply>
+    </sequence>
+</bpel_20:process>

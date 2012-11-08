@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.sources.dir}/jax-ws"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-service-RPCLiteral" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/service/RPCLiteral"/>
+        <property name="service-wsdl-RPCLiteral" location="${meta.inf}/xml-resources/web-services/RPCLiteral/wsdl/SimpleRPCLiteral.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service/RPCLiteral" destdir="${build.generated.dir}/jax-wsCache/service/RPCLiteral" wsdl="${service-wsdl-RPCLiteral}" catalog="catalog.xml" extension="true" verbose="true" xnocompile="true">
+            <depends file="${wsdl-RPCLiteral}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/service/RPCLiteral"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/service/RPCLiteral">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+        <property name="targetLocation-RPCLiteral" location="${meta.inf}/wsdl/RPCLiteral"/>
+        <property name="sourceLocation-RPCLiteral" location="${meta.inf}/xml-resources/web-services/RPCLiteral/wsdl/"/>
+        <copy todir="${targetLocation-RPCLiteral}">
+            <fileset dir="${sourceLocation-RPCLiteral}"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-RPCLiteral" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/service/RPCLiteral"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/org/netbeans/j2ee/wsdl/cafaulttest/simplerpcliteral"/>
+    </target>
+    <target name="wsimport-service-SimpleDocLitWS" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS"/>
+        <property name="service-wsdl-SimpleDocLitWS" location="${meta.inf}/xml-resources/web-services/SimpleDocLitWS/wsdl/SimpleDocLiteral.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS" destdir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS" wsdl="${service-wsdl-SimpleDocLitWS}" catalog="catalog.xml" extension="true" verbose="true" xnocompile="true">
+            <depends file="${wsdl-SimpleDocLitWS}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+        <property name="targetLocation-SimpleDocLitWS" location="${meta.inf}/wsdl/SimpleDocLitWS"/>
+        <property name="sourceLocation-SimpleDocLitWS" location="${meta.inf}/xml-resources/web-services/SimpleDocLitWS/wsdl/"/>
+        <copy todir="${targetLocation-SimpleDocLitWS}">
+            <fileset dir="${sourceLocation-SimpleDocLitWS}"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-SimpleDocLitWS" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/service/SimpleDocLitWS"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/org/netbeans/j2ee/wsdl/cafaulttest/simpledocliteral"/>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-RPCLiteral, wsimport-service-SimpleDocLitWS"/>
+</project>

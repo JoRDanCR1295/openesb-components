@@ -1,0 +1,1 @@
+create table with special characters  - @%$&*

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BackupSynchronous"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Server/BackupSynchronous"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Server/BackupSynchronous" xmlns:ns0="http://xml.netbeans.org/schema/Synchronous">
+    <import namespace="http://localhost/Synchronous/Synchronous" location="Synchronous.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://localhost/Synchronous/Synchronous" partnerLinkType="tns:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out" xmlns:tns="http://localhost/Synchronous/Synchronous" messageType="tns:responseMessage"/>
+        <variable name="Operation1In" xmlns:tns="http://localhost/Synchronous/Synchronous" messageType="tns:requestMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation1" xmlns:tns="http://localhost/Synchronous/Synchronous" portType="tns:portType1" variable="Operation1In"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('Backup Service', ':', $Operation1In.inputType/ns0:paramA)</from>
+                <to>$Operation1Out.resultType/ns0:paramA</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" xmlns:tns="http://localhost/Synchronous/Synchronous" portType="tns:portType1" variable="Operation1Out"/>
+    </sequence>
+</process>

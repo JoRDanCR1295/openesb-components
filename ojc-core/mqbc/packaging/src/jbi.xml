@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!-- jbi.xml descriptor for the binding component (BC) -->
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"    
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:logging="http://www.sun.com/jbi/descriptor/logging">
+<!-- identification information about this binding -->
+    <component type="binding-component">
+        <identification>
+            <name>${project.name}</name>
+            <description>MQ binding</description>
+            <identification:VersionInfo component-version="${mqbc.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name>com.sun.jbi.mqbc.MQBindingComponent</component-class-name>
+        <component-class-path>
+            <path-element>lib/mqbcimpl.jar</path-element>
+            <path-element>lib/wsdl4j.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+            <path-element>lib/com.ibm.mq.jar</path-element>
+            <path-element>lib/xsdmodel.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.itf.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.impl.jar</path-element>
+         </component-class-path>
+        <bootstrap-class-name>com.sun.jbi.mqbc.bootstrap.MQBindingBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+            <path-element>lib/mqbcimpl.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>   
+            <path-element>lib/com.ibm.mq.jar</path-element>        
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+        </bootstrap-class-path>
+        <shared-library>sun-encoder-library</shared-library>
+        <logging:Logging root="com.sun.jbi.mqbc">
+            <logging:logger displayName="MQ Message Pollers">com.sun.jbi.mqbc.InboundMessageProcessor</logging:logger>
+            <logging:logger displayName="MQ Message Poller Management">com.sun.jbi.mqbc.InboundReceiver</logging:logger>
+            <logging:logger displayName="Component Lifecycle">com.sun.jbi.mqbc.MQBindingComponent</logging:logger>
+            <logging:logger displayName="Service Unit Management">com.sun.jbi.mqbc.MQBindingDeployer</logging:logger>
+            <logging:logger displayName="Message Denormalisation">com.sun.jbi.mqbc.MQDenormalizer</logging:logger>
+            <logging:logger displayName="Message Normalisation">com.sun.jbi.mqbc.MQNormalizer</logging:logger>
+            <logging:logger displayName="JBI Request/Response Processors">com.sun.jbi.mqbc.OutboundMessageProcessor</logging:logger>
+            <logging:logger displayName="JBI Request/Response Processor Management">com.sun.jbi.mqbc.OutboundReceiver</logging:logger>
+            <logging:logger displayName="Service Units">com.sun.jbi.mqbc.ServiceUnitImpl</logging:logger>
+        </logging:Logging>
+        <config:Configuration>
+            <config:Property name="OutboundThreads" 
+                             type="xsd:int" 
+                             displayName="Number of Outbound Threads" 
+                             displayDescription="Maximum number of threads to create for handling Queue Manager PUTs concurrently. The range of meaningful values is from 1 to 2147483647." 
+                             defaultValue="10" 
+                             showDisplay="all">
+                <config:Constraint facet="minInclusive" value="1"/> 
+                <config:Constraint facet="maxInclusive" value="2147483647"/>     
+            </config:Property>
+            <config:Property name="SeparateTrxBranches" 
+                             type="xsd:boolean" 
+                             displayName="Use Separate Transaction Branches" 
+                             displayDescription="When enabled, all transactional work units pertaining to the same MQ resource manager start on separate transactional branches. Enabling this function may incur a performance penalty. This function MUST be enabled to bypass a WSMQ bug that causes XA resource enlistment to block indefinitely, when applications involve multiple, MQ-bound endpoints that target the same MQ queue manager." 
+                             defaultValue="false" 
+                             showDisplay="all">
+            </config:Property>
+           <config:ApplicationConfiguration>
+               <config:Property name="configurationName" 
+                                type="xsd:string" 
+                                displayName="Application Configuration Name" 
+                                displayDescription="Name of the application configuration" 
+                                required="true"
+                                isApplicationRestartRequired="true"/>
+               <config:Property name="queuemanagerHost" 
+                                type="xsd:string"
+                                displayName="Queue Manager Host Name" 
+                                displayDescription="The name of the system that hosts the target Queue Manager."  
+                                required="false"
+                                isApplicationRestartRequired="true"/>
+               <config:Property name="queuemanagerPort" 
+                                type="xsd:int"
+                                displayName="Queue Manager Host Port" 
+                                displayDescription="The port number at which to communicate with the system that hosts the target Queue Manager. A value of -1 or 0 denotes that no explicit port number will be used when attempting to connect to the designated queue manager. The range of meaningful values is from 1 to 65535."  
+                                required="false"
+                                defaultValue="-1" 
+                                isApplicationRestartRequired="true">
+                   <config:Constraint facet="minInclusive" value="-1"/> 
+                   <config:Constraint facet="maxInclusive" value="65535"/>     
+               </config:Property>
+               <config:Property name="queuemanagerName" 
+                                type="xsd:string"
+                                displayName="Queue Manager Name" 
+                                displayDescription="The port number at which to communicate with the system that hosts the target Queue Manager. A value of -1 or 0 denotes that no explicit port number will be used when attempting to connect to the designated queue manager. The range of meaningful values is from 1 to 65535."  
+                                required="true"
+                                isApplicationRestartRequired="true"/>
+               <config:Property name="username" 
+                                type="xsd:string"
+                                displayName="Username" 
+                                displayDescription="The port number at which to communicate with the system that hosts the target Queue Manager. A value of -1 or 0 denotes that no explicit port number will be used when attempting to connect to the designated queue manager. The range of meaningful values is from 1 to 65535."  
+                                required="false"
+                                isApplicationRestartRequired="true"/>
+               <config:Property name="password" 
+                                type="xsd:string"
+                                displayName="Password"
+                                encrypted="true"
+                                displayDescription="The port number at which to communicate with the system that hosts the target Queue Manager. A value of -1 or 0 denotes that no explicit port number will be used when attempting to connect to the designated queue manager. The range of meaningful values is from 1 to 65535."  
+                                required="false"
+                                isApplicationRestartRequired="true"/>
+           </config:ApplicationConfiguration>
+           <config:ApplicationVariable isApplicationRestartRequired="true">
+               <config:name/>
+               <config:type/>
+               <config:value/>
+           </config:ApplicationVariable>
+        </config:Configuration>
+    </component>
+</jbi>

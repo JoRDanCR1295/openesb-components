@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://enterprise.netbeans.org/bpel/insertone" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns3="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="SoapWSDLPortTypeRole_myRole" interface-name="ns2:SoapWSDLPortType" name="endpoint1" service-name="ns1:SoapPartnerLink"/>
+<endpoint endpoint-name="insertonebpelSQL_myrole_partnerRole" interface-name="ns3:insertonebpelSQL_sqlsePortType" name="endpoint2" service-name="ns1:SqlPartnerLink"/>
+<endpoint endpoint-name="insertoneSQL_myrole" interface-name="ns3:insertoneSQL_sqlsePortType" name="endpoint3" service-name="ns3:insertoneSQL_sqlsePartnerLink"/>
+<endpoint endpoint-name="insertonebpelSQL_sqlsePort" interface-name="ns3:insertonebpelSQL_sqlsePortType" name="endpoint4" service-name="ns3:insertonebpelSQL_sqlseService"/>
+<endpoint endpoint-name="SoapWSDLPort" interface-name="ns2:SoapWSDLPortType" name="endpoint5" service-name="ns2:SoapWSDLService"/>
+<endpoint endpoint-name="insertoneSQL_sqlsePort" interface-name="ns3:insertoneSQL_sqlsePortType" name="endpoint6" service-name="ns3:insertoneSQL_sqlseService"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="insertoneBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="insertoneJbi-insertoneBpel" unit-name="insertoneBpel" unknown="false" x="118" y="100">
+<provides endpoint="endpoint1"/>
+<consumes endpoint="endpoint2"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="insertoneSQL.jar" component-name="sun-sql-engine" defined="true" description="Represents this Service Unit" internal="true" name="insertoneJbi-insertoneSQL" unit-name="insertoneSQL" unknown="false" x="118" y="230">
+<provides endpoint="endpoint3"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="insertoneJbi-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="60">
+<link xlink:href="../jbiServiceUnits/insertoneBpel/insertonebpelSQL.wsdl#xpointer(/definitions/service[@name='insertonebpelSQL_sqlseService']/port[@name='insertonebpelSQL_sqlsePort'])" xlink:type="simple"/>
+<provides endpoint="endpoint4"/>
+</port>
+<port x="0" y="150">
+<link xlink:href="../jbiServiceUnits/insertoneBpel/SoapWSDL.wsdl#xpointer(/definitions/service[@name='SoapWSDLService']/port[@name='SoapWSDLPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+</port>
+<port x="0" y="240">
+<link xlink:href="../jbiServiceUnits/insertoneSQL/insertoneSQL.wsdl#xpointer(/definitions/service[@name='insertoneSQL_sqlseService']/port[@name='insertoneSQL_sqlsePort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint6"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/insertonebpelSQL.wsdl#xpointer(/definitions/portType[@name='insertonebpelSQL_sqlsePortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/insertonebpelSQL.wsdl#xpointer(/definitions/binding[@name='insertonebpelSQLBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/insertonebpelSQL.wsdl#xpointer(/definitions/service[@name='insertonebpelSQL_sqlseService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/SoapWSDL.wsdl#xpointer(/definitions/portType[@name='SoapWSDLPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/SoapWSDL.wsdl#xpointer(/definitions/binding[@name='SoapWSDLBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneBpel/SoapWSDL.wsdl#xpointer(/definitions/service[@name='SoapWSDLService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneSQL/insertoneSQL.wsdl#xpointer(/definitions/portType[@name='insertoneSQL_sqlsePortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneSQL/insertoneSQL.wsdl#xpointer(/definitions/binding[@name='insertoneSQLBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/insertoneSQL/insertoneSQL.wsdl#xpointer(/definitions/service[@name='insertoneSQL_sqlseService'])" xlink:type="simple"/>
+</porttypes>
+<bindings/>
+<services/>
+<regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

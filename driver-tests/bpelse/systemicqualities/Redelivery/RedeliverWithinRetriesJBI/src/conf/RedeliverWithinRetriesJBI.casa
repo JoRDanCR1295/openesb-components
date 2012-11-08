@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://localhost/MultiDepBpel/benchMark" xmlns:ns2="http://www.seebeyond.com/eInsight/parentBP" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="benchMarkPort" interface-name="ns1:benchMarkSubBPPortType" name="endpoint1" service-name="ns1:benchMarkSubBPService"/>
+        <endpoint endpoint-name="benchMarkPort" interface-name="ns1:benchMarkPortType" name="endpoint2" service-name="ns1:benchMarkService"/>
+        <endpoint endpoint-name="javaee_benchMarkPort" interface-name="ns1:benchMarkSubBPPortType" name="endpoint3" service-name="ns1:benchMarkSubBPService"/>
+        <endpoint endpoint-name="javaee_benchMarkPort" interface-name="ns1:benchMarkPortType" name="endpoint4" service-name="ns1:benchMarkService"/>
+        <endpoint endpoint-name="Server_myRole" file-path="parentBP.bpel" interface-name="ns1:benchMarkPortType" name="endpoint5" process-name="parentBP" service-name="ns2:benchMark"/>
+        <endpoint endpoint-name="Server_partnerRole" file-path="parentBP.bpel" interface-name="ns1:benchMarkSubBPPortType" name="endpoint6" process-name="parentBP" service-name="ns2:benchMarkSubBP"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="DeliveredEjb.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="RedeliverWithinRetriesJBI-DeliveredEjb" unit-name="DeliveredEjb" unknown="false" x="146" y="99">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="RedeliverWithinRetries.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="RedeliverWithinRetriesJBI-RedeliverWithinRetries" unit-name="RedeliverWithinRetries" unknown="false" x="123" y="238">
+            <provides endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="RedeliverWithinRetriesJBI-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                    <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                    <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService']/port[@name='benchMarkPort'])" xlink:type="simple"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint5" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint1" state="new"/>
+        <connection consumer="endpoint4" provider="endpoint5" state="deleted"/>
+        <connection consumer="endpoint6" provider="endpoint3" state="deleted"/>
+        <connection consumer="endpoint1" provider="endpoint3" state="deleted"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkSubBPPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/portType[@name='benchMarkSubBPPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkSubBPBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/binding[@name='benchMarkSubBPBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/DeliveredEjb/META-INF/wsdl/InvokeHandler/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/RedeliverWithinRetries/benchMark.wsdl#xpointer(/definitions/service[@name='benchMarkSubBPService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

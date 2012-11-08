@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding"
+    xmlns:tns="it.imolinfo.Jbi4Corba.test.webservice.generator"
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+
+    name="EchoService"
+    targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator">
+
+  <wsdl:types>
+    <xsd:schema targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator"
+                elementFormDefault="qualified"
+                attributeFormDefault="qualified">
+
+      <xsd:element name="req">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="dataString"  type="xsd:string"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataBoolean" type="xsd:boolean" nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataFloat"   type="xsd:float"   nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataDouble"  type="xsd:double"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataAnyURI"  type="xsd:anyURI"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataLong"    type="xsd:long"    nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataInt"     type="xsd:int"     nillable="false" minOccurs="1" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="res">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="dataString"  type="xsd:string"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataBoolean" type="xsd:boolean" nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataFloat"   type="xsd:float"   nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataDouble"  type="xsd:double"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataAnyURI"  type="xsd:anyURI"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataLong"    type="xsd:long"    nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataInt"     type="xsd:int"     nillable="false" minOccurs="1" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="err">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="dataString"  type="xsd:string"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataBoolean" type="xsd:boolean" nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataFloat"   type="xsd:float"   nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataDouble"  type="xsd:double"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataAnyURI"  type="xsd:anyURI"  nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataLong"    type="xsd:long"    nillable="false" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="dataInt"     type="xsd:int"     nillable="false" minOccurs="1" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="echoRequest">
+    <wsdl:part element="tns:req" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:message name="echoResponse">
+    <wsdl:part element="tns:res" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:message name="echoFault">
+    <wsdl:part element="tns:err" name="parameters" />
+  </wsdl:message>
+
+  <wsdl:portType name="EchoServicePortType">
+
+    <wsdl:operation name="echo">
+      <wsdl:input message="tns:echoRequest" name="echoRequest" />
+      <wsdl:output message="tns:echoResponse" name="echoResponse" />
+      <wsdl:fault  message="tns:echoFault" name="echoFault" />
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+
+  <wsdl:binding name="EchoServiceHttpBinding" type="tns:EchoServicePortType">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+
+    <wsdl:operation name="echo">
+      <wsdlsoap:operation soapAction="fooAction" />
+      <wsdl:input name="echoRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="echoFault">
+		  <wsdlsoap:body use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+
+  </wsdl:binding>
+
+  <wsdl:service name="EchoService">
+    <wsdl:port binding="tns:EchoServiceHttpBinding" name="EchoServiceHttpPort">
+      <wsdlsoap:address location="http://localhost/services/EchoService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

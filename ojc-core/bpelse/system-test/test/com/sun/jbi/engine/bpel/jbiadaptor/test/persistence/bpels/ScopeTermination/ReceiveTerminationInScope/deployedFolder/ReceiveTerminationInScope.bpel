@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ReceiveTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ReceiveTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ReceiveTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ReceiveTerminationInScope_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/ReceiveTerminationInScope" xmlns:ns3="http://j2ee.netbeans.org/wsdl/ReceiveTerminationInScope_PTypes" xmlns:ns4="http://xml.netbeans.org/schema/DataTypes" xmlns:ns5="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/ReceiveTerminationInScope_PTypes" location="ReceiveTerminationInScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns3:ReceiveTerminationInScope_PTypesPartner1" partnerRole="ReceiveTerminationInScope_PTypesPortType1Role"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns3:ReceiveTerminationInScope_PTypesPartner2" myRole="ReceiveTerminationInScope_PTypesPortType2Role"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns3:ReceiveTerminationInScope_PTypesPartner" myRole="ReceiveTerminationInScope_PTypesPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Variable1" type="xsd:string"/>
+        <variable name="ReceiveTerminationInScope_PTypesOperationOut1" messageType="ns5:message1"/>
+        <variable name="ReceiveTerminationInScope_PTypesOperationIn1" messageType="ns5:message1"/>
+        <variable name="ReceiveTerminationInScope_PTypesOperationOut" messageType="ns5:message1"/>
+        <variable name="ReceiveTerminationInScope_PTypesOperationIn" messageType="ns5:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns5:property1"/>
+    </correlationSets>
+    <sequence name="Sequence2">
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ReceiveTerminationInScope_PTypesOperation" portType="ns3:ReceiveTerminationInScope_PTypesPortType" variable="ReceiveTerminationInScope_PTypesOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>
+                    <literal>1-InitialAssign</literal>
+                </from>
+                <to variable="Variable1"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence1">
+                        <assign>
+                            <copy>
+                                <from>concat($Variable1, ';3-AssignInFH')</from>
+                                <to>$ReceiveTerminationInScope_PTypesOperationOut.part1/Id1</to>
+                            </copy>
+                        </assign>
+                        <reply name="Reply1" partnerLink="PartnerLink1" operation="ReceiveTerminationInScope_PTypesOperation" portType="ns3:ReceiveTerminationInScope_PTypesPortType" variable="ReceiveTerminationInScope_PTypesOperationOut"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <flow name="Flow1">
+                <flow name="Flow2">
+                    <scope name="Scope2">
+                        <terminationHandler>
+                            <assign>
+                                <copy>
+                                    <from>concat($Variable1, ';2-AssignInTH')</from>
+                                    <to variable="Variable1"/>
+                                </copy>
+                            </assign>
+                        </terminationHandler>
+                        <sequence name="Sequence3">
+                            <receive name="Receive3" partnerLink="PartnerLink3" operation="ReceiveTerminationInScope_PTypesOperation" portType="ns3:ReceiveTerminationInScope_PTypesPortType2" createInstance="no" variable="ReceiveTerminationInScope_PTypesOperationIn1">
+                                <correlations>
+                                    <correlation set="CorrelationSet1" initiate="no"/>
+                                </correlations>
+                            </receive>
+                            <reply name="Reply3" partnerLink="PartnerLink3" operation="ReceiveTerminationInScope_PTypesOperation" portType="ns3:ReceiveTerminationInScope_PTypesPortType2" variable="ReceiveTerminationInScope_PTypesOperationOut1"/>
+                        </sequence>
+                    </scope>
+                    <empty name="Empty1"/>
+                    <invoke name="Invoke1" partnerLink="PartnerLink2" operation="ReceiveTerminationInScope_PTypesOperation" portType="ns3:ReceiveTerminationInScope_PTypesPortType1" inputVariable="ReceiveTerminationInScope_PTypesOperationIn" outputVariable="ReceiveTerminationInScope_PTypesOperationOut"/>
+                </flow>
+            </flow>
+        </scope>
+    </sequence>
+</process>

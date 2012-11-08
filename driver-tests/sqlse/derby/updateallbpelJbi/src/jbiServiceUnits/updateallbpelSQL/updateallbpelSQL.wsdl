@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="updateallbpelSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="updateallbpelRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="updateallbpelResponse">
+    <part name="updateallbpelResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="updateallbpelRequest">
+    <part name="updateallbpelRequestPart" element="tns:updateallbpelRequest"/>
+  </message>
+  <portType name="updateallbpelSQL_sqlsePortType">
+    <operation name="updateallbpel">
+      <input name="updateallbpelRequest" message="tns:updateallbpelRequest"/>
+      <output name="updateallbpelResponse" message="tns:updateallbpelResponse"/>
+    </operation>
+  </portType>
+  <binding name="updateallbpelSQLBinding" type="tns:updateallbpelSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="updateallbpel">
+      <soap:operation style="document"/>
+      <input name="updateallbpelRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="updateallbpelResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="updateallbpelSQL_sqlseService">
+    <port name="updateallbpelSQL_sqlsePort" binding="tns:updateallbpelSQLBinding">
+      <soap:address location="http://localhost:18181/updateallbpelSQL/updateallbpelSQL/updateallbpelSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="updateallbpelSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="updateallbpelSQL_myrole" portType="tns:updateallbpelSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

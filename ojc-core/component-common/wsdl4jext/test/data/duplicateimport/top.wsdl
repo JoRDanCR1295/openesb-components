@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="top" targetNamespace="http://ojc.java.net/wsdl4jext/unittest/simpleimport"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ojc.java.net/wsdl4jext/unittest/simpleimport" xmlns:ns0="http://ojc.java.net/wsdl4jext/unittest/Imported" xmlns:ns1="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD">
+    <import location="imported/imported.wsdl" namespace="http://ojc.java.net/wsdl4jext/unittest/Imported"/>
+    <import location="imported/imported2.wsdl" namespace="http://ojc.java.net/wsdl4jext/unittest/Imported"/>
+    <import location="imported/imported.xsd" namespace="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD"/>
+    <types>
+        <xsd:schema targetNamespace="http://ojc.java.net/wsdl4jext/unittest/simpleimport">
+            <xsd:import schemaLocation="imported/imported2.xsd" namespace="http://ojc.java.net/wsdl4jext/unittest/Simple/XSD"/>
+        </xsd:schema>
+    </types>
+    <message name="topOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="topOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="topPortType">
+        <wsdl:operation name="topOperation">
+            <wsdl:input name="input1" message="tns:topOperationRequest"/>
+            <wsdl:output name="output1" message="tns:topOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="topBinding" type="tns:topPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="topOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://ojc.java.net/wsdl4jext/unittest/simpleimport"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://ojc.java.net/wsdl4jext/unittest/simpleimport"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="topService">
+        <wsdl:port name="topPort" binding="tns:topBinding">
+            <soap:address location="http://localhost:18181/topService/topPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="top1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="topPortTypeRole" portType="tns:topPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

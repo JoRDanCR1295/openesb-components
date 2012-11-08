@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarmWithWhileBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarmWithWhileBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarmWithWhileBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarmWithWhileWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onAlarmWithWhileWSDL" location="onAlarmWithWhileWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarmWithWhileWSDL1" myRole="onAlarmWithWhileWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="tempVariable2" type="xsd:string"/>
+        <bpws:variable name="tempVariable1" type="xsd:int"/>
+        <bpws:variable name="OnAlarmWithWhileWSDLOperationOut" messageType="ns1:onAlarmWithWhileWSDLOperationReply"/>
+        <bpws:variable name="OnAlarmWithWhileWSDLOperationIn" messageType="ns1:onAlarmWithWhileWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarmWithWhileWSDLOperation" portType="ns1:onAlarmWithWhileWSDLPortType" variable="OnAlarmWithWhileWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>1</bpws:from>
+                <bpws:to variable="tempVariable1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="OnAlarmWithWhileWSDLOperationIn" part="part1"/>
+                <bpws:to variable="tempVariable2"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:documentation>ver0.3</bpws:documentation>
+                    <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+                    <bpws:scope name="Scope2">
+                        <bpws:while name="While1">
+                            <bpws:condition> ( $tempVariable1 &lt;= 5 ) </bpws:condition>
+                            <bpws:assign name="Assign2">
+                                <bpws:copy>
+                                    <bpws:from>concat($tempVariable2, '* Execution Inside While in EH *')</bpws:from>
+                                    <bpws:to variable="tempVariable2"/>
+                                </bpws:copy>
+                                <bpws:copy>
+                                    <bpws:from> ( $tempVariable1 + 1 ) </bpws:from>
+                                    <bpws:to variable="tempVariable1"/>
+                                </bpws:copy>
+                            </bpws:assign>
+                        </bpws:while>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:wait name="Wait1">
+                <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+            </bpws:wait>
+        </bpws:scope>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from variable="tempVariable2"/>
+                <bpws:to variable="OnAlarmWithWhileWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarmWithWhileWSDLOperation" portType="ns1:onAlarmWithWhileWSDLPortType" variable="OnAlarmWithWhileWSDLOperationOut"/>
+    </sequence>
+</process>

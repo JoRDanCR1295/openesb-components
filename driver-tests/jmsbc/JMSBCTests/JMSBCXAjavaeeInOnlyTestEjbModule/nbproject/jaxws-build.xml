@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xalan="http://xml.apache.org/xslt" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:jaxws="http://www.netbeans.org/ns/jax-ws/1">
+    <!--
+                ===================
+                JAX-WS WSGEN SECTION
+                ===================
+            -->
+    <!--
+                ===================
+                JAX-WS WSIMPORT SECTION
+                ===================
+            -->
+    <target name="wsimport-init" depends="init">
+        <mkdir dir="${build.generated.dir}/wsimport/client"/>
+        <mkdir dir="${build.generated.dir}/wsimport/service"/>
+        <mkdir dir="${build.generated.dir}/wsimport/binaries"/>
+        <mkdir dir="${classes.dir}"/>
+        <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
+            <classpath path="${j2ee.platform.wsimport.classpath}"/>
+        </taskdef>
+    </target>
+    <target name="wsimport-client-check-JMSBCjavaeeXAInOnlyTest" depends="wsimport-init">
+        <condition property="wsimport-client-JMSBCjavaeeXAInOnlyTest.notRequired">
+            <available file="${build.generated.dir}/wsimport/client/com/sun/jmsbc/test/javaeese" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-client-JMSBCjavaeeXAInOnlyTest" depends="wsimport-init,wsimport-client-check-JMSBCjavaeeXAInOnlyTest" unless="wsimport-client-JMSBCjavaeeXAInOnlyTest.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/client" extension="true" package="com.sun.jmsbc.test.javaeese" destdir="${build.generated.dir}/wsimport/binaries" wsdl="${basedir}/${meta.inf}/xml-resources/web-service-references/JMSBCjavaeeXAInOnlyTest/wsdl/JMSBCjavaeeXAInOnlyTest.wsdl" wsdlLocation="file:/@drivertest_dir@/jmsbc/JMSBCTests/JMSBCXAjavaeeInOnlyTestEjbModule/src/java/JMSBCjavaeeXAInOnlyTest.wsdl" catalog="catalog.xml"/>
+        <copy todir="${classes.dir}">
+            <fileset dir="${build.generated.dir}/wsimport/binaries" includes="**/*.xml"/>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-JMSBCjavaeeXAInOnlyTest" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/client/com/sun/jmsbc/test/javaeese"/>
+    </target>
+    <target name="wsimport-service-check-JMSBCXAjavaeeInOnlyTestService" depends="wsimport-init">
+        <condition property="wsimport-service-JMSBCXAjavaeeInOnlyTestService.notRequired">
+            <available file="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/jmsbcjavaeese/jmsbcjavaeexainonlytest" type="dir"/>
+        </condition>
+    </target>
+    <target name="wsimport-service-JMSBCXAjavaeeInOnlyTestService" depends="wsimport-init,wsimport-service-check-JMSBCXAjavaeeInOnlyTestService" unless="wsimport-service-JMSBCXAjavaeeInOnlyTestService.notRequired">
+        <wsimport xendorsed="true" sourcedestdir="${build.generated.dir}/wsimport/service" extension="true" verbose="true" destdir="${classes.dir}" wsdl="${basedir}/${meta.inf}/xml-resources/web-services/JMSBCXAjavaeeInOnlyTestService/wsdl/JMSBCjavaeeXAInOnlyTest.wsdl" catalog="catalog.xml"/>
+        <copy todir="${basedir}/${meta.inf}/wsdl/JMSBCXAjavaeeInOnlyTestService">
+            <fileset dir="${basedir}/${meta.inf}/xml-resources/web-services/JMSBCXAjavaeeInOnlyTestService/wsdl/"/>
+        </copy>
+    </target>
+    <target name="wsimport-service-clean-JMSBCXAjavaeeInOnlyTestService" depends="-init-project">
+        <delete dir="${build.generated.dir}/wsimport/service/org/netbeans/j2ee/wsdl/jmsbcjavaeese/jmsbcjavaeexainonlytest"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-JMSBCjavaeeXAInOnlyTest"/>
+    <target name="wsimport-client-compile" depends="wsimport-client-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/client" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}" javac.compilerargs.jaxws="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'"/>
+    </target>
+    <target name="wsimport-service-generate" depends="wsimport-service-JMSBCXAjavaeeInOnlyTestService"/>
+    <target name="wsimport-service-compile" depends="wsimport-service-generate">
+        <ejbjarproject2:javac srcdir="${build.generated.dir}/wsimport/service" classpath="${j2ee.platform.wsimport.classpath}:${javac.classpath}" destdir="${classes.dir}" javac.compilerargs.jaxws="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'"/>
+    </target>
+</project>

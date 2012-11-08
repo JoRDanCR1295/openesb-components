@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SimpleProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestScopeProj/SimpleProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TestScopeProj/SimpleProcess" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/ScopeInterface"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ScopeInterface" location="ScopeInterface.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="FinalInvPL" partnerLinkType="ns1:FinalInvPLT" partnerRole="FinalInvPTRole"/>
+        <partnerLink name="OneWayInvPL" partnerLinkType="ns1:OneWayPLT" partnerRole="OneWayPTRole"/>
+        <partnerLink name="InboundPL" partnerLinkType="ns1:InboundPLT" myRole="InboundPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FinalInvVar" messageType="ns1:InputMsg"/>
+        <variable name="ProcessInvVar" messageType="ns1:InputMsg"/>
+        <variable name="whileCounter" type="xsd:int"/>
+        <variable name="InRecVar" messageType="ns1:InputMsg"/>
+    </variables>
+    <faultHandlers>
+        <catch faultName="ns2:uninitializedVariable">
+            <sequence name="Sequence3">
+                <compensateScope name="compensateScope1" target="Scope1"/>
+                <assign name="AssignInFault">
+                    <copy>
+                        <from>concat($InRecVar.InputPart, ' Added in FH:')</from>
+                        <to part="InputPart" variable="InRecVar"/>
+                    </copy>
+                    <copy>
+                        <from variable="InRecVar" part="InputPart"/>
+                        <to variable="FinalInvVar" part="InputPart"/>
+                    </copy>
+                </assign>
+                <invoke name="finalInv" partnerLink="FinalInvPL" operation="FinalInvOper" 
+                        portType="ns1:FinalInvPT" inputVariable="FinalInvVar"/>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive createInstance="yes" name="InRec" partnerLink="InboundPL" 
+                 operation="InboundOper" portType="ns1:InboundPT" variable="InRecVar"/>
+        <assign name="assignCounter">
+            <copy>
+                <from>0</from>
+                <to variable="whileCounter"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> $whileCounter &lt; 2 </condition>
+            <sequence name="Sequence1">
+                <scope name="Scope1">
+                    <variables>
+                        <variable name="S1CHInvVar" messageType="ns1:InputMsg"/>
+                        <variable name="S1InvVar" messageType="ns1:InputMsg"/>
+                    </variables>
+                    <compensationHandler>
+                        <sequence name="Sequence4">
+                            <assign name="S1CHAssign">
+                                <copy>
+                                    <from>concat($InRecVar.InputPart, ' Added in S1CH:')</from>
+                                    <to variable="InRecVar" part="InputPart"/>
+                                </copy>
+                                
+                                <copy>
+                                    <from variable="InRecVar" part="InputPart"/>
+                                    <to variable="S1CHInvVar" part="InputPart"/>
+                                </copy>
+                            </assign>
+                            <invoke name="S1CHInv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                    portType="ns1:OneWayPT" inputVariable="S1CHInvVar"/>
+                        </sequence>
+                    </compensationHandler>
+                    <sequence name="Sequence2">
+                        <assign name="S1Assign">
+                            <copy>
+                                <from>concat($InRecVar.InputPart, ' Added in S1:')</from>
+                                <to part="InputPart" variable="InRecVar"/>
+                            </copy>
+                            <copy>
+                                <from variable="InRecVar" part="InputPart"/>
+                                <to variable="S1InvVar" part="InputPart"/>
+                            </copy>
+                        </assign>
+                        <invoke name="S1Invoke" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                                portType="ns1:OneWayPT" inputVariable="S1InvVar"/>
+                    </sequence>
+                </scope>
+                <assign name="incrementCounter">
+                    <copy>
+                        <from> $whileCounter + 1 </from>
+                        <to variable="whileCounter"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <scope name="Scope2">
+            <variables>
+                <variable name="S2Var" type="xsd:string"/>
+            </variables>
+            <assign name="S2Assign">
+                <copy>
+                    <from>concat($InRecVar.InputPart, ' Added in S2:')</from>
+                    <to variable="InRecVar" part="InputPart"/>
+                </copy>
+                <copy>
+                    <from variable="InRecVar" part="InputPart"/>
+                    <to variable="S2Var"/>
+                </copy>
+                <copy>
+                    <from variable="InRecVar" part="InputPart"/>
+                    <to variable="ProcessInvVar" part="InputPart"/>
+                </copy>
+            </assign>
+        </scope>
+        <invoke name="ProcessInv" partnerLink="OneWayInvPL" operation="OneWayOper" 
+                portType="ns1:OneWayPT" inputVariable="ProcessInvVar"/>
+        <throw name="ThrowFault" faultName="ns2:uninitializedVariable"/>
+    </sequence>
+    
+</process>

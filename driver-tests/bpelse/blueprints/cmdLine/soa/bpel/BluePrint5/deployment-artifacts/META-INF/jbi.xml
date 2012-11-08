@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://localhost/BluePrint5/HotelReservation" xmlns:ns2="http://www.seebeyond.com/eInsight/ReservationSystem" xmlns:ns3="http://www.seebeyond.com/eInsight/hotelReservation" xmlns:ns4="http://localhost/BluePrint5/AirLineReservation" xmlns:ns5="http://www.seebeyond.com/eInsight/airLineReservation" xmlns:ns6="http://localhost/BluePrint5/CarReservation" xmlns:ns7="http://www.seebeyond.com/eInsight/carReservation" xmlns:ns8="http://localhost/BluePrint5/Reservation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+<service-assembly>
+<identification>
+<name>BluePrint5Application</name>
+<description>Represents the Service Assembly of BluePrint5Application</description>
+</identification>
+<service-unit>
+<identification>
+<name>BluePrint5Application-bpelSE</name>
+<description>This represents the Application Service Unit for BPELSE</description>
+</identification>
+<target>
+<artifacts-zip>bpelSE.jar</artifacts-zip>
+<component-name>sun-bpel-engine</component-name>
+</target>
+</service-unit>
+<service-unit>
+<identification>
+<name>BluePrint5Application-httpBC</name>
+<description>This represents the Application Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>httpBC.jar</artifacts-zip>
+<component-name>sun-http-binding</component-name>
+</target>
+</service-unit>
+<connections>
+<connection>
+<consumer endpoint-name="HotelStatusServicePort" service-name="ns1:HotelStatusService"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:hotelReservationStatusPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="statusReceivingRole_partnerRole" service-name="ns3:hotelReservationStatus"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:hotelReservationStatusPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="AirlineServicePort" service-name="ns4:AirlineService"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns5:airlineReservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="reservingRole_partnerRole" service-name="ns2:airlineReservation"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns5:airlineReservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="AirlineStatusServicePort" service-name="ns4:AirlineStatusService"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:airlineStatus"/>
+</connection>
+<connection>
+<consumer endpoint-name="statusReceivingRole_partnerRole" service-name="ns5:airlineStatusPLink"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:airlineStatus"/>
+</connection>
+<connection>
+<consumer endpoint-name="HotelServicePort" service-name="ns1:HotelService"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns3:hotelReservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="reservingRole_partnerRole" service-name="ns2:hoteReservationPLink"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns3:hotelReservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="CarServicePort" service-name="ns6:CarService"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns7:reservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="reservingRole_partnerRole" service-name="ns2:carReservationPLink"/>
+<provider endpoint-name="reservingRole_myRole" service-name="ns7:reservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="reservationServicePort" service-name="ns8:reservationService"/>
+<provider endpoint-name="reservationServicing_myRole" service-name="ns2:reservationPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="CarStatusServicePort" service-name="ns6:CarStatusService"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:carReservationStatusPLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="statusReceivingRole_partnerRole" service-name="ns7:reservationStatusPLink"/>
+<provider endpoint-name="statusReceivingRole_myRole" service-name="ns2:carReservationStatusPLink"/>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

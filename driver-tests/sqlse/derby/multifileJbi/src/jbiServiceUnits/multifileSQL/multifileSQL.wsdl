@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="multifileSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="deletesqlRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:decimal"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="insertrowRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/><xsd:element name="selectallRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="selectallResponse"><xsd:complexType><xsd:sequence><xsd:element name="DISCOUNT_CODE" type="xsd:string"/><xsd:element name="RATE" type="xsd:decimal"/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="selectallRequest">
+    <part name="selectallRequestPart" element="tns:selectallRequest"/>
+  </message>
+  <message name="insertrowResponse">
+    <part name="insertrowResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="selectallResponse">
+    <part name="selectallResponsePart" element="tns:selectallResponse"/>
+  </message>
+  <message name="insertrowRequest">
+    <part name="insertrowRequestPart" element="tns:insertrowRequest"/>
+  </message>
+  <message name="deletesqlRequest">
+    <part name="deletesqlRequestPart" element="tns:deletesqlRequest"/>
+  </message>
+  <message name="deletesqlResponse">
+    <part name="deletesqlResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="multifileSQL_sqlsePortType">
+    <operation name="deletesql">
+      <input name="deletesqlRequest" message="tns:deletesqlRequest"/>
+      <output name="deletesqlResponse" message="tns:deletesqlResponse"/>
+    </operation>
+    <operation name="insertrow">
+      <input name="insertrowRequest" message="tns:insertrowRequest"/>
+      <output name="insertrowResponse" message="tns:insertrowResponse"/>
+    </operation>
+    <operation name="selectall">
+      <input name="selectallRequest" message="tns:selectallRequest"/>
+      <output name="selectallResponse" message="tns:selectallResponse"/>
+    </operation>
+  </portType>
+  <binding name="multifileSQLBinding" type="tns:multifileSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="deletesql">
+      <soap:operation style="document"/>
+      <input name="deletesqlRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="deletesqlResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="insertrow">
+      <soap:operation style="document"/>
+      <input name="insertrowRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="insertrowResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="selectall">
+      <soap:operation style="document"/>
+      <input name="selectallRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="selectallResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="multifileSQL_sqlseService">
+    <port name="multifileSQL_sqlsePort" binding="tns:multifileSQLBinding">
+      <soap:address location="http://localhost:18181/multifileSQL/multifileSQL/multifileSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="multifileSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="multifileSQL_myrole" portType="tns:multifileSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

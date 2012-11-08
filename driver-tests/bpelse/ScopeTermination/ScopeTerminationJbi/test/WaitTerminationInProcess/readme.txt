@@ -1,0 +1,1 @@
+This test tests wait termination in Process. The timeout for the test is 10s. If the wait does not get terminated, it would wait for 5 secs; and in the FH we wait another 6s. So the reply would come after 11 secs if the wait is not terminated. Also, if the wait is not terminated, the reply following the wait will execute resulting in the test failure.

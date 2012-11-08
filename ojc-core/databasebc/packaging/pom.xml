@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>databasebc-installer</artifactId>
+    <name>sun-database-binding</name>
+    <version>${databasebc.artifact.version}</version>
+    <description>databasebc packaging description</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-database-binding</Bundle-SymbolicName>
+                        <Bundle-Name>Sun Database Binding</Bundle-Name>
+                        <Bundle-Description>Sun Database Binding</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/databasebcimpl.jar,
+                            lib/wsdl4j.jar,
+                            lib/resolver.jar,
+                            lib/componentsl.jar,
+                            lib/customized-xmlbeans.jar,
+                            lib/common-util.jar,
+                            lib/qos.jar,
+                            lib/wsdl4jext.jar,
+                            lib/jsr173_api.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                            javax.xml.namespace,
+                            org.w3c.dom,
+                            !org.apache.tools.ant.*,
+                            !com.sun.tools.javadoc.*,
+                            !com.sun.javadoc.*,
+                            !net.java.hulp.measure,
+                            !xmlbean,
+                            !org.apache.xmlbeans.impl.xpath.*,
+                            !org.apache.xmlbeans.impl.xquery.*,
+                            *;-nouses:=true
+                        </Import-Package>
+
+                        <DynamicImport-Package>
+                            *
+                        </DynamicImport-Package>
+                    </instructions>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>databasebcimpl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4jext</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>customized-xmlbeans</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>jsr173_api</artifactId>
+            <optional>true</optional>
+        </dependency>
+	    <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.itf</artifactId>
+            <optional>true</optional>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.impl</artifactId>
+            <optional>true</optional>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>

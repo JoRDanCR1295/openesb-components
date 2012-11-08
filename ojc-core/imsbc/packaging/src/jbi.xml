@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!-- jbi.xml descriptor for the binding component (BC) -->
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"  
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0"   
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+<!-- identification information about this binding -->
+    <component type="binding-component">
+        <identification>
+            <name>${project.name}</name>
+            <description>IMS binding component to connect to and exchange information from IMS database</description>
+            <identification:VersionInfo component-version="${imsbc.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="The boot strap class" >com.sun.jbi.imsbc.IMSBindingComponent</component-class-name>
+        <component-class-path>
+            <path-element>lib/imsbcimpl.jar</path-element>
+            <path-element>lib/wsdl4j.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+			<path-element>lib/xsdmodel.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.itf.jar</path-element>
+            <path-element>lib/net.sf.hulp.meas.impl.jar</path-element>
+			<path-element>lib/qos.jar</path-element>
+			<path-element>lib/common-util.jar</path-element>
+        </component-class-path>
+        <bootstrap-class-name>com.sun.jbi.imsbc.bootstrap.IMSBindingBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+            <path-element>lib/imsbcimpl.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+			<path-element>lib/qos.jar</path-element> 
+			<path-element>lib/common-util.jar</path-element>
+        </bootstrap-class-path>
+		<shared-library>sun-encoder-library</shared-library>
+        <config:Configuration>
+           <config:Property name="Threads" 
+                            type="xsd:int" 
+                            displayName="Number of Outbound Threads" 
+                            displayDescription="Maximum number of threads to process outgoing IMS Server invocations concurrently. Any integer number between 1 and 2147483647 is allowed." 
+                            defaultValue="10" 
+                            showDisplay="all">
+               <config:Constraint facet="minInclusive" value="5"/> 
+               <config:Constraint facet="maxInclusive" value="2147483647"/>     
+           </config:Property>
+
+          <config:ApplicationConfiguration>
+              <config:Property name="configurationName" 
+                               type="xsd:string" 
+                               displayName="Application Configuration Name" 
+                               displayDescription="Name of the application configuration" 
+                               required="true"
+                               isApplicationRestartRequired="true"/>
+				<config:Property name="imsServerLocation" 
+                               type="xsd:string"
+                               displayName="IMS Server Location URL" 
+                               displayDescription="Name of the IMS server and port. For ex :ims://servername:port"  
+                               required="true"
+                               isApplicationRestartRequired="true"/>
+           </config:ApplicationConfiguration>
+           <config:ApplicationVariable isApplicationRestartRequired="true">
+               <config:name/>
+               <config:type/>
+               <config:value/>
+           </config:ApplicationVariable>
+        </config:Configuration>
+    </component>
+</jbi>

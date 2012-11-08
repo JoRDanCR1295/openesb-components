@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>worklistmanagerse-installer</artifactId>
+    <name>sun-wlm-engine</name>
+    <version>${workflowse.artifact.version}</version>
+    <description>workflow packaging description</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-rename-jars</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- restore version numbers for a few .jar files 
+                                <move file="${project.build.outputDirectory}/lib/antlr.jar" tofile="${project.build.outputDirectory}/lib/antlr-2.7.6.jar"></move>
+                                <move file="${project.build.outputDirectory}/lib/cglib.jar" tofile="${project.build.outputDirectory}/lib/cglib-2.1.3.jar"></move>
+                                <move file="${project.build.outputDirectory}/lib/commons-collections.jar" tofile="${project.build.outputDirectory}/lib/commons-collections-2.1.1.jar"></move>
+                                <move file="${project.build.outputDirectory}/lib/commons-logging.jar" tofile="${project.build.outputDirectory}/lib/commons-logging-1.0.4.jar"></move>
+                                <move file="${project.build.outputDirectory}/lib/dom4j.jar"
+                                tofile="${project.build.outputDirectory}/lib/dom4j-1.6.1.jar"></move> -->
+                                <!-- rename worklistmanagerseimpl.jar to worklistmanagerse.jar -->
+                                <move file="${project.build.outputDirectory}/lib/worklistmanagerseimpl.jar"
+                                tofile="${project.build.outputDirectory}/lib/worklistmanagerse.jar"></move>
+                             </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-wlm-engine</Bundle-SymbolicName>
+                        <Bundle-Name>Sun Worklist Manager Engine</Bundle-Name>
+                        <Bundle-Description>This is a worklist manager service engine.</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            !org.w3c.dom,
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/worklistmanagerse.jar,
+                            lib/componentsl.jar,
+                            lib/wsdl4j.jar,
+                            lib/crl.jar,
+                            lib/common-util.jar,
+                            lib/qos.jar,
+                            lib/jsr173_api.jar,
+                            lib/resolver.jar,
+                            lib/wfse_def.jar,
+                            lib/workflowmodel.jar,
+                            lib/hibernate-core.jar,
+                            lib/commons-logging.jar,
+                            lib/javassist.jar,
+                            lib/dom4j.jar,
+                            lib/asm.jar,
+                            lib/antlr.jar,
+                            lib/commons-collections.jar,
+                            lib/asm-attrs.jar,
+                            lib/cglib.jar,
+                            lib/xpathmodel.jar,
+                            lib/jxpath.jar,
+			    lib/ehcache.jar,
+			    lib/slf4j-simple.jar,
+			    lib/slf4j-api.jar,
+			    lib/hibernate-search.jar,
+			    lib/hibernate-commons-annotations.jar,
+			    lib/solr-core.jar,
+			    lib/solr-common.jar,
+			    lib/lucene-core.jar,
+			    lib/component-toolkit.jar,
+			    lib/commons-io.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                            javax.xml.namespace,
+                            org.w3c.dom,
+                            !org.apache.tools.ant.*,
+                            !javax.servlet.*,
+                            !com.sun.tools.javadoc.*,
+                            !com.sun.javadoc.*,
+                            !com.sun.jdi.*,
+                            !net.sf.swarmcache,
+                            !com.ibm.ejs.jts.jta,
+                            !org.jaxen.dom4j,
+                            !org.relaxng.datatype,
+                            !org.jboss.*,
+                            !org.apache.log,
+                            !com.opensymphony.*,
+                            !org.apache.log4j,
+                            !com.ibm.ws.Transaction,
+                            !org.jdom.*,
+                            !org.xmlpull.v1,
+                            !org.codehaus.*,
+                            !xmlbean,
+                            !org.gjt.xpp,
+                            !com.mchange.*,
+                            !net.sf.ehcache.*,
+                            !org.apache.avalon.*,
+                            !org.apache.commons.*,
+                            !org.jaxen.*,
+                            !org.logicalcobwebs.proxool.*,
+                            !org.jaxen.saxpath,
+                            !net.sf.saxon.*,
+                            !org.objectweb.asm.util,
+                            !com.sun.msv.datatype.*,
+                            *;-nouses:=true
+                        </Import-Package>
+
+                    </instructions>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>worklistmanagerseimpl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+	<dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>crl</artifactId>
+            <optional>true</optional>
+        </dependency>
+	
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>jsr173_api</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wfse_def</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>workflowmodel</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xpathmodel</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>jxpath</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+            <optional>true</optional>
+        </dependency>
+<!--Begin: Hibernate + Lucene -->
+        <dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlr</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <optional>true</optional>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <optional>true</optional>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+	    <version>3.3.2.GA</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>javassist</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+	    <version>1.6.0-beta5</version>
+        </dependency>
+	<dependency>
+	  <groupId>org.hibernate</groupId>
+	  <artifactId>hibernate-commons-annotations</artifactId>
+	  <version>3.1.0.GA</version>
+	</dependency>
+	 <dependency>
+	  <groupId>org.hibernate</groupId>
+	  <artifactId>hibernate-search</artifactId>
+	  <version>3.2.0.Final</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.commons</groupId>
+	  <artifactId>commons-io</artifactId>
+	  <version>1.3.2</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.apache.solr</groupId>
+	  <artifactId>solr-common</artifactId>
+	  <version>1.3.0</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.apache.solr</groupId>
+	  <artifactId>solr-core</artifactId>
+	  <version>1.3.0</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.apache.lucene</groupId>
+	  <artifactId>lucene-core</artifactId>
+	  <version>2.4.1</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>1.5.8</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>1.5.8</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-simple</artifactId>
+	  <version>1.5.8</version>
+	</dependency> 
+<!--End: Hibernate + Lucene -->
+    </dependencies>
+</project>

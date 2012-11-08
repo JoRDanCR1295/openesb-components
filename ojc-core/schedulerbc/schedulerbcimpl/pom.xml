@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>schedulerbcimpl</artifactId>
+    <name>schedulerbcimpl</name>
+    <version>${schedulerbc.artifact.version}</version>
+    <description>Implementation of SchedulerBC</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${artifactId}-extract-globalized-messages</id>
+                        <phase>process-classes</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="i18n" classname="${I18NTASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n dir="${project.build.outputDirectory}" file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties" strict="true" prefix="" pattern="(SCHEDBC-[4-7]\d\d\d)(: )(.*)" />
+                                <!-- copy file to classes dir: -->
+                                <copy file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties" todir="${project.build.outputDirectory}/${msgs.package}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+        </dependency>
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>crl</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+        </dependency>
+    </dependencies>
+    <properties>
+        <msgs.package>org/glassfish/openesb/schedulerbc</msgs.package>
+    </properties>
+</project>

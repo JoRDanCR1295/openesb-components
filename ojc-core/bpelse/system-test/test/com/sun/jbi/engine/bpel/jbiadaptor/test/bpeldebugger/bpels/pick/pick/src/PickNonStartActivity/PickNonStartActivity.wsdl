@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+             xmlns="http://schemas.xmlsoap.org/wsdl/"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="PickNonStartActivity"
+             targetNamespace="http://www.mycomp.org/PickNonStartActivity"
+             xmlns:tns="http://www.mycomp.org/PickNonStartActivity"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns3="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns4="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <wsdl:message name="requestMsg">
+        <wsdl:part name="req" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="responseMsg">
+        <wsdl:part name="res" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="portType1">
+        <operation name="operation1">
+            <input name="input1" message="tns:requestMsg"/>
+            <output name="output1" message="tns:responseMsg"/>
+        </operation>
+    </wsdl:portType>
+    <wsdl:portType name="portType2">
+        <wsdl:operation name="PickOperation2">
+            <wsdl:input name="input1" message="tns:requestMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1" message="tns:responseMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="invokeSoapBinding" type="tns:invokePortType">
+        <wsdl:operation name="oneWayInvokeOper">
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="binding1" type="tns:portType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="operation1">
+            <input name="input1">
+          <soap:body/>
+        </input><output name="output1">
+    <soap:body/>
+</output>
+        </operation>
+    </wsdl:binding>
+    <wsdl:binding name="binding2" type="tns:portType2">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="PickOperation2">
+        <wsdl:input name="input1">
+          <soap:body/>
+        </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PickNotStartActivityService">
+      	<wsdl:port name="oneWayOperationPortName" binding="tns:invokeSoapBinding">
+        	<soap:address location="http://localhost:18181/PickNonStartoneWayOperation"/>
+		</wsdl:port>
+    
+		<wsdl:port name="port1" binding="tns:binding1">                    
+                     <soap:address location="http://localhost:18181/PickNonStartActivity1"/>
+		</wsdl:port>
+        <wsdl:port name="port2" binding="tns:binding2">
+            <soap:address location="http://localhost:18181/PickNonStartActivity2"/>
+        </wsdl:port>
+    </wsdl:service>
+
+	<plnk:partnerLinkType name="partnerlinktype1">
+		<plnk:role name="partnerlinktyperole1" portType="tns:portType1"/>
+	</plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype2">
+        <plnk:role name="partnerlinktyperole2" portType="tns:portType2"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="invokePlinktype">
+		<plnk:role name="invokePlinkrole" portType="tns:invokePortType"/>
+	</plnk:partnerLinkType>
+    
+    <vprop:property type="xsd:string" name="msgProp"></vprop:property>
+    <vprop:propertyAlias part="req"
+			propertyName="tns:msgProp"
+                        messageType="tns:requestMsg">
+    </vprop:propertyAlias>
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

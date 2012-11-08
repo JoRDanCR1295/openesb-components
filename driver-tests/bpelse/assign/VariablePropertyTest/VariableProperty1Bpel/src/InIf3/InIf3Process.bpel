@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InIf3Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/VariableProperty1Bpel/InIf3Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/VariableProperty1Bpel/InIf3Process" xmlns:ns0="http://j2ee.netbeans.org/wsdl/InIf3" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://xml.netbeans.org/schema/simple">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InIf3" location="InIf3.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/simple" location="../simple.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="PlinkInOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InIf3" partnerLinkType="tns:InIf3" myRole="InIf3PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ElementVar" element="ns2:itemElem"/>
+        <variable name="OutputIntVar" type="xsd:int"/>
+        <variable name="BoolVariable" type="xsd:boolean"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="InIf3OperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InIf3" messageType="tns:InIf3OperationResponse"/>
+        <variable name="InIf3OperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InIf3" messageType="tns:InIf3OperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PlinkInOut" operation="InIf3Operation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InIf3" portType="tns:InIf3PortType" variable="InIf3OperationIn"/>
+        <assign name="PreAssign">
+            <copy>
+                <from>10</from>
+                <to variable="IntVariable"/>
+            </copy>
+            <copy>
+                <from>true()</from>
+                <to variable="BoolVariable"/>
+            </copy>
+            <copy>
+                <from>$InIf3OperationIn.inputPart/ns2:itemName</from>
+                <to>$ElementVar/ns2:itemName</to>
+            </copy>
+            <copy>
+                <from>$InIf3OperationIn.inputPart/ns2:price</from>
+                <to>$ElementVar/ns2:price</to>
+            </copy>
+            <copy>
+                <from>$InIf3OperationIn.inputPart/ns2:itemAvailable</from>
+                <to>$ElementVar/ns2:itemAvailable</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>not(ns1:getVariableProperty('ElementVar', 'ns0:boolProperty') and ns1:getVariableProperty('BoolVariable', 'ns0:boolProperty'))</condition>
+            <assign name="Assign_WithinIf">
+                <copy>
+                    <from>ns1:getVariableProperty('ElementVar', 'ns0:intProperty') + ns1:getVariableProperty('IntVariable', 'ns0:intProperty')</from>
+                    <to variable="OutputIntVar"/>
+                </copy>
+            </assign>
+        </if>
+        <assign name="Assign2">
+            <copy>
+                <from>concat("The int value is ", $OutputIntVar)</from>
+                <to variable="InIf3OperationOut" part="outputPart"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PlinkInOut" operation="InIf3Operation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InIf3" portType="tns:InIf3PortType" variable="InIf3OperationOut"/>
+    </sequence>
+</process>

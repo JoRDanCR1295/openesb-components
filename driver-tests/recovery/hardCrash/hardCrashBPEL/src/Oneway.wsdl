@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Oneway" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="OutOnlyService" targetNamespace="urn:Oneway">
+    <types>
+        <xsd:schema xmlns:ns1="urn:Oneway" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:Oneway">
+            <xsd:element name="helloObj" type="tns:helloObjType"/>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="nonNegativeInteger" type="xsd:nonNegativeInteger"/>
+                    <xsd:element name="byte" type="xsd:byte"/>
+                    <xsd:element name="short" type="xsd:short"/>
+                    <xsd:element name="int" type="xsd:int"/>
+                    <xsd:element name="long" type="xsd:long"/>
+                    <xsd:element name="negativeInteger" type="xsd:negativeInteger"/>
+                    <xsd:element name="dateTime" type="xsd:dateTime"/>
+                    <xsd:element name="nonPositiveInteger" type="xsd:nonPositiveInteger"/>
+                    <xsd:element name="duration" type="xsd:duration"/>
+                    <xsd:element name="ENTITIES" type="xsd:ENTITIES"/>
+                    <xsd:element name="double" type="xsd:double"/>
+                    <xsd:element name="ENTITY" type="xsd:ENTITY"/>
+                    <xsd:element name="float" type="xsd:float"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="Hello_sayHello">
+        <part element="tns:helloObj" name="body"/>
+    </message>
+    <message name="Hello_sayHelloResponse">
+        <part element="tns:helloObj" name="result"/>
+    </message>
+    <portType name="Hello">
+        <operation name="sayHello">
+            <input message="tns:Hello_sayHello"/>
+            <output message="tns:Hello_sayHelloResponse"/>
+        </operation>
+    </portType>
+    <portType name="Oneway">
+        <operation name="sayHello">
+            <input message="tns:Hello_sayHello"/>
+        </operation>
+    </portType>
+    <binding name="HelloDocElem2DocElemBinding" type="tns:Hello">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="result" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="OnewayBinding" type="tns:Oneway">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="OnewayBindingService">
+        <port binding="tns:OnewayBinding" name="OnewayPort">
+            <soap:address location="http://localhost:12100/service/OnewayTest"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="HelloServiceLink">
+        <plnk:role name="HelloRole" portType="Hello"/>
+        <plnk:role name="OnewayRole" portType="Oneway"/>
+    </plnk:partnerLinkType>
+</definitions>

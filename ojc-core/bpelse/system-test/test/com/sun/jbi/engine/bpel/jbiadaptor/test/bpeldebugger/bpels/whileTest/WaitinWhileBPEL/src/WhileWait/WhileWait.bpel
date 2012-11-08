@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="WhileWait" 
+         targetNamespace="http://sun.com/bpel/WhileWait"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://sun.com/wsdl/WhileWait">
+    <import namespace="http://sun.com/wsdl/WhileWait" location="WhileWait.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="ns1:WhileWaitInvokePLT" 
+                     partnerRole="WhileWaitInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WhileWaitPartnerLinkType" 
+                     myRole="WhileWaitPartnerLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WhileCounter" type="xsd:int"/>
+        <variable name="WhileWaitOutMessage" messageType="ns1:WhileWaitMessage"/>
+        <variable name="WhileWaitInMessage" messageType="ns1:WhileWaitMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" 
+                 operation="WhileWaitOperation" portType="ns1:WhileWaitPortType" 
+                 variable="WhileWaitInMessage" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy><from>0</from><to variable="WhileCounter"/></copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $WhileCounter &lt; $WhileWaitInMessage.counter ) </condition>
+            <sequence name="Sequence1">
+                <wait name="Wait1">
+                    <for>$WhileWaitInMessage.waitTime</for>
+                </wait>
+                <assign name="IncrementCounter">
+                    <copy>
+                    <from>  ( $WhileCounter + 1 )  </from><to variable="WhileCounter"/>
+                    </copy>
+                </assign>
+                <assign name="ConcatString">
+                    <copy>
+                        <from>concat($WhileWaitInMessage.string, '***Loop', $WhileCounter)</from>
+                        <to part="string" variable="WhileWaitInMessage"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign3">
+            <copy>
+                <from variable="WhileWaitInMessage" part="string"/>
+                <to variable="WhileWaitOutMessage" part="string"/>
+            </copy>
+            <copy>
+                <from variable="WhileCounter"/>
+                <to variable="WhileWaitOutMessage" part="counter"/>
+            </copy>
+            <copy>
+                <from variable="WhileWaitInMessage" part="waitTime"/>
+                <to variable="WhileWaitOutMessage" part="waitTime"/>
+            </copy>
+        </assign>
+        <!--
+        <reply name="Reply1" partnerLink="PartnerLink1" 
+               operation="WhileWaitOperation" portType="ns1:WhileWaitPortType" 
+               variable="WhileWaitOutMessage"/>
+        -->
+        <invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="oneWayInvokeOper" portType="ns1:invokePortType"
+                inputVariable="WhileWaitOutMessage"/>
+    </sequence>
+</process>

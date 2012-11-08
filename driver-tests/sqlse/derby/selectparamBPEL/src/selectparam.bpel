@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="selectparam"
+    targetNamespace="http://enterprise.netbeans.org/bpel/selectparam"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/selectparam" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bpel" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/bpel" location="bpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="selectparambpelSQL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:selectparambpelSQL_sqlsePartnerLinkType" partnerRole="selectparambpelSQL_myrole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:bpelPartner" myRole="bpelPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="BpelOperationOut" messageType="ns1:bpelOperationReply"/>
+      <bpws:variable name="SelectparambpelOut" messageType="ns2:selectparambpelResponse"/>
+      <bpws:variable name="SelectparambpelIn" messageType="ns2:selectparambpelRequest"/>
+      <bpws:variable name="BpelOperationIn" messageType="ns1:bpelOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="BpelOperationIn" part="part1"/>
+            <bpws:to>$SelectparambpelIn.selectparambpelRequestPart/ns2:param1</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="selectparambpel" portType="ns2:selectparambpelSQL_sqlsePortType" inputVariable="SelectparambpelIn" outputVariable="SelectparambpelOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$SelectparambpelOut.selectparambpelResponsePart/ns2:CUSTOMER_NUM</bpws:from>
+            <bpws:to>$BpelOperationOut.part1/ns0:CUSTOMER_NUM</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SelectparambpelOut.selectparambpelResponsePart/ns2:ZIP</bpws:from>
+            <bpws:to>$BpelOperationOut.part1/ns0:ZIP</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SelectparambpelOut.selectparambpelResponsePart/ns2:NAME</bpws:from>
+            <bpws:to>$BpelOperationOut.part1/ns0:NAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="bpelOperation" portType="ns1:bpelPortType" variable="BpelOperationOut"/>
+   </sequence>
+</process>

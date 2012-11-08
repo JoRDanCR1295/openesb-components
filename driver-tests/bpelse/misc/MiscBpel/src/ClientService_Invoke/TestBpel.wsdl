@@ -1,0 +1,64 @@
+<definitions targetNamespace="http://stc.com/TestBpel"
+             name="TestBpel"
+             xmlns:tns="http://stc.com/TestBpel"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:tns0="http://stc.com/TestBpel"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+    <types>
+        <xsd:schema targetNamespace="http://stc.com/TestBpel"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://stc.com/TestBpel"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+                    <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                     name="value"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="TestBpel">
+        <part name="part"
+              element="tns:item"></part>
+    </message>
+    <portType name="TestBpel">
+        <operation name="TestBpel">
+            <input message="tns:TestBpel"></input>
+            <output message="tns:TestBpel"></output>
+        </operation>
+    </portType>
+    <binding name="Binding"
+             type="tns:TestBpel">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="TestBpel">
+            <soap:operation soapAction="TestBpel"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="TestBpelService">
+        <port name="port"
+              binding="tns:Binding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/TestBpel"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="SLT"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:TestBpel"></plnk:role>
+    </plnk:partnerLinkType>
+</definitions>

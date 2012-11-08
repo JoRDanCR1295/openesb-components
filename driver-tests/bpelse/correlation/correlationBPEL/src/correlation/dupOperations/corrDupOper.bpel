@@ -1,0 +1,93 @@
+<process name="corrDupOper"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrDupOper"
+         sbynpxp:end_YLoc="119.0"
+         sbynpxp:start_YLoc="133.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="23.0"
+         sbynpxp:end_XLoc="650.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrDupOper"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:corrDupOperTargetNamespace"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:corrDupOperTargetNamespace"
+            location="corrDupOper.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="twoWayOperPLink"
+                     partnerLinkType="ns0:corrDupOperServiceLinkType"
+                     myRole="corrDupOperServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="corrDupOperOperation_Output"
+                  messageType="ns0:corrDupOperMessage"></variable>
+        <variable name="corrDupOperOperation_Input"
+                  messageType="ns0:corrDupOperMessage"></variable>
+        <variable name="corrDupOperOperation1_Output"
+                  messageType="ns0:corrDupOperMessage1"></variable>
+        <variable name="corrDupOperOperation_Output1"
+                  messageType="ns0:corrDupOperMessage"></variable>
+        <variable name="corrDupOperOperation_Input1"
+                  messageType="ns0:corrDupOperMessage"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns0:propertyName1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="corrDupOperOperation_Unique"
+                 partnerLink="twoWayOperPLink"
+                 portType="ns0:corrDupOperPortType"
+                 operation="corrDupOperOperation"
+                 variable="corrDupOperOperation_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="104.0"
+                 sbynpxp:YLoc="119.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <!-- Not sure the purpose of the test case!
+        Two receives for the same portType operation cannot be
+        outstanding at the same time, so this case seems to be invalid
+        Also the same correlationSet is being initiated twice which is incorrect
+        <receive name="corrDupOperOperation"
+                 partnerLink="twoWayOperPLink"
+                 portType="ns0:corrDupOperPortType"
+                 operation="corrDupOperOperation"
+                 variable="corrDupOperOperation_Output1"
+                 createInstance="no"
+                 sbynpxp:XLoc="225.0"
+                 sbynpxp:YLoc="120.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        -->
+        <reply name="corrDupOperOperation.Reply_Unique"
+               partnerLink="twoWayOperPLink"
+               portType="ns0:corrDupOperPortType"
+               operation="corrDupOperOperation"
+               variable="corrDupOperOperation_Output"
+               sbynpxp:XLoc="364.0"
+               sbynpxp:YLoc="133.0"></reply>
+        <!--       
+        <reply name="corrDupOperOperation.Reply"
+               partnerLink="twoWayOperPLink"
+               portType="ns0:corrDupOperPortType"
+               operation="corrDupOperOperation"
+               variable="corrDupOperOperation_Output"
+               sbynpxp:XLoc="468.0"
+               sbynpxp:YLoc="136.0"></reply>
+         -->      
+    </sequence>
+</process>

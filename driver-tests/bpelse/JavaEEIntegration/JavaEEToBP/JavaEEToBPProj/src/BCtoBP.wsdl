@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/BCtoBP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/BCtoBP" name="BCtoBP" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types/>
+    <wsdl:message name="InboundMsg">
+        <wsdl:part name="InMsg" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="OutboundMsg">
+        <wsdl:part name="OutMsg" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="BCBpelPT">
+        <wsdl:operation name="BCBpelOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+            <wsdl:output name="output1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BCBpelBinding" type="tns:BCBpelPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="BCBpelOper">
+            <wsdl:input name="input1">
+                <soap:body parts="InMsg" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="OutMsg" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="BCBpelService">
+        <wsdl:port name="BCBpelPort" binding="tns:BCBpelBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/JavaEEToBPProj/BCtoBP/BCBpelPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="BCtoBPPartnerLinkType">
+        <plnk:role name="BCBpelPTRole" portType="tns:BCBpelPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="BCtoBPPartnerLinkType1">
+        <plnk:role name="BCBpelPTRole" portType="tns:BCBpelPT"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileNeverExecute" 
+    targetNamespace="http://www.mycomp.org/WhileNeverExecute/WhileNeverExecute"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns1="http://www.mycomp.org/WhileNeverExecute/WhileNeverExecute">
+    <import namespace="http://www.mycomp.org/WhileNeverExecute/WhileNeverExecute" location="WhileNeverExecute.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WhileBasicAssignmentPartnerLinkType" myRole="WhileNeverExecuteServer"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WhileInput" messageType="ns1:WhileMessage"/>
+        <variable name="WhileOutput" messageType="ns1:WhileMessage"/>
+        <variable name="Count" messageType="ns1:CounterMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="WhileOperation" portType="ns1:MyPortType" variable="WhileInput" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="part1" variable="Count"/>
+            </copy>
+        </assign>
+        <assign name="Assign3">
+             <copy>
+             <from variable="WhileInput" part="part_0"/><to variable="WhileOutput" part="part_0"/>
+             </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $Count.part1 &lt; $WhileInput.part_1 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                <copy>
+                <from>concat($WhileInput.part_0, 'Within While')</from><to part="part_0" variable="WhileOutput"/>
+                </copy>
+                <copy>
+                <from> ( $Count.part1 + 1 ) </from><to part="part1" variable="Count"/>
+                </copy>
+            </assign>
+            </sequence>
+        </while>
+        <assign name="Assign4">
+             <copy>
+             <from variable="Count" part="part1"/><to variable="WhileOutput" part="part_1"/>
+             </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="WhileOperation" portType="ns1:MyPortType" variable="WhileOutput"/>
+    </sequence>
+   
+</process>

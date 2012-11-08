@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileFaulthandler" 
+    targetNamespace="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandlerBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandlerBP" xmlns:ns1="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandler" xmlns:ns2="http://sun.com/Fault" xmlns:ns3="http://sun.com/FaultTest">
+    <import namespace="http://www.mycomp.org/WhileFaulthandler/WhileFaulthandler" location="WhileFaulthandler.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WhileFaulthandlerPartnerLinkType" myRole="WhileFaulthandlerProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="counter" messageType="ns1:Count"/>
+        <variable name="FaultVar" messageType="ns1:FaultMsg"/>
+        <variable name="FaultOut" messageType="ns1:FaultMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="FaultOperation" portType="ns1:MyPortType" variable="FaultVar"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="counter" variable="counter"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $counter.counter &lt;= 4 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign6">
+                    <copy>
+                    <from>concat($FaultVar.FaultTest, ' While : ')</from><to part="FaultTest" variable="FaultOut"/>
+                    </copy>
+                </assign>
+                <scope name="Scope1">
+                    <faultHandlers>
+                        <catch faultName="ns2:myfault" faultVariable="myfault" faultMessageType="ns1:FaultMsg">
+                            <sequence name="Sequence3">
+                                <assign name="Assign4">
+                                    <copy>
+                                    <from>concat($FaultOut.FaultTest, ' ---*Fault Message*---')</from><to part="FaultTest" variable="FaultOut"/>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </catch>
+                    </faultHandlers>
+                    <sequence name="Sequence4">
+                        <assign name="Assign5">
+                            <copy>
+                            <from>concat($FaultOut.FaultTest, ' Inside Scope')</from><to part="FaultTest" variable="FaultOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw1" faultName="ns2:myfault" faultVariable="FaultVar"/>
+                    </sequence>
+                </scope>
+                <assign name="Assign7">
+                    <copy>
+                    <from> ( $counter.counter + 1 ) </from><to part="counter" variable="counter"/>
+                    </copy>
+                    <copy>
+                    <from variable="FaultOut" part="FaultTest"/><to variable="FaultVar" part="FaultTest"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign8">
+            <copy>
+            <from variable="FaultVar" part="FaultTest"/><to variable="FaultOut" part="FaultTest"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FaultOperation" portType="ns1:MyPortType" variable="FaultOut"/>
+    </sequence>
+   
+</process>

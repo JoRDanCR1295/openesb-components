@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<aspectmap>
+    <aspect exchangeType="filterRequestReply" ID="2">                     
+         <input  partnerLink="{http://com.sun.jbi/aspect/logging}loggingPartner"       
+                roleName="loggingPortTypeRole"            
+                portType="{http://com.sun.jbi/aspect/logging}loggingPortType"          
+                operation="loggingOperation"
+                messageType="{http://com.sun.jbi/etl/etlengine}inputMsg"
+                file=""
+        />    
+              
+        <output ID = "1" partnerLink="{http://localhost/SynchronousSample/SynchronousSample}partnerlinktype1"       
+                roleName="partnerlinktyperole1"            
+                portType="{http://localhost/SynchronousSample/SynchronousSample}portType1"       
+                operation="operation1"
+                messageType="{http://localhost/SynchronousSample/SynchronousSample}requestMessage"
+                file="output.xsl"              
+                transformJBI="true" />
+
+		<advice type="logging" configurationFile="logging_1.xml" order="2" />
+		<advice type="autoReconnect" configurationFile="retry_1.xml" order="4" />
+		<advice type="messageTracking" configurationFile="messageTracking_1.xml" order="5" />
+		<advice type="cache" configurationFile="cache_1.xml" order="6" />
+		<advice type="contentBasedRouting" configurationFile="cbr_1.xml" order="7" />
+    </aspect>
+</aspectmap>

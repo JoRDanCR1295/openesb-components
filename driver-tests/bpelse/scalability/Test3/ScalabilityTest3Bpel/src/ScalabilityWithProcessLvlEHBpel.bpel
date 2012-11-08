@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="ScalabilityWithProcessLvlEHBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ScalabilityTest3Bpel/ScalabilityWithProcessLvlEHBpel" xmlns:sexf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ScalabilityWithProcessLvlEHWSDL" location="ScalabilityWithProcessLvlEHWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/jmsTest" location="partners/JMSPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="JMSPartnerLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" partnerLinkType="tns:jmsTest" partnerRole="jmsTestPortTypeRole"/>
+        <partnerLink name="JMSFinishPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" partnerLinkType="tns:FinishJMSOutLinkType" partnerRole="Finish_PLT"/>
+        <partnerLink name="InputPartnerLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/ScalabilityWithProcessLvlEHWSDL" partnerLinkType="tns:ScalabilityWithProcessLvlEHWSDL" myRole="ScalabilityWithEHWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="JmsTestOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" messageType="tns:jmsTestOperationRequest"/>
+        <variable name="ScalabilityWithEHWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/ScalabilityWithProcessLvlEHWSDL" messageType="tns:ScalabilityWithEHWSDLOperationRequest"/>
+        <variable name="JmsTestOperationIn1" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" messageType="tns:jmsTestOperationRequest"/>
+      
+    </variables>
+    <eventHandlers>
+        <onAlarm>
+            <for>'P0Y0M0DT0H0M5S'</for>
+            <repeatEvery>'P0Y0M0DT0H0M3S'</repeatEvery>
+            <scope name="Scope1">
+                   <sequence name="Sequence1">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>concat('Inside EH', sexf:current-dateTime())</from>
+                            <to variable="JmsTestOperationIn1" part="part1"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke2" partnerLink="JMSPartnerLink" operation="jmsTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" portType="tns:jmsTestPortType" inputVariable="JmsTestOperationIn1"/>
+                </sequence>
+            </scope>
+        </onAlarm>
+    </eventHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="InputPartnerLink" operation="ScalabilityWithEHWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/ScalabilityWithProcessLvlEHWSDL" portType="tns:ScalabilityWithEHWSDLPortType" variable="ScalabilityWithEHWSDLOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="ScalabilityWithEHWSDLOperationIn" part="inputMessage"/>
+                <to variable="JmsTestOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <wait name="Wait1">
+            <for>$ScalabilityWithEHWSDLOperationIn.waitDuration</for>
+        </wait>
+        <invoke name="Invoke1" partnerLink="JMSFinishPL" operation="jmsTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" portType="tns:ProcessedPortType" inputVariable="JmsTestOperationIn"/>
+    </sequence>
+</process>

@@ -1,0 +1,110 @@
+<definitions targetNamespace="TestReceiveparent"
+             name="TestReceiveparent"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="TestReceiveparent"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="TestReceiveparentServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Server"
+                   portType="tns:TestReceiveparentPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="TestReceiveparentServiceLinkType1"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Server"
+                   portType="tns:TestReceiveparentPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:property name="property"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property"
+                        messageType="tns:TestReceiveparentMessage"
+                        part="TestReceiveparentPart">
+            <vprop:query>TestReceiveparentElement/string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:property name="property1"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1"
+                        messageType="tns:TestReceiveparentMessage1"
+                        part="TestReceiveparentPart">
+            <vprop:query>TestReceiveparentElement/string</vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="TestReceiveparent"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+                    xmlns:tns="TestReceiveparent"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+                    <xsd:element type="tns:TestReceiveparentType"
+                         name="TestReceiveparentElement"></xsd:element>
+            <xsd:complexType name="TestReceiveparentType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="TestReceiveparentMessage">
+        <part name="TestReceiveparentPart"
+              element="tns:TestReceiveparentElement"></part>
+    </message>
+    <message name="TestReceiveparentMessage1">
+        <part name="TestReceiveparentPart"
+              element="tns:TestReceiveparentElement"></part>
+    </message>
+    <portType name="TestReceiveparentPortType">
+        <operation name="TestReceiveparentOperation">
+            <input message="tns:TestReceiveparentMessage"></input>
+            <output message="tns:TestReceiveparentMessage"></output>
+        </operation>
+    </portType>
+    <portType name="TestReceiveparentPortType1">
+        <operation name="TestReceiveparentOperation1">
+            <input message="tns:TestReceiveparentMessage1"></input>
+        </operation>
+    </portType>
+    <binding name="TestReceiveparentBinding"
+             type="tns:TestReceiveparentPortType">
+        <soap:binding style="rpc"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="TestReceiveparentOperation">
+            <soap:operation soapAction="TestReceiveparentOperation"/>
+            <input>
+                <soap:body parts="TestReceiveparentPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="TestReceiveparentPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="TestReceiveparentBinding1"
+             type="tns:TestReceiveparentPortType1">
+        <soap:binding style="rpc"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="TestReceiveparentOperation1">
+            <soap:operation soapAction="TestReceiveparentOperation1"/>
+            <input>
+                <soap:body parts="TestReceiveparentPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="TestReceiveparentService">
+        <port name="TestReceiveparentPort"
+              binding="tns:TestReceiveparentBinding">
+            <soap:address location="http://localhost:12100/service/TestReceiveparentService"/>
+        </port>
+        <port name="TestReceiveparentPort1"
+              binding="tns:TestReceiveparentBinding1">
+            <soap:address location="http://localhost:12100/service/TestReceiveparentService1"/>
+        </port>
+    </service>
+</definitions>

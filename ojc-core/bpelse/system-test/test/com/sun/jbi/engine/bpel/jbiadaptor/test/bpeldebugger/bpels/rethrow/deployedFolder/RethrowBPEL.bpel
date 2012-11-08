@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RethrowBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/RethrowBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/RethrowBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/newWSDL" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/newWSDL" location="newWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:newWSDL1" myRole="newWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="NewWSDLOperationOut" messageType="ns1:newWSDLOperationReply"/>
+        <variable name="NewWSDLOperationIn" messageType="ns1:newWSDLOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:newWSDLOperationReply" faultVariable="NewWSDLOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="newWSDLOperation" portType="ns1:newWSDLPortType" variable="NewWSDLOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="newWSDLOperation" portType="ns1:newWSDLPortType" variable="NewWSDLOperationIn"/>
+        <if name="If1">
+            <condition> ( $NewWSDLOperationIn.part1 = '1stLevelScope' ) </condition>
+            <scope name="Scope1">
+                <faultHandlers>
+                    <catch faultName="tns:catchFault" faultMessageType="ns1:newWSDLOperationReply" faultVariable="NewWSDLOperationOut">
+                        <rethrow name="Rethrow4"/>
+                    </catch>
+                    <catchAll>
+                        <rethrow name="Rethrow3"/>
+                    </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition> ( $NewWSDLOperationIn.part2 = 'catchAll' ) </condition>
+                    <sequence name="Sequence1">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($NewWSDLOperationIn.part1, '-catchAll-')</from>
+                                <to part="part1" variable="NewWSDLOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw5" faultName="tns:catchAllFault" faultVariable="NewWSDLOperationOut"/>
+                    </sequence>
+                    <else>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($NewWSDLOperationIn.part1, '-catch-')</from>
+                                    <to part="part1" variable="NewWSDLOperationOut"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw6" faultName="tns:catchFault" faultVariable="NewWSDLOperationOut"/>
+                        </sequence>
+                    </else>
+                </if>
+            </scope>
+            <elseif>
+                <condition> ( $NewWSDLOperationIn.part1 = 'NestedScope' ) </condition>
+                <scope name="Scope2">
+                    <faultHandlers>
+                        <catchAll>
+                            <rethrow name="Rethrow9"/>
+                        </catchAll>
+                    </faultHandlers>
+                    <scope name="Scope3">
+                        <faultHandlers>
+                            <catch faultName="tns:catchFault" faultMessageType="ns1:newWSDLOperationReply" faultVariable="NewWSDLOperationOut">
+                                <rethrow name="Rethrow2"/>
+                            </catch>
+                            <catchAll>
+                                <rethrow name="Rethrow1"/>
+                            </catchAll>                                
+                        </faultHandlers>
+                        <if name="If3">
+                            <condition> ( $NewWSDLOperationIn.part2 = 'catchAll' ) </condition>
+                            <sequence name="Sequence1">
+                                <assign name="Assign1">
+                                    <copy>
+                                        <from>concat($NewWSDLOperationIn.part1, '-catchAll-')</from>
+                                        <to part="part1" variable="NewWSDLOperationOut"/>
+                                    </copy>
+                                </assign>
+                                <throw name="Throw7" faultName="tns:catchAllFault" faultVariable="NewWSDLOperationOut"/>
+                            </sequence>
+                            <else>
+                                <sequence name="Sequence2">
+                                    <assign name="Assign2">
+                                        <copy>
+                                            <from>concat($NewWSDLOperationIn.part1, '-catch-')</from>
+                                            <to part="part1" variable="NewWSDLOperationOut"/>
+                                        </copy>
+                                    </assign>
+                                    <throw name="Throw8" faultName="tns:catchFault" faultVariable="NewWSDLOperationOut"/>
+                                </sequence>
+                            </else>
+                        </if>                        
+                    </scope>
+                </scope>
+            </elseif>
+            <else>
+                <reply name="Reply1" partnerLink="PartnerLink1" operation="newWSDLOperation" portType="ns1:newWSDLPortType" variable="NewWSDLOperationOut"/>
+            </else>
+        </if>
+    </sequence>
+</process>

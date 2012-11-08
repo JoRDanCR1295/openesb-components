@@ -1,0 +1,197 @@
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32111-3-620.zip
+//File: AlarmIRPSystem.idl
+
+#ifndef _ALARMIRPSYSTEM_IDL_
+#define _ALARMIRPSYSTEM_IDL_
+
+#include "AlarmIRPConstDefs.idl"
+#include "ManagedGenericIRPSystem.idl"
+
+// This statement must appear after all include statements
+#pragma prefix "3gppsa5.org"
+
+/* ## Module: AlarmIRPSystem
+This module contains the specification of all operations of Alarm IRP Agent.
+================================================================
+*/
+module AlarmIRPSystem
+{
+   /*
+   System fails to complete the operation.  System can provide reason
+   to qualify the exception.  The semantics carried in reason
+   is outside the scope of this IRP.
+   */
+   exception GetAlarmIRPVersions { string reason; };
+   exception GetAlarmIRPOperationsProfile { string reason; };
+   exception GetAlarmIRPNotificationProfile { string reason; };
+   exception AcknowledgeAlarms { string reason; };
+   exception UnacknowledgeAlarms { string reason; };
+   exception CommentAlarms { string reason; };
+   exception ClearAlarms { string reason; };
+   exception GetAlarmList { string reason; };
+   exception GetAlarmCount { string reason; };
+   exception NextAlarmInformations { string reason; };
+
+   /*
+   The AlarmInformationIterator is used to iterate through a snapshot of
+   Alarm Informations taken from the Alarm List when IRPManager invokes
+   get_alarm_list. IRPManager uses it to pace the return of Alarm
+   Informations.
+   IRPAgent controls the life-cycle of the iterator. However, a destroy
+   operation is provided to handle the case where IRPManager wants to stop
+   the iteration procedure before reaching the last iteration.
+   */
+   interface AlarmInformationIterator
+   {
+      /*
+      This method returns between 1 and "how_many" Alarm Informations. The
+      IRPAgent may return less than "how_many" items even if there are more
+      items to return. "how_many" must be non-zero. Return TRUE if there may
+      be more Alarm Information to return. Return FALSE if there are no more
+      Alarm Information to be returned.
+      If FALSE is returned, the IRPAgent will automatically destroy the
+      iterator.
+      */
+      boolean next_alarmInformations (
+         in unsigned short how_many,
+         out AlarmIRPConstDefs::AlarmInformationSeq alarm_informations
+      )
+      raises (NextAlarmInformations, ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method destroys the iterator.
+      */
+      void destroy();
+   };
+
+   interface AlarmIRP
+   {
+      /*
+      Return the list of all supported Alarm IRP versions.
+      Implementations are to provide a return value consisting of one or more
+      IRPVersions.
+      Each IRPVersion is defined by the rule in the clause titled
+      "IRP document version number string"
+      */
+      ManagedGenericIRPConstDefs::VersionNumberSet get_alarm_IRP_versions (
+      )
+      raises (GetAlarmIRPVersions);
+
+      /*
+      Return the list of all supported operations and their supported
+      parameters for a specific Alarm IRP version.
+      */
+      ManagedGenericIRPConstDefs::MethodList get_alarm_IRP_operations_profile (
+         in ManagedGenericIRPConstDefs::VersionNumber alarm_irp_version
+      )
+      raises (GetAlarmIRPOperationsProfile,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Return the list of all supported notifications and their supported
+      parameters for a specific Alarm IRP version.
+      */
+      ManagedGenericIRPConstDefs::MethodList get_alarm_IRP_notification_profile
+      (
+         in ManagedGenericIRPConstDefs::VersionNumber alarm_irp_version
+      )
+      raises (GetAlarmIRPNotificationProfile,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to acknowledge one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal acknowledge_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdAndSevSeq
+            alarm_information_id_and_sev_list,
+         in string ack_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt ack_system_id,
+         out AlarmIRPConstDefs::BadAcknowledgeAlarmInfoSeq
+            bad_ack_alarm_info_list
+      )
+      raises (AcknowledgeAlarms, ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to remove acknowledgement information of one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal unacknowledge_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string ack_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt ack_system_id,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+             bad_alarm_information_id_list
+      )
+      raises (UnacknowledgeAlarms,
+              ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Make comment to one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal comment_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string comment_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt comment_system_id,
+         in string comment_text,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+             bad_alarm_information_id_list
+      )
+      raises (CommentAlarms, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      Request to clear one or more alarms.
+      */
+      ManagedGenericIRPConstDefs::Signal clear_alarms (
+         in AlarmIRPConstDefs::AlarmInformationIdSeq alarm_information_id_list,
+         in string clear_user_id,
+         in ManagedGenericIRPConstDefs::StringTypeOpt clear_system_id,
+         out AlarmIRPConstDefs::BadAlarmInformationIdSeq
+            bad_alarm_information_id_list
+      )
+raises (ClearAlarms, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method returns Alarm Informations.
+      If flag is TRUE, all returned Alarm Informations shall be
+      in AlarmInformationSeq that contains 0 or more Alarm Informations.
+      Output parameter iter shall be useless.
+      If flag is FALSE, no Alarm Informations shall be in AlarmInformationSeq.
+      IRPAgent needs to use iter to retrieve them.
+      */
+      AlarmIRPConstDefs::AlarmInformationSeq get_alarm_list (
+         in ManagedGenericIRPConstDefs::StringTypeOpt filter,
+         in AlarmIRPConstDefs::DNTypeOpt base_object,
+         out boolean flag,
+         out AlarmInformationIterator iter
+      )
+      raises (GetAlarmList, ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+
+      /*
+      This method returns the count of Alarm Informations.
+      */
+      void get_alarm_count (
+         in ManagedGenericIRPConstDefs::StringTypeOpt filter,
+         out unsigned long critical_count,
+         out unsigned long major_count,
+         out unsigned long minor_count,
+         out unsigned long warning_count,
+         out unsigned long indeterminate_count,
+         out unsigned long cleared_count
+      )
+      raises (GetAlarmCount, ManagedGenericIRPSystem::OperationNotSupported,
+              ManagedGenericIRPSystem::ParameterNotSupported,
+              ManagedGenericIRPSystem::InvalidParameter);
+   };
+};
+
+#endif // _AlarmIRPSystem_idl_
+

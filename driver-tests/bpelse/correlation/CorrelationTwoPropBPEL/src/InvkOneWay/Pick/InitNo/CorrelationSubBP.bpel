@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CorrelationSubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeOneWay_Pick_InitNo/src/CorrelationSubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InvokeOneWay_Pick_InitNo/src/CorrelationSubBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InvokeOneWay_Pick_InitNo/src/CorrelationTest" xmlns:ns0="http://xml.netbeans.org/schema/InvokeOneWay_Pick_InitNo/src/Message">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InvokeOneWay_Pick_InitNo/src/CorrelationTest" location="CorrelationTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkB" partnerLinkType="ns1:CorrelationTestPartner" partnerRole="CorrelationTestPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:SubBPPartner" myRole="SubBPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="InvokeOperationIn" messageType="ns1:CorrMessage"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="InvokeOperation" portType="ns1:SubBPPortType" variable="InvokeOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($InvokeOperationIn.Data/ns0:Content, 'Content Added By SubBP.')</bpws:from>
+                <bpws:to>$InvokeOperationIn.Data/ns0:Content</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLinkB" operation="CorrelationTestOperation" portType="ns1:CorrelationTestPortType" inputVariable="InvokeOperationIn"/>
+    </sequence>
+</process>

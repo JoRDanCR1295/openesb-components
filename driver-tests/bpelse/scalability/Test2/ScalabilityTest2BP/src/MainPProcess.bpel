@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AlarmIRPProcess2"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AlarmIRPBpel2/AlarmIRPProcess2"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AlarmIRPBpel2/AlarmIRPProcess2" xmlns:ns1="http://enterprise.netbeans.org/bpel/AlarmIRPPortTypeWrapper" xmlns:ns2="http://services/fm" xmlns:sexf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">        
+    <documentation>&lt;html&gt;
+  &lt;head&gt;
+    
+  &lt;/head&gt;
+  &lt;body&gt;
+    This can be used for testing scalability. Three exposed operation allow 
+    for messages of 10k, 1000k and 10000k be tested. This process will call 
+    and EJB Service with will return with the message of defined size. It will 
+    further send message to JMS Queue, asynchronously call Sub BP, receive 
+    asynchronous reply from sub bp and finally send another message to another 
+    queue to indicate process completion. The input to this process will 
+    specify the correlation id to be used for sub-bp communication and also 
+    duration that the sub-bp should wait. The input also allows for specifying 
+    message of arbitrary size can be passed. The objective of the test is to 
+    verify the scalability of engine for various message size. Passing some 
+    time duration to sub bp will cause the sub bp and also the main bp to wait 
+    for the duration (as passed). As more messages are pumped in, more 
+    instances in memory will be created, hence the available memory will fall. 
+    This should kick in the bpelse scalability solution.
+  &lt;/body&gt;
+&lt;/html&gt;</documentation>        
+    <import namespace="http://enterprise.netbeans.org/bpel/AlarmIRPPortTypeWrapper" location="Partners/AlarmIRP/AlarmIRPPortTypeWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://services/fm" location="Partners/AlarmIRP/AlarmIRPPortType.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://services/fm" location="MainProcessWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/jmsTest" location="Partners/JMS/JMSPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="Partners/SubBP/SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:AlarmIRPLinkType2" partnerRole="AlarmIRPRole"/>
+        <partnerLink name="JMSSTartPartnerLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" partnerLinkType="tns:jmsTest" partnerRole="jmsTestPortTypeRole"/>
+        <partnerLink name="SubBPPartnerLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/SubBPWSDL" partnerLinkType="tns:SubBPWSDLRIT14201" partnerRole="SubBPWSDLPortTypeRole"/>
+        <partnerLink name="JMSFinshPartnerLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" partnerLinkType="tns:FinishJMSOutLinkType" partnerRole="Finish_PLT"/>
+        <partnerLink name="AlarmIRPProxyPartnerLink" partnerLinkType="ns2:AlarmIRPProxyLinkType" myRole="AlarmIRPProxyRole"/>
+        <partnerLink name="SubBPRecvPartnerLink" partnerLinkType="ns2:SubBPRecvPartnerlinkType" myRole="subBPRecvRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InputMessageVariable" type="xsd:string"/>
+        <variable name="SubBPRecvOperationIn" messageType="ns2:subBPMessage"/>
+        <variable name="JmsTestOperationIn1" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" messageType="tns:jmsTestOperationRequest"/>
+        <variable name="SubBPWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SubBPWSDL" messageType="tns:SubBPWSDLOperationRequest"/>
+        <variable name="JmsTestOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" messageType="tns:jmsTestOperationRequest"/>
+
+        <variable name="GetAlarmsBySeverity10x1kIn" messageType="ns2:getAlarmsBySeverity10x1k"/>
+        <variable name="GetAlarmsBySeverity10x1kOut" messageType="ns2:getAlarmsBySeverity10x1kResponse"/>
+        <variable name="GetAlarmsBySeverity1000x1kIn" messageType="ns2:getAlarmsBySeverity1000x1k"/>
+        <variable name="GetAlarmsBySeverity1000x1kOut" messageType="ns2:getAlarmsBySeverity1000x1kResponse"/>
+        <variable name="GetAlarmsBySeverity10000x1kIn" messageType="ns2:getAlarmsBySeverity10000x1k"/>
+        <variable name="GetAlarmsBySeverity10000x1kOut" messageType="ns2:getAlarmsBySeverity10000x1kResponse"/>
+
+    </variables>
+    
+    <correlationSets>
+        <correlationSet name="cSet1"  properties="ns2:propertyName1"/>
+    </correlationSets>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="AlarmIRPProxyPartnerLink" operation="getAlarmsBySeverity10x1k" portType="ns2:AlarmIRPProxyPortType" variable="GetAlarmsBySeverity10x1kIn">
+                <correlations>
+                    <correlation set="cSet1" initiate="yes"/>
+                </correlations>                
+                <sequence name="Sequence1">
+                    <assign name="AssignEJBIn1">
+                        <copy>
+                            <from>$GetAlarmsBySeverity10x1kIn.parameters/correlationId</from>
+                            <to variable="SubBPWSDLOperationIn" part="correlationIdPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity10x1kIn.parameters/duration</from>
+                            <to variable="SubBPWSDLOperationIn" part="durationPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity10x1kIn.parameters/message</from>
+                            <to variable="InputMessageVariable"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke_10K_EJB" partnerLink="PartnerLink1" operation="getAlarmsBySeverity10x1k" portType="ns2:AlarmIRPPortType" inputVariable="GetAlarmsBySeverity10x1kIn" outputVariable="GetAlarmsBySeverity10x1kOut"/>
+                    <assign name="Assign_10K_JMSInput">
+                        <copy>
+                                <from>sexf:doMarshal($GetAlarmsBySeverity10x1kOut.parameters)</from>
+                                    <to variable="JmsTestOperationIn" part="part1"/>
+                            </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="AlarmIRPProxyPartnerLink" operation="getAlarmsBySeverity1000x1k" portType="ns2:AlarmIRPProxyPortType" variable="GetAlarmsBySeverity1000x1kIn">
+                <correlations>
+                    <correlation set="cSet1" initiate="yes"/>
+                </correlations>
+                <sequence name="Sequence100">
+                    <assign name="AssignEJBIn5">
+                        <copy>
+                            <from>$GetAlarmsBySeverity1000x1kIn.parameters/duration</from>
+                            <to variable="SubBPWSDLOperationIn" part="durationPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity1000x1kIn.parameters/correlationId</from>
+                            <to variable="SubBPWSDLOperationIn" part="correlationIdPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity1000x1kIn.parameters/message</from>
+                            <to variable="InputMessageVariable"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke_100K_EJB" partnerLink="PartnerLink1" operation="getAlarmsBySeverity1000x1k" portType="ns2:AlarmIRPPortType" inputVariable="GetAlarmsBySeverity1000x1kIn" outputVariable="GetAlarmsBySeverity1000x1kOut"/>
+                    <assign name="Assign_1000K_JMSInput">
+                        <copy>
+                                <from>sexf:doMarshal($GetAlarmsBySeverity1000x1kOut.parameters)</from>
+                                    <to variable="JmsTestOperationIn" part="part1"/>
+                            </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="AlarmIRPProxyPartnerLink" operation="getAlarmsBySeverity10000x1k" portType="ns2:AlarmIRPProxyPortType" variable="GetAlarmsBySeverity10000x1kIn">
+                <correlations>
+                    <correlation set="cSet1" initiate="yes"/>
+                </correlations>                
+                <sequence name="Sequence1000">
+                    <assign name="Assign2000">
+                        <copy>
+                            <from>$GetAlarmsBySeverity10000x1kIn.parameters/duration</from>
+                            <to variable="SubBPWSDLOperationIn" part="durationPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity10000x1kIn.parameters/correlationId</from>
+                            <to variable="SubBPWSDLOperationIn" part="correlationIdPart"/>
+                        </copy>
+                        <copy>
+                            <from>$GetAlarmsBySeverity10000x1kIn.parameters/message</from>
+                            <to variable="InputMessageVariable"/>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke_10000K_EJB" partnerLink="PartnerLink1" operation="getAlarmsBySeverity10000x1k" portType="ns2:AlarmIRPPortType" inputVariable="GetAlarmsBySeverity10000x1kIn" outputVariable="GetAlarmsBySeverity10000x1kOut"/>
+                    <assign name="Assign_10000K_JMSInput">
+                        <copy>
+                            <from>sexf:doMarshal($GetAlarmsBySeverity10000x1kOut.parameters)</from>
+                            <to variable="JmsTestOperationIn" part="part1"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+        </pick>
+        <invoke name="JMS_Start_Invoke" partnerLink="JMSSTartPartnerLink" operation="jmsTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" portType="tns:jmsTestPortType" inputVariable="JmsTestOperationIn"/>
+        <invoke name="SubBPInvoke" partnerLink="SubBPPartnerLink" operation="SubBPWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SubBPWSDL" portType="tns:SubBPWSDLPortType" inputVariable="SubBPWSDLOperationIn"/>
+        <receive name="SubProcessReceive" createInstance="no" partnerLink="SubBPRecvPartnerLink" operation="SubBPRecvOperation" portType="ns2:SubBPRecvPortType1" variable="SubBPRecvOperationIn">
+            <correlations>
+                <correlation set="cSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign4001">
+            <copy>
+                <from>concat($InputMessageVariable, $SubBPRecvOperationIn.messagePart)</from>
+                <to variable="JmsTestOperationIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="JMS_Finish_Invoke" partnerLink="JMSFinshPartnerLink" operation="jmsTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/jmsTest" portType="tns:ProcessedPortType" inputVariable="JmsTestOperationIn1"/>
+    </sequence>
+
+</process>

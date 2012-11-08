@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="EventHandler_OnAlarm_OnScope1"
+    targetNamespace="http://www.seebeyond.com/eInsight/EventHandler_OnAlarm_OnScope1"
+    sbynpxp:end_YLoc="103.0"
+    sbynpxp:start_YLoc="43.0"
+    sbynpxp:linkStyle="angular"
+    sbynpxp:start_XLoc="-11.0"
+    sbynpxp:end_XLoc="688.0"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:tns="http://www.seebeyond.com/eInsight/EventHandler1"
+    xmlns:ns4="EventHandler1"
+    xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+    xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+    xmlns:ns0="urn:jmsservice"
+    xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/"
+    xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+    xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel"
+    xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2"
+    xmlns:ns1="http://webservices.EventHandler1.com/websvc"
+    xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+    xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+    xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns3="https://webservices.EventHandler1.com/websvc"
+    xmlns:ns2="EventHandler1"
+    xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1">
+
+    <bpel_20:import namespace="EventHandler1"
+    location="EventHandler1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+                    
+    <bpel_20:partnerLinks>                       
+
+        <bpel_20:partnerLink name="EventHandler1NormalServiceLink3"
+        partnerLinkType="ns2:EventHandler1NormalServiceLinkType3"
+        myRole="Server"/>
+
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+    
+        <bpel_20:variable name="MyRole_EventHandler1Operation_Output"
+        messageType="ns2:EventHandler1Message3"
+        sbyncreation:type="auto"></bpel_20:variable>
+                          
+        <bpel_20:variable name="MyRole_EventHandler1Operation_Input"
+        messageType="ns2:EventHandler1Message3"
+        sbyncreation:type="auto"></bpel_20:variable>
+
+    </bpel_20:variables>
+    
+    <sequence>            
+        <scope name="scope1">
+            <eventHandlers>
+                <onAlarm>
+                    <for>'P0Y0DT0H0M6S'</for>
+          			<repeatEvery>'P0Y0DT0H0M3S'</repeatEvery>
+                    <scope name="onAlarm1Scope">            		
+                        <sequence>
+                            <bpel_20:assign name="Assign">
+                                <copy>
+                                    <from>$MyRole_EventHandler1Operation_Input.EventHandler3Part/value + 1</from>
+                                    <to>$MyRole_EventHandler1Operation_Input.EventHandler3Part/value</to>
+                                </copy>
+                            </bpel_20:assign>
+                        </sequence>
+                    </scope>
+                </onAlarm>
+            </eventHandlers>      			 
+      			 
+            <sequence>     	      
+                <bpel_20:receive name="MyRole.NormalOperation3.Receive"
+                    partnerLink="EventHandler1NormalServiceLink3"
+                    portType="ns2:NormalOperationPortType3"
+                    operation="NormalOperation3"
+                    variable="MyRole_EventHandler1Operation_Input"
+                    createInstance="yes"
+                    sbynpxp:XLoc="22.0"
+                    sbynpxp:YLoc="37.0">
+                </bpel_20:receive>  
+
+     
+                <bpel_20:wait>
+                	<for>'P0Y0DT0H1M0S'</for>
+                </bpel_20:wait>
+         
+       
+                <bpel_20:reply name="MyRole.NormalOperation3.Reply"
+                partnerLink="EventHandler1NormalServiceLink3"
+                portType="ns2:NormalOperationPortType3"
+                operation="NormalOperation3"
+                variable="MyRole_EventHandler1Operation_Input"
+                sbynpxp:XLoc="573.0"
+                sbynpxp:YLoc="91.0"></bpel_20:reply>
+            </sequence>
+        </scope>
+    </sequence>
+</bpel_20:process>

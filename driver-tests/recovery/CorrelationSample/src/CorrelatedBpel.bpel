@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="CorrelatedBpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/CorrelatedBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/CorrelatedBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" xmlns:ns2="http://xml.netbeans.org/schema/CorrelationSample">
+   <import location="CorrelationSample.xsd" importType="http://www.w3.org/2001/XMLSchema" namespace="http://xml.netbeans.org/schema/CorrelationSample"/>
+   <import location="CorrelatedBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLinkA" partnerLinkType="ns1:CorrelatedBpelPartner" myRole="CallInPortTypeRole" partnerRole="CallBackPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="OutVar" messageType="ns1:CallBackOperationRequest"/>
+      <variable name="InputVar" messageType="ns1:CallInOperationRequest"/>
+   </variables>
+   <sequence>
+      <receive name="Start" createInstance="yes" partnerLink="PartnerLinkA" operation="CallInOperation" portType="ns1:CallInPortType" variable="InputVar"/>
+      <assign name="Assign">
+         <copy>
+            <from>$InputVar.InMessage/ns2:Id</from>
+            <to>$OutVar.OutMessage/ns2:Id</to>
+         </copy>
+         <copy>
+            <from>concat('This is the message you sent me : ', $InputVar.InMessage/ns2:InMessage)</from>
+            <to>$OutVar.OutMessage/ns2:OutMessage</to>
+         </copy>
+      </assign>
+      <invoke name="End" partnerLink="PartnerLinkA" operation="CallBackOperation" portType="ns1:CallBackPortType" inputVariable="OutVar"/>
+   </sequence>
+   
+</process>

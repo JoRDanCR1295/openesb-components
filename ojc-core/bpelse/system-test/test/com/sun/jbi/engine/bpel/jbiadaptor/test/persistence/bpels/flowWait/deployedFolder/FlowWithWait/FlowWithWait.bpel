@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowWithWait" 
+    targetNamespace="http://www.mycomp.org/FlowWithWait/bpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/FlowWithWait">
+    <import namespace="http://www.mycomp.org/FlowWithWait" location="FlowWithWait.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:FlowWithWaitResponsePartnerLinkType" partnerRole="FlowWithWaitResponseProvider"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:FlowWithWaitPartnerLinkType" myRole="FlowWithWaitProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FlowWithWaitResponseOperationIn1" messageType="wsdlNS:message2"/>
+        <variable name="Operation1In2" messageType="wsdlNS:message2"/>
+        <variable name="Operation1In1" messageType="wsdlNS:message2"/>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="Output" messageType="wsdlNS:message1"/>
+        <variable name="Input" messageType="wsdlNS:message1"/>
+        <variable name="intVariable1" type="xsd:int"/>
+        <variable name="doubleVariable1" type="xsd:double"/>
+        <variable name="floatVariable1" type="xsd:float"/>
+        <variable name="dateVariable1" type="xsd:date"/>
+        <variable name="dateTimeVariable1" type="xsd:dateTime"/>
+        <variable name="booleanVariable1" type="xsd:boolean"/>
+        <variable name="testSimpleVar" type="xsd:string"/>
+    </variables>
+    <sequence>
+      <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowWithWaitOperation" createInstance="yes" portType="wsdlNS:FlowWithWaitPortType" variable="Input"/>
+      <flow name="Flow1">
+         <sequence name="Sequence">
+            <assign name="Assign1">
+             <copy>
+                 <from>'Inside Branch1: '</from>
+                 <to variable="branch1"/>
+             </copy>
+               <copy>
+               <from>'inside Branch1 - invoke1'</from>
+               <to part="part1" variable="Operation1In1"/>
+               </copy>
+            </assign>
+            <!--
+            <assign name="Assign5">
+              <copy>
+             	<from>5000</from>
+             	<to variable="floatVariable1"/>
+              </copy>
+             </assign>
+             <assign name="Assign6">
+                 <copy>
+                     <from>3000</from>
+                     <to variable="intVariable1"/>
+                 </copy>
+             </assign>
+             -->
+             <assign name="Assign7">
+                 <copy>
+                     <from>20000000</from>
+                     <to variable="doubleVariable1"/>
+                 </copy>
+             </assign>
+             <assign name="Assign8">
+                 <copy>
+                     <from>true()</from>
+                     <to variable="booleanVariable1"/>
+                 </copy>
+             </assign>
+             <assign name="Assign9">
+                 <copy>
+                     <from>'2014-09-18T16:18:33'</from>
+                     <to variable="dateTimeVariable1"/>
+                 </copy>
+             </assign>
+              <assign name="Assign10">
+                 <copy>
+                     <from>'2008-09-28'</from>
+                     <to variable="dateVariable1"/>
+                 </copy>
+             </assign>
+            <wait name="Wait1">
+               <for>'P0Y0M0DT0H0M2S'</for>
+            </wait>
+         </sequence>           
+         <sequence name="Sequence1">
+            <assign name="Assign2">
+                <copy>
+                    <from>'Inside Branch2: '</from>
+                    <to variable="branch2"/>
+                </copy>
+               <copy>
+               <from>'inside Branch1 - invoke1'</from><to part="part1" variable="Operation1In2"/>
+               </copy>
+            </assign>
+            <wait name="Wait2">
+               <for>'P0Y0M0DT0H0M2S'</for>
+            </wait>
+         </sequence>
+
+      </flow>
+        <assign name="Assign3">
+            <copy>
+                <from>concat($branch1, $Input.branch1, $Operation1In1.part1)</from>
+                <to variable="branch1"/>
+            </copy>
+            <copy>
+                <from>concat($branch2, $Input.branch2, $Operation1In2.part1)</from>
+                <to variable="branch2"/>
+            </copy>
+            <copy>
+                <from>concat($doubleVariable1, $booleanVariable1)</from>
+                <to variable="testSimpleVar"/>
+            </copy>
+        </assign>
+        <assign name="Assign4">
+            <copy>
+                <from>concat($branch1, $branch2, $testSimpleVar)</from>
+                <to part="part1" variable="FlowWithWaitResponseOperationIn1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="FlowWithWaitResponseOperation" portType="wsdlNS:FlowWithWaitResponsePortType" inputVariable="FlowWithWaitResponseOperationIn1"/>
+    </sequence>
+   
+</process>

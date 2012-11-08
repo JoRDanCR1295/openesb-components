@@ -1,0 +1,244 @@
+											---
+											Supported IDL data types
+											---
+											Mirco Casoni, Marco Piraccini
+											---
+											15/02/2007
+
+Supported IDL data types
+
+  The jbi4corba component support the following data types defined in the CORBA
+  specification.
+  
+   * {{{supportedIDLDataTypes.html#Supported_Basic_Data_Types}Supported Basic Data Types}}
+      
+   * {{{supportedIDLDataTypes.html#Unsupported_Basic_Data_Types}Unsupported Basic Data Types}}
+    
+   * {{{supportedIDLDataTypes.html#Supported_Constructed_Data_Types}Supported Constructed Data Types}}
+
+   * {{{supportedIDLDataTypes.html#Unsupported_Constructed_Data_Types}Unsupported Constructed Data Types}}
+    
+   * {{{supportedIDLDataTypes.html#Value_Types}Value Types}}
+
+   * {{{supportedIDLDataTypes.html#Interfaces}Interfaces}}
+
+   * {{{supportedIDLDataTypes.html#Other_IDL_Constructs}Other IDL Constructs}}
+    
+   * {{{supportedIDLDataTypes.html#Known_Issues}Known Issues}}
+    
+    []
+    
+  {<<Supported Basic Data Types>>}
+
+*---------------------+----------------------------+--------------------------+-----------------------+
+| <IDL Types>         | <Java Types>               | <WSDL Types>             | <Comment>             |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| boolean             | boolean                    | xsd:boolean              |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| char                | char                       | xsd:unsignedShort        |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| wchar               | char                       | xsd:unsignedShort        |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| string              | String                     | xsd:string               |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| wstring             | String                     | xsd:string               |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| short               | short                      | xsd:short                |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| unsigned short      | short                      | xsd:short                |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| long                | int                        | xsd:int                  |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| unsigned long       | int                        | xsd:int                  |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| long long           | long                       | xsd:long                 |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| unsigned long  long | long                       | xsd:long                 |Range not set in corresponding xsd field|
+*---------------------+----------------------------+--------------------------+-----------------------+
+| float               | float                      | xsd:float                |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| double              | double                     | xsd:double               |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| octet               | byte                       | xsd:byte                 |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+| any                 | Object                     | xsd:anyType              |                       |
+*---------------------+----------------------------+--------------------------+-----------------------+
+
+  {<<Unsupported Basic Data Types>>}
+
+*---------------------+----------------------------+--------------------------+
+| <IDL Types>         | <Java Types>               | <WSDL Types>             |
+*---------------------+----------------------------+--------------------------+
+| long double         | not available at this time in IDL to java mapping |   |
+*---------------------+----------------------------+--------------------------+
+
+  {<<Supported Constructed Data Types>>}
+
+*---------------------+--------------------------------------------+------------------------------------+
+| <Type>              | <Java Types>                               | <WSDL Types>                       |
+*---------------------+--------------------------------------------+------------------------------------+
+| Struct              | The IDL struct is mapped in a java         | The IDL struct is mapped           |
+|                     | class that implements                      | in a xsd:complexType with          |
+|                     | org.omg.CORBA.portable.IDLEntity.          | the name of struct.                |
+|                     | In this class there are a public           | This complexType contains          |
+|                     | attribute for each attribute of            | a sequence of elements             |
+|                     | the struct.                                | (one element for each              |
+|                     |                                            | attribute of struct)               |
+*---------------------+--------------------------------------------+------------------------------------+
+| Sequence            | There are two type of sequence:            | The IDL sequence is mapped in a    |
+|                     | 1) a sequence of a primitive data type.    | xsd:complexType that contains a    |
+|                     | 2) a sequence of a non primitive data type.| xsd:sequence of one element where  |
+|                     |                                            | minOccurs=0; nillable=true and     |
+|                     | A sequence of a primitive is mapped in a   | name is the same of the element    |
+|                     | java class that implements                 | defined in the IDL file.           |
+|                     | org.omg.CORBA.portable.StreamableValue and |                                    |
+|                     | contains a public attribute array of a type|                                    |
+|                     | defined in the IDL file.                   |                                    |
+|                     |                                            |                                    |
+|                     | A sequence of a non primitive data type is |                                    |
+|                     | not mapped in any java class.              |                                    |
+|                     |                                            |                                    |
+|                     | Both the sequence's type generate the      |                                    |
+|                     | helper and the holder class.               |                                    |
+|                     |                                            |                                    |
+*---------------------+--------------------------------------------+-----------------------------------------+
+| Enum                | The CORBA and the JAVA implementation of   | \<xsd:simpleType name="myEnum"\>        |
+|                     | th enumeration are different.              |   \<xsd:restriction base="xsd:string"\> |
+|                     | The component provides a standard          |   \<xsd:enumeration value="A"/\>        |
+|                     | implementation with all the methods used   |   \<xsd:enumeration value="B"/\>        |
+|                     | inside the associated corba helper class   |   \<xsd:enumeration value="C"/\>        |
+|                     |                                            |   \</xsd:restriction\>                  |
+|                     |                                            | \</xsd:simpleType\>                     |
+*---------------------+--------------------------------------------+-----------------------------------------+
+| Array               | {{{Array.html}Supported with limitations}} |                                    |
+*---------------------+--------------------------------------------+------------------------------------+
+| Union               | The Union type is converted in an          | \<xs:complexType name="myUnion"\>
+|					  | annotated Object, or a Wrapper             | 	\<xs:sequence\>
+|                     | class of the object (used when direct      | 		\<xs:choice minOccurs="0">
+|                     | jaxb the annotation is not possible, for   |  			\<xs:element name="A" type="xs:int"/\>
+|                     | example in parameters or Union of Unions   | 			\<xs:element name="B" type="xs:float"/\>
+|                     | Please se the union {{{supportedIDLDataTypes.html#Union Issue}issue}}.                 | 			\<xs:element name="C" type="xs:int"/\>
+|                     |                                            | 		\</xs:choice\>
+|                     |                                            | 	\</xs:sequence\>
+|                     |                                            | \</xs:complexType\>
+*---------------------+--------------------------------------------+------------------------------------+
+| string              | java.lang.String | xsd:string                                   |
+*---------------------+--------------------------------------------+------------------------------------+
+| wstring             | java.lang.String | xsd:string                                     |
+*---------------------+--------------------------------------------+------------------------------------+
+| exception           | like structs | like structs                                     |
+*---------------------+--------------------------------------------+------------------------------------+
+
+  {<<Unsupported Constructed Data Types>>}
+
+*---------------------+--------------------------------------------+------------------------------------+---------------+
+| <Type>              | <Java Types>                               | <WSDL Types>                       |<comment>      |
+*---------------------+--------------------------------------------+------------------------------------+---------------+
+| fixed               | java.math.BigDecimal       | xsd:decimal              |Not supported by idlj, for more information see the idlj documentation ({{{http://java.sun.com/j2se/1.5.0/docs/guide/rmi-iiop/toJavaPortableUG.html}section restrictions}}) |
+*---------------------+----------------------------+--------------------------+------------------------------------------+
+| typedef             | the redefined type       | the redefined type         |support is partial please see the note |
+*---------------------+----------------------------+--------------------------+------------------------------------------+
+
+  <<Note on typedef>>
+
+  Typedef types aren’t explicitly supported. Currently typedef conversion to WSDL type isn’t supported. When the type of a typedef defined type is statically known the component provide a rudimentary support using the base type of the typedef type. So for example if we have Typedef A B;
+  And then we use B as a method parameter or a struct element then A would be used instead. From the information content point of view this is acceptable since A and B have the same information. The same applies when the typedef is used to declare a sequence.
+  When the type of a corba object must be recognized at runtime the typedef support is not sufficient. This happens in particular when a typedef defined type is used inside a any type.
+
+  {<<Value Types>>}
+
+  The IDL value types are partially supported, in fact the component is able to
+  manage all the value types that can be represented as a JavaBean. Where possible value type are treated like structs, this means that only state members are considered by the component, while initializers and methods are ignored. Only regular value type have this limited support.
+
+*--------------+--------------+
+| <Type>       | <Supported>  |
+*--------------+--------------+
+| Regular      | Yes          |
+*--------------+--------------+
+| Boxed        | No           |
+*--------------+--------------+
+| Abstract     | No           |
+*--------------+--------------+
+
+  {<<Interfaces>>}
+
+  Support is available for standard interfaces, <local> and <abstract> interfaces aren't supported.
+
+  A CORBA interface may contain different types of declarations inside. The following table summarize it specifying the support level of the component.
+
+*--------------+--------------+
+| <Element Declaration>       | <Support>  |
+*--------------+--------------+
+| Const      | No          |
+*--------------+--------------+
+| Type        | Yes           |
+*--------------+--------------+
+| Exception     | Yes           |
+*--------------+--------------+
+| Attribute     | No           |
+*--------------+--------------+
+| Operation     | Yes           |
+*--------------+--------------+
+
+  {<<Other IDL Constructs >>}
+
+  IDL has other constructs and keyword. Here is summarized the support level for each of them
+
+*--------------+--------------+
+| <IDL construct>       | <Support>  |
+*--------------+--------------+
+| native      | No          |
+*--------------+--------------+
+| const        | No           |
+*--------------+--------------+
+| event     | No           |
+*--------------+--------------+
+| component     | No           |
+*--------------+--------------+
+| home     | No           |
+*--------------+--------------+
+
+  {<<Known Issues>>}
+
+	There is a idlj issue about union with boolean (see
+	{{{http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4504275}http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4504275}}). 
+	If we have this IDL:
+	
++------------------------------------------+
+
+  union DNTypeOpt switch (boolean)
+   {
+      case TRUE: DN value;
+   };
++------------------------------------------+
+
+	Idlj converts it in a class containing:
+
++------------------------------------------+
+  private void verifyDefault( boolean value )
+  {
+    switch (value) {
+      case true:
+        throw new org.omg.CORBA.BAD_OPERATION() ;
+      default:
+        return;
+    }
+  }  
++------------------------------------------+
+	
+	Which clearly doesn't compile (contains a switch using a boolean).
+	To correct that, the IDL must be changed manually in:
+	
++------------------------------------------+
+	   
+   union DNTypeOpt switch (boolean)
+   {
+      case TRUE: DN value;
+      case FALSE: <another type not DN> not_used;
+   };
+
++------------------------------------------+
+
+   In this case the method verifyDefault is no more created 
+   ant the classes are generated correctly. 
+ 

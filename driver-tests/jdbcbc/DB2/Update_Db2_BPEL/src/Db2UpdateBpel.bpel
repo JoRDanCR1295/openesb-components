@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Db2UpdateBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Db2UpdateBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Db2UpdateBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPUpdateDb2Trigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SOAPUpdateDb2Trigger" location="SOAPUpdateDb2Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="JdbcDb2Update.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SOAPUpdateDb2TriggerPartner" myRole="SOAPUpdateDb2TriggerPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SOAPUpdateDb2TriggerOperationOut" messageType="ns1:SOAPUpdateDb2TriggerOperationReply"/>
+      <bpws:variable name="UpdateOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="UpdateIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SOAPUpdateDb2TriggerOperationIn" messageType="ns1:SOAPUpdateDb2TriggerOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SOAPUpdateDb2TriggerOperation" portType="ns1:SOAPUpdateDb2TriggerPortType" variable="SOAPUpdateDb2TriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="SOAPUpdateDb2TriggerOperationIn" part="part1"/>
+            <bpws:to variable="UpdateIn" part="part"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="update" portType="ns2:jdbcPortType" inputVariable="UpdateIn" outputVariable="UpdateOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="UpdateOut" part="part"/>
+            <bpws:to variable="SOAPUpdateDb2TriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SOAPUpdateDb2TriggerOperation" portType="ns1:SOAPUpdateDb2TriggerPortType" variable="SOAPUpdateDb2TriggerOperationOut"/>
+   </sequence>
+</process>

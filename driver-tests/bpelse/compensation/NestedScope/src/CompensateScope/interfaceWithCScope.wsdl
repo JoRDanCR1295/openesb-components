@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="interfaceWithCScope" targetNamespace="http://j2ee.netbeans.org/wsdl/interfaceWithCScope"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/interfaceWithCScope" xmlns:ns0="http://xml.netbeans.org/schema/compensateScopeSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/compensateScopeSchema" xmlns:tns1="http://xml.netbeans.org/schema/compensateScopeSchema">
+            <xsd:complexType name="scopeType">
+                <xsd:sequence>
+                    <xsd:element name="Scope1Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope2Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope3Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="OutVar" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InMsg">
+        <part name="InPart" type="xsd:string"/>
+    </message>
+    <message name="RepMsg">
+        <part name="RepPart" type="ns0:scopeType"/>
+    </message>
+    <portType name="CompScopePT">
+        <operation name="CompScopeOper">
+            <input name="input1" message="tns:InMsg"/>
+            <output name="output1" message="tns:RepMsg"/>
+        </operation>
+    </portType>
+    <binding name="CompScopeBinding" type="tns:CompScopePT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CompScopeOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="RepPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="CompScopeService">
+        <port name="port1" binding="tns:CompScopeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/interfaceWithCScope/port1"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="interfaceWithCScope1">
+        <plnk:role name="CompScopePTRole" portType="tns:CompScopePT"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="BooleanTest" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/BooleanTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/BooleanTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BooleanTest" xmlns:ns2="http://xml.netbeans.org/schema/BooleanTestSchema">
+    <import location="BooleanTestSchema.xsd" importType="http://www.w3.org/2001/XMLSchema" namespace="http://xml.netbeans.org/schema/BooleanTestSchema"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/BooleanTest" location="BooleanTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="AssignAndPartnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="xsdBooleanVariable3" type="ns2:booleanComplexType"/>
+        <variable name="xsdBooleanVariable2" element="ns2:booleanElement"/>
+        <variable name="xsdBooleanVariable1" type="xsd:boolean"/>
+        <variable name="replyMessage" messageType="ns1:ResponseMessage"/>
+        <variable name="requestMessage" messageType="ns1:RequestMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="BooleanTesteration1" portType="ns1:AssignAndPortType1" variable="requestMessage" createInstance="yes"/>
+        <assign name="initialize">
+            <copy>
+                <from variable="requestMessage" part="booleanString"/>
+                <to>$xsdBooleanVariable3/ns2:booleanElement</to>
+            </copy>
+            <copy>
+                <from variable="requestMessage" part="booleanString"/>
+                <to variable="xsdBooleanVariable2"/>
+            </copy>
+            <copy>
+                <from variable="requestMessage" part="booleanString"/>
+                <to variable="xsdBooleanVariable1"/>
+            </copy>
+        </assign>
+        <assign name="Assign1">
+            <copy>
+                <from>boolean($requestMessage.input3/booleanElement)</from>
+                <to part="output6" variable="replyMessage"/>
+            </copy>
+            <copy>
+                <from>boolean($xsdBooleanVariable3/ns2:booleanElement)</from>
+                <to part="output3" variable="replyMessage"/>
+            </copy>
+            <copy>
+                <from>boolean($xsdBooleanVariable1)</from>
+                <to part="output1" variable="replyMessage"/>
+            </copy>
+            <copy>
+                <from>boolean($xsdBooleanVariable2)</from>
+                <to part="output2" variable="replyMessage"/>
+            </copy>
+            <copy>
+                <from>boolean($requestMessage.input1)</from>
+                <to part="output4" variable="replyMessage"/>
+            </copy>
+            <copy>
+                <from>boolean($requestMessage.input2)</from>
+                <to part="output5" variable="replyMessage"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="BooleanTesteration1" portType="ns1:AssignAndPortType1" variable="replyMessage"/>
+    </sequence>
+   
+</process>

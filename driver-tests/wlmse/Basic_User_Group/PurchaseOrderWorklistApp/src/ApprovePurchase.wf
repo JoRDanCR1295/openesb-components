@@ -1,0 +1,32 @@
+<task name="ApprovePurchase" portType="wsdl:ApprovePurchasePT" operation="ApprovePurchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase"
+xmlns="http://jbi.com.sun/wfse" xmlns:wsdl="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL" xmlns:tns="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase"
+xmlns:nh="http://j2ee.netbeans.org/wsdl/EmailNotificationHandler" xmlns:po="http://wlmse.sample/po">
+	<import namespace="http://jbi.com.sun/wfse/wsdl/WorkflowApp2/ApprovePurchase_TM_BPEL"
+                location="ApprovePurchase_TM_BPEL.wsdl"/>
+        <title expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">concat($TaskInput/po:purchaserName, concat(' Purchase Order for ', $TaskInput/po:productId))</title>
+        <priority expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$TaskInput/po:priority</priority>
+	<init>
+		<variables/>
+		<variable-init>
+			<copy>
+				<from>'Approved'</from>
+				<to>$TaskOutput/po:approveResult</to>
+			</copy>
+		</variable-init>
+	</init>   
+	<assignment>
+            <user>$TaskInput/po:users</user>
+        </assignment>
+         <action type="Completed" name="Complete">
+             <changeVariables>
+                <copy>
+                    <from>current-dateTime()</from>
+                    <to>$TaskOutput/po:approveDate</to>
+                </copy>   
+                <copy>
+                    <from>$TaskInput/po:orderId</from>
+                    <to>$TaskOutput/po:orderId</to>
+                </copy>                               
+            </changeVariables>                
+        </action>      
+</task>

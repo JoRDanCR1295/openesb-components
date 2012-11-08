@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    =========================================================
+    COORDINATES
+    =========================================================
+  -->
+  <parent>
+    <groupId>it.imolinfo.jbi4corba.test-provider-lazy-lookup</groupId>
+    <artifactId>test-provider-lazy-lookup</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>provider-lazy-lookup-ns-jbi4corba-provider</artifactId>
+
+  <!--
+    =========================================================
+    DESCRIPTION
+    =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <!--
+    =========================================================
+    PACKAGING
+    =========================================================
+  -->
+  <packaging>jbi-service-unit</packaging>
+
+  <description>su connection to corba servant</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>it.imolinfo.jbi4corba</groupId>
+      <artifactId>jbi4corba</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+  </dependencies>
+  
+  <properties>
+<componentName>jbi4corba</componentName>
+</properties>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**</exclude>
+        </excludes>
+      </resource>
+    </resources>  
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- Aggiungo la customizzazione del WSDL - ORB -->
+          <transformationSets>
+            <transformationSet>
+              <dir>src/main/resources</dir>
+              <includes>
+                <param>**/*.wsdl</param>
+                <param>**/*.xsd</param>
+              </includes>
+              <stylesheet>src/main/xslt/${orb.xsl}</stylesheet>
+              <outputDir>${project.build.directory}/classes</outputDir>
+            </transformationSet>
+          </transformationSets>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <!-- Profile which creates an assembly for glassfish (default) -->
+    <profile>
+      <id>sunorb</id>
+      <properties>
+        <orb.xsl>sunorb.xsl</orb.xsl>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>      
+    </profile>  
+    <profile>
+      <id>glassfishorb</id>
+      <properties>
+        <orb.xsl>glassfishorb.xsl</orb.xsl>
+      </properties>
+    </profile>
+    <profile>
+      <id>ibmorb</id>
+      <properties>
+        <orb.xsl>ibmorb.xsl</orb.xsl>
+      </properties>
+    </profile>
+    <profile>
+      <id>jacorb</id>
+      <properties>
+        <orb.xsl>jacorb.xsl</orb.xsl>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://CosNotification/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://CosNotification/">
+    <xs:complexType name="structuredEvent">
+        <xs:sequence>
+            <xs:element name="header" type="tns:eventHeader"/>
+            <xs:element maxOccurs="unbounded" name="filterable_data" type="tns:property"/>
+            <xs:element name="remainder_of_body" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="eventHeader">
+        <xs:sequence>
+            <xs:element name="fixed_header" type="tns:fixedEventHeader"/>
+            <xs:element maxOccurs="unbounded" name="variable_header" type="tns:property"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="fixedEventHeader">
+        <xs:sequence>
+            <xs:element name="event_type" type="tns:eventType"/>
+            <xs:element name="event_name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="eventType">
+        <xs:sequence>
+            <xs:element name="domain_name" type="xs:string"/>
+            <xs:element name="type_name" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="property">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="value" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="propertyError">
+        <xs:sequence>
+            <xs:element name="code" type="tns:qoSErrorCode"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="available_range" type="tns:propertyRange"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="propertyRange">
+        <xs:sequence>
+            <xs:element name="low_val" type="xs:anyType"/>
+            <xs:element name="high_val" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="namedPropertyRange">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="range" type="tns:propertyRange"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="qoSErrorCode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNSUPPORTED_PROPERTY"/>
+            <xs:enumeration value="UNAVAILABLE_PROPERTY"/>
+            <xs:enumeration value="UNSUPPORTED_VALUE"/>
+            <xs:enumeration value="UNAVAILABLE_VALUE"/>
+            <xs:enumeration value="BAD_PROPERTY"/>
+            <xs:enumeration value="BAD_TYPE"/>
+            <xs:enumeration value="BAD_VALUE"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

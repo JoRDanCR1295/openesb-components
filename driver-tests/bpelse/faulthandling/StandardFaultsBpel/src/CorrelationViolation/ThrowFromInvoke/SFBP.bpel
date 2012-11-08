@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SFBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromInvoke/SFBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/src/CorrelationViolation/ThrowFromInvoke/SFBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromInvoke/StandardFaultWSDL" xmlns:ns0="http://xml.netbeans.org/schema/StandardFaultsBpel/src/CorrelationViolation/XmlSchema" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/StandardFaultsBpel/CorrelationViolation/ThrowFromInvoke/StandardFaultWSDL" location="StandardFaultWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <ns2:partnerLink name="PartnerLink5" partnerLinkType="ns1:MainBPOneWay3" partnerRole="MainBPOneWay3TypeRole"/>
+        <ns2:partnerLink name="PartnerLink4" partnerLinkType="ns1:MainBPOneWay2" partnerRole="MainBPOneWay2TypeRole"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns1:SubBP" partnerRole="SubBPPortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:SFBP" myRole="SFBPPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:MainBPOneWay" partnerRole="MainBPOneWayPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <ns2:variable name="MainBPOneWayOperationIn" messageType="ns1:MessageReply"/>
+        <variable name="SFBPOperationIn" messageType="ns1:MessageRequest"/>
+    </variables>
+    <correlationSets>
+        <ns2:correlationSet name="CorrelationSet1" properties="ns1:correlation1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink2" operation="SFBPOperation" portType="ns1:SFBPPortType" variable="SFBPOperationIn"/>
+        <if name="If1">
+            <condition>    ( $SFBPOperationIn.Input/ns0:Data = 'case1' )    </condition>
+            <ns2:sequence name="Sequence2">
+                <ns2:scope name="Request_Response_Correlation_Mismatch">
+                    <ns2:faultHandlers>
+                            <ns2:catch faultName="ns2:correlationViolation">
+                                    <ns2:assign name="Assign2">
+                                        <ns2:copy>
+                                            <ns2:from>$SFBPOperationIn.Input/ns0:Id1</ns2:from>
+                                            <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id1</ns2:to>
+                                        </ns2:copy>
+                                        <ns2:copy>
+                                            <ns2:from>$SFBPOperationIn.Input/ns0:Id2</ns2:from>
+                                            <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id2</ns2:to>
+                                        </ns2:copy>
+                                        <ns2:copy>
+                                            <ns2:from>
+                                                <ns2:literal>Request Response Correlation Mismatch</ns2:literal>
+                                            </ns2:from>
+                                            <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Data</ns2:to>
+                                        </ns2:copy>
+                                    </ns2:assign>
+                                </ns2:catch>
+                        </ns2:faultHandlers>
+                        <ns2:sequence name="Sequence1">
+                            <ns2:invoke name="Invoke1" partnerLink="PartnerLink3" operation="SubBPOperation" portType="ns1:SubBPPortType" inputVariable="SFBPOperationIn" outputVariable="MainBPOneWayOperationIn">
+                                <ns2:correlations>
+                                    <ns2:correlation set="CorrelationSet1" initiate="yes" pattern="request-response"/>
+                                </ns2:correlations>
+                            </ns2:invoke>
+                                <ns2:assign name="Assign1">
+                                    <ns2:copy>
+                                        <ns2:from>
+                                            <ns2:literal>Success.</ns2:literal>
+                                        </ns2:from>
+                                        <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Data</ns2:to>
+                                    </ns2:copy>
+                                </ns2:assign>
+                        </ns2:sequence>
+                </ns2:scope>
+                <ns2:invoke name="Invoke2" partnerLink="PartnerLink5" operation="MainBPOneWay3Operation" portType="ns1:MainBPOneWay3Type" inputVariable="MainBPOneWayOperationIn"/>
+            </ns2:sequence>
+            <ns2:else>
+                <ns2:scope name="Correlation_Already_Initiated">
+                    <ns2:faultHandlers>
+                        <ns2:catch faultName="ns2:correlationViolation">
+                            <ns2:sequence name="Sequence4">
+                                <ns2:assign name="Assign4">
+                                    <ns2:copy>
+                                        <ns2:from>
+                                            <ns2:literal>Correlation Already Initiated</ns2:literal>
+                                        </ns2:from>
+                                        <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Data</ns2:to>
+                                    </ns2:copy>
+                                    <ns2:copy>
+                                        <ns2:from>$SFBPOperationIn.Input/ns0:Id2</ns2:from>
+                                        <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id2</ns2:to>
+                                    </ns2:copy>
+                                    <ns2:copy>
+                                        <ns2:from>
+                                            <ns2:literal>dummy</ns2:literal>
+                                        </ns2:from>
+                                        <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id1</ns2:to>
+                                    </ns2:copy>
+                                </ns2:assign>
+                                <ns2:invoke name="Invoke5" partnerLink="PartnerLink4" operation="MainBPOneWay2Operation" portType="ns1:MainBPOneWay2Type" inputVariable="MainBPOneWayOperationIn"/>
+                            </ns2:sequence>
+                        </ns2:catch>
+                    </ns2:faultHandlers>
+                    <ns2:sequence name="Sequence3">
+                        <ns2:invoke name="Invoke3" partnerLink="PartnerLink3" operation="SubBPOperation" portType="ns1:SubBPPortType" inputVariable="SFBPOperationIn" outputVariable="MainBPOneWayOperationIn">
+                            <ns2:correlations>
+                                <ns2:correlation set="CorrelationSet1" initiate="yes" pattern="request-response"/>
+                            </ns2:correlations>
+                        </ns2:invoke>
+                        <ns2:assign name="Assign3">
+                            <ns2:copy>
+                                <ns2:from>
+                                    <ns2:literal>Success</ns2:literal>
+                                </ns2:from>
+                                <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Data</ns2:to>
+                            </ns2:copy>
+                            <ns2:copy>
+                                <ns2:from>$SFBPOperationIn.Input/ns0:Id1</ns2:from>
+                                <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id1</ns2:to>
+                            </ns2:copy>
+                            <ns2:copy>
+                                <ns2:from>
+                                    <ns2:literal>dummy</ns2:literal>
+                                </ns2:from>
+                                <ns2:to>$MainBPOneWayOperationIn.Output/ns0:Id2</ns2:to>
+                            </ns2:copy>
+                        </ns2:assign>
+                        <ns2:invoke name="Invoke4" partnerLink="PartnerLink1" operation="MainBPOneWayOperation" portType="ns1:MainBPOneWayPortType" inputVariable="MainBPOneWayOperationIn"/>
+                    </ns2:sequence>
+                </ns2:scope>
+            </ns2:else>
+        </if>
+    </sequence>
+</process>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="IfTerminationInScope" 
+         targetNamespace="http://localhost/bpel/IfTerminationInScope"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="http://localhost/bpel/IfTerminationInScope"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns1="http://localhost/wsdl/IfTerminationInScope">
+    
+    <import namespace="http://localhost/wsdl/IfTerminationInScope" 
+            location="IfTerminationInScope.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+    <partnerLinks>
+        <partnerLink name="IfTerminationInScope" 
+                     partnerLinkType="ns1:partnerlinktype1" 
+                     myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence3">
+                <reply name="replyFromFH" 
+                       partnerLink="IfTerminationInScope" 
+                       operation="operation1" 
+                       portType="ns1:portType1" 
+                       variable="outputVar"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="start" 
+                 partnerLink="IfTerminationInScope" 
+                 operation="operation1" 
+                 portType="ns1:portType1" 
+                 variable="inputVar" 
+                 createInstance="yes">
+        </receive>
+        <scope name="Scope1">
+            <flow name="Flow1">
+                <sequence name="Sequence4">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>
+                                <literal>InitialAssign</literal>
+                            </from>
+                            <to>$outputVar.resultType/ns1:paramA</to>
+                        </copy>
+                    </assign>
+                    <if name="If1">
+                        <condition> ( $outputVar.resultType/ns1:paramA = 'InitialAssign' ) </condition>
+                        <sequence name="Sequence1">
+                            <wait name="Wait_30Secs">
+                                <for>'P0Y0M0DT0H0M30S'</for>
+                            </wait>
+                            <assign name="Assign1">
+                                <copy>
+                                    <from>concat($outputVar.resultType/ns1:paramA, '-AssignInIf')</from>
+                                    <to>$outputVar.resultType/ns1:paramA</to>
+                                </copy>
+                            </assign>
+                            <reply name="replyFromBranch" 
+                                   partnerLink="IfTerminationInScope" 
+                                   operation="operation1" 
+                                   portType="ns1:portType1" 
+                                   variable="outputVar"/>                                
+                        </sequence>
+                    </if>
+                </sequence>
+                <sequence name="Sequence2">
+                    <throw name="Throw1" faultName="tns:SomeFault"/>
+                </sequence>
+            </flow>
+        </scope> 
+    </sequence>
+</process>

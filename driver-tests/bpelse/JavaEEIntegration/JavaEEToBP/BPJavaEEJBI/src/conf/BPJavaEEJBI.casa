@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BPToJava" xmlns:ns2="http://j2ee.netbeans.org/wsdl/BCtoBP" xmlns:ns3="http://enterprise.netbeans.org/bpel/CallerBP" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="BPToJavaEEPort" interface-name="ns1:BPToJavaEEPT" name="endpoint1" service-name="ns1:BPToJavaEEService"/>
+<endpoint endpoint-name="JavaEEToBPPort" interface-name="ns1:JavaEEToBPPT" name="endpoint2" service-name="ns1:JavaEEToBPService"/>
+<endpoint endpoint-name="BCBpelPort" interface-name="ns2:BCBpelPT" name="endpoint3" service-name="ns2:BCBpelService"/>
+<endpoint endpoint-name="javaee_BPToJavaEEPort" interface-name="ns1:BPToJavaEEPT" name="endpoint4" service-name="ns1:BPToJavaEEService"/>
+<endpoint endpoint-name="javaee_JavaEEToBPPort" interface-name="ns1:JavaEEToBPPT" name="endpoint5" service-name="ns1:JavaEEToBPService"/>
+<endpoint display-name="JavaEEToBPPartnerLink" endpoint-name="JavaEEToBPPTRole_myRole" file-path="CallerBP.bpel" interface-name="ns1:JavaEEToBPPT" name="endpoint6" process-name="CallerBP" service-name="ns3:JavaEEToBPPartnerLink"/>
+<endpoint display-name="BCToBPPartnerLink" endpoint-name="BCBpelPTRole_myRole" file-path="CallerBP.bpel" interface-name="ns2:BCBpelPT" name="endpoint7" process-name="CallerBP" service-name="ns3:BCToBPPartnerLink"/>
+<endpoint display-name="BPToJavaEEPartnerLink" endpoint-name="BPToJavaEEPTRole_partnerRole" file-path="CallerBP.bpel" interface-name="ns1:BPToJavaEEPT" name="endpoint8" process-name="CallerBP" service-name="ns3:BPToJavaEEPartnerLink"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="JavaEEWebService.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="BPJavaEEJBI-JavaEEWebService" unit-name="JavaEEWebService" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint4"/>
+<consumes endpoint="endpoint5"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="JavaEEToBPProj.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="BPJavaEEJBI-JavaEEToBPProj" unit-name="JavaEEToBPProj" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint6"/>
+<provides endpoint="endpoint7"/>
+<consumes endpoint="endpoint8"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BPJavaEEJBI-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BCtoBP.wsdl#xpointer(/definitions/service[@name='BCBpelService']/port[@name='BCBpelPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/service[@name='BPToJavaEEService']/port[@name='BPToJavaEEPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/service[@name='JavaEEToBPService']/port[@name='JavaEEToBPPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint6" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint6" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint1" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint8" provider="endpoint4" state="unchanged"/>
+<connection consumer="endpoint8" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BCtoBP.wsdl#xpointer(/definitions/portType[@name='BCBpelPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/portType[@name='BPToJavaEEPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/portType[@name='JavaEEToBPPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/portType[@name='BPToJavaEEPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/portType[@name='JavaEEToBPPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/portType[@name='BPToJavaEEPT'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/portType[@name='JavaEEToBPPT'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BCtoBP.wsdl#xpointer(/definitions/binding[@name='BCBpelBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/binding[@name='BPToJavaEEBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/binding[@name='JavaEEToBPBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/binding[@name='BPToJavaEEBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/binding[@name='JavaEEToBPBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/binding[@name='BPToJavaEEBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/binding[@name='JavaEEToBPBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BCtoBP.wsdl#xpointer(/definitions/service[@name='BCBpelService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/service[@name='BPToJavaEEService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEToBPProj/BPToJava.wsdl#xpointer(/definitions/service[@name='JavaEEToBPService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/service[@name='BPToJavaEEService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/client/BPToJava/BPToJava.wsdl#xpointer(/definitions/service[@name='JavaEEToBPService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/service[@name='BPToJavaEEService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/JavaEEWebService/META-INF/wsdl/JavaEEWSProvider/BPToJava.wsdl#xpointer(/definitions/service[@name='JavaEEToBPService'])" xlink:type="simple"/>
+</services>
+<regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

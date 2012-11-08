@@ -1,0 +1,52 @@
+#
+# BOM for open-jbi-components
+#
+
+#include shared parts:
+INCLUDE common_defs.bom
+
+set DST_DIR .
+
+#NOTE - this bundle is just a zip of the component jars defined in components.bom
+set SRC_DIR <RELEASE_STAGE>
+set SRC_FILE ojc-components.zip
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+
+#add index.html FILE
+set SRC_FILE index.html
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+
+#add version.txt (not sure this is used - only contains build-number.  RT 6/19/07):
+set SRC_FILE version.txt
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+
+#add cvs_update.log
+set SRC_FILE cvs_update.log
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+
+#add individual components:
+INCLUDE components.bom
+
+#add source distributions:
+INCLUDE sources.bom
+
+IF <IS_RELEASE_BUILD> = 1
+
+#add driver-test source bundle:
+set SRC_DIR <SRC_STAGE>/test
+set SRC_FILE driver-tests.zip
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+
+#add product source bundle:
+set SRC_DIR <SRC_STAGE>/product
+set SRC_FILE ojc-src.zip
+set DST_FILE <SRC_FILE>
+<SRC_FILE>|0444|bin|<SRC_DIR>|<DST_FILE>|<DST_DIR>
+ENDIF
+
+

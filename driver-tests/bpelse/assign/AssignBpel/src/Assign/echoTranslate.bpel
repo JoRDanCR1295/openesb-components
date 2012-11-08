@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoTranslate"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoTranslate"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoTranslate"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/echoTranslate"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/echoTranslate"
+            location="echoTranslate.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_echoTranslate"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoTranslate_Output"
+                  messageType="ns0:echoTranslate"></variable>
+        <variable name="echoTranslate_Input"
+                  messageType="ns0:echoTranslate"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoTranslate"
+                 partnerLink="plink_echoTranslate"
+                 portType="ns0:echoTranslate"
+                 operation="echoTranslate"
+                 variable="echoTranslate_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>translate($echoTranslate_Output.part/value, &apos;abcdefghijklmnopqrstuvwxyz.@BCD#FGH!JKLMN*PQRST^VWXYZ&apos;)</from>
+                <to>$echoTranslate_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_echoTranslate"
+               portType="ns0:echoTranslate"
+               operation="echoTranslate"
+               variable="echoTranslate_Input"></reply>
+    </sequence>
+</process>

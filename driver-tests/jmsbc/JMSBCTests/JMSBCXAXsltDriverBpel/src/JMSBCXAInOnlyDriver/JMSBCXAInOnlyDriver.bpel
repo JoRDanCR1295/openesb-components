@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSBCXAInOnlyDriver"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSBCXAInOnlyDriver"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSBCXAInOnlyDriver"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver"
+            location="JMSBCXAInOnlyDriver.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSXAInOnlyTestHttpReqReplyPartner"
+                     partnerLinkType="ns0:JMSXAInOnlyRequestReplyLnkType"
+                     myRole="roleJMSXAInOnlyTestTrigger"/>
+        <partnerLink name="JMSXAInOnlyTestSendPartner"
+                     partnerLinkType="ns0:JMSXAInOnlyOutLnkType"
+                     partnerRole="roleJMSXAInOnlyTestSender"/>
+        <partnerLink name="JMSXAInOnlyTestReceivePartner"
+                     partnerLinkType="ns0:JMSXAInOnlyInLnkType"
+                     myRole="roleJMSXAInOnlyTestReceiver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequest"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageReply"></variable>
+        <variable name="operationOneWayOut_Input"
+                  messageType="ns0:messageRequest"></variable>
+        <variable name="operationOneWayIn_Output"
+                  messageType="ns0:messageReply"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSetJMSXAInOnlyTest"
+                        properties="ns0:props1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMSXAInOnlyTestHttpReqReplyPartner"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="cSetJMSXAInOnlyTest"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign">
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/EmployeeNumber</from>
+                <to>$operationOneWayOut_Input.partRequest/EmployeeNumber</to>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/LastName</from>
+                <to>$operationOneWayOut_Input.partRequest/LastName</to>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/FirstName</from>
+                <to>$operationOneWayOut_Input.partRequest/FirstName</to>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/JobTitle</from>
+                <to>$operationOneWayOut_Input.partRequest/JobTitle</to>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/HoursWorked</from>
+                <to>$operationOneWayOut_Input.partRequest/HoursWorked</to>
+            </copy>
+            <copy>
+                <from>$operationRequestReply_Output.partRequest/PayRate</from>
+                <to>$operationOneWayOut_Input.partRequest/PayRate</to>
+            </copy>
+        </assign>
+        <invoke name="operationOneWayOut"
+                partnerLink="JMSXAInOnlyTestSendPartner"
+                portType="ns0:portTypeOneWayOut"
+                operation="operationOneWayOut"
+                inputVariable="operationOneWayOut_Input"></invoke>
+        <receive name="operationOneWayIn"
+                 partnerLink="JMSXAInOnlyTestReceivePartner"
+                 portType="ns0:portTypeOneWayIn"
+                 operation="operationOneWayIn"
+                 variable="operationOneWayIn_Output"
+                 createInstance="no">
+            <correlations>
+                <correlation set="cSetJMSXAInOnlyTest"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from>$operationOneWayIn_Output.partReply/EmpId</from>
+                <to>$operationRequestReply_Input.partReply/EmpId</to>
+            </copy>
+            <copy>
+                <from>$operationOneWayIn_Output.partReply/LName</from>
+                <to>$operationRequestReply_Input.partReply/LName</to>
+            </copy>
+            <copy>
+                <from>$operationOneWayIn_Output.partReply/FName</from>
+                <to>$operationRequestReply_Input.partReply/FName</to>
+            </copy>
+            <copy>
+                <from>$operationOneWayIn_Output.partReply/Title</from>
+                <to>$operationRequestReply_Input.partReply/Title</to>
+            </copy>
+            <copy>
+                <from>$operationOneWayIn_Output.partReply/Amt</from>
+                <to>$operationRequestReply_Input.partReply/Amt</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMSXAInOnlyTestHttpReqReplyPartner"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"></reply>
+    </sequence>
+</process>

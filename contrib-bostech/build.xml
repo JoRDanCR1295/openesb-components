@@ -1,0 +1,47 @@
+<project name="module-mainbuild" default="build">
+
+	<property name="cbesb.home" location="." />
+	<property name="external_libs" location="${cbesb.home}/lib" />
+	<property name="build.dir" location="${cbesb.home}/build" />
+	<property name="build.lib.dir" location="${cbesb.home}/build/lib" />
+
+	<target name="build">
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.component.util/scripts" antfile="build.xml" target="build"/>			
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.ccsl/scripts" antfile="build.xml" target="build"/>			
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.component.tcpip/scripts" antfile="build.xml" target="build"/>
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.custom/scripts" antfile="build.xml" target="build"/>
+		
+		<antcall target="packageComponents"/>
+	</target>
+
+	<target name="packageComponents" depends="packageTcpipComponent" />
+
+		
+	<target name="packageTcpipComponent">
+		<jar destfile="${build.dir}/ChainBuilderESB-BC-TCPIP.jar">
+			<fileset dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.component.tcpip/src/resources">
+				<include name="**/jbi.xml" />
+			</fileset>
+			<fileset dir="${build.lib.dir}">
+				<include name="*.jar" />
+			</fileset>			
+			<fileset dir="${external_libs}">
+                                <include name="commons-logging-1.1.jar" />
+                                <include name="servicemix-core-3.0-incubating.jar" />
+                                <include name="servicemix-common-3.0-incubating.jar" />
+                                <include name="wsdl4j-1.5.2.jar" />
+                                <include name="backport-util-concurrent-2.1.jar" />
+                                <include name="com.bostechcorp.cbesb.common.util.jar" />
+			</fileset>			
+		</jar>	
+	</target>
+	
+	<target name="clean">
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.component.util/scripts" antfile="build.xml" target="clean"/>			
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.ccsl/scripts" antfile="build.xml" target="clean"/>			
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.runtime.component.tcpip/scripts" antfile="build.xml" target="clean"/>
+		<ant inheritAll="false" inheritRefs="false" dir="${cbesb.home}/com.bostechcorp.cbesb.custom/scripts" antfile="build.xml" target="clean"/>
+		<delete dir="${build.dir}" quiet="true" />
+	</target>
+
+</project>

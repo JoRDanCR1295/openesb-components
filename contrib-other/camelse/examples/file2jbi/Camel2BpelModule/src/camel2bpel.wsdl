@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="camel2bpel" targetNamespace="http://openesb.org/wsdl/camel2jbi/Camel2BpelJBIModule"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://openesb.org/wsdl/camel2jbi/Camel2BpelJBIModule" xmlns:ns="http://openesb.org/camel2jbi/message/Camel2BpelJBIModule" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://openesb.org/wsdl/camel2jbi/Camel2BpelJBIModule">
+            <xsd:import namespace="http://openesb.org/camel2jbi/message/Camel2BpelJBIModule" schemaLocation="camel2bpel.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="camel2bpelOperationRequest">
+        <part name="part1" element="ns:AnyMessage"/>
+    </message>
+    <portType name="camel2bpelInterface">
+        <operation name="camel2bpelOperation">
+            <input name="input1" message="tns:camel2bpelOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="camel2bpelBinding" type="tns:camel2bpelInterface">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="camel2bpelOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="camel2bpelService">
+        <port name="camel2bpelPort" binding="tns:camel2bpelBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/camel2bpelService/camel2bpelPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="camel2bpel">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="camel2bpelInterfaceRole" portType="tns:camel2bpelInterface"/>
+    </plnk:partnerLinkType>
+</definitions>

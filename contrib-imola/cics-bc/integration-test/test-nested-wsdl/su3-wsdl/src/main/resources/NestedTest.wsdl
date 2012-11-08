@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://wsdl.nested.test.jbi4cics.imolinfo.it" xmlns:imolacics="uri://schemas.imola.it/jbi/wsdl-extensions/cics/" xmlns:tns="http://wsdl.nested.test.jbi4cics.imolinfo.it" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tipi="http://nested.test.jbi4cics.imolinfo.it">
+
+<wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://nested.test.jbi4cics.imolinfo.it">
+<xsd:complexType name="InputOutputBean">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CA_RETCODE1" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CA_RETCODE2" nillable="true" type="tipi:CA_RETCODE2"/>
+<xsd:element minOccurs="0" name="CA_RETCODE4" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CA_RETCODE2">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CA_RETCODE3" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:schema>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://wsdl.nested.test.jbi4cics.imolinfo.it">
+<xsd:element name="NestedOperation">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="tipi:InputOutputBean"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="NestedOperationResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="tipi:InputOutputBean"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
+
+  </wsdl:types>
+  
+  <wsdl:message name="NestedOperationResponse">
+    <wsdl:part name="parameters" element="tns:NestedOperationResponse"/>
+  </wsdl:message>
+  <wsdl:message name="NestedOperationRequest">
+    <wsdl:part name="parameters" element="tns:NestedOperation"/>
+  </wsdl:message>
+  <wsdl:portType name="NestedServiceWSDLPortType">
+    <wsdl:operation name="NestedOperation">
+      <wsdl:input name="NestedOperationRequest" message="tns:NestedOperationRequest"/>
+      <wsdl:output name="NestedOperationResponse" message="tns:NestedOperationResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="NestedServiceCICSBinding" type="tns:NestedServiceWSDLPortType">
+
+	<imolacics:binding servicePackageName="it.imolinfo.jbi4cics.test.nested" codePage="CP037">
+		<imolacics:copyCobol>02 CA-RETCODE1 PIC XXXXX        .
+02 CA-RETCODE2                  .
+03 CA-RETCODE3 PIC XXXXX        .
+02 CA-RETCODE4 PIC XXXXX        .</imolacics:copyCobol>
+	</imolacics:binding>   
+
+
+    <wsdl:operation name="NestedOperation">
+      <wsdl:input name="NestedOperationRequest"/>
+      <wsdl:output name="NestedOperationResponse"/>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="NestedService">
+    <wsdl:port name="NestedServiceCICSPort" binding="tns:NestedServiceCICSBinding">
+		<imolacics:address 
+			username="imola" 
+			password="imola"
+			connectionType="DUMMY"
+			JNDIConnectionName="test"			
+			programName="imola"
+			transactionName="imola"
+			tpn="false"	
+			/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="bpVodafone02"
+    targetNamespace="http://enterprise.netbeans.org/bpel/bpVodafone02"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/bpVodafone02" xmlns:ns1="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" xmlns:ns2="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl" xmlns:ns0="http://java.sun.com/products/oss/xml/TroubleTicket" xmlns:ns3="http://java.sun.com/products/oss/xml/Common" xmlns:ns4="http://java.sun.com/products/oss/xml/Common" xmlns:ns5="http://java.sun.com/products/oss/xml/TroubleTicket">
+   <import namespace="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" location="TroubleTicketWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl" location="TroubleTicket.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://java.sun.com/products/oss/xml/Common" location="../Vodafone/XmlCommonSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+   <import namespace="http://java.sun.com/products/oss/xml/TroubleTicket" location="../Vodafone/XmlTroubleTicketSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+   <partnerLinks>
+      <bpws:partnerLink name="plTroubleTicket" partnerLinkType="ns1:TroubleTicketWSPortLinkType" myRole="roleTroubleTicket"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="GetTroubleTicketByKeyOut" messageType="ns2:getTroubleTicketByKeyResponse"/>
+      <bpws:variable name="GetTroubleTicketByKeyIn" messageType="ns2:getTroubleTicketByKeyRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="plTroubleTicket" operation="getTroubleTicketByKey" portType="ns2:TroubleTicketWSPort" variable="GetTroubleTicketByKeyIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>1</bpws:from>
+            <bpws:to>$GetTroubleTicketByKeyOut.parameter/ns0:troubleTicketValue/ns3:lastUpdateVersionNumber</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="plTroubleTicket" operation="getTroubleTicketByKey" portType="ns2:TroubleTicketWSPort" variable="GetTroubleTicketByKeyOut"/>
+   </sequence>
+</process>

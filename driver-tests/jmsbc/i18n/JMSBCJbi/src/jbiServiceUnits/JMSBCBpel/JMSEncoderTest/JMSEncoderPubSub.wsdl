@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSEncoderPubSub" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSub"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSub" xmlns:ns="http://www.seebeyond.com/encoder/UD1/_1012836547" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSub">
+            <xsd:import namespace="http://www.seebeyond.com/encoder/UD1/_1012836547" schemaLocation="UD1.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="JMSEncoderPubSubOperationRequest">
+        <part name="part1" element="ns:root"/>
+        <part name="part2" type="xsd:string"/>
+    </message>
+    <message name="JMSEncoderPubSubOperationReply">
+        <part name="part1" element="ns:root"/>
+    </message>
+    <portType name="JMSEncoderPubSubPortType">
+        <operation name="JMSEncoderPubSubOperation">
+            <input name="input1" message="tns:JMSEncoderPubSubOperationRequest"/>
+            <output name="output1" message="tns:JMSEncoderPubSubOperationReply"/>
+        </operation>
+    </portType>
+    <binding name="JMSEncoderPubSubBinding" type="tns:JMSEncoderPubSubPortType">
+        <jms:binding/>
+        <operation name="JMSEncoderPubSubOperation">
+            <jms:operation destination="JMSEncoderPubSubTopic" destinationType="Topic" messageSelector="JMSType='A.Sample.Type'"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" use="encoded" encodingStyle="ud1encoder-1.0" textPart="part1" typePart="part2"/>
+            </input>
+            <output name="output1">
+                <jms:message messageType="TextMessage" use="encoded" encodingStyle="ud1encoder-1.0" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="JMSEncoderPubSubService">
+        <port name="JMSEncoderPubSubPort" binding="tns:JMSEncoderPubSubBinding">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="JMSEncoderPubSubPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="JMSEncoderPubSubPortTypeRole" portType="tns:JMSEncoderPubSubPortType"/>
+    </plink:partnerLinkType>
+</definitions>

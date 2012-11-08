@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SubBP" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SubBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPRecover">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SubBPRecover" location="SubBPRecover.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink" partnerLinkType="ns1:InOutPartner1" myRole="InOutPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="SubBPRepVar" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="SubBPInVar" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <bpws:sequence name="Sequence1">
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink" operation="InOutOper" portType="ns1:InOutPT" variable="SubBPInVar"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat('Added in SuB bp', $SubBPInVar.part1/msg1)</bpws:from>
+                <bpws:to>$SubBPRepVar.part1/msg1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubBPInVar.part1/content1/id</bpws:from>
+                <bpws:to>$SubBPRepVar.part1/content1/id</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$SubBPInVar.part1/content1/data</bpws:from>
+                <bpws:to>$SubBPRepVar.part1/content1/data</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink" operation="InOutOper" portType="ns1:InOutPT" variable="SubBPRepVar"/>
+    </bpws:sequence>
+</process>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ExitInPickOnAlarm" targetNamespace="http://j2ee.netbeans.org/wsdl/ExitInPickOnAlarm"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInPickOnAlarm" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="ExitInPickOnAlarmOperationRequest">
+        <part name="InputPart" type="xsd:string"/>
+    </message>
+    <message name="ExitInPickOnAlarmOperationReply">
+        <part name="OutputPart" type="xsd:string"/>
+    </message>
+    <portType name="ExitInPickOnAlarmPortType">
+        <wsdl:operation name="ExitInPickOnAlarmOperation">
+            <wsdl:input name="input1" message="tns:ExitInPickOnAlarmOperationRequest"/>
+            <wsdl:output name="output1" message="tns:ExitInPickOnAlarmOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="CorrelationPortType">
+        <operation name="CorrelationOperation">
+            <input name="input1" message="tns:ExitInPickOnAlarmOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="ExitInPickOnAlarmBinding" type="tns:ExitInPickOnAlarmPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ExitInPickOnAlarmOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/ExitInPickOnAlarm"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/ExitInPickOnAlarm"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="CorrelationPortTypeBinding" type="tns:CorrelationPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CorrelationOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/ExitInPickOnAlarm"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="ExitInPickOnAlarmService">
+        <wsdl:port name="ExitInPickOnAlarmPort" binding="tns:ExitInPickOnAlarmBinding">
+            <soap:address location="http://localhost:18181/ExitBpel/ExitInPickOnAlarmService/ExitInPickOnAlarmPort"/>
+        </wsdl:port>
+    </service>
+    <service name="CorrelationService">
+        <port name="CorrelationPort" binding="tns:CorrelationPortTypeBinding">
+            <soap:address location="http://localhost:18181/ExitBpel/ExitInPickOnAlarm/CorrelationPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="ExitInPickOnAlarmPlink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ExitInPickOnAlarmPortTypeRole" portType="tns:ExitInPickOnAlarmPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="CorrelationPlink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="CorrelationPortTypeRole" portType="tns:CorrelationPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="CorrelationVar" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationVar" messageType="tns:ExitInPickOnAlarmOperationRequest" part="InputPart"/>
+</definitions>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ENDPOINT_NAME" targetNamespace="NAME_SPACE" xmlns:tns="NAME_SPACE" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="NAME_SPACE" xmlns:ns1="http://jaxb.dev.java.net/array" xmlns:tns="NAME_SPACE" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://jaxb.dev.java.net/array" schemaLocation="TypeDef_array.xsd"/>
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="msg" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:complexType name="matrixLong">
+<xs:sequence>
+<xs:element form="unqualified" maxOccurs="unbounded" name="value" type="ns1:intArray"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="matrixString">
+<xs:sequence>
+<xs:element form="unqualified" maxOccurs="unbounded" name="value" type="ns1:stringArray"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="matrixLongArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:matrixLong"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="matrixStringArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:matrixString"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ENDPOINT_NAME">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ENDPOINT_NAMECorbaBinding" type="tns:ENDPOINT_NAME">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoSimpleArraySequenceTypeDef.idl" relativepath=".">
+//IDL
+module it{
+module imolinfo{
+module jbi4corba{
+module test{
+module webservice{
+module generator{
+
+// simple types supported
+// boolean 		
+// char
+// wchar
+// string
+// wstring
+// short
+// unsigned short 
+// long
+// unsigned long
+// long long
+// unsigned long long
+// float
+// double 
+// octect
+
+  // Arrays
+  typedef string mystringArr[2];  
+  typedef long myintArr[2];  
+  typedef boolean mybooleanArr[2];
+  typedef char mycharArr[2];
+  typedef wchar mywcharArr[2];
+  typedef wstring mywstringArr[2];
+  typedef short myshortArr[2];
+  typedef unsigned short myunsignedshortArr[2];
+  typedef long mylongArr[2];
+  typedef unsigned long myunsignedlongArr[2];
+  typedef long long mylonglongArr[2];
+  typedef unsigned long long myunsignedlonglongArr[2];
+  typedef float myfloatArr[2];
+  typedef double mydoubleArr[2];
+  typedef string MatrixString[3][3];
+  typedef long MatrixLong[3][3];
+
+  // Sequences
+  typedef sequence &lt;string&gt; mystringSeq;
+  typedef sequence &lt;long&gt; myintSeq;  
+  typedef sequence &lt;boolean&gt; mybooleanSeq;
+  typedef sequence &lt;char&gt; mycharSeq;
+  typedef sequence &lt;wchar&gt; mywcharSeq;
+  typedef sequence &lt;wstring&gt; mywstringSeq;
+  typedef sequence &lt;short&gt; myshortSeq;
+  typedef sequence &lt;unsigned short&gt; myunsignedshortSeq;
+  typedef sequence &lt;unsigned long&gt; myunsignedlongSeq;
+  typedef sequence &lt;long long&gt; mylonglongSeq;
+  typedef sequence &lt;unsigned long long&gt; myunsignedlonglongSeq;
+  typedef sequence &lt;float&gt; myfloatSeq;
+  typedef sequence &lt;double&gt; mydoubleSeq;
+
+  interface Echo {
+    string echo(in any msg);
+  };
+
+};
+};
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ENDPOINT_NAME">
+    <wsdl:port name="ENDPOINT_NAMECorbaPort" binding="tns:ENDPOINT_NAMECorbaBinding">
+<imolacorba:address name="CORBA_SERVICE_NAME" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="quo" value="2"/>
+<imolacorba:property name="qua" value=""/>
+<imolacorba:property name="qui" value="1"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

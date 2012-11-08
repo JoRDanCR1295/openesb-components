@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ForEachInFlowBranch"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ForEachInFlowBranch"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ForEachInFlowBranch" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ForEachInFlowBranch">
+   <import namespace="http://j2ee.netbeans.org/wsdl/ForEachInFlowBranch" location="ForEachInFlowBranch.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:ForEachInFlowBranch1" partnerRole="ForEachInFlowBranch1PortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:ForEachInFlowBranch" myRole="ForEachInFlowBranchPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="VarCtr" type="xsd:string"/>
+      <bpws:variable name="ForEachInFlowBranch1OperationIn" messageType="ns1:ForEachInFlowBranchOperationRequest"/>
+      <bpws:variable name="ForEachInFlowBranchOperationIn" messageType="ns1:ForEachInFlowBranchOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ForEachInFlowBranchOperation" portType="ns1:ForEachInFlowBranchPortType" variable="ForEachInFlowBranchOperationIn"/>
+      <bpws:flow name="Flow1">
+         <bpws:sequence name="Sequence1">
+            <bpws:assign name="Assign1">
+               <bpws:copy>
+                  <bpws:from>0</bpws:from>
+                  <bpws:to variable="VarCtr"/>
+               </bpws:copy>
+            </bpws:assign>
+            <bpws:forEach name="ForEach1" parallel="no" counterName="index">
+               <bpws:startCounterValue>0</bpws:startCounterValue>
+               <bpws:finalCounterValue>1</bpws:finalCounterValue>
+               <bpws:scope name="Scope1">
+		          <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="ForEachInFlowBranch1Operation" portType="ns1:ForEachInFlowBranch1PortType" inputVariable="ForEachInFlowBranchOperationIn"/>
+                  <bpws:assign name="Assign3">
+                     <bpws:copy>
+                        <bpws:from> ( $VarCtr + 1 ) </bpws:from>
+                        <bpws:to variable="VarCtr"/>
+                     </bpws:copy>
+                  </bpws:assign>
+               </bpws:scope>
+            </bpws:forEach>
+         </bpws:sequence>
+         <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="ForEachInFlowBranch1Operation" portType="ns1:ForEachInFlowBranch1PortType" inputVariable="ForEachInFlowBranchOperationIn"/>
+      </bpws:flow>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>3</bpws:from>
+            <bpws:to variable="VarCtr"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from variable="ForEachInFlowBranchOperationIn"/>
+            <bpws:to variable="ForEachInFlowBranch1OperationIn"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke2" partnerLink="PartnerLink2" operation="ForEachInFlowBranch1Operation" portType="ns1:ForEachInFlowBranch1PortType" inputVariable="ForEachInFlowBranch1OperationIn"/>
+   </sequence>
+</process>

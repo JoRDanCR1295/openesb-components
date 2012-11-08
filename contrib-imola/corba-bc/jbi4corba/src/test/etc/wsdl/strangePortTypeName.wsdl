@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"
+                  xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/"
+                  xmlns:soapenc12="http://www.w3.org/2003/05/soap-encoding"
+                  xmlns:tns="it.imolinfo.Jbi4Corba.test.webservice.generator"
+                  xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator">
+
+  <!--
+  Types  
+  -->
+  
+  <wsdl:types>
+    <xsd:schema targetNamespace="it.imolinfo.Jbi4Corba.test.webservice.generator"
+                elementFormDefault="qualified"
+                attributeFormDefault="qualified">
+<xsd:element name="echoString">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="msg" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+
+<xsd:element name="echoStringResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="return" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>                
+</xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+
+
+  <!--
+  Message - String
+  -->
+  <wsdl:message name="echoString">
+    <wsdl:part  name="parameters" element="tns:echoString"/>
+  </wsdl:message>
+
+  <wsdl:message name="echoStringResponse">
+    <wsdl:part name="parameters" element="tns:echoStringResponse"/>
+  </wsdl:message>
+
+
+
+  <!--
+  PortType
+  -->
+  <wsdl:portType name="StrangeName">
+
+
+    <!--
+    PortType - string
+    -->
+    <wsdl:operation name="echoString">
+      <wsdl:input  message="tns:echoString"  name="echoString" />
+      <wsdl:output message="tns:echoStringResponse" name="echoStringResponse" />
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+
+
+  <!--
+  Binding
+  -->
+  <wsdl:binding name="StrangeNameHttpBinding"
+                type="tns:StrangeName">
+
+    <!--
+    Style
+    -->
+    <wsdlsoap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http" />
+
+
+    <!--
+    Operation - string
+    -->
+    <wsdl:operation name="echoString">
+
+      <wsdlsoap:operation soapAction="fooAction" />
+
+      <wsdl:input name="echoString">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+
+      <wsdl:output name="echoStringResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+
+    </wsdl:operation>
+
+  </wsdl:binding>
+
+  <!--
+  Service
+  -->
+  <wsdl:service name="StrangeNameServ">
+    <wsdl:port binding="tns:StrangeNameHttpBinding" name="StrangeNameHttpPort">
+
+      <wsdlsoap:address location="http://localhost/services/StrangeNameServ" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

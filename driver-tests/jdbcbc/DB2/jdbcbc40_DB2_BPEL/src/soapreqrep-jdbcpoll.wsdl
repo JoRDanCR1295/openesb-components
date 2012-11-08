@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="soapreqrep-jdbcpoll" targetNamespace="http://j2ee.netbeans.org/wsdl/soapreqrep-jdbcpoll" xmlns:tns="http://j2ee.netbeans.org/wsdl/soapreqrep-jdbcpoll" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" xmlns:ns="http://j2ee.netbeans.org/xsd/tableSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+  <wsdl:types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://j2ee.netbeans.org/wsdl/soapreqrep-jdbcpoll">
+            
+	<xsd:import namespace="http://j2ee.netbeans.org/xsd/tableSchema" schemaLocation="JDBCOUTBOUNDDRIVERTEST_EMP.xsd"/></xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="insertRetMsg">
+    <wsdl:part name="part" type="xsd:int"/>
+  </wsdl:message>
+  <wsdl:message name="inputMsg">
+    <part element="ns:JDBCOUTBOUNDDRIVERTEST_EMP" name="part"/>
+  </wsdl:message>
+  <wsdl:message name="outputMsg">
+    <part element="ns:JDBCOUTBOUNDDRIVERTEST_EMP" name="part"/>
+  </wsdl:message>
+    <wsdl:portType name="jdbcPortType">
+    <wsdl:operation name="insert">
+      <wsdl:input name="inputInsert" message="tns:inputMsg"/>
+      <wsdl:output name="outputInsert" message="tns:insertRetMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+      <wsdl:input name="inputUpdate" message="tns:inputMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+      <wsdl:input name="inputDelete" message="tns:inputMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+      <wsdl:input name="inputFind" message="tns:inputMsg"/>
+      <wsdl:output name="outputFind" message="tns:outputMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="pollrecords">
+      <wsdl:input name="inputPoll" message="tns:inputMsg"/>
+    </wsdl:operation>
+  </wsdl:portType>
+    <wsdl:portType name="soapReqResPortType">
+        <wsdl:operation name="soapReqReslOperation">
+            <wsdl:input name="input1" message="tns:inputMsg"/>
+            <wsdl:output name="output1" message="tns:outputMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="binding" type="tns:jdbcPortType">
+    <jdbc:binding xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+    <wsdl:operation name="insert">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputInsert">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="EMPID" PollMilliSeconds="5000" TableName="DB2ADMIN.JDBCOUTBOUNDDRIVERTEST_EMP" Transaction="NOTransaction" numberOfRecords="" operationType="insert" paramOrder="EMPID,DEPTID,MARKCOLUMN,ENAME" sql="insert into &quot;DB2ADMIN&quot;.&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot; (&quot;EMPID&quot;,&quot;DEPTID&quot;,&quot;MARKCOLUMN&quot;,&quot;ENAME&quot;) values (?,?,?,?)"/>
+      </wsdl:input>
+      <wsdl:output name="outputInsert">
+    <jdbc:output xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" returnPartName="part"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="update">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputUpdate">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="EMPID" PollMilliSeconds="5000" TableName="DB2ADMIN.JDBCOUTBOUNDDRIVERTEST_EMP" Transaction="NOTransaction" numberOfRecords="" operationType="update" paramOrder="EMPID,DEPTID,MARKCOLUMN,ENAME" sql="update &quot;DB2ADMIN&quot;.&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot; set &quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;.&quot;EMPID&quot;  = ?,&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;.&quot;DEPTID&quot;  = ?,&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;.&quot;MARKCOLUMN&quot;  = ?,&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;.&quot;ENAME&quot;  = ?"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="delete">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputDelete">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="EMPID" PollMilliSeconds="5000" TableName="DB2ADMIN.JDBCOUTBOUNDDRIVERTEST_EMP" Transaction="NOTransaction" numberOfRecords="" operationType="delete" paramOrder="" sql="delete from &quot;DB2ADMIN&quot;.&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="find">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputFind">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="EMPID" PollMilliSeconds="5000" TableName="DB2ADMIN.JDBCOUTBOUNDDRIVERTEST_EMP" Transaction="NOTransaction" numberOfRecords="" operationType="find" paramOrder="" sql="select &quot;EMPID&quot;,&quot;DEPTID&quot;,&quot;MARKCOLUMN&quot;,&quot;ENAME&quot; from &quot;DB2ADMIN&quot;.&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;"/>
+      </wsdl:input>
+      <wsdl:output name="outputFind">
+    <jdbc:output xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" returnPartName="part"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="pollrecords">
+    <jdbc:operation xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/"/>
+      <wsdl:input name="inputPoll">
+    <jdbc:input xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" MarkColumnName="" MarkColumnValue="" MoveRowToTableName="" PKName="EMPID" PollMilliSeconds="5000" PollingPostProcessing="Delete" TableName="DB2ADMIN.JDBCOUTBOUNDDRIVERTEST_EMP" Transaction="NOTransaction" numberOfRecords="" operationType="poll" paramOrder="" sql="select &quot;EMPID&quot;,&quot;DEPTID&quot;,&quot;MARKCOLUMN&quot;,&quot;ENAME&quot; from &quot;DB2ADMIN&quot;.&quot;JDBCOUTBOUNDDRIVERTEST_EMP&quot;"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+    <wsdl:binding name="soapbindings" type="tns:soapReqResPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="soapReqReslOperation">
+            <wsdl:input name="input1">
+                <soap:body use="literal" parts="part"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" parts="part"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="soapreqrep-jdbcpollService">
+    <wsdl:port name="soapreqrep-jdbcpollPort" binding="tns:binding">
+    <jdbc:address xmlns:jdbc="http://schemas.sun.com/jbi/wsdl-extensions/jdbc/" jndiName="jdbc/__db2"/>
+    </wsdl:port>
+  </wsdl:service>
+    <wsdl:service name="soapService40">
+        <wsdl:port name="soapPort40" binding="tns:soapbindings">
+            <soap:address location="http://localhost:18181/jdbcbc40_DB2_BPEL/soapreqrep-jdbcpoll/soapPort40"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="jdbcpartner">
+        <plink:role name="jdbcPortTypeRole" portType="tns:jdbcPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="soappartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="soapReqResPortTypeRole" portType="tns:soapReqResPortType"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:inputMsg" part="part">
+        <vprop:query>EMPID</vprop:query>
+    </vprop:propertyAlias>
+</wsdl:definitions>

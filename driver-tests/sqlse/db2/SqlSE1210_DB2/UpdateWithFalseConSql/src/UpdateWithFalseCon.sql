@@ -1,0 +1,1 @@
+UPDATE drivertest_emp SET empid = 0, ename = 'wrongempname' , deptid = 1 WHERE empid = ?

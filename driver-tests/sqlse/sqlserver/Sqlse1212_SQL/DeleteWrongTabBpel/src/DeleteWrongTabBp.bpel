@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DeleteWrongTabBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DeleteWrongTabBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DeleteWrongTabBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/DeleteWrongTabBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="DeleteWrongTabSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/DeleteWrongTabBpel" location="DeleteWrongTabBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:DeleteWrongTabBpelPartner" partnerRole="DeleteWrongTabBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:DeleteWrongTabSql_sqlsePartnerLinkType" myRole="DeleteWrongTabSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="DeleteWrongTabOut" messageType="ns1:DeleteWrongTabResponse"/>
+      <bpws:variable name="DeleteWrongTabBpelOperationOut" messageType="ns2:DeleteWrongTabBpelOperationReply"/>
+      <bpws:variable name="DeleteWrongTabBpelOperationIn" messageType="ns2:DeleteWrongTabBpelOperationRequest"/>
+      <bpws:variable name="DeleteWrongTabIn" messageType="ns1:DeleteWrongTabRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DeleteWrongTab" portType="ns1:DeleteWrongTabSql_sqlsePortType" variable="DeleteWrongTabIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="DeleteWrongTabIn" part="DeleteWrongTabRequestPart"/>
+            <bpws:to variable="DeleteWrongTabBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="DeleteWrongTabBpelOperation" portType="ns2:DeleteWrongTabBpelPortType" inputVariable="DeleteWrongTabBpelOperationIn" outputVariable="DeleteWrongTabBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteWrongTabBpelOperationOut" part="part1"/>
+            <bpws:to variable="DeleteWrongTabOut" part="DeleteWrongTabResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="DeleteWrongTab" portType="ns1:DeleteWrongTabSql_sqlsePortType" variable="DeleteWrongTabOut"/>
+   </sequence>
+</process>

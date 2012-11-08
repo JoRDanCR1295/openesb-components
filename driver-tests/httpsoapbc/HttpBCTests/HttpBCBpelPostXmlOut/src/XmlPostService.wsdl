@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="XmlPostService" targetNamespace="http://j2ee.netbeans.org/wsdl/XmlPostService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/XmlPost" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://xml.netbeans.org/schema/XmlPostSchema" xmlns:ns="http://j2ee.netbeans.org/wsdl/XmlPostService">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/XmlPost">
+            <xsd:import schemaLocation="XmlPostSchema.xsd" namespace="http://xml.netbeans.org/schema/XmlPostSchema"/>
+        </xsd:schema>
+    </types>
+    <message name="XmlPostOperationRequest">
+        <part name="part1" element="ns1:Contact"/>
+    </message>
+    <message name="XmlPostOperationReply">
+        <part name="part1" element="ns1:Outcome"/>
+    </message>
+    <message name="XmlPostServiceOperationRequest">
+        <part name="part1" element="ns1:Contact"/>
+    </message>
+    <message name="XmlPostServiceOperationReply">
+        <part name="part1" element="ns1:Outcome"/>
+    </message>
+    <portType name="XmlPostServicePortType">
+        <wsdl:operation name="XmlPostServiceOperation">
+            <wsdl:input name="input1" message="ns:XmlPostServiceOperationRequest"/>
+            <wsdl:output name="output1" message="ns:XmlPostServiceOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="XmlPostServiceBinding" type="ns:XmlPostServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="XmlPostServiceOperation">
+            <http:operation location="submit"/>
+            <wsdl:input name="input1">
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output name="output1"/>
+        </wsdl:operation>
+    </binding>
+    <service name="XmlPostServiceService">
+        <wsdl:port name="XmlPostServicePort" binding="ns:XmlPostServiceBinding">
+            <http:address location="http://localhost:${HttpDefaultPort}/XmlPostServiceService/XmlPostServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="XmlPostService1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="XmlPostServicePortTypeRole" portType="ns:XmlPostServicePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="XmlPostService12">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="XmlPostServicePortTypeRole" portType="ns:XmlPostServicePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

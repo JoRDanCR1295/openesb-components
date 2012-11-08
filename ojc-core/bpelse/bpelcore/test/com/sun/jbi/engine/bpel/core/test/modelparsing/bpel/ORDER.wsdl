@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="https://hhws.portamedic.com/DocumentService/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="https://hhws.portamedic.com/DocumentService/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="https://hhws.portamedic.com/DocumentService/">
+      <s:element name="SubmitOrderData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="OrderData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitOrderDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubmitOrderDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="WSSecurity" type="s0:WSSecurity" />
+      <s:complexType name="WSSecurity">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Credentials" type="s0:UserNameToken" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserNameToken">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Username" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </types>
+  <message name="SubmitOrderDataSoapIn">
+    <part name="parameters" element="s0:SubmitOrderData" />
+  </message>
+  <message name="SubmitOrderDataSoapOut">
+    <part name="parameters" element="s0:SubmitOrderDataResponse" />
+  </message>
+  <message name="SubmitOrderDataWSSecurity">
+    <part name="WSSecurity" element="s0:WSSecurity" />
+  </message>
+  <portType name="SubmitOrderSoap">
+    <operation name="SubmitOrderData">
+      <input message="s0:SubmitOrderDataSoapIn" />
+      <output message="s0:SubmitOrderDataSoapOut" />
+    </operation>
+  </portType>
+  <binding name="SubmitOrderSoap" type="s0:SubmitOrderSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="SubmitOrderData">
+      <soap:operation soapAction="https://hhws.portamedic.com/DocumentService/SubmitOrderData" style="document" />
+      <input>
+        <soap:header message="s0:SubmitOrderDataWSSecurity" part="WSSecurity" use="literal" />
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="SubmitOrder">
+    <port name="SubmitOrderSoap" binding="s0:SubmitOrderSoap">
+      <soap:address location="https://hhws.portamedic.com/hhorders/ORDER.asmx" />
+    </port>
+  </service>
+
+  <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+    <plnk:role name="Server" portType="s0:SubmitOrderSoap"/>
+  </plnk:partnerLinkType>
+</definitions>

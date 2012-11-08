@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+	<wsdl:types>
+		<xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://testclasses.generator.webservice.test.jbi4corba.imolinfo.it/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:element name="echo">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element maxOccurs="1" minOccurs="1" name="msg" nillable="true" type="xsd:string"/>
+						<xsd:element maxOccurs="1" minOccurs="1" name="msgstr" nillable="true" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="echoResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element maxOccurs="1" minOccurs="1" name="return" nillable="true" type="xsd:string"/>
+						<xsd:element minOccurs="0" name="msg" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" targetNamespace="uri://schemas.imola.it/jbi/wsdl-extensions/corba/">
+			<xsd:simpleType name="roleChoice">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="consumer"/>
+					<xsd:enumeration value="provider"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:simpleType name="localizationChoice">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="NameService"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:element name="property">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required"/>
+					<xsd:attribute name="value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:complexType name="orbProperties">
+				<xsd:sequence>
+					<xsd:element ref="imolacorba:property" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="binding" type="imolacorba:bindingType"/>
+			<xsd:complexType name="bindingType">
+				<xsd:sequence>
+					<xsd:element name="orb" type="imolacorba:orbProperties"/>
+					<xsd:element name="idl" type="xsd:string"/>
+				</xsd:sequence>
+				<xsd:attribute name="role" type="imolacorba:roleChoice" use="required"/>
+				<xsd:attribute name="localizationType" type="imolacorba:localizationChoice" use="required"/>
+				<xsd:attribute name="localizationName" type="xsd:string" use="required"/>	                                				                      
+			</xsd:complexType>
+
+		   	<xsd:element name="address" type="imolacorba:addressType"/>
+			<xsd:complexType name="addressType">
+				<xsd:attribute name="name" type="xsd:string" use="required"/>
+			</xsd:complexType>				
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="echoRequest">
+		<wsdl:part name="parameters" element="tns:echo"/>
+	</wsdl:message>
+	<wsdl:message name="echoResponse">
+		<wsdl:part name="parameters" element="tns:echoResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="EchoInOutOperations">
+		<wsdl:operation name="echo">
+			<wsdl:input name="echoRequest" message="tns:echoRequest"/>
+			<wsdl:output name="echoResponse" message="tns:echoResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="EchoPortBinding" type="tns:EchoInOutOperations">	
+                <imolacorba:binding  localizationType="NameService" role="provider">
+
+                    <imolacorba:idl>	
+                    module it{
+                        module imolinfo{
+                            module jbi4corba{
+        			module test{
+				module webservice{
+					module generator{
+					module testclasses{
+						interface EchoInOut {
+							string echo(inout string msg, in string msgstr);
+						};
+					};
+				};
+                		};
+                                };
+                            };
+                    };};
+                    </imolacorba:idl>
+                </imolacorba:binding>
+                
+		<wsdl:operation name="echo">			
+			<wsdl:input name="echoRequest"/>
+			<wsdl:output name="echoResponse"/>
+		</wsdl:operation>
+		
+	</wsdl:binding>
+	<wsdl:service name="EchoInOut">
+		<wsdl:port name="EchoInOutPort" binding="tns:EchoPortBinding">
+			<imolacorba:address name="EchoInOut">
+			                    <imolacorba:orb>
+                    	<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+			<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+                    </imolacorba:orb>
+			</imolacorba:address>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+
+<!-- IMPORTANT:  all plugin and dependency versions for ojc-core are managed by this pom.  -->
+
+<project>
+    <parent>
+        <artifactId>global-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../../global-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>ojc-common</artifactId>
+    <packaging>pom</packaging>
+    <name>ojc-common</name>
+    <version>1.1</version>
+    <description>Common definitions inherited by all ojc-core poms.</description>
+    <url>https://open-jbi-components.dev.java.net</url>
+    <inceptionYear>2006</inceptionYear>
+    <build>
+        <pluginManagement>
+            <!-- generally, we just want to set the version of the plugin here. RT 1/30/08 -->
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <!-- NOTE:  version 2.2 has problems with maven 2.0.9.  RT 5/9/08-->
+                    <version>2.1</version>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <archive>
+                            <!--
+                             ! prevent maven from adding pom meta-data to our jars.
+                             ! See:  http://maven.apache.org/guides/mini/guide-archive-configuration.html
+                             !       for info on the archiver configuration properties.
+                             ! NOTE:  <addMavenDescriptor> requires v 2.1 or greater archive plugin.
+                             -->
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifestEntries>
+                                <ojc-scm-type>${ojc-scm-type}</ojc-scm-type>
+                                <ojc-cvsroot>${ojc-cvsroot}</ojc-cvsroot>
+                                <ojc-cvs-branch>${ojc-cvs-branch}</ojc-cvs-branch>
+                                <ojc-cvs-timestamp>${ojc-cvs-timestamp}</ojc-cvs-timestamp>
+                                <ojc-cvs-srcdir>${ojc-cvs-srcdir}</ojc-cvs-srcdir>
+                                <ojc-artifact-version>${project.version}</ojc-artifact-version>
+                                <ojc-artifact-url>${ojc-artifact-url}</ojc-artifact-url>
+                                <ojc-build-number>${ojc-build-number}</ojc-build-number>
+                                <ojc-release-version>${ojc.default.release.version}</ojc-release-version>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.2</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <!-- <version>2.0-alpha-4-SNAPSHOT</version> -->
+                    <!-- 2.0 finally released 25-Jan-2008.  RT 3/21/08 -->
+                    <version>2.0</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <!-- 1.2 finally released 09-Aug-2008.  RT 10/7/08 -->
+                    <version>1.2</version>
+                    <inherited>true</inherited>
+                    <dependencies>
+                        <!-- must setup up tools.jar and pass plugin classpath
+                         !   to satisfy dependencies in the ant build.
+                         -->
+                       <dependency>
+                            <groupId>sun.jdk</groupId>
+                            <artifactId>tools</artifactId>
+                            <version>${java.version}</version>
+                            <scope>system</scope>
+                            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                        </dependency>
+	    
+		       <dependency>
+			 <groupId>org.apache.ant</groupId>
+			 <artifactId>ant</artifactId>
+			 <version>1.7.1</version>
+		       </dependency>
+
+		       <dependency>
+			 <groupId>ant</groupId>
+			 <artifactId>ant-nodeps</artifactId>
+			 <version>1.6.5</version>
+		       </dependency>
+                  
+		    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.0.4</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <!-- <version>2.1.3</version> -->
+                    <!-- <version>2.4-SNAPSHOT</version> -->
+                    <!--
+                     ! Pertest forkMode is broken in version 2.2. use version 2.1.3 instead.  RT 6/30/06
+                     !
+                     ! NOTE:  surefire < 2.4 have bug running tests from parent harness - wrong cwd.
+                     !
+                     ! UPDATE, 11/27/07:  2.4-SNAPSHOT now bad with maven 2.0.5.  Error is:
+java.lang.NoSuchMethodError: org.codehaus.plexus.util.cli.Commandline.createArg()Lorg/codehaus/plexus/util/cli/Arg;
+    at org.apache.maven.surefire.booter.ForkConfiguration.createCommandLine(ForkConfiguration.java:206)
+                     ! Reverting to 2.3.1-SNAPSHOT to fix.  RT 11/27/07
+                     !
+                     -->
+                    <!-- <version>2.4.2</version> get FAILURES in gestalt rss & bpelcore.  RT 3/22/08 -->
+                    <version>2.3.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>1.4.0</version>
+                </plugin> 
+            </plugins>
+        </pluginManagement>
+    </build>
+    <dependencyManagement>
+        <dependencies>
+            <!-- <dependency>
+                 <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.6.5</version>
+            </dependency> -->
+	    
+	    <dependency>
+	          <groupId>org.apache.ant</groupId>
+		  <artifactId>ant</artifactId>
+		  <version>1.7.1</version>
+	    </dependency>
+
+	    <dependency>
+		 <groupId>ant</groupId>
+		 <artifactId>ant-nodeps</artifactId>
+		 <version>1.6.5</version>
+	    </dependency>
+
+            <dependency>
+                <groupId>antlr</groupId>
+                <artifactId>antlr</artifactId>
+                <version>2.7.6</version>
+            </dependency>
+            <dependency>
+                <groupId>asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>1.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>asm</groupId>
+                <artifactId>asm-attrs</artifactId>
+                <version>1.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>2.1_3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm</groupId>
+                <artifactId>mq</artifactId>
+                <version>6.0.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sap</groupId>
+                <artifactId>sapidocjco</artifactId>
+                <version>1.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sap</groupId>
+                <artifactId>sapidoc</artifactId>
+                <version>1.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sap</groupId>
+                <artifactId>sapjco</artifactId>
+                <version>2.1.7</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stc.jmsjca</groupId>
+                <artifactId>com.stc.jmsjca.core</artifactId>
+                <version>6.2.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.stc.jmsjca</groupId>
+                <artifactId>com.stc.jmsjca.raunifiedjms</artifactId>
+                <version>6.2.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun</groupId>
+                <artifactId>sbme</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>1.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-primitives</groupId>
+                <artifactId>commons-primitives</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>concurrent</groupId>
+                <artifactId>concurrent</artifactId>
+                <version>1.3.4</version>
+            </dependency>
+            <dependency>
+                <groupId>directory-network</groupId>
+                <artifactId>mina</artifactId>
+                <version>0.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>1.6.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-xjc</artifactId>
+                <version>2.0</version>
+                <!-- jsr173.jar is not required for compile.  RT 6/19/07 -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml</groupId>
+                        <artifactId>jsr173</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>jboss</groupId>
+                <artifactId>javassist</artifactId>
+                <version>3.4.ga</version>
+            </dependency>
+            <dependency>
+                <groupId>jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>b9</version>
+            </dependency>
+            <dependency>
+                <groupId>jdtcore</groupId>
+                <artifactId>jdtcore</artifactId>
+                <version>unknown</version>
+            </dependency>
+            <dependency>
+                <groupId>jexcelapi</groupId>
+                <artifactId>jxl</artifactId>
+                <version>2.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jfree</groupId>
+                <artifactId>jcommon</artifactId>
+                <version>1.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>jfree</groupId>
+                <artifactId>jfreechart</artifactId>
+                <version>1.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jmock</groupId>
+                <artifactId>jmock-cglib</artifactId>
+                <version>1.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>jmock</groupId>
+                <artifactId>jmock</artifactId>
+                <version>1.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>saxon</artifactId>
+                <version>9.1.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>saxon-dom</artifactId>
+                <version>9.1.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>saxon-s9api</artifactId>
+                <version>9.1.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyclient</artifactId>
+                <version>10.1.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>10.1.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-hibernate3</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>oro</groupId>
+                <artifactId>oro</artifactId>
+                <version>2.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>sun-identity</groupId>
+                <artifactId>amclientsdk</artifactId>
+                <version>7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>sun</groupId>
+                <artifactId>tools</artifactId>
+                <version>ignored</version>
+                <scope>system</scope>
+                <systemPath>${java.home}/../lib/tools.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>woodstock</groupId>
+                <artifactId>dataprovider</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>woodstock</groupId>
+                <artifactId>webui-jsf</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>wsdl4j</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.7.1</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>2.0-dev-2</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>jsr173_api</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xbean_xpath</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xbean</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>2.0-dev-2</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlbeans</groupId>
+                <artifactId>xmlpublic</artifactId>
+                <version>2.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xml-resolver</groupId>
+                <artifactId>xml-resolver</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-nodeps</artifactId>
+                <version>1.6.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-junit</artifactId>
+                <version>${ant-junit-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>1.7</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>j-interop</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>iwombat</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>jarapac</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>jcifs-1.2.9</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>jcifs-ntlm-auth</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>ncacn_ip_tcp</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>ncacn_np</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>ntlm-security</artifactId>
+                <version>1.19</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jinterop</groupId>
+                <artifactId>progIdVsClsidDB</artifactId>
+                <version>1.19</version>
+                <type>properties</type>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.scriptse</groupId>
+                <artifactId>script</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.scriptse</groupId>
+                <artifactId>scriptdatatypes</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.scriptse</groupId>
+                <artifactId>serializer</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <!-- open-esb dependency versions: -->
+            <dependency>
+                <groupId>open-esb</groupId>
+                <artifactId>jbi</artifactId>
+                <version>${OPEN_ESB_VERSION}</version>
+            </dependency>
+            <dependency>
+                <groupId>open-esb</groupId>
+                <artifactId>jbi-ext</artifactId>
+                <version>${OPEN_ESB_VERSION}</version>
+            </dependency>
+            <dependency>
+                <groupId>open-esb</groupId>
+                <artifactId>jbi-admin-common</artifactId>
+                <version>${OPEN_ESB_VERSION}</version>
+            </dependency>
+            <dependency>
+                <groupId>opensymphony</groupId>
+                <artifactId>quartz-all</artifactId>
+                <version>1.6.1</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+    <properties>
+        <!--
+         ! Note - the order of these declarations is unimportant.
+        -->
+
+        <!-- required env. vars: -->
+        <ALASKA_ROOT>${env.JV_SRCROOT}/ojc-core</ALASKA_ROOT>
+        <ALASKA_SHAREDLIBRARY>${env.JV_SRCROOT}/ojc-core/component-common</ALASKA_SHAREDLIBRARY>
+        <JBICOMPS_HOME>${env.JV_SRCROOT}/ojc-core</JBICOMPS_HOME>
+        <OPEN_ESB_VERSION>1.1</OPEN_ESB_VERSION>
+
+        <!-- this sets the versions for https://hulp.dev.java.net/i18n ant task: -->
+        <I18NTASK_CLASS>net.java.hulp.i18n.buildtools.I18NTask</I18NTASK_CLASS>
+        <I18N_XML_TASK_CLASS>net.java.hulp.i18n.buildtools.I18nXmlTask</I18N_XML_TASK_CLASS>
+        <I18NTASK_VERSION>2.1-SNAPSHOT</I18NTASK_VERSION>
+        <I18NTASK_JAR>${maven.repo.local}/net/java/hulp/i18ntask/net.java.hulp.i18ntask/${I18NTASK_VERSION}/net.java.hulp.i18ntask-${I18NTASK_VERSION}.jar</I18NTASK_JAR>
+
+    </properties>
+</project>

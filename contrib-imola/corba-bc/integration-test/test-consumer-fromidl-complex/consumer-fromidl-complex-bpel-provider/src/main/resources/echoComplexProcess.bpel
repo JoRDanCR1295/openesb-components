@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoComplexProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoComplexProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/scProcess" xmlns:ns1="urn:jbi4corba/test-consumer-fromidl-complex" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://testconsumerfromidlcomplex.test.jbi4corba.imolinfo.it/">
+    <import namespace="urn:jbi4corba/test-consumer-fromidl-complex" location="EchoComplex.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="echoComplexProcess" partnerLinkType="ns1:echoComplexProcess" myRole="echoComplexProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoVTPrimiSeqOut" messageType="ns1:echoVTPrimiSeqResponse"/>
+        <variable name="EchoVTPrimiSeqIn" messageType="ns1:echoVTPrimiSeq"/>
+        <variable name="EchoValueTypeOfValueTypeOut" messageType="ns1:echoValueTypeOfValueTypeResponse"/>
+        <variable name="EchoValueTypeOfValueTypeIn" messageType="ns1:echoValueTypeOfValueType"/>
+        <variable name="EchoValueBoxedTypeComplexOut" messageType="ns1:echoValueBoxedTypeComplexResponse"/>
+        <variable name="EchoValueBoxedTypeComplexIn" messageType="ns1:echoValueBoxedTypeComplex"/>
+        <variable name="EchoExceptionThrownOut" messageType="ns1:echoExceptionThrownResponse"/>
+        <variable name="EchoExceptionThrownIn" messageType="ns1:echoExceptionThrown"/>
+        <variable name="EchoStructOfValuetypeOut" messageType="ns1:echoStructOfValuetypeResponse"/>
+        <variable name="EchoStructOfValuetypeIn" messageType="ns1:echoStructOfValuetype"/>
+        <variable name="EchoValueTypeOfStructOut" messageType="ns1:echoValueTypeOfStructResponse"/>
+        <variable name="EchoValueTypeOfStructIn" messageType="ns1:echoValueTypeOfStruct"/>
+        <variable name="EchoStructOfStructOut" messageType="ns1:echoStructOfStructResponse"/>
+        <variable name="EchoStructOfStructIn" messageType="ns1:echoStructOfStruct"/>
+        <variable name="EchoSequenceOut" messageType="ns1:echoSequenceResponse"/>
+        <variable name="EchoSequenceIn" messageType="ns1:echoSequence"/>
+        <variable name="EchoValueBoxedTypePrimitiveOut" messageType="ns1:echoValueBoxedTypePrimitiveResponse"/>
+        <variable name="EchoValueBoxedTypePrimitiveIn" messageType="ns1:echoValueBoxedTypePrimitive"/>
+        <variable name="EchoSequenceValueTypeOut" messageType="ns1:echoSequenceValueTypeResponse"/>
+        <variable name="EchoSequenceValueTypeIn" messageType="ns1:echoSequenceValueType"/>
+        <variable name="EchoVTPrimiOut" messageType="ns1:echoVTPrimiResponse"/>
+        <variable name="EchoVTPrimiIn" messageType="ns1:echoVTPrimi"/>
+        <variable name="EchoExceptionNotThrownOut" messageType="ns1:echoExceptionNotThrownResponse"/>
+        <variable name="EchoExceptionNotThrownIn" messageType="ns1:echoExceptionNotThrown"/>
+        <variable name="EchoSequenceSeqEchoStructOut" messageType="ns1:echoSequenceSeqEchoStructResponse"/>
+        <variable name="EchoSequenceSeqEchoStructIn" messageType="ns1:echoSequenceSeqEchoStruct"/>
+        <variable name="EchoSequenceSeqMySequenceOut" messageType="ns1:echoSequenceSeqMySequenceResponse"/>
+        <variable name="EchoSequenceSeqMySequenceIn" messageType="ns1:echoSequenceSeqMySequence"/>
+        <variable name="EchoValueTypeOut" messageType="ns1:echoValueTypeResponse"/>
+        <variable name="EchoValueTypeIn" messageType="ns1:echoValueType"/>
+        <variable name="EchoStructOut" messageType="ns1:echoStructResponse"/>
+        <variable name="EchoStructIn" messageType="ns1:echoStruct"/>
+        <variable name="EchoOut" messageType="ns1:echoResponse"/>
+        <variable name="EchoIn" messageType="ns1:echo"/>
+    </variables>
+    <sequence name="Sequence1">
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="echoComplexProcess" operation="echo" portType="ns1:EchoComplexPortType" variable="EchoIn">
+                <sequence name="Sequence2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>$EchoIn.parameters/ns1:msg</from>
+                            <to>$EchoOut.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="echoComplexProcess" operation="echo" portType="ns1:EchoComplexPortType" variable="EchoOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoStruct" portType="ns1:EchoComplexPortType" variable="EchoStructIn">
+                <sequence name="Sequence3">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldBoolean</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldChar</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldWChar</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldOctet</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldString</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldWString</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldShort</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldUnsignedShort</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldLong</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldUnsignedLong</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldLongLong</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldFloat</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructIn.parameters/ns1:es/ns2:fieldDouble</from>
+                            <to>$EchoStructOut.parameters/ns1:return/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply2" partnerLink="echoComplexProcess" operation="echoStruct" portType="ns1:EchoComplexPortType" variable="EchoStructOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoValueType" portType="ns1:EchoComplexPortType" variable="EchoValueTypeIn">
+                <sequence name="Sequence4">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>$EchoValueTypeIn.parameters/ns1:e/ns2:publicShort</from>
+                            <to>$EchoValueTypeOut.parameters/ns1:return/ns2:publicShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeIn.parameters/ns1:e/ns2:privateLong</from>
+                            <to>$EchoValueTypeOut.parameters/ns1:return/ns2:privateLong</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply3" partnerLink="echoComplexProcess" operation="echoValueType" portType="ns1:EchoComplexPortType" variable="EchoValueTypeOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoSequenceSeqMySequence" portType="ns1:EchoComplexPortType" variable="EchoSequenceSeqMySequenceIn">
+                <sequence name="Sequence5">
+                    <assign name="Assign4">
+                        <copy>
+                            <from>$EchoSequenceSeqMySequenceIn.parameters/ns1:es/ns2:data</from>
+                            <to>$EchoSequenceSeqMySequenceOut.parameters/ns1:return/ns2:data</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply4" partnerLink="echoComplexProcess" operation="echoSequenceSeqMySequence" portType="ns1:EchoComplexPortType" variable="EchoSequenceSeqMySequenceOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoSequenceSeqEchoStruct" portType="ns1:EchoComplexPortType" variable="EchoSequenceSeqEchoStructIn">
+                <sequence name="Sequence6">
+                    <assign name="Assign5">
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldBoolean</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldChar</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldWChar</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldOctet</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldString</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldWString</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldShort</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldUnsignedShort</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldLong</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldUnsignedLong</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldLongLong</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldFloat</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoSequenceSeqEchoStructIn.parameters/ns1:es/ns2:fieldDouble</from>
+                            <to>$EchoSequenceSeqEchoStructOut.parameters/ns1:return/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply5" partnerLink="echoComplexProcess" operation="echoSequenceSeqEchoStruct" portType="ns1:EchoComplexPortType" variable="EchoSequenceSeqEchoStructOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoExceptionNotThrown" portType="ns1:EchoComplexPortType" variable="EchoExceptionNotThrownIn">
+                <sequence name="Sequence7">
+                    <assign name="Assign6">
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldBoolean</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldChar</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldWChar</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldOctet</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldString</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldWString</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldShort</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldUnsignedShort</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldLong</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldUnsignedLong</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldLongLong</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldFloat</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionNotThrownIn.parameters/ns1:es/ns2:fieldDouble</from>
+                            <to>$EchoExceptionNotThrownOut.parameters/ns1:return/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply6" partnerLink="echoComplexProcess" operation="echoExceptionNotThrown" portType="ns1:EchoComplexPortType" variable="EchoExceptionNotThrownOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoVTPrimi" portType="ns1:EchoComplexPortType" variable="EchoVTPrimiIn">
+                <sequence name="Sequence8">
+                    <assign name="Assign7">
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldBoolean</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldChar</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldWChar</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldOctet</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldString</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldWString</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldShort</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldUnsignedShort</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldLong</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldUnsignedLong</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldLongLong</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldFloat</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiIn.parameters/ns1:v/ns2:fieldDouble</from>
+                            <to>$EchoVTPrimiOut.parameters/ns1:return/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply7" partnerLink="echoComplexProcess" operation="echoVTPrimi" portType="ns1:EchoComplexPortType" variable="EchoVTPrimiOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoSequenceValueType" portType="ns1:EchoComplexPortType" variable="EchoSequenceValueTypeIn">
+                <sequence name="Sequence9">
+                    <assign name="Assign8">
+                        <copy>
+                            <from>$EchoSequenceValueTypeIn.parameters/ns1:es/ns2:data</from>
+                            <to>$EchoSequenceValueTypeOut.parameters/ns1:return/ns2:data</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply8" partnerLink="echoComplexProcess" operation="echoSequenceValueType" portType="ns1:EchoComplexPortType" variable="EchoSequenceValueTypeOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoValueBoxedTypePrimitive" portType="ns1:EchoComplexPortType" variable="EchoValueBoxedTypePrimitiveIn">
+                <sequence name="Sequence10">
+                    <assign name="Assign9">
+                        <copy>
+                            <from>$EchoValueBoxedTypePrimitiveIn.parameters/ns1:e/ns2:data</from>
+                            <to>$EchoValueBoxedTypePrimitiveOut.parameters/ns1:return/ns2:data</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply9" partnerLink="echoComplexProcess" operation="echoValueBoxedTypePrimitive" portType="ns1:EchoComplexPortType" variable="EchoValueBoxedTypePrimitiveOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoSequence" portType="ns1:EchoComplexPortType" variable="EchoSequenceIn">
+                <sequence name="Sequence11">
+                    <assign name="Assign10">
+                        <copy>
+                            <from>$EchoSequenceIn.parameters/ns1:es</from>
+                            <to>$EchoSequenceOut.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply10" partnerLink="echoComplexProcess" operation="echoSequence" portType="ns1:EchoComplexPortType" variable="EchoSequenceOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoStructOfStruct" portType="ns1:EchoComplexPortType" variable="EchoStructOfStructIn">
+                <sequence name="Sequence12">
+                    <assign name="Assign11">
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldBoolean</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldChar</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldWChar</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldOctet</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldString</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldWString</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldShort</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldUnsignedShort</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldLong</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldUnsignedLong</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldLongLong</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldFloat</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfStructIn.parameters/ns1:v/ns2:internalStruct/ns2:fieldDouble</from>
+                            <to>$EchoStructOfStructOut.parameters/ns1:return/ns2:internalStruct/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply11" partnerLink="echoComplexProcess" operation="echoStructOfStruct" portType="ns1:EchoComplexPortType" variable="EchoStructOfStructOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoValueTypeOfStruct" portType="ns1:EchoComplexPortType" variable="EchoValueTypeOfStructIn">
+                <sequence name="Sequence13">
+                    <assign name="Assign12">
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldBoolean</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldChar</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldWChar</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldOctet</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldString</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldWString</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldShort</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedShort</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldLong</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLong</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldLongLong</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldFloat</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfStructIn.parameters/ns1:v/ns2:data/ns2:fieldDouble</from>
+                            <to>$EchoValueTypeOfStructOut.parameters/ns1:return/ns2:data/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply12" partnerLink="echoComplexProcess" operation="echoValueTypeOfStruct" portType="ns1:EchoComplexPortType" variable="EchoValueTypeOfStructOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoStructOfValuetype" portType="ns1:EchoComplexPortType" variable="EchoStructOfValuetypeIn">
+                <sequence name="Sequence14">
+                    <assign name="Assign13">
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldBoolean</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldChar</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldWChar</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldOctet</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldString</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldWString</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldShort</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedShort</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldLong</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLong</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldLongLong</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldFloat</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoStructOfValuetypeIn.parameters/ns1:v/ns2:data/ns2:fieldDouble</from>
+                            <to>$EchoStructOfValuetypeOut.parameters/ns1:return/ns2:data/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply13" partnerLink="echoComplexProcess" operation="echoStructOfValuetype" portType="ns1:EchoComplexPortType" variable="EchoStructOfValuetypeOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoExceptionThrown" portType="ns1:EchoComplexPortType" variable="EchoExceptionThrownIn">
+                <sequence name="Sequence15">
+                    <assign name="Assign14">
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldBoolean</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldChar</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldWChar</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldOctet</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldString</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldWString</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldShort</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldUnsignedShort</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldLong</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldUnsignedLong</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldLongLong</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldFloat</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoExceptionThrownIn.parameters/ns1:es/ns2:fieldDouble</from>
+                            <to>$EchoExceptionThrownOut.parameters/ns1:return/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply14" partnerLink="echoComplexProcess" operation="echoExceptionThrown" portType="ns1:EchoComplexPortType" variable="EchoExceptionThrownOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoValueBoxedTypeComplex" portType="ns1:EchoComplexPortType" variable="EchoValueBoxedTypeComplexIn">
+                <sequence name="Sequence16">
+                    <assign name="Assign15">
+                        <copy>
+                            <from>$EchoValueBoxedTypeComplexIn.parameters/ns1:e/ns2:data</from>
+                            <to>$EchoValueBoxedTypeComplexOut.parameters/ns1:return/ns2:data</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply15" partnerLink="echoComplexProcess" operation="echoValueBoxedTypeComplex" portType="ns1:EchoComplexPortType" variable="EchoValueBoxedTypeComplexOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoValueTypeOfValueType" portType="ns1:EchoComplexPortType" variable="EchoValueTypeOfValueTypeIn">
+                <sequence name="Sequence17">
+                    <assign name="Assign16">
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldBoolean</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldChar</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldWChar</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldOctet</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldString</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldWString</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldShort</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedShort</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldLong</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLong</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldLongLong</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldFloat</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoValueTypeOfValueTypeIn.parameters/ns1:v/ns2:data/ns2:fieldDouble</from>
+                            <to>$EchoValueTypeOfValueTypeOut.parameters/ns1:return/ns2:data/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply16" partnerLink="echoComplexProcess" operation="echoValueTypeOfValueType" portType="ns1:EchoComplexPortType" variable="EchoValueTypeOfValueTypeOut"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="echoComplexProcess" operation="echoVTPrimiSeq" portType="ns1:EchoComplexPortType" variable="EchoVTPrimiSeqIn">
+                <sequence name="Sequence18">
+                    <assign name="Assign17">
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldBoolean</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldChar</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldWChar</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldWChar</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldOctet</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldOctet</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldString</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldWString</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldWString</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldShort</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedShort</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedShort</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldLong</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLong</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldLongLong</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldUnsignedLongLong</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldUnsignedLongLong</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldFloat</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldFloat</to>
+                        </copy>
+                        <copy>
+                            <from>$EchoVTPrimiSeqIn.parameters/ns1:v/ns2:data/ns2:fieldDouble</from>
+                            <to>$EchoVTPrimiSeqOut.parameters/ns1:return/ns2:data/ns2:fieldDouble</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply17" partnerLink="echoComplexProcess" operation="echoVTPrimiSeq" portType="ns1:EchoComplexPortType" variable="EchoVTPrimiSeqOut"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>
+
+

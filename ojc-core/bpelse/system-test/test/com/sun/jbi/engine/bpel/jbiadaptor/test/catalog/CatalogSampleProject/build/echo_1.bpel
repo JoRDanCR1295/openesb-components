@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="echo_1" 
+    targetNamespace="http://www.mycomp.org/echo/echo_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/echo/echo_1">
+    <import location="echo_1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://www.mycomp.org/echo/echo_1"/>
+    <import location="http://www.ncbi.nlm.nih.gov/entrez/eutils/soap/eutils.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://www.ncbi.nlm.nih.gov/soap/eutils/"/>
+
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:echo_1PartnerLinkType" myRole="echo_1Provider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echo_in" messageType="wsdlNS:message_0"/>
+        <variable name="echo_out" messageType="wsdlNS:message_0"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation_0" portType="wsdlNS:MyPortType" variable="echo_in"/>
+        <assign name="Assign1">
+            <copy>
+            <from variable="echo_in" part="part_0"/><to variable="echo_out" part="part_0"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation_0" portType="wsdlNS:MyPortType" variable="echo_out"/>
+    </sequence>
+   
+</process>

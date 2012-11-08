@@ -1,0 +1,97 @@
+<bpel_20:process name="flowtest1"
+                 targetNamespace="http://www.seebeyond.com/eInsight/flowtest1"
+                 sbynpxp:end_YLoc="214.0"
+                 sbynpxp:start_YLoc="176.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="25.0"
+                 sbynpxp:end_XLoc="680.0"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/flowtest1"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns0="http://stc.com/flowTest"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <bpel_20:import namespace="http://stc.com/flowTest"
+                    location="flowTest1.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="Client2BPLink"
+                             partnerLinkType="ns0:SLT"
+                             myRole="flowtestserver"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="testflowOperation_Output"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="testflowOperation_Input"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="testflowOperation_Output1"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="testflowOperation_Input1"
+                          messageType="ns0:testMsg"
+                          sbyncreation:type="auto"></bpel_20:variable>
+    </bpel_20:variables>
+    <sequence>
+        <bpel_20:flow name="Flow"
+                      sbynpxp:XLoc="93.0"
+                      sbynpxp:YLoc="170.0"
+                      sbynpxp:YLoc_MergeNode="204.0"
+                      sbynpxp:XLoc_MergeNode="581.0">
+            <sequence>
+                <bpel_20:receive name="testflowOperation"
+                                 partnerLink="Client2BPLink"
+                                 portType="ns0:testflowPort"
+                                 operation="testflowOperation"
+                                 variable="testflowOperation_Output"
+                                 createInstance="yes"
+                                 sbynpxp:XLoc="205.0"
+                                 sbynpxp:YLoc="118.0"></bpel_20:receive>
+                <bpel_20:assign name="Assign"
+                                sbynpxp:XLoc="342.0"
+                                sbynpxp:YLoc="118.0">
+                    <bpel_20:copy>
+                        <bpel_20:from>$testflowOperation_Output.part/value</bpel_20:from>
+                        <bpel_20:to>$testflowOperation_Input.part/value</bpel_20:to>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+                <bpel_20:reply name="testflowOperation.Reply"
+                               partnerLink="Client2BPLink"
+                               portType="ns0:testflowPort"
+                               operation="testflowOperation"
+                               variable="testflowOperation_Input"
+                               sbynpxp:XLoc="437.0"
+                               sbynpxp:YLoc="119.0"></bpel_20:reply>
+            </sequence>
+            <sequence>
+                <bpel_20:receive name="branch2receive"
+                                 partnerLink="Client2BPLink"
+                                 portType="ns0:testflowPort"
+                                 operation="testflowOperation"
+                                 variable="testflowOperation_Output1"
+                                 sbynpxp:XLoc="207.0"
+                                 sbynpxp:YLoc="250.0"></bpel_20:receive>
+                <bpel_20:assign name="Assign2"
+                                sbynpxp:XLoc="342.0"
+                                sbynpxp:YLoc="251.0">
+                    <bpel_20:copy>
+                        <bpel_20:from>&apos;second flow branch&apos;</bpel_20:from>
+                        <bpel_20:to>$testflowOperation_Input1.part/value</bpel_20:to>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+                <bpel_20:reply name="branch2reply"
+                               partnerLink="Client2BPLink"
+                               portType="ns0:testflowPort"
+                               operation="testflowOperation"
+                               variable="testflowOperation_Input1"
+                               sbynpxp:XLoc="453.0"
+                               sbynpxp:YLoc="250.0"></bpel_20:reply>
+            </sequence>
+        </bpel_20:flow>
+    </sequence>
+</bpel_20:process>

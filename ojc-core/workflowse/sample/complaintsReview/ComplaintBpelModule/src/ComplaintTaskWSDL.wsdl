@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ComplaintTaskWSDLRIT30" targetNamespace="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL" xmlns:ns="http:/sample.wlmse/schema/Complaints" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL">
+            <xsd:import namespace="http:/sample.wlmse/schema/Complaints" schemaLocation="Complaints.xsd"/>
+            <xsd:import namespace="http:/sample.wlmse/schema/Complaints" schemaLocation="ComplaintsBpelToWLM.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ComplaintTaskOperationRequest">
+        <part name="part1" element="ns:complaintInput"/>
+    </message>
+    <message name="ComplaintTaskOperationReply">
+        <part name="part1" element="ns:resolution"/>
+    </message>
+    <portType name="ComplaintTaskWSDLPortType">
+        <wsdl:operation name="ComplaintTaskOperation">
+            <wsdl:input name="input1" message="tns:ComplaintTaskOperationRequest"/>
+            <wsdl:output name="output1" message="tns:ComplaintTaskOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="ComplaintTaskWSDLBinding" type="tns:ComplaintTaskWSDLPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ComplaintTaskOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="ComplaintTaskWSDLService">
+        <wsdl:port name="ComplaintTaskWSDLPort" binding="tns:ComplaintTaskWSDLBinding">
+            <soap:address location="http://localhost:18181/ComplaintTaskWSDLService/ComplaintTaskWSDLPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="ComplaintTaskWSDLRIT301">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ComplaintTaskWSDLPortTypeRole" portType="tns:ComplaintTaskWSDLPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1">
+        <plnk:role name="taskRole" portType="tns:ComplaintTaskWSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

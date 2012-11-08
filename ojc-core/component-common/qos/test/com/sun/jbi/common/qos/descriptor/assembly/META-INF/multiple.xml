@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://enterprise.netbeans.org/bpel/BPAtomicTest1/Main" 
+											xmlns:ns2="http://enterprise.netbeans.org/bpel/BPAtomicTest1/SubProcess" 
+											xmlns:ns3="http://j2ee.netbeans.org/wsdl/Ejb1" 
+											xmlns:ns4="http://j2ee.netbeans.org/wsdl/JmsOut" 
+											xmlns:ns5="http://j2ee.netbeans.org/wsdl/Ejb2" 
+											xmlns:ns6="http://j2ee.netbeans.org/wsdl/Main" 
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+    <service-assembly>
+        <identification>
+            <name>BPAtomicTest1App</name>
+            <description>Represents the Service Assembly of BPAtomicTest1App</description>
+        </identification>
+        <service-unit>
+            <identification>
+                <name>BPAtomicTest1App-EJBModule1</name>
+                <description>Represents this Service Unit</description>
+            </identification>
+            <target>
+                <artifacts-zip>EJBModule1.jar</artifacts-zip>
+                <component-name>sun-javaee-engine</component-name>
+            </target>
+        </service-unit>
+        <service-unit>
+            <identification>
+                <name>BPAtomicTest1App-BPAtomicTest1</name>
+                <description>Represents this Service Unit</description>
+            </identification>
+            <target>
+                <artifacts-zip>BPAtomicTest1.jar</artifacts-zip>
+                <component-name>sun-bpel-engine</component-name>
+            </target>
+        </service-unit>
+        <service-unit>
+            <identification>
+                <name>BPAtomicTest1App-sun-http-binding</name>
+                <description>Represents this Service Unit</description>
+            </identification>
+            <target>
+                <artifacts-zip>sun-http-binding.jar</artifacts-zip>
+                <component-name>sun-http-binding</component-name>
+            </target>
+        </service-unit>
+        <service-unit>
+            <identification>
+                <name>BPAtomicTest1App-sun-jms-binding</name>
+                <description>Represents this Service Unit</description>
+            </identification>
+            <target>
+                <artifacts-zip>sun-jms-binding.jar</artifacts-zip>
+                <component-name>sun-jms-binding</component-name>
+            </target>
+        </service-unit>
+        <connections>
+            <connection>
+                <consumer endpoint-name="SubProcessPortTypeRole_partnerRole" service-name="ns1:PartnerLink2"/>
+                <provider endpoint-name="SubProcessPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="Ejb1PortTypeRole_partnerRole" service-name="ns2:PartnerLink2"/>
+                <provider endpoint-name="javaee_Ejb1Port" service-name="ns3:Ejb1Service"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="JmsOutPortTypeRole_partnerRole" service-name="ns1:PartnerLink3"/>
+                <provider endpoint-name="JmsOutPort" service-name="ns4:JmsOutService"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="Ejb2PortTypeRole_partnerRole" service-name="ns2:PartnerLink3"/>
+                <provider endpoint-name="javaee_Ejb2Port" service-name="ns5:Ejb2Service"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="MainPort" service-name="ns6:MainService"/>
+                <provider endpoint-name="MainPortTypeRole_myRole" service-name="ns1:PartnerLink1"/>
+            </connection>
+        </connections>
+        <connections xmlns="http://www.sun.com/jbi/qos">
+            <connection>
+                <consumer endpoint-name="SubProcessPortTypeRole_partnerRole" service-name="ns1:PartnerLink2"/>
+                <provider endpoint-name="SubProcessPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+                <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="" waitTime="">
+                    <on-failure>
+                        <suspend/>
+                    </on-failure>
+                </redelivery>
+            </connection>
+            <connection>
+                <consumer endpoint-name="Ejb1PortTypeRole_partnerRole" service-name="ns2:PartnerLink2"/>
+                <provider endpoint-name="javaee_Ejb1Port" service-name="ns3:Ejb1Service"/>
+                <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="16"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="Ejb2PortTypeRole_partnerRole" service-name="ns2:PartnerLink3"/>
+                <provider endpoint-name="javaee_Ejb2Port" service-name="ns5:Ejb2Service"/>
+                <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="13"/>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

@@ -1,0 +1,1 @@
+select * from "COMPANY"."v1058" where customer_id=? or state=?

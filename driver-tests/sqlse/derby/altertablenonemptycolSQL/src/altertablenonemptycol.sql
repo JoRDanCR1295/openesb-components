@@ -1,0 +1,1 @@
+alter table "APP"."altertab" alter  ename SET DATA TYPE VARCHAR(3)

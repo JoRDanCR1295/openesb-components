@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="soap_jdbcUpdateOneRec"
+    targetNamespace="http://enterprise.netbeans.org/bpel/soap_jdbcUpdateOneRec"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/soap_jdbcUpdateOneRec" xmlns:ns1="http://j2ee.netbeans.org/wsdl/soapUpdateOneRecTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/soapUpdateOneRecTrigger" location="soapUpdateOneRecTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="jdbcUpdateOneRec.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:soapUpdateOneRecTriggerPartner" myRole="soapUpdateOneRecTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="SoapUpdateOneRecTriggerOperationOut" messageType="ns1:soapUpdateOneRecTriggerOperationReply"/>
+      <bpws:variable name="UpdateOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="UpdateIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SoapUpdateOneRecTriggerOperationIn" messageType="ns1:soapUpdateOneRecTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="soapUpdateOneRecTriggerOperation" portType="ns1:soapUpdateOneRecTriggerPortType" variable="SoapUpdateOneRecTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$SoapUpdateOneRecTriggerOperationIn.part1/ns0:EMPID</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:EMPID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapUpdateOneRecTriggerOperationIn.part1/ns0:DEPTID</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:DEPTID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapUpdateOneRecTriggerOperationIn.part1/ns0:MARKCOLUMN</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:MARKCOLUMN</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$SoapUpdateOneRecTriggerOperationIn.part1/ns0:ENAME</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:ENAME</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="update" portType="ns2:jdbcPortType" inputVariable="UpdateIn" outputVariable="UpdateOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="UpdateOut" part="part"/>
+            <bpws:to variable="SoapUpdateOneRecTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="soapUpdateOneRecTriggerOperation" portType="ns1:soapUpdateOneRecTriggerPortType" variable="SoapUpdateOneRecTriggerOperationOut"/>
+   </sequence>
+</process>

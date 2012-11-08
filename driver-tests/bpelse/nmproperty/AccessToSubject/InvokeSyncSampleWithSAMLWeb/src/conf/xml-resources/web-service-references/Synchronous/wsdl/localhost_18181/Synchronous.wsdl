@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Synchronous" targetNamespace="http://localhost/Synchronous/Synchronous" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:ns="http://xml.netbeans.org/schema/Synchronous" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:sc="http://schemas.sun.com/2006/03/wss/server" xmlns:wsaws="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:tns="http://localhost/Synchronous/Synchronous" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema targetNamespace="http://localhost/Synchronous/Synchronous">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Synchronous" schemaLocation="http://FAABEDI-E2600D.stc.com:18181/SyncSampleWithSAMLApplication-sun-http-binding/SyncSampleWithSAML/Synchronous.xsd"/>
+        </xsd:schema>
+  </types>
+  <message name="requestMessage">
+    <part name="inputType" element="ns:typeA">
+    </part>
+  </message>
+  <message name="responseMessage">
+    <part name="resultType" element="ns:typeA">
+    </part>
+  </message>
+  <portType name="portType1">
+    <operation name="operation1">
+      <input name="input1" message="tns:requestMessage">
+    </input>
+      <output name="output1" message="tns:responseMessage">
+    </output>
+    </operation>
+  </portType>
+  <binding name="binding1" type="tns:portType1">
+    <wsp:PolicyReference URI="#binding1Policy"/>
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="operation1">
+      <input name="input1">
+        <soap:body use="literal"/>
+    <wsp:PolicyReference URI="#binding1_input1_Policy"/>
+      </input>
+      <output name="output1">
+        <soap:body use="literal"/>
+    <wsp:PolicyReference URI="#binding1_output1_Policy"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="service1">
+    <port name="port1" binding="tns:binding1">
+      <soap:address location="http://FAABEDI-E2600D.stc.com:18181/Synchronous"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="partnerlinktyperole1" portType="tns:portType1"/>
+    </plink:partnerLinkType>
+    <wsp:Policy wsu:Id="binding1Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsaws:UsingAddressing xmlns:wsaws="http://www.w3.org/2006/05/addressing/wsdl"/>
+                <sc:KeyStore alias="xws-security-server" keypass="changeit" location="C:\GlassFishESB20090220\glassfish\domains\domain1\config\keystore.jks" storepass="changeit" type="JKS" wspp:visibility="private"/>
+                <sp:AsymmetricBinding>
+                    <wsp:Policy>
+                        <sp:InitiatorToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:InitiatorToken>
+                        <sp:RecipientToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:RecipientToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                    </wsp:Policy>
+                </sp:AsymmetricBinding>
+                <sp:Wss10>
+                    <wsp:Policy>
+                        <sp:MustSupportRefKeyIdentifier/>
+                        <sp:MustSupportRefIssuerSerial/>
+                    </wsp:Policy>
+                </sp:Wss10>
+                <sp:SignedSupportingTokens>
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV11Token10/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sc:TrustStore location="C:\GlassFishESB20090220\glassfish\domains\domain1\config\cacerts.jks" storepass="changeit" type="JKS" wspp:visibility="private"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="binding1_input1_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="binding1_output1_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+</definitions>

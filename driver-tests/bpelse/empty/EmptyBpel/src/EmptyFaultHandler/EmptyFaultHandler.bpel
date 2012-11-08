@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="EmptyFaultHandler" 
+    targetNamespace="http://www.mycomp.org/FaultHandler/FaultHandler_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/FaultHandler/FaultHandler_1" xmlns:ns1="http://stc.com/EmptyFaultHandler" xmlns:ns2="ThrowingFault">
+    <import namespace="http://stc.com/EmptyFaultHandler" location="EmptyFaultHandler.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FaultVariable" messageType="ns1:EmptyFaultHandler"/>
+        <variable name="Output" messageType="ns1:EmptyFaultHandler"/>
+        <variable name="Input" messageType="ns1:EmptyFaultHandler"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence1">
+                <empty name="Empty1"/>
+                <assign name="Assign1">
+            
+                    <copy>
+                    <from>concat($FaultVariable.part/value, $Input.part/value)</from><to>$Output.part/value</to>
+                    </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="PartnerLink1" operation="EmptyFaultHandler" portType="ns1:EmptyFaultHandler" variable="Output"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="EmptyFaultHandler" portType="ns1:EmptyFaultHandler" variable="Input" createInstance="yes"/>
+        <assign name="Assign2">
+            <copy>
+            <from>'ThrowingException!!'</from><to>$FaultVariable.part/value</to>
+            </copy>
+        </assign>
+        <throw name="Throw1" faultName="ns2:String" faultVariable="FaultVariable"/>
+    </sequence>
+   
+</process>

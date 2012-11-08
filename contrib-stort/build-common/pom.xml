@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <parent>
+        <artifactId>global-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../global-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.stort.openesb</groupId>
+    <artifactId>build-common</artifactId>
+    <name>build-common</name>
+
+    <!-- do not change this version - it is the version of the parent pom, not of the project -->
+    <version>1.0</version>
+
+    <packaging>pom</packaging>
+
+    <description>Common definitions inherited by all contrib-stort poms.</description>
+    <url>https://open-jbi-components.dev.java.net</url>
+    <inceptionYear>2007</inceptionYear>
+    <build>
+        <testOutputDirectory>bld/test</testOutputDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <!-- 
+                     ! project-wide excludes for build resource copies.
+                     ! add <resources> in local pom to override.
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/checkstyle.suppressions</exclude>
+                    <exclude>**/package.html</exclude>
+                    <exclude>**/.*.swp</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/jbi.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>test</directory>
+                <excludes>
+                    <!-- 
+                     ! project-wide excludes for test resource copies.
+                     ! add <testresources> in local pom to override.
+                     -->
+                    <exclude>**/*.java</exclude>
+                    <exclude>**/*.ref</exclude>
+                    <exclude>**/.*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <!-- NOTE:  version 2.2 has problems with maven 2.0.9.  RT 5/9/08-->
+                    <version>2.1</version>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <archive>
+                            <!--
+                             ! prevent maven from adding pom meta-data to our jars.
+                             ! See:  http://maven.apache.org/guides/mini/guide-archive-configuration.html
+                             !       for info on the archiver configuration properties.
+                             ! NOTE:  <addMavenDescriptor> requires v 2.1 or greater archive plugin.
+                             -->
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <!-- generate 1.5 class files: -->
+                        <source>1.5</source>
+                        <target>1.5</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.2</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.0</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.2</version>
+                    <inherited>true</inherited>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.3.1</version>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <forkMode>pertest</forkMode>
+                        <!-- shows total/fail/error summaries on stdout:  -->
+                        <printSummary>true</printSummary>
+                        <!-- this gives test class name & time elapsed in report files:  -->
+                        <reportFormat>plain</reportFormat>
+                        <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                        <workingDirectory>${basedir}</workingDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>maven-snapshots</id>
+            <name>Maven Snapshots</name>
+            <url>http://people.apache.org/maven-snapshot-repository</url>
+        </pluginRepository>
+        <pluginRepository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>codehaus-snapshots</id>
+            <name>Codehaus Snapshots</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <reporting>
+        <outputDirectory>${project.build.directory}/site</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <configuration>
+                    <!-- this is the input test-reports directory from the junit run: -->
+                    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>${project.artifactId}-test-report-only</id>
+                        <inherited>true</inherited>
+                        <reports>
+                            <report>report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>Helios</artifactId>
+                <version>${contrib.stort.currentVersion}</version>
+            </dependency>        
+            <dependency>
+                <groupId>open-esb</groupId>
+                <artifactId>jbi</artifactId>
+                <version>1.0</version>
+            </dependency>        
+            <dependency>
+                <groupId>wsdl4j</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>1.6.2</version>
+            </dependency>        
+<!--
+            <dependency>
+                <groupId>open-esb.jbi-cdk</groupId>
+                <artifactId>jbi-cdk-ant-tasks</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>                
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>2.1.2</version>
+                <scope>test</scope>
+            </dependency>        
+            <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-nodeps</artifactId>
+                <version>1.6.5</version>
+            </dependency>
+            <dependency>
+                <groupId>ant</groupId>
+                <artifactId>ant-junit</artifactId>
+                <version>1.6.5</version>
+                <scope>test</scope>
+            </dependency>                        
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>3.8.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-ant-tasks</artifactId>
+                <version>2.0.7</version>
+            </dependency>        
+-->
+        </dependencies>
+    </dependencyManagement>
+</project>

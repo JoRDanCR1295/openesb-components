@@ -1,0 +1,66 @@
+																			---
+																			ORB Configuration
+																			---
+																			Antonella Bellettini, Giancarlo Valeri
+																			---
+																			03/05/2007
+
+ORB Configuration
+
+* Introduction
+
+	An ORB makes it possible for CORBA objects to communicate with each other 
+	by connecting objects making requests (clients) with objects servicing 
+	requests (servers). 
+	Java provides the {{{http://java.sun.com/javase/6/docs/api/index.html?org/omg/CORBA/package-summary.html}ORB}} 
+	class to obtain references to objects implemented anywhere on the network. 
+	The ORB class also provides "pluggable ORB implementation" APIs that allow 
+	another vendor's ORB implementation to be used. 
+ 	To choose an orb implementation we have to specify standard java corba 
+	properties and how obtain a reference to the NameService.
+
+* {Standard Java CORBA Properties}
+
+
+*------------------------+--------------------------------------------------+
+| <<Property Name>>      | <<Property Value>>                               |
+*------------------------+--------------------------------------------------+
+| org.omg.CORBA.ORBClass | class name of an ORB implementation              |
+*------------------------+--------------------------------------------------+
+| org.omg.CORBA.ORBSingletonClass |class name of the ORB returned by init() |
+*------------------------+--------------------------------------------------+
+
+* {Reference to the NameService}
+
+	We have to specify in the ORB implementation used how to obtain an initial object reference to the NameService.
+
+	If we use JacORB, we have to add a property named <ORBInitRef.NameService> in the wsdl file.
+
+	Here's an example of how to set all the informations needed for the JacORB implementation in the wsdl file:
+	
++------------------------------------------+
+  <imolacorba:address name="<CORBA_SERVANT>" localizationType="<LOCALIZATION_TYPE>">	
+    <imolacorba:orb>
+	    <imolacorba:property name="org.omg.CORBA.ORBClass" value="org.jacorb.orb.ORB"/>
+	    <imolacorba:property name="org.omg.CORBA.ORBSingletonClass" value="org.jacorb.orb.ORBSingleton"/>
+	    <imolacorba:property name="ORBInitRef.NameService" value="corbaloc::localhost:1050/NameService"/>
+    </imolacorba:orb>
+  </imolacorba:address>
++------------------------------------------+
+
+* {Using JacORB with GlassFishESB}
+
+	The classes configured in the WSDL must be reacheable at runtime. For example, to use jacORB with
+	GlassFishESB, the ORB libraries (with their dependencies) must be added to the <<lib/ext>> directory 
+	of the GlassFish domain. 
+
+ 	* avalon-framework-4.1.5.jar
+ 	
+ 	 	
+	* idl.jar 
+	
+	* jacorb.jar
+	
+	* logkit-1.2.jar
+	[]
+

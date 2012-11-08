@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowWhile" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/FlowWhile"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FlowWhile" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FlowWhile" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FlowWhile" location="FlowWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowWhilePLT" myRole="FlowWhilePLTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="while_counter" type="xsd:int"/>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="output" messageType="ns1:FlowWhileMessage"/>
+        <variable name="input" messageType="ns1:FlowWhileMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowWhileOperation" portType="ns1:FlowWhilePortType" variable="input" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+                <from>'BRANCH1***'</from>
+                <to variable="branch1"/>
+            </copy>
+            <copy>
+                <from>1</from>
+                <to variable="while_counter"/>
+            </copy>
+        </assign>
+        <flow name="Flow1">
+            <while name="While1">
+                <condition> ( $while_counter &lt;= $input.counter ) </condition>
+                <sequence name="Sequence1">
+                    <assign name="IncrementCounter">
+                        <copy>
+                            <from>  ( $while_counter + 1 )  </from>
+                            <to variable="while_counter"/>
+                        </copy>
+                    </assign>
+                    <assign name="Concat">
+                        <copy>
+                            <from>concat($branch1, 'loop', $while_counter)</from>
+                            <to variable="branch1"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </while>
+            <assign name="Assign2">
+                <copy>
+                    <from>'BRANCH2***'</from>
+                    <to variable="branch2"/>
+                </copy>
+            </assign>
+        </flow>
+        <assign name="Assign3">
+            <copy>
+                <from>concat($branch1, $input.part1)</from>
+                <to part="part1" variable="output"/>
+            </copy>
+            <copy>
+                <from>concat($branch2, $input.part2)</from>
+                <to part="part2" variable="output"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to variable="output" part="counter"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowWhileOperation" portType="ns1:FlowWhilePortType" variable="output"/>
+    </sequence>
+   
+</process>

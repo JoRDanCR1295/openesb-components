@@ -1,0 +1,1 @@
+create table "COMPANY"."TEMP1" (dES12_@# integer)

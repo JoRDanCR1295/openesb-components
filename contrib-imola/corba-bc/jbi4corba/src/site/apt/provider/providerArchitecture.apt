@@ -1,0 +1,55 @@
+																			---
+																			Provider: Architecture
+																			---
+																			Mirco Casoni
+																			---
+																			23/03/2007
+																			
+Provider - Architecture
+
+    Jbi4Corba, when run in <<provider>> mode, is based on this simple pseudo
+    equation: idj2java + java2wsdl = {{{idl2wsdl.html}idl2wsdl}}.
+
+	From the architectural point of view, we analyze two different phases: the 
+	<<deploy>> and the <<runtime>>.
+
+
+* {Deploy}
+
+  At deploy time the following sequence of events occurs:
+  
+  [[1]] The IDL file is parsed and used to {{{idl2wsdl.html}generate the java classes}}.
+        (To verify which IDL's features are supported please visit the page
+        of the {{{supportedIDLDataTypes.html}supported IDL data types}}).
+  
+  [[2]] Generated java classes are compiled.
+  
+  [[3]] One JBI web service per idl interface is created.
+  
+  [[4]] When the endpoint is activated the underlying corba object is located using the Corba name service.
+  
+  [[5]] Each JBI Web service is published as an internal JBI endpoint.
+  
+  []
+  
+  The following (unformal) sequence diagram shows this process:
+
+[../images/deployTime.jpg] The deploy time process.  
+
+* {Runtime}
+
+  At runtime the following sequence of events occurs:
+  
+  [[1]] The JBI internal endpoint is called by another JBI endpoint.
+  
+  [[2]] The CXF dynamic interface and the Corba dynamic interface are used together to forward any port called on the web service to the corresponding corba method.
+  
+  [[3]] The result is marshalled into the reply payload.
+  
+  [[4]] The reply payload is posted into the JBI bus.
+  
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[../images/runtime.jpg] The runtime process.

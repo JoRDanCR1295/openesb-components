@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WaitFlowTest" 
+    targetNamespace="http://www.mycomp.org/WaitFlowTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/WaitFlowTest">
+    <import namespace="http://www.mycomp.org/WaitFlowTest" location="WaitFlowTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:WaitFlowTestPartnerLinkType" myRole="WaitFlowTestProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WaitFlow_input" messageType="wsdlNS:requestMessage
+"/>
+        <variable name="WaitFlow_Out" messageType="wsdlNS:responseMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="WaitFlowOperation" portType="wsdlNS:MyPortType" variable="WaitFlow_input" createInstance="yes"/>
+        <flow name="Flow1">
+            <sequence name="Sequence1">
+                <wait name="Wait1">
+                    <for>'P0Y0M0DT0H0M10S'</for>
+                </wait>
+                <assign name="Assign1">
+                    <copy>
+                    <from>concat('First Flow: ', $WaitFlow_input.request)</from><to part="request" variable="WaitFlow_input"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <flow name="Flow2">
+                <sequence name="Sequence2">
+                    <wait name="Wait2">
+                        <for>'P0Y0M0DT0H0M15S'</for>
+                    </wait>
+                    <assign name="Assign2">
+                        <copy>
+                        <from>concat('***Second Flow: ', $WaitFlow_input.request)</from><to part="response" variable="WaitFlow_Out"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </flow>
+        </flow>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="WaitFlowOperation" portType="wsdlNS:MyPortType" variable="WaitFlow_Out"/>
+    </sequence>
+   
+</process>

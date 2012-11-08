@@ -1,0 +1,276 @@
+<?xml version="1.0"?>
+<jbi version="1.0"
+        xmlns="http://java.sun.com/xml/ns/jbi"
+    	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    	xmlns:config="http://www.sun.com/jbi/Configuration/V1.0"
+	xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0"
+        xmlns:logging="http://www.sun.com/jbi/descriptor/logging">
+<!-- identification information about this engine -->
+    <component type="service-engine">
+        <identification>
+            <name>${project.name}</name>
+            <description>This is a worklist manager service engine.</description>
+            <identification:VersionInfo component-version="${workflowse.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+	<component-class-name description="Workflow SE Component" >com.sun.jbi.engine.workflow.base.WLMSEComponentManager</component-class-name>
+        <component-class-path>
+		<path-element>lib/worklistmanagerse.jar</path-element>
+		<path-element>lib/componentsl.jar</path-element>
+                <path-element>lib/common-util.jar</path-element>
+                <path-element>lib/qos.jar</path-element>
+		<path-element>lib/crl.jar</path-element>
+		<path-element>lib/wfse_def.jar</path-element>
+		<path-element>lib/workflowmodel.jar</path-element>
+		<path-element>lib/xpathmodel.jar</path-element>   
+		<path-element>lib/jxpath.jar</path-element>
+		<path-element>lib/component-toolkit.jar</path-element>
+<!-- Begin Hibernate + Lucene -->
+		<path-element>lib/ehcache.jar</path-element>
+		<path-element>lib/hibernate-core.jar</path-element>
+		<path-element>lib/commons-logging.jar</path-element>
+		<path-element>lib/javassist.jar</path-element>
+		<path-element>lib/dom4j.jar</path-element>
+		<path-element>lib/asm.jar</path-element>
+		<path-element>lib/antlr.jar</path-element>
+		<path-element>lib/commons-collections.jar</path-element>
+		<path-element>lib/asm-attrs.jar</path-element>
+		<path-element>lib/cglib.jar</path-element>
+		<path-element>lib/lucene-core.jar</path-element>
+		<path-element>lib/slf4j-api.jar</path-element>
+		<path-element>lib/slf4j-simple.jar</path-element>
+		<path-element>lib/hibernate-search.jar</path-element>
+		<path-element>lib/hibernate-commons-annotations.jar</path-element>
+		<path-element>lib/solr-common.jar</path-element>
+		<path-element>lib/solr-core.jar</path-element>
+		<path-element>lib/commons-io.jar</path-element>
+<!-- End Hibernate + Lucene -->		
+         </component-class-path>
+	 <bootstrap-class-name>com.sun.jbi.engine.workflow.base.WLMSEBootStrap</bootstrap-class-name>
+        <bootstrap-class-path>
+		<path-element>lib/worklistmanagerse.jar</path-element>
+		<path-element>lib/componentsl.jar</path-element>
+                <path-element>lib/common-util.jar</path-element>
+                 <path-element>lib/qos.jar</path-element>
+		<path-element>lib/resolver.jar</path-element>
+		<path-element>lib/wfse_def.jar</path-element>
+		<path-element>lib/workflowmodel.jar</path-element>
+		<path-element>lib/xpathmodel.jar</path-element>   
+		<path-element>lib/jxpath.jar</path-element>
+<!-- Begin Hibernate + Lucene -->
+		<path-element>lib/ehcache.jar</path-element>
+		<path-element>lib/hibernate-core.jar</path-element>
+		<path-element>lib/commons-logging.jar</path-element>
+		<path-element>lib/javassist.jar</path-element>
+		<path-element>lib/dom4j.jar</path-element>
+		<path-element>lib/asm.jar</path-element>
+		<path-element>lib/antlr.jar</path-element>
+		<path-element>lib/commons-collections.jar</path-element>
+		<path-element>lib/asm-attrs.jar</path-element>
+		<path-element>lib/cglib.jar</path-element>
+		<path-element>lib/lucene-core.jar</path-element>
+		<path-element>lib/slf4j-api.jar</path-element>
+		<path-element>lib/slf4j-simple.jar</path-element>
+		<path-element>lib/hibernate-search.jar</path-element>
+		<path-element>lib/hibernate-commons-annotations.jar</path-element>
+		<path-element>lib/solr-common.jar</path-element>
+		<path-element>lib/solr-core.jar</path-element>
+		<path-element>lib/commons-io.jar</path-element>
+		<path-element>lib/component-toolkit.jar</path-element>
+<!-- End Hibernate + Lucene -->	
+        </bootstrap-class-path>
+	<shared-library>sun-wsdl-ext-library</shared-library>
+        <config:Configuration>
+          <config:PropertyGroup name="EngineProperties" displayName="EngineProperties" displayDescription="Configure Engine Properties" showDisplay="all"> 
+		<config:Property name="DataSourceJNDIName"
+			displayName="DataSource JNDI"
+            		displayDescription="sun-wlm-engine data source JNDI"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="jdbc/__workflow">
+    		</config:Property> 
+		<config:Property name="DataSourceType"
+			displayName="DataSource Type"
+            		displayDescription="sun-wlm-engine data source type"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="Derby">
+                  <config:Constraint facet="enumeration" value="Derby" />
+                  <config:Constraint facet="enumeration"  value="Oracle" />
+                  <config:Constraint facet="enumeration" value="MySQL" />
+    		</config:Property>    
+		<config:Property name="MaxThreadCount"
+			displayName="Max Thread Count"
+            		displayDescription="sun-wlm-engine maximum number of processing threads"
+                        showDisplay="all"
+                        type="xsd:int"
+            		defaultValue="10">
+		    <config:Constraint facet="minInclusive" value="1"/>
+		    <config:Constraint facet="maxInclusive" value="100"/>
+    		</config:Property>       
+		<config:Property name="TestModeEnabled"
+			displayName="Test Mode"
+            		displayDescription="sun-wlm-engine Testing mode, if true, db schema will be recreated every time wlmse starts, if false, db schema will not be recreated"
+                        showDisplay="all"
+                        type="xsd:boolean"
+            		defaultValue="false">
+    		</config:Property> 
+		<config:Property name="UpdateIndexOnStart"
+			displayName="Update Index on engine start"
+            		displayDescription="sun-wlm-engine will update
+            		the full text index when engine starts. This
+            		will be needed when a mass archive and delete
+            		happens or to improve full text search
+            		efficiency after database runs for a
+            		time."
+                        showDisplay="all"
+                        type="xsd:boolean"
+            		defaultValue="true">
+		</config:Property>
+		<config:Property name="IndexDirProperty"
+			displayName="Index root directory System Property"
+            		displayDescription="sun-wlm-engine queries
+            		this System Property to get the file system
+            		directory as the root directory for storing
+            		full text index, the System Property must be
+            		set when Application Server starts and the
+            		directory must exist and accessible"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="java.io.tmpdir">
+    		</config:Property> 
+    		 
+           </config:PropertyGroup>
+          <config:PropertyGroup name="LDAPProperties" displayName="LDAP Properties" displayDescription="Configure LDAP Properties" showDisplay="all"> 
+		<config:Property name="UseLDAP"
+			displayName="LDAP used"
+            		displayDescription="If true, the properties specified in this section will be used to connect to a LDAP server"
+                        showDisplay="all"
+                        type="xsd:boolean"
+            		defaultValue="false">
+    		</config:Property>  
+		<config:Property name="LdapHost"
+			displayName="LDAP host"
+            		displayDescription="The Ldap host IP"
+                        showDisplay="all"
+                        type="xsd:string"
+			defaultValue="localhost">
+    		</config:Property>    	
+		<config:Property name="LdapPort"
+			displayName="LDAP port"
+            		displayDescription="The LDAP server port"
+                        showDisplay="all"
+                        type="xsd:int"
+            		defaultValue="389">
+    		</config:Property> 
+    		
+		<config:Property name="SSL"
+			displayName="Is SSL enabled for LDAP"
+            		displayDescription="If true, LDAP server will be connected using ldaps://"
+                        showDisplay="all"
+                        type="xsd:boolean"
+            		defaultValue="false">
+    		</config:Property> 
+    		
+		<config:Property name="LdapSPort"
+			displayName="LDAPS port"
+            		displayDescription="The LDAP server SSL port"
+                        showDisplay="all"
+                        type="xsd:int"
+            		defaultValue="636">
+    		</config:Property>     	   
+		<config:Property name="LoginType"
+			displayName="Login Type"
+            		displayDescription="LDAP search login type"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="none">
+                  <config:Constraint facet="enumeration" value="none" />
+                  <config:Constraint facet="enumeration" value="simple" />
+    		</config:Property>        		
+		<config:Property name="LoginDN"
+			displayName="LDAP search login DN"
+            		displayDescription="LDAP search login DN, only required if Login Type is simple"
+                        showDisplay="all"
+                        type="xsd:string">
+    		</config:Property>   
+		<config:Property name="LoginPassword"
+			displayName="LDAP search login password"
+            		displayDescription="LDAP search login password, only required if Login Type is simple"
+                        showDisplay="all"
+                        type="xsd:string">
+    		</config:Property>       		
+    		
+		<config:Property name="UidAttr"
+			displayName="uid attribute name"
+            		displayDescription="The name of the user id attribute in LDAP user entry"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="uid">
+    		</config:Property> 
+		<config:Property name="ManagerAttr"
+			displayName="manager attribute name"
+            		displayDescription="The name of the manager attribute in LDAP user entry"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="manager">
+    		</config:Property>     		
+		<config:Property name="EmailAttr"
+			displayName="email attribute name"
+            		displayDescription="The name of the email attribute in LDAP user entry"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="mail">
+    		</config:Property>  
+
+		<config:Property name="BaseDN"
+			displayName="Base DN in search"
+            		displayDescription="The base DN under which the search is executed"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="dc=example,dc=com">
+    		</config:Property>     	    	
+    		
+		<config:Property name="ScopeType"
+			displayName="Scope Type"
+            		displayDescription="LDAP search scope type"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="sub">
+                  <config:Constraint facet="enumeration" value="base" />
+                  <config:Constraint facet="enumeration" value="one" />
+                  <config:Constraint facet="enumeration" value="sub" />
+    		</config:Property>  
+	
+    		     		
+		<config:Property name="UserFilter"
+			displayName="User filter"
+            		displayDescription="The filter used in user search, %s expands to the user's id value"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="(uid=%s)">
+    		</config:Property>     		
+    		     		
+		<config:Property name="GroupFilter"
+			displayName="Group filter"
+            		displayDescription="The filter used in group search, %s expands to the group's id value"
+                        showDisplay="all"
+                        type="xsd:string"
+            		defaultValue="(cn=%s)">
+    		</config:Property>     		
+    		     		        	
+       		
+           </config:PropertyGroup>           
+        </config:Configuration>
+        <logging:Logging root="com.sun.jbi.engine.workflow" >
+            <logging:logger displayName="WorkflowEngine" addPrefix="false">com.sun.jbi.engine.workflow.WorkflowEngine</logging:logger>
+	    <logging:logger displayName="WorkflowSEBootstrap" addPrefix="false">com.sun.jbi.engine.workflow.WorkflowSEBootstrap</logging:logger>
+	    <logging:logger displayName="WorkflowSEInOutThread" addPrefix="false">com.sun.jbi.engine.workflow.WorkflowSEInOutThread</logging:logger>
+	    <logging:logger displayName="WorkflowSELifeCycle" addPrefix="false">com.sun.jbi.engine.workflow.WorkflowSELifeCycle</logging:logger>
+	    <logging:logger displayName="WorkflowSEServiceUnitManager" addPrefix="false">com.sun.jbi.engine.workflow.WorkflowSEServiceUnitManager</logging:logger>
+	    <logging:logger displayName="WorkflowSEInOutProvider" addPrefix="false">com.sun.jbi.engine.workflow.process.WorkflowSEInOutProvider</logging:logger>
+	    <logging:logger displayName="DBOperation" addPrefix="false">com.sun.jbi.engine.workflow.db.opt.WorkflowSEInOutProvider</logging:logger>
+	    <logging:logger displayName="PersistenceTaskManagerImpl" addPrefix="false">com.sun.jbi.engine.workflow.runtime.model.impl.PersistenceTaskManagerImpl</logging:logger>
+	</logging:Logging>
+    </component>
+</jbi>

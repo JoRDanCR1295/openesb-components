@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ApprovePurchase_TM_Client" targetNamespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_Client"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"  xmlns:ns="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:ns2="http://wlmse.sample/po" xmlns:tns="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_Client"
+    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+  <!-- Type definitions -->
+    <import location="TaskCommon.wsdl" namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon"/>
+    <types>
+        <xsd:schema targetNamespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_Client">
+            <xsd:import schemaLocation="PurchaseOrder.xsd" namespace="http://wlmse.sample/po"/>
+        </xsd:schema>
+    </types>
+    <message name="ApprovePurchaseInput">
+        <part name="Input" element="ns2:purchaseOrder"/>
+    </message>
+    <message name="ApprovePurchaseOutput">
+        <part name="Output" element="ns2:orderReply"/>
+    </message>    
+    
+    <message name="GetApprovePurchaseInput_Input">
+        <part name="taskId" type="xsd:string"/>
+        <part name="sessionId" type="xsd:int"/>
+    </message>    
+    
+    <message name="GetApprovePurchaseOutput_Input">
+        <part name="taskId" type="xsd:string"/>
+        <part name="sessionId" type="xsd:int"/>
+    </message>     
+    
+    <message name="SetApprovePurchaseOutput_Input">
+        <part name="taskId" type="xsd:string"/>
+        <part name="sessionId" type="xsd:int"/>
+        <part name="Output" element="ns2:orderReply"/>
+    </message>      
+
+    <portType name="ApprovePurchasePT">
+        <operation name="GetApprovePurchaseInput">
+            <input name="GetApprovePurchaseInputInput" message="tns:GetApprovePurchaseInput_Input"/>
+            <output name="GetApprovePurchaseInputOutput" message="tns:ApprovePurchaseInput"/>
+            <fault name="GetApprovePurchaseInputFault" message="ns:OptFaultMsg"/>            
+        </operation>
+        <operation name="GetApprovePurchaseOutput">
+            <input name="GetApprovePurchaseOutputInput" message="tns:GetApprovePurchaseOutput_Input"/>
+            <output name="GetApprovePurchaseOutputOutput" message="tns:ApprovePurchaseOutput"/>
+            <fault name="GetApprovePurchaseOutputFault" message="ns:OptFaultMsg"/>             
+        </operation>
+        <operation name="SetApprovePurchaseOutput">
+            <input name="SetApprovePurchaseOutputInput" message="tns:SetApprovePurchaseOutput_Input"/>
+        </operation>
+    </portType>
+    <binding name="ApprovePurchase" type="tns:ApprovePurchasePT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="GetApprovePurchaseInput">
+            <soap:operation soapAction="GetApprovePurchaseInput"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="error" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="GetApprovePurchaseOutput">
+            <soap:operation soapAction="GetApprovePurchaseOutput"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="error" use="literal"/>
+            </fault>
+        </operation>    
+        <operation name="SetApprovePurchaseOutput">
+            <soap:operation soapAction="SetApprovePurchaseOutput"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation> 
+       </binding>
+    <service name="TaskApprovePurchaseClientService">
+        <port name="TaskApprovePurchaseClientPort" binding="tns:ApprovePurchase">
+            <soap:address location="http://localhost:18181/wfse/ApprovePurchaseClient"/>
+        </port>
+    </service>  
+    
+    <plink:partnerLinkType name="TaskApprovePurchaseClientLT">
+        <plink:role name="TaskApprovePurchaseClient_Server" portType="tns:ApprovePurchasePT"/>
+    </plink:partnerLinkType>         
+</definitions>

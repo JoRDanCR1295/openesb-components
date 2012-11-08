@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="urn:ProcessLoanWS/wsdl" xmlns:request="http://www.gm.com/csto/v1/process/loan/request" xmlns:response="http://www.gm.com/csto/v1/process/loan/response" xmlns:fault="http://www.gm.com/csto/v1/process/loan/fault" xmlns:wsdl="urn:ProcessLoanWS/wsdl" xmlns:types="urn:ProcessLoanWS/types" targetNamespace="urn:ProcessLoanWS/wsdl" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="ProcessLoan" xmlns:ns="http://www.gm.com/csto/v1/process/loan/request">
+	<types>
+		<xs:schema targetNamespace="urn:ProcessLoanWS/wsdl" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:ProcessLoanWS/wsdl">
+			<xs:import namespace="http://www.gm.com/csto/v1/process/loan/request" schemaLocation="ProcessLoanRequest.xsd"/>
+			<xs:import namespace="http://www.gm.com/csto/v1/process/loan/response" schemaLocation="ProcessLoanResponse.xsd"/>
+			<xs:import namespace="http://www.gm.com/csto/v1/process/loan/fault" schemaLocation="ProcessLoanFault.xsd"/>
+		 <xs:import schemaLocation="ProcessLoanRequest.xsd" namespace="http://www.gm.com/csto/v1/process/loan/request"/>
+		</xs:schema>
+	</types>
+	<message name="ProcessLoanRequest">
+		<part name="request" element="request:ProcessLoanRequest"/>
+	</message>
+	<message name="ProcessLoanResponse">
+		<part name="response" element="response:ProcessLoanResponse"/>
+	</message>
+	<message name="ProcessLoanFault">
+		<part name="fault" element="fault:ProcessLoanFault"/>
+	</message>
+	<portType name="ProcessLoanSEI">
+		<operation name="processLoan">
+			<input message="tns:ProcessLoanRequest"/>
+			<output message="tns:ProcessLoanResponse"/>
+			<fault name="ProcessLoanFault" message="tns:ProcessLoanFault"/>
+		</operation>
+	</portType>
+	<binding name="ProcessLoanBinding" type="tns:ProcessLoanSEI">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="processLoan">
+			<soap:operation soapAction=""/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="ProcessLoanFault">
+				<soap:fault name="ProcessLoanFault" use="literal"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="ProcessLoanService">
+		<port name="ProcessLoanSEIPort" binding="tns:ProcessLoanBinding">
+			<soap:address location="http://localhost:18181/processloan/v2/ProcessLoan"/>
+		</port>
+	</service>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="partnerlinktyperole1" portType="tns:ProcessLoanSEI"/>
+    </plink:partnerLinkType>
+</definitions>

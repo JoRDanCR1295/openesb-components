@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="VARcvInvokeRply_1" 
+    targetNamespace="http://www.mycomp.org/VARcvInvokeRply/VARcvInvokeRply_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl">
+  
+    <import namespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+            location="virtualAssignTest_1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+           
+    <partnerLinks>
+        <partnerLink name="PartnerLink_for_receive_and_reply" 
+                           partnerLinkType="wsdlNS:virtualAssignLinkType1" 
+                           myRole="server"/>
+        <partnerLink name="PartnerLink_for_invoke_out_to_subbp" 
+                           partnerLinkType="wsdlNS:virtualAssignLinkType1_outbound" 
+                           partnerRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  type="wsdlNS:simpleStringType"></variable>
+        <variable name="var2"
+		  type="wsdlNS:simpleStringType"></variable>
+        <variable name="var3"
+                  type="wsdlNS:simpleStringType"></variable>
+        <variable name="var4"
+                  type="wsdlNS:simpleStringType"></variable>
+        <variable name="recvVar"
+                  messageType="wsdlNS:virtualAssignSimpleStringMessage"></variable>
+    </variables>
+    
+    <sequence>
+      <receive name="receive_in_parent"
+               partnerLink="PartnerLink_for_receive_and_reply"
+               operation="virtualAssignOperation1" 
+               portType="wsdlNS:virtualAssignPortType1"
+               createInstance="yes"
+               variable="recvVar"> <!-- remove variable -->
+               <!-- fromPart part="simpleStringPart" toVariable="var1"/> -->
+      </receive>
+        <assign name="Assign1">
+            <copy>
+            <from variable="recvVar" part="simpleStringPart"/><to variable="var1"/>
+            </copy>
+            <copy>
+            <from variable="recvVar" part="simpleStringPart"/><to variable="var1"/>
+            </copy>
+        </assign>
+        <invoke name="invoke_to_subbp" 
+              partnerLink="PartnerLink_for_invoke_out_to_subbp"
+              operation="virtualAssignOperation1" 
+	      portType="wsdlNS:virtualAssignPortType11"
+              outputVariable="var2">
+              outputVariable="var2"> 
+      </invoke>
+      <!-- remove variables -->
+              <!-- toPart part="simpleStringPart" fromVariable="var1"/ -->
+              <!-- fromPart part="simpleStringPart" toVariable="var2"/ -->
+              
+      <reply name="reply_from_parent" 
+              partnerLink="PartnerLink_for_receive_and_reply"
+              operation="virtualAssignOperation1"
+              portType="wsdlNS:virtualAssignPortType1"
+              variable="var2"> <!-- remove variable -->
+              <!-- toPart part="simpleStringPart" fromVariable="var2"/ -->       
+      </reply>
+      
+   </sequence>
+   
+</process>

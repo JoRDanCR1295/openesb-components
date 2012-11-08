@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="FlowWithInvoke"
+             targetNamespace="http://www.mycomp.org/FlowWithInvoke"
+             xmlns:tns="http://www.mycomp.org/FlowWithInvoke"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:message name="message1">
+        <wsdl:part name="branch1" type="xsd:string"/>
+        <wsdl:part name="branch2" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="message2">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FlowWithInvokePortType">
+        <wsdl:operation name="FlowWithInvokeOperation">
+            <wsdl:input name="input1" message="tns:message1"/>
+            <wsdl:output name="output1" message="tns:message1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="invokePortType">
+        <wsdl:operation name="operation1">
+            <wsdl:input name="input1" message="tns:message2"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="FlowWithInvokeSoapBinding" type="tns:FlowWithInvokePortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                <operation name="FlowWithInvokeOperation">
+                <soap:operation style="document"/>
+                <input name="input1">
+                     <soap:body/>
+                </input>
+                <output name="output1">
+                    <soap:body/>
+                </output>
+                </operation>
+        </binding>
+    <wsdl:binding name="invokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="operation1">
+            <soap:operation style="document"/>
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FlowWithInvokeService">
+		<wsdl:port name="FlowWithInvokePortName" binding="tns:FlowWithInvokeSoapBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/FlowWithInvoke"/>
+		</wsdl:port>
+		<wsdl:port name="InvokePortName" binding="tns:invokeBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/FlowWithInvoke_invokePort"/>
+		</wsdl:port>
+        
+            </wsdl:service>
+
+	<plnk:partnerLinkType name="FlowWithInvokePartnerLinkType">
+		<plnk:role name="FlowWithInvokeProvider" portType="tns:FlowWithInvokePortType"/>
+	</plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1">
+        <plnk:role name="partnerlinktyperole1" portType="tns:invokePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype2">
+        <plnk:role name="partnerlinktyperole1" portType="tns:invokePortType"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

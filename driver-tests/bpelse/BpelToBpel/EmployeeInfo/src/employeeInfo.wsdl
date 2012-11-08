@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="employeeInfo" targetNamespace="http://j2ee.netbeans.org/wsdl/employeeInfo"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/employeeInfo"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/employeeInfo/types"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+  <!-- Type definitions -->
+  <types>
+    <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/employeeInfo/types">
+      <xsd:element name="employNameElement" type="xsd:string"/>
+      <xsd:element name="employeeInfoElement" type="xsd:string"/>
+    </xsd:schema>
+  </types>
+
+   
+    <message name="employeeName">
+        <part name="employeeNamePart" element="ns1:employNameElement"/>
+    </message>
+    
+    <message name="employeeInfo">
+        <part name="employeeInfoPart" element="ns1:employeeInfoElement"/>
+    </message>
+   
+    
+    <portType name="employeeInfoPortType">
+        <operation name="getEmployeeInfo">
+            <input name="EmployeeName" message="tns:employeeName"/>
+            <output name="EmployeeInfo" message="tns:employeeInfo"/>
+        </operation>
+    </portType>
+      <!-- Binding definitions -->
+  <binding name="employeeInfoBinding" type="tns:employeeInfoPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="getEmployeeInfo">
+      <soap:operation soapAction="getEmployeeInfo"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      </operation>
+  </binding>
+  
+  <service name="employeeInfoService">
+    <port name="employeeInfoPort" binding="tns:employeeInfoBinding">
+      <soap:address location="http://localhost:${HttpDefaultPort}/service/employeeInfo"/>
+    </port>
+  </service>
+    
+    <plink:partnerLinkType name="employeeInfoPartnerlinktype">
+        <plink:role name="employeeInfoPartnerlinktyperole" portType="tns:employeeInfoPortType"/>
+    </plink:partnerLinkType>
+</definitions>

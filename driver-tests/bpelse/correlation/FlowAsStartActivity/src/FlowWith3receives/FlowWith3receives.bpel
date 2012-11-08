@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="FlowWith3receives"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FlowWith3receives"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FlowWith3receives" xmlns:ns1="http://j2ee.netbeans.org/wsdl/flowWith3Receives" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/flowWith3Receives" location="flowWith3Receives.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns1:flowWith3ReceivesPartner2" myRole="flowWith3ReceivesPortType2Role"/>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:flowWith3ReceivesPartner1" myRole="flowWith3ReceivesPortType1Role"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:flowWith3ReceivesPartner" myRole="flowWith3ReceivesPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="FlowWith3ReceivesOperationIn2" messageType="ns1:flowWith3ReceivesOperationRequest2"/>
+      <bpws:variable name="FlowWith3ReceivesOperationIn1" messageType="ns1:flowWith3ReceivesOperationRequest1"/>
+      <bpws:variable name="FlowWith3ReceivesOperationOut" messageType="ns1:flowWith3ReceivesOperationReply"/>
+      <bpws:variable name="FlowWith3ReceivesOperationIn" messageType="ns1:flowWith3ReceivesOperationRequest"/>
+   </bpws:variables>
+   <bpws:correlationSets>
+      <bpws:correlationSet name="CorrelationSet3" properties="ns1:property3"/>
+      <bpws:correlationSet name="CorrelationSet2" properties="ns1:property2"/>
+      <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+   </bpws:correlationSets>
+   <sequence>
+      <bpws:flow name="Flow1">
+         <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="flowWith3ReceivesOperation" portType="ns1:flowWith3ReceivesPortType" variable="FlowWith3ReceivesOperationIn">
+            <bpws:correlations>
+               <bpws:correlation set="CorrelationSet2" initiate="join"/>
+               <bpws:correlation set="CorrelationSet3" initiate="join"/>
+               <bpws:correlation set="CorrelationSet1" initiate="join"/>
+            </bpws:correlations>
+         </bpws:receive>
+         <bpws:receive name="Receive2" createInstance="yes" partnerLink="PartnerLink2" operation="flowWith3ReceivesOperation" portType="ns1:flowWith3ReceivesPortType1" variable="FlowWith3ReceivesOperationIn1">
+            <bpws:correlations>
+               <bpws:correlation set="CorrelationSet1" initiate="join"/>
+               <bpws:correlation set="CorrelationSet2" initiate="join"/>
+               <bpws:correlation set="CorrelationSet3" initiate="join"/>
+            </bpws:correlations>
+         </bpws:receive>
+         <bpws:receive name="Receive3" createInstance="yes" partnerLink="PartnerLink3" operation="flowWith3ReceivesOperation" portType="ns1:flowWith3ReceivesPortType2" variable="FlowWith3ReceivesOperationIn2">
+            <bpws:correlations>
+               <bpws:correlation set="CorrelationSet1" initiate="join"/>
+               <bpws:correlation set="CorrelationSet2" initiate="join"/>
+               <bpws:correlation set="CorrelationSet3" initiate="join"/>
+            </bpws:correlations>
+         </bpws:receive>
+      </bpws:flow>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat($FlowWith3ReceivesOperationIn.part1/ns0:string, $FlowWith3ReceivesOperationIn1.part1/ns0:string, $FlowWith3ReceivesOperationIn2.part1/ns0:string)</bpws:from>
+            <bpws:to>$FlowWith3ReceivesOperationOut.part1/ns0:string</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="flowWith3ReceivesOperation" portType="ns1:flowWith3ReceivesPortType" variable="FlowWith3ReceivesOperationOut"/>
+   </sequence>
+</process>

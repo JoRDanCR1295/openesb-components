@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ScopeFH" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/ScopeFH"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/ScopeFH">
+    <import namespace="http://enterprise.netbeans.org/wsdl/ScopeFH" 
+            location="ScopeFH.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ScopeInvokePLT" 
+                     partnerRole="ScopeInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ScopePartnerLinkType" 
+                     myRole="ScopePLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="inputMsg" messageType="wsdlNS:ScopeMessage"/>
+        <variable name="outputMsg" messageType="wsdlNS:ScopeMessage"/>
+    </variables>
+    <sequence>
+      	<receive name="Receive1" partnerLink="PartnerLink1" 
+      	         operation="ScopeOperation" portType="wsdlNS:ScopePortType" 
+         	     variable="inputMsg" createInstance="yes"/>
+		<scope name="Scope1">
+			<variables>
+                <variable name="scopeMsg" messageType="wsdlNS:ScopeMessage"/>
+                <variable name="counter" type="xsd:int"/>
+                <variable name="scopeStr" type="xsd:string"/>
+			</variables>
+            <sequence>
+				<assign name="Assign1">
+					<copy>
+						<from>'DuckDuckGoose'</from>
+						<to part="data" variable="scopeMsg"/>
+					</copy>
+					<copy><from>0</from><to variable="counter"/></copy>
+				</assign>
+				<while name="While1">
+					<condition>  ( $counter &lt; 3 )  </condition>
+					<sequence>
+						<assign name="AssignIncrement">
+							<copy>
+								<from> ( $counter + 1 ) </from>
+								<to variable="counter"/>
+							</copy>
+						</assign>
+                        <scope name="Scope2">
+                            <bpws:faultHandlers>
+                                <bpws:catch faultName="bpws:myFault">
+                                    <scope name="ScopeCatch">
+                                        <variables>
+                                            <variable name="catchStr" type="xsd:string"/>
+                                        </variables>
+                                        <sequence>
+                                            <bpws:assign name="Assign2a">
+                                                <bpws:copy>
+                                                    <bpws:from part="data" variable="inputMsg"/>
+                                                    <bpws:to variable="catchStr"/>
+                                                </bpws:copy>
+                                            </bpws:assign>
+                                            <invoke name="Invoke1" partnerLink="InvokePLT"
+                                                    operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+                                                    inputVariable="scopeMsg"/>
+                                            <bpws:assign name="Assign2b">
+                                                <bpws:copy>
+                                                    <bpws:from variable="catchStr"/>
+                                                    <bpws:to variable="scopeStr"/>
+                                                </bpws:copy>
+                                            </bpws:assign>
+                                        </sequence>
+                                    </scope>
+                                </bpws:catch>
+                                <bpws:catchAll>
+                                    <scope name="ScopeCatchAll">
+                                        <variables>
+                                            <variable name="catchAllStr" type="xsd:string"/>
+                                        </variables>
+                                        <sequence>
+                                            <bpws:assign name="Assign3a">
+                                                <bpws:copy>
+                                                    <bpws:from>'Duck'</bpws:from>
+                                                    <bpws:to variable="catchAllStr"/>
+                                                </bpws:copy>
+                                            </bpws:assign>
+                                            <invoke name="Invoke2" partnerLink="InvokePLT"
+                                                    operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+                                                    inputVariable="scopeMsg"/>
+                                            <bpws:assign name="Assign3b">
+                                                <bpws:copy>
+                                                    <bpws:from>concat($scopeStr, $catchAllStr)</bpws:from>
+                                                    <bpws:to variable="scopeStr"/>
+                                                </bpws:copy>
+                                            </bpws:assign>
+                                        </sequence>
+                                    </scope>
+                                </bpws:catchAll>
+                            </bpws:faultHandlers>
+                            <sequence>
+                                <if name="If1">
+                                    <bpws:condition>  ( $counter = 1 )  </bpws:condition>
+                                    <bpws:throw name="Throw1" faultName="bpws:myFault"/>
+                                    <bpws:elseif>
+                                        <bpws:condition> ( $counter = 2 ) </bpws:condition>
+                                        <bpws:throw name="Throw2" faultName="bpws:myOtherFault"/>
+                                    </bpws:elseif>
+                                    <bpws:else>
+                                        <bpws:assign name="Assign4">
+                                            <bpws:copy>
+                                                <bpws:from>concat($scopeStr,'Goose')</bpws:from>
+                                                <bpws:to part="data" variable="outputMsg"/>
+                                            </bpws:copy>
+                                        </bpws:assign>
+                                    </bpws:else>
+                                </if>
+                            </sequence>
+                        </scope>
+                    </sequence>
+				</while>
+			</sequence>
+		</scope>
+      	<invoke name="InvokeEnd" partnerLink="InvokePLT"
+              	operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+              	inputVariable="outputMsg"/>
+   </sequence>
+</process>

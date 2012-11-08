@@ -1,0 +1,1 @@
+create table "COMPANY"."ab12AB@$" (ename varchar(10))

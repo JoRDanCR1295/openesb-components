@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RecReplyInv_InvPatternReq"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RecReplyInv_InvPatternReq"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RecReplyInv_InvPatternReq" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/RecReplyInv_InvPatternReq_Driver" 
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/RecReplyInv_InvPatternReq" 
+    xmlns:ns3="http://j2ee.netbeans.org/wsdl/RecReplyInv_InvPatternReq_PTypes" 
+    xmlns:ns4="http://xml.netbeans.org/schema/DataTypes" 
+    xmlns:ns5="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/RecReplyInv_InvPatternReq_PTypes" location="RecReplyInv_InvPatternReq_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns3:RecReplyInv_InvPatternReq_PTypesPartner2" partnerRole="RecReplyInv_InvPatternReq_PTypesPortType2Role"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns3:RecReplyInv_InvPatternReq_PTypesPartner1" partnerRole="RecReplyInv_InvPatternReq_PTypesPortType1Role"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns3:RecReplyInv_InvPatternReq_PTypesPartner" myRole="RecReplyInv_InvPatternReq_PTypesPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="RecReplyInv_InvPatternReq_PTypesOperationIn" messageType="ns5:message1"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet3" properties="ns5:property3"/>
+        <bpws:correlationSet name="CorrelationSet2" properties="ns5:property2"/>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns5:property1"/>
+    </correlationSets>
+    <sequence name="Sequence1">
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="RecReplyInv_InvPatternReq_PTypesOperation" portType="ns3:RecReplyInv_InvPatternReq_PTypesPortType" variable="RecReplyInv_InvPatternReq_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Initialized Id2</bpws:literal>
+                </bpws:from>
+                <bpws:to>$RecReplyInv_InvPatternReq_PTypesOperationIn.part1/Id2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="RecReplyInv_InvPatternReq_PTypesOperation" portType="ns3:RecReplyInv_InvPatternReq_PTypesPortType" variable="RecReplyInv_InvPatternReq_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet2" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:reply>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Initialized Id3</bpws:literal>
+                </bpws:from>
+                <bpws:to>$RecReplyInv_InvPatternReq_PTypesOperationIn.part1/Id3</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="RecReplyInv_InvPatternReq_PTypesOperation" portType="ns3:RecReplyInv_InvPatternReq_PTypesPortType1" inputVariable="RecReplyInv_InvPatternReq_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet3" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:invoke name="Invoke2" partnerLink="PartnerLink3" operation="RecReplyInv_InvPatternReq_PTypesOperation" portType="ns3:RecReplyInv_InvPatternReq_PTypesPortType2" inputVariable="RecReplyInv_InvPatternReq_PTypesOperationIn" outputVariable="RecReplyInv_InvPatternReq_PTypesOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" pattern="request"/>
+                <bpws:correlation set="CorrelationSet2" pattern="request"/>
+                <bpws:correlation set="CorrelationSet3" pattern="request"/>                
+            </bpws:correlations>
+        </bpws:invoke>
+    </sequence>
+</process>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="IfFlow" 
+    targetNamespace="http://www.mycomp.org/DefaultServiceName"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/DefaultServiceName">
+    <import namespace="http://www.mycomp.org/DefaultServiceName" location="IfFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:IfFlowPartnerLinkType" myRole="IfFlowProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="IfFlow_In" messageType="wsdlNS:message1"/>
+        <variable name="IfFlow_Out" messageType="wsdlNS:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="IfFlowOperation" portType="wsdlNS:IfFlowPortType" variable="IfFlow_In" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from variable="IfFlow_In" part="ifflowbranch1"/><to variable="IfFlow_Out" part="ifflowbranch1"/>
+            </copy>
+            <copy>
+            <from variable="IfFlow_In" part="ifflowbranch2"/><to variable="IfFlow_Out" part="ifflowbranch2"/>
+            </copy>
+            <copy>
+            <from variable="IfFlow_In" part="elseifflowbranch1"/><to variable="IfFlow_Out" part="elseifflowbranch1"/>
+            </copy>
+            <copy>
+            <from variable="IfFlow_In" part="elseifflowbranch2"/><to variable="IfFlow_Out" part="elseifflowbranch2"/>
+            </copy>
+            <copy>
+            <from variable="IfFlow_In" part="elseflowbranch1"/><to variable="IfFlow_Out" part="elseflowbranch1"/>
+            </copy>
+            <copy>
+            <from variable="IfFlow_In" part="elseflowbranch2"/><to variable="IfFlow_Out" part="elseflowbranch2"/>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition> ( 'if' = $IfFlow_In.ifflowbranch1 ) </condition>
+            <flow name="Flow1">
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat('IfFlowBranch1:', $IfFlow_In.ifflowbranch1)</from><to part="ifflowbranch1" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+                <assign name="Assign3">
+                    <copy>
+                    <from>concat('IfFlowBranch2:', $IfFlow_In.ifflowbranch2)</from><to part="ifflowbranch2" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+            </flow>
+            <elseif>
+                <condition> ( 'elseif' = $IfFlow_In.elseifflowbranch1 ) </condition>
+                <flow name="Flow2">
+                    <assign name="Assign4">
+                    <copy>
+                    <from>concat('ElseIfFlowBranch1:', $IfFlow_In.elseifflowbranch1)</from><to part="elseifflowbranch1" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+                <assign name="Assign5">
+                    <copy>
+                    <from>concat('ElseIfFlowBranch2:', $IfFlow_In.elseifflowbranch2)</from><to part="elseifflowbranch2" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+                </flow>
+            </elseif>
+            <else>
+                <flow name="Flow3">
+                <assign name="Assign6">
+                    <copy>
+                    <from>concat('ElseFlowBranch1:', $IfFlow_In.elseflowbranch1)</from><to part="elseflowbranch1" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+                <assign name="Assign7">
+                    <copy>
+                    <from>concat('ElseeFlowBranch2:', $IfFlow_In.elseflowbranch2)</from><to part="elseflowbranch2" variable="IfFlow_Out"/>
+                    </copy>
+                </assign>
+                </flow>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="IfFlowOperation" portType="wsdlNS:IfFlowPortType" variable="IfFlow_Out"/>
+    </sequence>
+   
+</process>

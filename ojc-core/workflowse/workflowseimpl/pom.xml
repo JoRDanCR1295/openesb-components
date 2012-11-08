@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>worklistmanagerseimpl</artifactId>
+    <name>worklistmanagerseimpl</name>
+    <version>${workflowse.artifact.version}</version>
+    <description>worklistmanagerseimpl description</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${artifactId}-extract-globalized-messages</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <taskdef name="i18n" classname="${I18NTASK_CLASS}" classpath="${I18NTASK_JAR}" />
+                                <i18n dir="${project.build.outputDirectory}"
+                                    file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                    prefix=""
+                                    pattern="(WLM-[4-7]\d\d\d)(: )(.*)" />
+                                <!-- copy file to classes dir: -->
+                                <copy file="${project.build.sourceDirectory}/${msgs.package}/msgs.properties"
+                                     todir="${project.build.outputDirectory}/${msgs.package}" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>${project.artifactId}-run-junit-and-derby-via-ant</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <property name="derbylibs" value="${JV_GFBASE}/javadb/lib"></property>
+                                <property name="derbydb" value="${project.build.directory}/javadb"></property>
+
+                                <patternset id="jbicomps.junit.test.patternset">
+                                    <include name="**/*Test.java"></include>
+				    <!-- <include name="**/StaticOperationFactoryTest.java"></include>-->
+                                </patternset>
+
+                                <!-- invoke derby and junit via ant -->
+
+                                <ant antfile="${SRCROOT}/global-common/m2.ant" dir="${project.build.sourceDirectory}/.." target="run_junit_and_derby">
+                                    <property name="maven.test.skip" value="${maven.test.skip}"></property>
+                                    <property name="maven.repo.local" value="${maven.repo.local}"></property>
+                                    <property name="project.artifactId" value="${project.artifactId}"></property>
+                                    <property name="project.build.directory" value="${project.build.directory}"></property>
+                                    <property name="project.build.testSourceDirectory" value="${project.build.testSourceDirectory}"></property>
+                                    <property name="derbylibs" value="${derbylibs}"></property>
+                                    <property name="derbydb" value="${derbydb}"></property>
+
+                                    <!-- no junit system properties are needed: -->
+                                    <propertyset id="jbicomps.junit.sysproperties"></propertyset>
+
+                                    <reference refid="maven.test.classpath"></reference>
+                                    <reference refid="jbicomps.junit.sysproperties"></reference>
+                                    <reference refid="jbicomps.junit.test.patternset"></reference>
+                                </ant>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>crl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>component-toolkit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+        </dependency>
+	<!--
+        Begin: Hibernate + Lucene
+	-->
+	<dependency>
+	   <groupId>org.hibernate</groupId>
+	   <artifactId>hibernate-core</artifactId>
+	   <version>3.3.2.GA</version>
+	</dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+	    <version>1.6.0-beta5</version>
+        </dependency>
+	<dependency>
+	  <groupId>org.hibernate</groupId>
+	  <artifactId>hibernate-commons-annotations</artifactId>
+	  <version>3.1.0.GA</version>
+	</dependency>
+	 <dependency>
+	  <groupId>org.hibernate</groupId>
+	  <artifactId>hibernate-search</artifactId>
+	  <version>3.2.0.Final</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.commons</groupId>
+	  <artifactId>commons-io</artifactId>
+	  <version>1.3.2</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.apache.solr</groupId>
+	  <artifactId>solr-common</artifactId>
+	  <version>1.3.0</version>
+	</dependency>
+
+	<dependency>
+	  <groupId>org.apache.solr</groupId>
+	  <artifactId>solr-core</artifactId>
+	  <version>1.3.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.lucene</groupId>
+	  <artifactId>lucene-core</artifactId>
+	  <version>2.4.1</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>1.5.8</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-api</artifactId>
+	  <version>1.5.8</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-simple</artifactId>
+	  <version>1.5.8</version>
+	</dependency> 
+        <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>javassist</artifactId>
+            <optional>true</optional>
+        </dependency>
+	<!--
+        End: Hibernate + Lucene
+	-->
+       
+	<dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>workflowmodel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+
+
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>xpathmodel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>jxpath</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>saxon</artifactId>
+            <optional>true</optional>
+	    <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+            <optional>true</optional>
+	    <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-s9api</artifactId>
+            <optional>true</optional>
+	    <scope>test</scope>
+        </dependency>
+        <!-- TEST DEPENDENCIES-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <properties>
+        <msgs.package>com/sun/jbi/engine/workflow/util</msgs.package>
+    </properties>
+</project>

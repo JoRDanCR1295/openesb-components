@@ -1,0 +1,1 @@
+This bpel has a receive, assign and an invoke

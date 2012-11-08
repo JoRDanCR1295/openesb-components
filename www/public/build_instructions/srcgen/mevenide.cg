@@ -1,0 +1,51 @@
+#to codegen final version in place:
+#  codegen -u -cgroot .. mevenide.cg
+#to codegen for testing:
+#  codegen -u -DDO_SYMLINKS=1 mevenide.cg
+
+%ifndef CG_ROOT CG_ROOT = bld
+
+%pragma preserve_multiline_lnewline 1
+
+%void $CG_INDENT_STRING:clr:space:space:a
+#%echo CG_INDENT_STRING='$CG_INDENT_STRING'
+
+set_anchor_var := << EOF
+#create base and url anchor forms for <anchor_var>
+{
+    CG_ATTRIBUTE_a =	href="#$anchor_var"
+    ${anchor_var}_url =	$anchor_var:valueof:_a
+
+    CG_ATTRIBUTE_h3 =	id="$anchor_var"
+    ${anchor_var}_head =	$anchor_var:valueof:_h3
+
+#%echo var=$anchor_var
+}
+EOF
+
+
+#set the content:
+%include mevenide.defs
+
+body = $body:indent
+
+html = << EOF
+$head:_head:indent
+$body:_body:indent
+EOF
+
+ECHO_TXT = $html:_html:rnewline
+
+echo    /mevenide.html
+
+#check for undefs:
+%shell egrep "{=|:undef" `walkdir -f -l 0 $CG_ROOT`
+
+#if matches found (i.e., grep status is zero)...
+%ifnot $CG_SHELL_STATUS %echo Found undefined varibles - please correct.
+%ifnot $CG_SHELL_STATUS CG_SHELL_STATUS = 1
+
+#create symlinks for testing:
+%ifdef DO_SYMLINKS %echo creating symlinks for testing:
+%ifdef DO_SYMLINKS %shell cd $CG_ROOT; rm -f images ; ln -s ../../images images
+%ifdef DO_SYMLINKS %shell cd $CG_ROOT; rm -f ojcsetup.html ; ln -s ../../ojcsetup.html ojcsetup.html

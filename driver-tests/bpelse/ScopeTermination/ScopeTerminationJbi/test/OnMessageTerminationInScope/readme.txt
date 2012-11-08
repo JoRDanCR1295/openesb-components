@@ -1,0 +1,1 @@
+This test is very similar to ReceiveTerminationInScope except that we use OnMessage instead of the two Receives. See ReceiveTerminationInScope's readme.txt for more details.

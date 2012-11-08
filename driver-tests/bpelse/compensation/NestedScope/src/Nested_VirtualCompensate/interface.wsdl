@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="interface" targetNamespace="http://j2ee.netbeans.org/wsdl/interface"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/interface" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://xml.netbeans.org/schema/NestedScope">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/NestedScope" 
+                    xmlns:tns1="http://xml.netbeans.org/schema/NestedScope">
+            <xsd:complexType name="SimpleType">
+                <xsd:sequence>
+                    <xsd:element name="Scope1Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope2Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope3Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="OutVar" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InputMsg">
+        <part name="InputPart" type="xsd:string"/>
+    </message>
+    <message name="ReplyMsg">
+        <part name="ReplyVar" type="ns0:SimpleType"/>
+    </message>
+    <portType name="InitializePort">
+        <operation name="InitializeOper">
+            <input name="input1" message="tns:InputMsg"/>
+            <output name="output1" message="tns:ReplyMsg"/>
+        </operation>
+    </portType>
+    <binding name="InitializeBinding" type="tns:InitializePort">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="InitializeOper">
+            <input name="input1">
+                <soap:body parts="InputPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="ReplyVar" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="InitializeService">
+        <port name="InitializePort" binding="tns:InitializeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/interface/InitializePort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="initializePLT">
+        <plnk:role name="InitializePortRole" portType="tns:InitializePort"/>
+    </plnk:partnerLinkType>
+</definitions>

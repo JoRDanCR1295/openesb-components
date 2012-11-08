@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BpelService"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TwoWay/BpelService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TwoWay/BpelService" xmlns:ns1="http://j2ee.netbeans.org/wsdl/TwoWay">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TwoWay" location="TwoWay.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="bpelService" partnerLinkType="ns1:TwoWayPLT" myRole="TwoWayPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TwoWaySrvOut" messageType="ns1:TwoWayMsg"/>
+        <variable name="TwoWaySrvIn" messageType="ns1:TwoWayMsg"/>
+    </variables>
+    <sequence>
+        <receive name="SrvRec" createInstance="yes" partnerLink="bpelService" operation="TwoWayOper" portType="ns1:TwoWayPT" variable="TwoWaySrvIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$TwoWaySrvIn.TwoWayPart/id</from>
+                <to>$TwoWaySrvOut.TwoWayPart/id</to>
+            </copy>
+            <copy>
+                <from>concat($TwoWaySrvIn.TwoWayPart/msg, ' Added in BPEL: ')</from>
+                <to>$TwoWaySrvOut.TwoWayPart/msg</to>
+            </copy>
+        </assign>
+        <reply name="SrvRep" partnerLink="bpelService" operation="TwoWayOper" portType="ns1:TwoWayPT" variable="TwoWaySrvOut"/>
+    </sequence>
+</process>

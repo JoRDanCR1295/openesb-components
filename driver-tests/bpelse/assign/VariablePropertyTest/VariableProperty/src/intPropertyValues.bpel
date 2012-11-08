@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="intPropertyValues"
+    targetNamespace="http://enterprise.netbeans.org/bpel/conditionProj/intPropertyValues"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/conditionProj/intPropertyValues" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/conditions"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/schema/conditionsSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/conditions" 
+    location="conditions.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="intPropValTestPL" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        partnerLinkType="tns:intPropValPLT" myRole="intPropValPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="XsdTypeIntElemVar" type="ns3:xsdIntType"/>
+        <variable name="MessageXsdTypeVar" messageType="ns0:XsdTypeMessage"/>
+        <variable name="IntegerVar" type="xsd:int"/>
+        <variable name="IntPropValOperationOut" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+        <variable name="IntPropValOperationIn" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:intProp"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" 
+        partnerLink="intPropValTestPL" operation="intPropValOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="tns:intPropValPT" variable="IntPropValOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="assignvalues">
+            <copy>
+                <from>101</from>
+                <to variable="MessageXsdTypeVar" part="intPart"/>
+            </copy>
+            <copy>
+                <from>101</from>
+                <to variable="IntegerVar"/>
+            </copy>
+            <copy>
+                <from>404</from>
+                <to>$XsdTypeIntElemVar/xsdIntElem</to>
+            </copy>
+        </assign>
+        <assign name="Assign1">
+            <copy>
+                <from>$IntPropValOperationIn.mesgPart/strElem</from>
+                <to>$IntPropValOperationOut.mesgPart/strElem</to>
+            </copy>
+            <copy>
+                <from>$IntPropValOperationIn.mesgPart/boolElem</from>
+                <to>$IntPropValOperationOut.mesgPart/boolElem</to>
+            </copy>
+            <copy>
+                <from>ns2:getVariableProperty('IntPropValOperationIn','ns0:intProp') + ns2:getVariableProperty('MessageXsdTypeVar','ns0:intProp') + ns2:getVariableProperty('IntegerVar','ns0:intProp') + ns2:getVariableProperty('IntegerVar','ns0:intProp') + ns2:getVariableProperty('XsdTypeIntElemVar','ns0:xsdIntBasedProp')</from>
+                <!--from>202 + ns2:getVariableProperty('IntegerVar', 'ns0:intProp')</from-->
+                <to>$IntPropValOperationOut.mesgPart/intElem</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="intPropValTestPL" 
+        operation="intPropValOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="tns:intPropValPT" variable="IntPropValOperationOut"/>
+    </sequence>
+</process>

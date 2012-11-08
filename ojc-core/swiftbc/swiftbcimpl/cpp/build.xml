@@ -1,0 +1,352 @@
+<!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- ::::::::::::::::::::  SAG JNI LIB ANT BUILD  :::::::::::::::::::: -->
+<!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+<project name="saglib" default="dist" basedir="." xmlns:cpptasks="antlib:org.sf.net.antcontrib.cpptasks" >
+
+<!-- ::::::::::::::::::::::::: TASKDEF ::::::::::::::::::::::::: -->
+<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+
+   <taskdef name="cc"       classname="net.sf.antcontrib.cpptasks.CCTask" />
+   <taskdef name="if"       classname="net.sf.antcontrib.logic.IfTask" />
+   <typedef name="linker"   classname="net.sf.antcontrib.cpptasks.LinkerDef" />
+   <typedef name="compiler" classname="net.sf.antcontrib.cpptasks.CompilerDef" />
+
+<!-- :::::::::::::::::::::::: GLOBAL PROPERTIES ::::::::::::::::::::::: -->
+    <!-- Set up access to the environment settings -->
+    <property environment="env"/>
+    <property name="build.dir" value="c:\build"/>
+    <property file="${env.STC_ROOT}/stc.properties"/>
+    <property file="../../../build.properties"/>
+
+<!-- ::::::::::::::::::::::: COMPILER & LINKER DEFINITION :::::::::::::::::::::: -->
+   <compiler id="base-ForteCompiler" name="CC">
+      <defineset define="USE_PTHREADS, __svr4__,_REENTRANT,_THREAD_SAFE,__UNIX__" />
+      <compilerarg value='-KPIC' />
+      <compilerarg value='-xildoff' />
+      <compilerarg value='-xtarget=generic64' if="SunOS64" />
+      <compilerarg value='-xs' />
+      <compilerarg value='-dalign' />
+      <compilerarg value='-norunpath' />
+      <compilerarg value="-I/opt/SUNWspro/prod/include/CC" if="SunOS64" />
+      <compilerarg value="-I/opt/SUNWspro6.0/include" if="SunOS32" />
+      <compilerarg value='-compat=4' if="SunOS32" />
+      <compilerarg value='-features=namespace,bool,except,mutable,except,rtti' />
+      <sysincludepath location="${stc.dist.dir}/src/ms/thirdparty/STLport-4.0/stlport" if="SunOS32" />
+   </compiler>
+
+   <linker id="base-ForteLinker" name="CC">
+      <linkerarg value='-DUSE_PTHREADS' />
+      <linkerarg value='-D__svr4__' />
+      <linkerarg value='-G' />
+      <linkerarg value='-xtarget=generic64' if="SunOS64" />
+      <linkerarg value='-mt' />
+      <linkerarg value='-KPIC' />
+      <linkerarg value='-xildoff' />
+      <linkerarg value='-xs' />
+      <linkerarg value='-dalign' />
+      <linkerarg value='-norunpath' />
+      <linkerarg value="-L/opt/SUNWspro/lib" if="SunOS64" />
+      <linkerarg value="-L/opt/SUNWspro6.0/lib" if="SunOS32" />
+      <linkerarg value='-compat=4' if="SunOS32" />
+      <linkerarg value='-features=namespace,bool,except,mutable,except,rtti' />
+   </linker>
+
+   <compiler id="base-HPUXCompiler" name="aCC">
+      <defineset define="_REENTRANT,_RWSTD_MULTI_THREAD,hpux,hpux1100,USE_PTHREADS,_POSIX_C_SOURCE=199506L,_HPUX_SOURCE,_LARGEFILE64_SOURCE,__UNIX__" />
+      <compilerarg value='-ext' />
+      <compilerarg value='+DA2.0N' if="on-HPUXRISC" />
+      <compilerarg value='+u4' />
+      <compilerarg value='+p' />
+      <compilerarg value='+DSitanium' if="on-HPUXI64" />
+      <compilerarg value='-I/opt/aCC/include_std' if="on-HPUXI64" />
+      <compilerarg value='-I/opt/aCC/include' />
+      <compilerarg value='+DD64' if="on-HPUX64" />
+      <compilerarg value='+DD64' if="on-HPUXI64" />
+      <compilerarg value='-AA' if="on-HPUXI64" />
+   </compiler>
+
+   <linker id="base-HPUXLinker" name="aCC">
+<!--linkerarg value='+Z' / -->
+      <linkerarg value='-Wl,+b' />
+      <linkerarg value='.' />
+<!-- path list for runtime -->
+      <linkerarg value='-ext' />
+      <linkerarg value='-N' if="onHPUXRISC" />
+      <linkerarg value='-Wl,+s' />
+      <linkerarg value='-b' />
+      <linkerarg value='-n' />
+       <linkerarg value='+DD64' if="on-HPUX64" />
+      <linkerarg value='+DD64' if="on-HPUXI64" />
+      <linkerarg value='-L/usr/lib' if="on-HPUXI64" />
+
+   </linker>
+
+   <compiler id="base-Tru64Compiler" name="aCC">
+      <defineset define="_POSIX_THREADS,_OSF_SOURCE,_BSD,HAVE_ALLOC_H,__USE_STD_IOSTREAM" />
+      <compilerarg value='-assume noaligned_objects' />
+      <compilerarg value='-pthread' />
+      <compilerarg value='-shared' />
+      <compilerarg value='-I/usr/include' />
+      <compilerarg value='-I/usr/include/cxx' />
+   </compiler>
+
+   <linker id="base-Tru64Linker" name="aCC">
+      <linkerarg value='-shared -nocxxstd' />
+      <linkerarg value='-pthread -lcxx' />
+     <linkerarg value='-msym' />
+<!-- path list for runtime -->
+      <linkerarg value='-lmach -lexc -lc -lmld -lst' />
+      <linkerarg value='-lm' />
+      <linkerarg value='-lrt' />
+
+   </linker>
+
+   <compiler id="base-AIXCompiler" name="xlC">
+      <defineset define="_REENTRANT, _THREAD_SAFE, RWSTD_MULTI_THREAD, __AIX__,__UNIX__" />
+      <compilerarg value='-+' />
+      <compilerarg value='-qmaxmem=8192' />
+      <compilerarg value='-qcpluscmt' />
+      <compilerarg value='-qarch=com' />
+      <compilerarg value='-qenum=4' />
+      <compilerarg value='-qldbl128' />
+      <compilerarg value='-qlonglong' />
+      <compilerarg value='-qrtti' />
+      <compilerarg value='-qmkshrobj' />
+     <compilerarg value= '-O' if="UseOptFlag" />      
+   </compiler>
+
+   <linker id="base-AIXLinker" name="xlC">
+      <linkerarg value='-brtl' />
+      <linkerarg value='-bh:5' />
+   </linker>
+
+   <linker id="sharedLib-AIXLinker" extends="base-AIXLinker">
+      <linkerarg value='-G' />   
+      <linkerarg value='-berok' />
+   </linker>
+
+   <compiler id="base-LinuxCompiler" name="g++">
+      <defineset define="_REENTRANT, _THREAD_SAFE, _LARGEFILE64_SOURCE, __UNIX__" />
+      <compilerarg value='-fexceptions' />
+   </compiler>
+
+   <linker id="base-LinuxLinker" name="g++">
+      <linkerarg value='-ldl' />
+   </linker>
+
+   <compiler id="base-MSVCCompiler" name="msvc">
+      <defineset define="WIN32,_WINDOWS,_MBCS,_USRDLL" />
+      <compilerarg value='/W3' />
+      <compilerarg value='/GR' />
+      <compilerarg value='/GX' />
+      <compilerarg value='/FD' />
+      <compilerarg value='/YX' />
+      <compilerarg value='/Zi' if="UsePDB" />
+      <compilerarg value='/O2' if="UseOptFlag" />
+      <!-- compilerarg value='${WINDebugFalg}' /-->
+   </compiler>
+
+   <linker id="base-MSVCLinker" name="msvc">
+      <libset libs="kernel32, user32, gdi32, winspool, comdlg32, advapi32, shell32, ole32, oleaut32, uuid, odbc32, odbccp32, ws2_32" />
+      <linkerarg value='/DLL /MD' />
+   </linker>
+
+
+<!-- ::::::::::::::::::::::::: PUBLIC TARGETS ::::::::::::::::::::::::: -->
+<!--  ************** TARGET INIT ******************** -->
+   <target name="init" depends="properties,prop-set">
+      <mkdir dir="${build.dir}/obj" />
+      <mkdir dir="${build.dir}/lib" />
+   </target>
+
+<!--  ************** TARGET CLEAN ******************** -->
+   <target name="clean" depends="properties">
+      <delete quiet="true" dir="${build.dir}" />
+   </target>
+
+<!--  ************** TARGET DEV ******************** -->
+   <target name="dev" depends="dist" />
+
+<!--  ************** TARGET PACKAGE ******************** -->
+   <target name="package" depends="install" />
+
+<!--  ************** TARGET INSTALL ******************** -->
+   <target name="install" depends="dist" />
+
+<!--  ************** TARGET DIST ******************** -->
+   <target name="dist" depends="compile" />
+
+<!--  ************** TARGET COMPILE ******************** -->
+   <target name="compile" depends="build-lib,init" />
+
+<!--  ************** TARGET BUILD-LIB ******************** -->
+   <target name="build-lib" depends="saglib" />
+
+<!--  ************** TARGET BUILD-LIB-CLEAN ******************** -->
+   <target name="build-lib-clean" depends="saglib-clean" />
+
+
+<!--  ************** TARGET PROPERTIES ******************** -->
+   <target name="prop-set">
+
+      <!-- Set platform property -->
+      <condition property="on-windows">
+         <os family="windows" />
+      </condition>
+
+      <condition property="on-unix">
+         <os family="unix" />
+      </condition>
+
+      <condition property="on-SunOS">
+         <os name="SunOS" />
+      </condition>
+
+      <condition property="on-HPUX">
+         <os name="HP-UX" />
+      </condition>
+
+      <condition property="on-AIX">
+         <os name="AIX" />
+      </condition>
+
+      <condition property="on-Linux">
+         <os name="Linux" />
+      </condition>
+
+      <if>
+         <os family="unix" />
+         <then>
+            <property name="targetOS" value="unix" />
+         </then>
+         <else>
+            <property name="targetOS" value="windows" />
+         </else>
+      </if>
+
+      <!-- Platform specific includes -->
+      <condition property="stc.dist.dir.jvm.include" value="${env.JAVA_HOME}\include\Win32">
+         <os family="windows" />
+      </condition>
+
+      <condition property="stc.dist.dir.jvm.include" value="${env.JAVA_HOME}/include/solaris">
+         <os name="SunOS" />
+      </condition>
+
+      <condition property="stc.dist.dir.jvm.include" value="${env.JAVA_HOME}/include/hp-ux">
+         <os name="HP-UX" />
+      </condition>
+
+      <condition property="stc.dist.dir.jvm.include" value="${env.JAVA_HOME}/include/">
+         <os name="AIX" />
+      </condition>
+
+      <condition property="stc.dist.dir.jvm.include" value="${env.JAVA_HOME}/include/linux">
+         <os name="Linux" />
+      </condition>
+
+      <path id="stc-dist-dir-java-include" location="${env.JAVA_HOME}/include" />
+      <pathconvert targetos="${targetOS}" property="stc.dist.dir.java.include" refid="stc-dist-dir-java-include" />
+    </target>
+
+    <target name="properties">
+
+        <!--fail unless="env.STC_ROOT">
+            The env.STC_ROOT property was not set.
+            Example: -Denv.STC_ROOT=C:\hawaii
+        </fail-->
+
+        <property name="name" value="sagadapter" />
+        <property name="src.dir" value="stcsagjni" />
+        <property name="build.dir" value="${connectors.build.basedir}/sagadapter" />
+    </target>
+
+<!--  ************** TARGET SAGLIB JNI LIBRARY ******************** -->
+   <target name="saglib" depends="init">
+      <cc debug="true" outfile="${build.dir}/lib/stcsagjni" objdir="${build.dir}/obj" 
+          link="shared" multithreaded="true" exceptions="true" >
+
+         <fileset dir="stcsagjni" includes="*.cpp" />
+	 <fileset dir="thirdparty/fake/src" includes="*.cpp" />
+         <includepath location="thirdparty/fake/include"/>
+         <includepath location="include" />
+         <includepath location="${stc.dist.dir.java.include}" />
+         <includepath location="${stc.dist.dir.jvm.include}" />
+<!--
+         <includepath location="../../../thirdpartylib/SwiftAlliance/RA/include" />
+-->
+<!--
+         <libset dir="../../../thirdpartylib/SwiftAlliance/RA/dlib" 
+                 libs="sagapp_20" />
+         <libset dir="../../../thirdpartylib/SwiftAlliance/RA/dlib" 
+                 libs="swstring_20" />
+-->
+         <compiler if="on-SunOS" debug="${CCDebug}" extends="base-ForteCompiler" />
+         <linker if="on-SunOS" debug="${CCDebug}" extends="base-ForteLinker" />
+
+         <compiler if="on-HPUX" debug="${CCDebug}" extends="base-HPUXCompiler" />
+         <linker if="on-HPUX" debug="${CCDebug}" extends="base-HPUXLinker" />
+
+         <compiler if="on-AIX" debug="${CCDebug}" extends="base-AIXCompiler" />
+         <linker if="on-AIX" debug="${CCDebug}" extends="sharedLib-AIXLinker" />
+
+         <compiler if="on-Linux" debug="${CCDebug}" extends="base-LinuxCompiler" />
+         <linker if="on-Linux" debug="${CCDebug}" extends="base-LinuxLinker" />
+
+         <compiler if="on-windows" debug="${CCDebug}" extends="base-MSVCCompiler">
+            <defineset define="WIN32,_WINDOWS,_MBCS,_USRDLL,STCSAGJNI_EXPORTS" />
+	    <compilerarg value='/Fdstcsagjni.pdb' if="UsePDB" />
+         </compiler>
+
+<!--
+         <compiler if="on-windows" debug="${CCDebug}" extends="base-MSVCCompiler">
+            <defineset define="MSCLIENT_EXPORTS,MSGSRVC_API=__declspec(dllexport)" />
+	    <compilerarg value='/Fd${msclient.name}.pdb' if="UsePDB" />
+         </compiler>
+-->
+<!-- __declspec(dllexport) 
+            <libset dir="${stc.thirdpartylib.dir}/SwiftAlliance/RA/dlib" 
+                 libs="libsagapp_20, libswstring_20" />
+         <linker if="on-windows" debug="${CCDebug}" extends="base-MSVCLinker">
+            <syslibset libs="kernel32, user32, gdi32, winspool, comdlg32, advapi32, shell32, ole32, oleaut32, uuid, odbc32, odbccp32, ws2_32" />
+         </linker>
+-->
+
+         <linker if="on-windows" debug="${CCDebug}" extends="base-MSVCLinker">
+            <libset libs="kernel32, user32, gdi32, winspool, comdlg32, advapi32, shell32, ole32, oleaut32, uuid, odbc32, odbccp32, ws2_32" />
+<!--
+            <libset dir="../../../thirdpartylib/SwiftAlliance/RA/dlib" 
+                    libs="sagapp_20, swstring_20, sagcontrol_50" />
+-->
+            <linkerarg value='/base:0x07000000' />
+         </linker>
+
+      </cc>
+
+<!-- copy program database file to ${build.dir}/lib
+      <if>
+       <os family="windows" />
+       <then>
+         <copy todir="${build.dir}/lib">
+           <fileset dir="${objdir}">
+	   	<include name="${name}.pdb" />
+	   </fileset>
+         </copy>
+         <echo message="copy ${name}.pdb from ${objdir} to ${build.dir}/lib" />
+       </then>
+      </if>
+-->
+   </target>
+
+<!--  ************** TARGET LIB CLEAN ******************** -->
+   <target name="saglib-clean">
+      <echo>Cleaning up ${build.dir}/obj</echo>
+      <delete dir="${build.dir}/obj" />
+      <echo>Cleaning up ${build.dir}/lib</echo>
+      <delete dir="${build.dir}/lib" />
+   </target>
+
+</project>
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="FeederBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FeederBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FeederBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InOnlyBCtoBP" xmlns:ns2="http://j2ee.netbeans.org/wsdl/BPToJava">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InOnlyBCtoBP" location="InOnlyBCtoBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/BPToJava" location="BPToJava.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="SubBPToFeederBPPartnerLink" partnerLinkType="ns2:BPToMainBPPartnerLinkType" myRole="BPToMainBPPTRole"/>
+        <bpws:partnerLink name="FeederBPToJavaEEPartnerLink" partnerLinkType="ns2:BPToJavaEEPartnerLinkType" partnerRole="BPToJavaEEPTRole"/>
+        <bpws:partnerLink name="BCToBPPartnerLink" partnerLinkType="ns1:BCtoBPPartnerLinkType" myRole="BCBpelPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="BPToMainBPPTIn" messageType="ns2:Message"/>
+        <bpws:variable name="BPToJavaEEOperIn" messageType="ns2:Message"/>
+        <bpws:variable name="BCBpelOperOut" messageType="ns1:OutboundMsg"/>
+        <bpws:variable name="BCBpelOperIn" messageType="ns1:InboundMsg"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns2:bpjavaprop"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="ReceiveFromBC" createInstance="yes" partnerLink="BCToBPPartnerLink" operation="BCBpelOper" portType="ns1:BCBpelPT" variable="BCBpelOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>1999</bpws:from>
+                <bpws:to>$BPToJavaEEOperIn.Msg/intElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($BCBpelOperIn.InMsg, ' Received in the FeederBP:')</bpws:from>
+                <bpws:to>$BPToJavaEEOperIn.Msg/strElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InvokeToJavaWS" partnerLink="FeederBPToJavaEEPartnerLink" operation="BPToJavaEEOper" portType="ns2:BPToJavaEEPT" inputVariable="BPToJavaEEOperIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:receive name="ReceiveFromSubBP" createInstance="no" partnerLink="SubBPToFeederBPPartnerLink" operation="BPToMainBPPT" portType="ns2:BPToMainBPPT" variable="BPToMainBPPTIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($BPToMainBPPTIn.Msg/strElem, ' Return Msg to BC:')</bpws:from>
+                <bpws:to part="OutMsg" variable="BCBpelOperOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="ReplyToBC" partnerLink="BCToBPPartnerLink" operation="BCBpelOper" portType="ns1:BCBpelPT" variable="BCBpelOperOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,153 @@
+<process name="xsddatatype_specexample1"
+    targetNamespace="http://sun.com/bpel/xsddatatype_specexample1Wsdl"
+    xmlns:tns="http://sun.com/bpel/xsddatatype_specexample1Wsdl"
+    xmlns:ns1="http://localhost/person"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+
+    <import namespace="http://sun.com/bpel/xsddatatype_specexample1.wsdl" location="xsddatatype_specexample1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://localhost/person" location="person.xsd"  importType="http://www.w3.org/2001/XMLSchema"></import>
+            
+    <partnerLinks>
+        <partnerLink name="OperationLink" partnerLinkType="tns:xsddatatype_specexample1PLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MessageType_PersonInput" messageType="tns:message"/>
+        <variable name="MessageType_PersonOutput" messageType="tns:message"/>
+        <variable name="XSDVariable_Person1" element="ns1:person"/>
+        <variable name="XSDVariable_Person2" element="ns1:person"/>     
+        <variable name="XSDVariable_USAddress_CType" type="ns1:USAddress"/>            
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="OperationLink" operation="operation1" portType="tns:xsddatatype_specexample1PortType" variable="MessageType_PersonInput" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+                <from>'TestResult'</from>
+                <to>$XSDVariable_Person1/testType</to>
+            </copy>
+            <copy>
+                <from>'Feb'</from>
+                <to>$XSDVariable_Person1/birthdate/month</to>
+            </copy>
+            <copy>
+                <from>28</from>
+                <to>$XSDVariable_Person1/birthdate/day</to>
+            </copy>
+            <copy>
+                <from>1950</from>
+                <to>$XSDVariable_Person1/birthdate/year</to>
+            </copy>
+            <copy>
+                <from>'800 Royal Oaks Drive'</from>
+                <to>$XSDVariable_Person1/home/street</to>
+            </copy>
+            <copy>
+                <from>'Sun Micro'</from>
+                <to>$XSDVariable_Person1/home/name</to>
+            </copy>
+            <copy>
+                <from>'Monrovia'</from>
+                <to>$XSDVariable_Person1/home/city</to>
+            </copy>
+            <copy>
+                <from>'CA'</from>
+                <to>$XSDVariable_Person1/home/state</to>
+            </copy>
+            <copy>
+                <from>'91016'</from>
+                <to>$XSDVariable_Person1/home/zip</to>
+            </copy>
+            <copy>
+                <from>'SUN'</from>
+                <to>$XSDVariable_Person1/@name</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>($MessageType_PersonInput.part/testType = 'ElementToElement')</condition>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/home</from>
+                        <to>$XSDVariable_Person2/work</to>
+                    </copy>
+                </assign>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'ElementToText')</condition>
+                <assign name="Assign3">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/birthdate/month</from>
+                        <to>$XSDVariable_Person2/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'ElementToAttribute')</condition>
+                <assign name="Assign4">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/home/name</from>
+                        <to>$XSDVariable_Person2/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'TextToElement')</condition>
+                <assign name="Assign5">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/home/name/text()</from>
+                        <to>$XSDVariable_Person2/home/note</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'TextToText')</condition>
+                <assign name="Assign6">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/home/name/text()</from>
+                        <to>$XSDVariable_Person2/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'TextToAttribute')</condition>
+                <assign name="Assign7">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/home/name/text()</from>
+                        <to>$XSDVariable_Person2/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'AttributeToElement')</condition>
+                <assign name="Assign8">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/@name</from>
+                        <to>$XSDVariable_Person2/home/note</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'AttributeToText')</condition>
+                <assign name="Assign9">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/@name</from>
+                        <to>$XSDVariable_Person2/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition>($MessageType_PersonInput.part/testType = 'AttributeToAttribute')</condition>
+                <assign name="Assign10">
+                    <copy>
+                        <from>$MessageType_PersonInput.part/@name</from>
+                        <to>$XSDVariable_Person2/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+        </if>
+        <assign name="CopyXSDPersonToOutputMessageType">
+            <copy>
+                <from>$XSDVariable_Person2</from>
+                <to>$MessageType_PersonOutput.part</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="OperationLink" operation="operation1" portType="tns:xsddatatype_specexample1PortType" variable="MessageType_PersonOutput"/>
+    </sequence>
+</process>

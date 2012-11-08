@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:defns="iepStockVolumeAlert_iep" 
+xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" 
+xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="iepStockVolumeAlert_iep" 
+xmlns:typens="iepStockVolumeAlert_iep" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="iepStockVolumeAlert_iep">
+    <import namespace="http://schemas.xmlsoap.org/ws/2002/07/service-link/"/>
+    <import namespace="http://schemas.sun.com/jbi/wsdl-extensions/file/"/>
+    <types>
+        <xsd:schema xmlns:file="http://www.stc.com/file/" targetNamespace="iepStockVolumeAlert_iep">
+            <xsd:element name="FileOut_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="SYMB" type="xsd:string"/>
+                        <xsd:element name="AVGVolumeA" type="xsd:double"/>
+                        <xsd:element name="AVGVolumeB" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema> 
+    </types>
+    <message name="FileOut_Msg">
+        <part element="typens:FileOut_MsgObj" name="output"/>
+    </message>
+    <portType name="OutputPt_FileOut">
+        <operation name="FileOut">
+            <input message="tns:FileOut_Msg"/>
+        </operation>
+    </portType>
+    
+  <!--  
+    <binding name="OutputBinding_FileOut" type="tns:OutputPt_FileOut">
+        <file:binding/>
+        <operation name="FileOut">
+            <file:operation/>
+            <input>
+                <file:write fileName="xsltOutPutFile.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true">
+                </file:write>
+            </input>
+        </operation>
+    </binding>
+    
+   --> 
+    <binding name="OutputBinding_FileOut" type="tns:OutputPt_FileOut">
+    <operation name="FileOut">
+        <soap:operation soapAction="FileOut"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    </binding>
+    
+    
+    
+    
+    <service name="OutputService_FileOut">
+    <port binding="tns:OutputBinding_FileOut" name="OutputPort_FileOut">
+        <!--  <soap:address location="YOUR_SERVICE_HERE"/> -->
+        <soap:address location="http://localhost:18181/bpel_1"/>
+    </port>
+</service>
+<!--
+    <service name="OutputService_FileOut">
+        <port binding="tns:OutputBinding_FileOut" name="OutputPort_FileOut">
+            <file:address fileDirectory="@drivertest_dir@/iepse/usecases/iepXSLTBpelFile/jbi/test/iepXSLTBpelFile/"/>
+        </port>
+    </service>
+    -->
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_FileOut">
+        <plnk:role name="OutputRn_FileOut" portType="tns:OutputPt_FileOut"/>
+    </plnk:partnerLinkType>
+</definitions>

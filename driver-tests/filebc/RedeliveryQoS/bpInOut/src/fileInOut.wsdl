@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="fileInOut" targetNamespace="http://j2ee.netbeans.org/wsdl/fileInOut"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/fileInOut" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types/>
+    <message name="fileInOutOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="fileInOutOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="fileInOutPortType">
+        <operation name="fileInOutOperation">
+            <input name="input1" message="tns:fileInOutOperationRequest"/>
+            <output name="output1" message="tns:fileInOutOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="fileInOutBinding" type="tns:fileInOutPortType">
+        <file:binding/>
+        <operation name="fileInOutOperation">
+            <file:operation/>
+            <input name="input1">
+                <file:message use="literal" fileName="Req.xml" pollingInterval="1000"/>
+            </input>
+            <output name="output1">
+                <file:message use="literal" fileName="Res.xml"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="fileInOutService">
+        <port name="fileInOutPort" binding="tns:fileInOutBinding">
+            <file:address fileDirectory="C:\Temp\InOut" lockName="filebc.lck" workArea="filebc_tmp" seqName="filebc.seq"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="fileInOut">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="fileInOutPortTypeRole" portType="tns:fileInOutPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

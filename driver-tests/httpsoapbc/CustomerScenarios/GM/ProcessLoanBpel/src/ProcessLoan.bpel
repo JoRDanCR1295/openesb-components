@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="ProcessLoan_1" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/newProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/newProcess" xmlns:ns1="urn:ProcessLoanWS/wsdl" xmlns:ns2="http://j2ee.netbeans.org/echo_1" xmlns:ns0="http://www.gm.com/csto/v1/process/loan/request" xmlns:ns3="http://www.gm.com/csto/v1/process/loan/response">
+    <import namespace="urn:ProcessLoanWS/wsdl" location="ProcessLoan.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ProcessLoanOut1" messageType="ns1:ProcessLoanResponse"/>
+        <variable name="ProcessLoanIn1" messageType="ns1:ProcessLoanRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="processLoan" portType="ns1:ProcessLoanSEI" variable="ProcessLoanIn1"/>
+        <if name="If1">
+            <condition> ( $ProcessLoanIn1.request/ns0:CustomerData/ns0:CreditScore > 600 ) </condition>
+            <assign name="Assign1">
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:DocumentID</from>
+                <to>$ProcessLoanOut1.response/ns3:DocumentID</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:CustomerID</from>
+                <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:CustomerID</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:RequestID</from>
+                <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:RequestID</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:CreditScore</from>
+                <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:CreditScore</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:Financing/ns0:DownPaymentAmount</from>
+                <to>$ProcessLoanOut1.response/ns3:Decision/ns3:FinanceDetails/ns3:DownPaymentAmount</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:Financing/ns0:Term</from>
+                <to>$ProcessLoanOut1.response/ns3:Decision/ns3:FinanceDetails/ns3:Term</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:Financing/ns0:FinanceType</from>
+                <to>$ProcessLoanOut1.response/ns3:Decision/ns3:FinanceDetails/ns3:FinanceType</to>
+            </copy>
+            <copy>
+                <from>$ProcessLoanIn1.request/ns0:Financing/ns0:AnnualPercentageRate</from>
+                <to>$ProcessLoanOut1.response/ns3:Decision/ns3:FinanceDetails/ns3:APR</to>
+            </copy>
+        </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$ProcessLoanIn1.request/ns0:DocumentID</from>
+                        <to>$ProcessLoanOut1.response/ns3:DocumentID</to>
+                    </copy>
+                    <copy>
+                        <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:CustomerID</from>
+                        <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:CustomerID</to>
+                    </copy>
+                    <copy>
+                        <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:RequestID</from>
+                        <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:RequestID</to>
+                    </copy>
+                    <copy>
+                        <from>$ProcessLoanIn1.request/ns0:CustomerData/ns0:CreditScore</from>
+                        <to>$ProcessLoanOut1.response/ns3:CustomerData/ns3:CreditScore</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>Loan was Rejected based on your credit score</literal>
+                        </from>
+                        <to>$ProcessLoanOut1.response/ns3:Decision/ns3:RejectionDetails/ns3:RejectionText</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="processLoan" portType="ns1:ProcessLoanSEI" variable="ProcessLoanOut1"/>
+    </sequence>
+   
+</process>

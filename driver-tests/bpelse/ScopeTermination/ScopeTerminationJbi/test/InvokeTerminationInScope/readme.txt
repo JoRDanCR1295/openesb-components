@@ -1,0 +1,2 @@
+This test tests the termination of a two way invoke.
+Invoke1 and Invoke2 are sent from a flow in the Driver. The Invoke2 is terminated because there is a fault in the scope. When the Sub-BP sends a reply corresponsing to this invoke, the invoke is not found because it is terminated and an error status is sent to the Sub-BP. This error status generated a system fault in the Sub-BP, which is caught in the catchAll. The catchAll sends a message for Invoke1.

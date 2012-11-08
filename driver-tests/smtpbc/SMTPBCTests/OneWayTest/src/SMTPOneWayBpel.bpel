@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SMTPOneWayBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SMTPOneWayBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SMTPOneWayBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SMTPOneWayTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/SMTPOneWay">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SMTPOneWayTrigger" location="SMTPOneWayTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SMTPOneWay" location="SMTPOneWay.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:SMTPOneWayPartner" partnerRole="SMTPOneWayPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SMTPOneWayTriggerPartner" myRole="SMTPOneWayTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="SMTPOneWayOperationIn" messageType="ns2:SMTPOneWayOperationRequest"/>
+      <bpws:variable name="SMTPOneWayTriggerOperationIn" messageType="ns1:SMTPOneWayTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SMTPOneWayTriggerOperation" portType="ns1:SMTPOneWayTriggerPortType" variable="SMTPOneWayTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="SMTPOneWayTriggerOperationIn" part="part1"/>
+            <bpws:to variable="SMTPOneWayOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="SMTPOneWayOperation" portType="ns2:SMTPOneWayPortType" inputVariable="SMTPOneWayOperationIn"/>
+   </sequence>
+</process>

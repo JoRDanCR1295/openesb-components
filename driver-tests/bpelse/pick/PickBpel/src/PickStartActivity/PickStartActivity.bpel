@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="PickStartActivity" 
+    targetNamespace="http://www.mycomp.org/PickStartActivity"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/PickStartActivity">
+    <import namespace="http://www.mycomp.org/PickStartActivity" location="PickStartActivity.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:PickNotStartActivityPartnerLinkType" myRole="PickNotStartActivityProvider"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Pick_output" messageType="wsdlNS:responseMsg"/>
+        <variable name="Pick_input" messageType="wsdlNS:requestMsg"/>
+    </variables>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink1" operation="PickOperation" portType="wsdlNS:MyPortType" variable="Pick_input">
+               <sequence>
+                <assign name="Assign1">
+                   <copy>
+                   <from>concat('PICK1:', $Pick_input.req)</from><to part="res" variable="Pick_output"/>
+                   </copy>
+                </assign>
+                  <reply name="Reply2" partnerLink="PartnerLink1" operation="PickOperation" portType="wsdlNS:MyPortType" variable="Pick_output"/>
+               </sequence> 
+            </onMessage>
+             <onMessage partnerLink="PartnerLink2" operation="operation1" portType="wsdlNS:portType1" variable="Pick_input">
+               <sequence>
+                 <assign name="Assign2">
+                    <copy>
+                    <from>concat('PICK2:', $Pick_input.req)</from><to part="res" variable="Pick_output"/>
+                    </copy>
+                 </assign>
+                  <reply name="Reply3" partnerLink="PartnerLink2" operation="operation1" portType="wsdlNS:portType1" variable="Pick_output"/>
+               </sequence>
+                </onMessage>
+        </pick>
+    </sequence>
+   
+</process>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://new.webservice.namespace" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:tns="http://www.seebeyond.com/eInsight/MultiOpDiffMsgElemElemTestOperation" name="MultiOpDiffMsgElemElemTestOperation1" sbynpxp:end_XLoc="840.0" sbynpxp:end_YLoc="341.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="50.0" sbynpxp:start_YLoc="120.0" targetNamespace="http://www.seebeyond.com/eInsight/MultiOpDiffMsgElemElemTestOperation">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="multiOpTest.wsdl" namespace="http://new.webservice.namespace"/>
+    
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="MultiOpDiffMsgElemElemIFRole" name="partner" partnerLinkType="ns0:MultiOpIFServiceLink2"/>
+    </bpel_20:partnerLinks>
+    
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns0:message1" name="MyRole_operation1_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:message1Result" name="MyRole_operation1_Input" sbyncreation:type="auto"/>
+    </bpel_20:variables>
+    
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="MyRole.operation1.Receive" operation="operation1" partnerLink="partner" portType="ns0:MultiOpDiffMsgElemElemIF" sbynpxp:XLoc="115.0" sbynpxp:YLoc="110.0" variable="MyRole_operation1_Output"/>
+        <bpel_20:assign name="assign" sbynpxp:XLoc="406.0" sbynpxp:YLoc="149.0">
+            <bpel_20:copy>
+                <bpel_20:from>$MyRole_operation1_Output.body/Field1_1</bpel_20:from>
+                <bpel_20:to>$MyRole_operation1_Input.result/Field1_1</bpel_20:to>
+            </bpel_20:copy>
+            <bpel_20:copy>
+                <bpel_20:from>$MyRole_operation1_Output.body/Field1_2</bpel_20:from>
+                <bpel_20:to>$MyRole_operation1_Input.result/Field1_2</bpel_20:to>
+            </bpel_20:copy>
+            <bpel_20:copy>
+                <bpel_20:from>'Operation 1 was invoked.'</bpel_20:from>
+                <bpel_20:to>$MyRole_operation1_Input.result/Field1_3</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:reply name="MyRole.operation1.Reply" operation="operation1" partnerLink="partner" portType="ns0:MultiOpDiffMsgElemElemIF" sbynpxp:XLoc="581.0" sbynpxp:YLoc="142.0" variable="MyRole_operation1_Input"/>
+    </bpel_20:sequence>
+</bpel_20:process>

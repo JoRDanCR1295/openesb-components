@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>etlse-installer</artifactId>
+    <name>sun-etl-engine</name>
+    <version>${etlse.artifact.version}</version>
+    <description>etl packaging description</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                    <include>*.sql</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>scripts</targetPath>
+                <directory>src/scripts/derby</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.sql</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-rename-jars</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <move
+                                    file  ="${project.build.outputDirectory}/lib/commons-codec.jar"
+                                    tofile="${project.build.outputDirectory}/lib/commons-codec-1.3.jar" />
+                                <move
+                                    file  ="${project.build.outputDirectory}/lib/commons-logging.jar"
+                                    tofile="${project.build.outputDirectory}/lib/commons-logging-1.1.jar" />
+                                <move
+                                    file  ="${project.build.outputDirectory}/lib/commons-primitives.jar"
+                                    tofile="${project.build.outputDirectory}/lib/commons-primitives-1.0.jar" />
+                                <!--move
+                                    file  ="${project.build.outputDirectory}/../../../etlse-monitor/bld/etlse-monitor.war"
+                                    tofile="${project.build.outputDirectory}/../etlse-monitor.war" /-->
+                                    <copy file  ="${project.build.outputDirectory}/../../../etlse-monitor/bld/etlse-monitor.war"
+                                    tofile="${project.build.outputDirectory}/webapp/etlse-monitor.war"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-etl-engine</Bundle-SymbolicName>
+                        <Bundle-Name>Sun ETL SE Component</Bundle-Name>
+                        <Bundle-Description>This is a etl service engine.</Bundle-Description>
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}, Export-Package</_removeheaders>
+                        <Export-Package>
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            lib/etlse.jar,
+                            lib/componentsl.jar,
+                            lib/wsdl4j.jar,
+                            lib/etlengine.jar,
+                            lib/qos.jar,
+                            lib/common-util.jar,
+                            lib/axiondb.jar,
+                            lib/etlmonitor.jar,
+                            lib/commons-codec-1.3.jar,
+                            lib/commons-logging-1.1.jar,
+                            lib/commons-primitives-1.0.jar,
+                            lib/sbme.jar,
+                            lib/crl.jar
+                        </Bundle-ClassPath>
+                        <Import-Package>
+                            !com.sun.rowset.*,
+                            !org.apache.xml.resolver.*,
+                            !org.apache.log4j.*,
+                            !org.apache.log.*,
+                            !javax.servlet.*,
+                            !org.apache.avalon.*,
+                            !xmlbean,
+                            !com.sun.codemodel.*,
+                            *;-nouses:=true
+                        </Import-Package>
+
+                    </instructions>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-primitives</groupId>
+            <artifactId>commons-primitives</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>axiondb</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>etlengine</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>etlmonitor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>etlse</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>sbme</artifactId>
+            <optional>true</optional>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+</project>

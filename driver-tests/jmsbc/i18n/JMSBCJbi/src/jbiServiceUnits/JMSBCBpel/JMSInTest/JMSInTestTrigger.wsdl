@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:slink="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://localhost/JMS/JMSInTestTrigger" xmlns:tns0="http://localhost/JMS/JMSInTestTrigger" xmlns:tns1="http://localhost/JMS/JMSInTestTrigger" xmlns:tns2="http://localhost/JMS/JMSInTestTrigger" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="JMSInTestTrigger" targetNamespace="http://localhost/JMS/JMSInTestTrigger">
+    <types>
+        <xsd:schema xmlns:ns1="http://localhost/JMS/JMSInTestTrigger" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://localhost/JMS/JMSInTestTrigger">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <xsd:element name="helloObj" type="tns1:helloObjType"/>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="nonNegativeInteger" type="xsd:nonNegativeInteger"/>
+                    <xsd:element name="byte" type="xsd:byte"/>
+                    <xsd:element name="short" type="xsd:short"/>
+                    <xsd:element name="int" type="xsd:int"/>
+                    <xsd:element name="long" type="xsd:long"/>
+                    <xsd:element name="negativeInteger" type="xsd:negativeInteger"/>
+                    <xsd:element name="dateTime" type="xsd:dateTime"/>
+                    <xsd:element name="nonPositiveInteger" type="xsd:nonPositiveInteger"/>
+                    <xsd:element name="duration" type="xsd:duration"/>
+                    <xsd:element name="ENTITIES" type="xsd:ENTITIES"/>
+                    <xsd:element name="double" type="xsd:double"/>
+                    <xsd:element name="ENTITY" type="xsd:ENTITY"/>
+                    <xsd:element name="float" type="xsd:float"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="messageFileIn">
+        <part element="tns:helloObj" name="partFileIn"/>
+    </message>
+    <portType name="portTypeFileIn">
+        <operation name="operationFileIn">
+            <input message="tns:messageFileIn" name="input"/>
+        </operation>
+    </portType>
+    <binding name="bindingFileIn" type="tns:portTypeFileIn">
+        <file:binding/>
+        <operation name="operationFileIn">
+            <file:operation/>
+            <input name="input">
+                <file:message fileType="text" use="literal" fileName="Input.xml" pollingInterval="5000"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceFileIn">
+        <port binding="tns:bindingFileIn" name="portFileIn">
+            <file:address fileDirectory="@drivertest_dir@/jmsbc/JMSBCTests/JMSBCJbi/test/JMSInTest_Feed/testruninput"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="FileInSvcLNK">
+        <plnk:role name="FileServer" portType="tns:portTypeFileIn"/>
+    </plnk:partnerLinkType>
+</definitions>

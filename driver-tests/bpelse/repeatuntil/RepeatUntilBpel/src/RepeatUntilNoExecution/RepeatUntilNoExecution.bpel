@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilNoExecution" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilNoExecution"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilNoExecution" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepeatUntilNoExecution">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepeatUntilNoExecution" location="RepeatUntilNoExecution.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Repeatoperation1Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Repeatoperation1In1" messageType="ns1:RptMessage1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="Repeatoperation1" portType="ns1:MyportType1" variable="Repeatoperation1In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>0</from><to part="counter" variable="Repeatoperation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <assign name="Assign2">
+                <copy>
+                <from>  ( $Repeatoperation1In1.counter + 1 )  </from><to part="counter" variable="Repeatoperation1In1"/>
+                </copy>
+                <copy>
+                <from>concat($Repeatoperation1In1.Name, ' In Repeat iteration:', $Repeatoperation1In1.counter)</from><to part="Name" variable="Repeatoperation1In1"/>
+                </copy>
+            </assign>
+            <condition>  ( $Repeatoperation1In1.counter &lt;= 5 )  </condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+            <from variable="Repeatoperation1In1" part="counter"/><to variable="Repeatoperation1Out1" part="counter"/>
+            </copy>
+            <copy>
+            <from variable="Repeatoperation1In1" part="Name"/><to variable="Repeatoperation1Out1" part="Name"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="Repeatoperation1" portType="ns1:MyportType1" variable="Repeatoperation1Out1"/>
+    </sequence>
+   
+</process>

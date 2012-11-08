@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InsertBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InsertBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InsertBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InsertTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/InsertTrigger" location="InsertTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="InsertTable.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:InsertTriggerPartner" myRole="InsertTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="FindOut" messageType="ns2:outputMsg"/>
+      <bpws:variable name="FindIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="InsertTriggerOperationOut" messageType="ns1:InsertTriggerOperationReply"/>
+      <bpws:variable name="InsertOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="InsertIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="InsertTriggerOperationIn" messageType="ns1:InsertTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InsertTriggerOperation" portType="ns1:InsertTriggerPortType" variable="InsertTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$InsertTriggerOperationIn.part1/ns0:テストSal</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:テストSal</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertTriggerOperationIn.part1/ns0:テストID</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:テストID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertTriggerOperationIn.part1/ns0:テストフラグ</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:テストフラグ</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertTriggerOperationIn.part1/ns0:テスト名</bpws:from>
+            <bpws:to>$InsertIn.part/ns0:テスト名</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InsertTriggerOperationIn.part1/ns0:テストID</bpws:from>
+            <bpws:to>$FindIn.part/ns0:テストID</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="insert" portType="ns2:jdbcPortType" inputVariable="InsertIn" outputVariable="InsertOut"/>
+      <bpws:invoke name="Invoke2" partnerLink="PartnerLink2" operation="find" portType="ns2:jdbcPortType" inputVariable="FindIn" outputVariable="FindOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:テストSal</bpws:from>
+            <bpws:to>$InsertTriggerOperationOut.part1/ns0:テストSal</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:テストID</bpws:from>
+            <bpws:to>$InsertTriggerOperationOut.part1/ns0:テストID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:テストフラグ</bpws:from>
+            <bpws:to>$InsertTriggerOperationOut.part1/ns0:テストフラグ</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FindOut.part/ns0:テスト名</bpws:from>
+            <bpws:to>$InsertTriggerOperationOut.part1/ns0:テスト名</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="InsertTriggerOperation" portType="ns1:InsertTriggerPortType" variable="InsertTriggerOperationOut"/>
+      <bpws:invoke name="Invoke3" partnerLink="PartnerLink2" operation="delete" portType="ns2:jdbcPortType" inputVariable="FindIn"/>
+   </sequence>
+</process>

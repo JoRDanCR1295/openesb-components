@@ -1,0 +1,47 @@
+<process name="echo"
+         targetNamespace="http://www.sun.com/sample-bpel/echo"
+         xmlns:tns="http://www.sun.com/sample-bpel/echo"
+         xmlns:ns0="http://www.sun.com/sample-service/echo"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+
+    <import namespace="http://www.sun.com/sample-service/echo"
+            location="echo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="Client2BPLink"
+                     partnerLinkType="ns0:PLT"
+                     myRole="server"/>
+    </partnerLinks>
+    
+    <!-- variables definition -->
+    <variables>
+        <variable name="echo_Output" messageType="ns0:echo"/>
+        <variable name="echo_Input" messageType="ns0:echo"/>
+    </variables>
+
+    <!-- activities definition -->
+    <sequence>
+
+        <receive name="echo"
+                 partnerLink="Client2BPLink"
+                 portType="ns0:echo"
+                 operation="echo"
+                 variable="echo_Output"
+                 createInstance="yes"/>
+
+        <assign name="Assign">
+            <copy>
+                <from>$echo_Output.part/value</from>
+                <to>$echo_Input.part/value</to>
+            </copy>
+        </assign>
+
+        <reply name="echo.Reply"
+               partnerLink="Client2BPLink"
+               portType="ns0:echo"
+               operation="echo"
+               variable="echo_Output"/>
+    </sequence>
+</process>

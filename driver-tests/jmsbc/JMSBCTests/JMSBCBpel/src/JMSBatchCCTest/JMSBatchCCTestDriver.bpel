@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="JMSBatchCCTestDriver" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSBatchCCTestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSBatchCCTestDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBatchCCTest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSBatchCCTest" location="JMSBatchCCTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkJMSDriverSubscriber" partnerLinkType="ns1:pltJMSDriverSubscriber" myRole="roleJMSDriverIn"/>
+        <partnerLink name="PartnerLinkJMSDriverPublisher" partnerLinkType="ns1:pltJMSDriverPublisher" partnerRole="roleJMSDriverOut"/>
+        <partnerLink name="PartnerLinkHttpReqReply" partnerLinkType="ns1:pltTrigger" myRole="roleTrigger"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1In3" messageType="ns1:msg2Parts"/>
+        <variable name="Operation1In2" messageType="ns1:countAndMsg"/>
+        <variable name="PublishCount" type="xsd:int"/>
+        <variable name="Operation1Out1" messageType="ns1:countAndMsg"/>
+        <variable name="Operation1In1" messageType="ns1:msgOnly"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:prop1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkHttpReqReply" operation="operation1" portType="ns1:ptDriverReqReply" variable="Operation1In1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>1</from>
+                <to variable="PublishCount"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                        <from variable="PublishCount"/>
+                        <to>$Operation1In2.part1/MsgCount</to>
+                    </copy>
+                    <copy>
+                        <from>$Operation1In1.part1/Msg</from>
+                        <to>$Operation1In2.part1/Msg</to>
+                    </copy>
+                </assign>
+                <invoke name="Invoke1" partnerLink="PartnerLinkJMSDriverPublisher" operation="operation1" portType="ns1:ptDriverOneway" inputVariable="Operation1In2"/>
+                <assign name="Assign4">
+                    <copy>
+                        <from> ( $PublishCount + 1 ) </from>
+                        <to variable="PublishCount"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $PublishCount &gt; 20 ) </condition>
+        </repeatUntil>
+        <receive name="Receive2" createInstance="no" partnerLink="PartnerLinkJMSDriverSubscriber" operation="operation1" portType="ns1:ptDriverOneway2" variable="Operation1In3">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign3">
+            <copy>
+                <from variable="Operation1In3" part="partMsgCount"/>
+                <to>$Operation1Out1.part1/MsgCount</to>
+            </copy>
+            <copy>
+                <from>$Operation1In3.part1/Msg</from>
+                <to>$Operation1Out1.part1/Msg</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLinkHttpReqReply" operation="operation1" portType="ns1:ptDriverReqReply" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

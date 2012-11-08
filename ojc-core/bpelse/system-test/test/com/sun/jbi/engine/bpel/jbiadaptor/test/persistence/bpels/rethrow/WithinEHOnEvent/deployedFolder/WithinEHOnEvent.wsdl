@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="WithinEHOnEvent" targetNamespace="http://j2ee.netbeans.org/wsdl/WithinEHOnEvent"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://j2ee.netbeans.org/wsdl/WithinEHOnEvent" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="WithinEHOnEventOperationRequest">
+        <part name="InputPart" type="xsd:string"/>
+    </message>
+    <message name="WithinEHOnEventOperationReply">
+        <part name="OutputPart" type="xsd:string"/>
+    </message>
+    <message name="MainBPOneWayRequest">
+        <wsdl:part name="InputPart" type="xsd:string"/>
+    </message>
+    <portType name="WithinEHOnEventPortType">
+        <wsdl:operation name="WithinEHOnEventOperation">
+            <wsdl:input name="input1" message="tns:WithinEHOnEventOperationRequest"/>
+            <wsdl:output name="output1" message="tns:WithinEHOnEventOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="MainBPOneWayWSDLPortType">
+        <wsdl:operation name="MainBPOneWayWSDLOperation">
+            <wsdl:input name="input1" message="tns:MainBPOneWayRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="WithinEHOnEventBinding" type="tns:WithinEHOnEventPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="WithinEHOnEventOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinEHOnEvent"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinEHOnEvent"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="MainBPOneWayBinding" type="tns:MainBPOneWayWSDLPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MainBPOneWayWSDLOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinEHOnEvent"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="WithinEHOnEventService">
+        <wsdl:port name="WithinEHOnEventPort" binding="tns:WithinEHOnEventBinding">
+            <soap:address location="http://localhost:18181/WithinEHOnEventService/WithinEHOnEventPort"/>
+        </wsdl:port>
+    </service>
+    <service name="MainBPOneWayService">
+        <wsdl:port name="MainBPOneWayPort" binding="tns:MainBPOneWayBinding">
+            <soap:address location="http://localhost:18181/WithinEHOnEvent/MainBPOneWayPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="MainBPIOPLink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="WithinEHOnEventPortTypeRole" portType="tns:WithinEHOnEventPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="MainBPOneWayPLink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="MainBPOneWayWSDLPortTypeRole" portType="tns:MainBPOneWayWSDLPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="CorrelationVariable" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationVariable" messageType="tns:WithinEHOnEventOperationRequest" part="InputPart"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationVariable" messageType="tns:MainBPOneWayRequest" part="InputPart"/>
+</definitions>

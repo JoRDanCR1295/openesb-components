@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP_IN_THEN_OU" targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeXSDMsgType/FTP_IN_THEN_OU"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDukeXSDMsgType/FTP_IN_THEN_OU" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://xml.netbeans.org/schema/Greeting">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeXSDMsgType/FTP_IN_THEN_OU">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Greeting" schemaLocation="Greeting.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="InboundRequestResponseMessagingOperationRequest">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <message name="InboundRequestResponseMessagingOperationResponse">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <portType name="InboundRequestResponseMessagingPortType">
+        <operation name="InboundRequestResponseMessagingOperation">
+            <input name="input1" message="tns:InboundRequestResponseMessagingOperationRequest"/>
+            <output name="output1" message="tns:InboundRequestResponseMessagingOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="InboundRequestResponseMessagingBinding" type="tns:InboundRequestResponseMessagingPortType">
+        <ftp:binding/>
+        <operation name="InboundRequestResponseMessagingOperation">
+            <ftp:operation/>
+            <input name="input1">
+                <ftp:message messageRepository="repo_1000" messageName="%u.txt" messageNamePrefixIB="req." pollIntervalMillis="5000" archive="true" protect="true" stage="true" use="literal" messageCorrelate="true" part="part1"/>
+            </input>
+            <output name="output1">
+                <ftp:message messageRepository="repo_1000" messageName="%u.txt" messageNamePrefixOB="resp." archive="true" protect="true" stage="true" use="literal" messageCorrelate="true" part="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="InboundRequestResponseMessagingService">
+        <port name="InboundRequestResponseMessagingPort" binding="tns:InboundRequestResponseMessagingBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" securedFTP="None" enableCCC="false" cmdChannelTimeout="45000" dataChannelTimeout="45000" controlChannelEncoding=""/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FTP_IN_THEN_OU">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="InboundRequestResponseMessagingPortTypeRole" portType="tns:InboundRequestResponseMessagingPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://ManagedGenericIRPConstDefs/" xmlns:ns1="http://TimeBase/" xmlns:ns3="http://CosNotification/" xmlns:tns="http://AlarmIRPConstDefs/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://AlarmIRPConstDefs/">
+<xs:import namespace="http://ManagedGenericIRPConstDefs/" schemaLocation="TypeDef_ManagedGenericIRPConstDefs.xsd"/>
+<xs:import namespace="http://TimeBase/" schemaLocation="TypeDef_TimeBase.xsd"/>
+<xs:import namespace="http://CosNotification/" schemaLocation="TypeDef_CosNotification.xsd"/>
+<xs:complexType name="attributeChangeSetType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:attributeValueChangeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="attributeValueChangeType">
+<xs:sequence>
+<xs:element name="attribute_name" type="xs:string"/>
+<xs:element name="old_value" type="xs:anyType"/>
+<xs:element name="new_value" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="dn">
+<xs:restriction base="xs:string"/>
+</xs:simpleType>
+<xs:complexType name="FloatTypeOpt">
+<xs:choice>
+<xs:element name="value1" type="xs:float"/>
+<xs:element name="value" type="xs:float"/>
+</xs:choice>
+</xs:complexType>
+<xs:complexType name="badAlarmInformationId">
+<xs:sequence>
+<xs:element name="alarm_information_reference" type="xs:string"/>
+<xs:element name="reason" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="backedUpStatusType">
+<xs:restriction base="xs:boolean"/>
+</xs:simpleType>
+<xs:complexType name="corelatedNotification">
+<xs:sequence>
+<xs:element name="source" type="xs:string"/>
+<xs:element maxOccurs="unbounded" name="notif_id_set" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="notifIdSetType">
+<xs:list itemType="xs:int"/>
+</xs:simpleType>
+<xs:complexType name="alarmInformationIdAndSev">
+<xs:sequence>
+<xs:element name="alarm_information_reference" type="xs:string"/>
+<xs:element name="perceived_severity" type="ns2:ShortTypeOpt"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="thresholdInfoType">
+<xs:sequence>
+<xs:element name="attributeID" type="xs:string"/>
+<xs:element name="observedValue" type="xs:float"/>
+<xs:element name="thresholdLevel" type="tns:ThresholdLevelIndTypeOpt"/>
+<xs:element name="armTime" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ThresholdLevelIndTypeOpt">
+<xs:choice>
+<xs:element name="value1" type="xs:string"/>
+<xs:element name="value" type="tns:thresholdLevelIndType"/>
+</xs:choice>
+</xs:complexType>
+<xs:complexType name="thresholdLevelIndType">
+<xs:sequence>
+<xs:element name="indication" type="tns:thresholdIndicationType"/>
+<xs:element name="low" type="tns:FloatTypeOpt"/>
+<xs:element name="high" type="xs:float"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="badAlarmInformationIdSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:badAlarmInformationId"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="comment">
+<xs:sequence>
+<xs:element name="comment_time" type="ns1:utcT"/>
+<xs:element name="comment_text" type="xs:string"/>
+<xs:element name="user_id" type="xs:string"/>
+<xs:element name="system_id" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="badAcknowledgeAlarmInfo">
+<xs:sequence>
+<xs:element name="alarm_information_reference" type="xs:string"/>
+<xs:element name="failure_category" type="tns:acknowledgeFailureCategories"/>
+<xs:element name="reason" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="correlatedNotificationSetType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:corelatedNotification"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="attributeValueType">
+<xs:sequence>
+<xs:element name="attribute_name" type="xs:string"/>
+<xs:element name="value" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="alarmInformationIdAndSevSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:alarmInformationIdAndSev"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="commentSet">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:comment"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="alarmInformationIdSeq">
+<xs:list itemType="xs:string"/>
+</xs:simpleType>
+<xs:complexType name="DNTypeOpt">
+<xs:choice>
+<xs:element name="value1" type="xs:string"/>
+<xs:element name="value" type="xs:string"/>
+</xs:choice>
+</xs:complexType>
+<xs:complexType name="alarmInformationSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="ns3:structuredEvent"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="badAcknowledgeAlarmInfoSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:badAcknowledgeAlarmInfo"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="attributeSetType">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:attributeValueType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="thresholdIndicationType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UP"/>
+<xs:enumeration value="DOWN"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="acknowledgeFailureCategories">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UnknownAlarmId"/>
+<xs:enumeration value="WrongPerceivedSeverity"/>
+<xs:enumeration value="AcknowledgmentFailed"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="alarmListAlignmentRequirementType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="REQUIRED"/>
+<xs:enumeration value="NOTREQUIRED"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:simpleType name="trendIndicationType">
+<xs:restriction base="xs:string">
+<xs:enumeration value="LessSevere"/>
+<xs:enumeration value="NoChange"/>
+<xs:enumeration value="MoreSevere"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:complexType final="#all" name="dnArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:dn"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="FloatTypeOptArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:FloatTypeOpt"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="badAlarmInformationIdArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:badAlarmInformationId"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="corelatedNotificationArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:corelatedNotification"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="notifIdSetTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:notifIdSetType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="badAlarmInformationIdSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:badAlarmInformationIdSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="badAcknowledgeAlarmInfoArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:badAcknowledgeAlarmInfo"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="correlatedNotificationSetTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:correlatedNotificationSetType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="ThresholdLevelIndTypeOptArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:ThresholdLevelIndTypeOpt"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="alarmListAlignmentRequirementTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:alarmListAlignmentRequirementType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="thresholdLevelIndTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:thresholdLevelIndType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="alarmInformationIdAndSevSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:alarmInformationIdAndSevSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="backedUpStatusTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:backedUpStatusType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="thresholdInfoTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:thresholdInfoType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="commentSetArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:commentSet"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="alarmInformationIdSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:alarmInformationIdSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="acknowledgeFailureCategoriesArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:acknowledgeFailureCategories"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="attributeChangeSetTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:attributeChangeSetType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="trendIndicationTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:trendIndicationType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="attributeValueTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:attributeValueType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="DNTypeOptArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:DNTypeOpt"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="alarmInformationSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:alarmInformationSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="thresholdIndicationTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:thresholdIndicationType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="alarmInformationIdAndSevArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:alarmInformationIdAndSev"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="commentArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:comment"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="attributeValueChangeTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:attributeValueChangeType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="badAcknowledgeAlarmInfoSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:badAcknowledgeAlarmInfoSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="attributeSetTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:attributeSetType"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

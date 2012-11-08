@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowForEach" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/FlowForEach"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FlowForEach" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FlowForEach" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FlowForEach" location="FlowForEach.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowForEachPLT" myRole="FlowForEachPLTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="output" messageType="ns1:FlowForEachMessage"/>
+        <variable name="input" messageType="ns1:FlowForEachMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowForEachOperation" portType="ns1:FlowForEachPortType" variable="input" createInstance="yes"/>
+        <assign name="Assign5">
+            <copy>
+                <from>'BRANCH2:  '</from>
+                <to variable="branch2"/>
+            </copy>
+        </assign>
+        <flow name="Flow1">
+            <assign name="Assign1">
+                <copy>
+                    <from>'BRANCH1:  '</from>
+                    <to variable="branch1"/>
+                </copy>
+            </assign>
+            <forEach name="ForEach1" parallel="no" counterName="c_variable">
+                <startCounterValue>1</startCounterValue>
+                <finalCounterValue>$input.loops</finalCounterValue>
+                <scope name="Scope1">
+                    <assign name="Assign4">
+                        <copy>
+                            <from>concat($branch2, 'loop', $c_variable)</from>
+                            <to variable="branch2"/>
+                        </copy>
+                    </assign>
+                </scope>
+            </forEach>
+        </flow>
+        <assign name="Assign3">
+            <copy>
+                <from>concat($branch1, $input.branch1)</from>
+                <to part="branch1" variable="output"/>
+            </copy>
+            <copy>
+                <from>concat($branch2, $input.branch2)</from>
+                <to part="branch2" variable="output"/>
+            </copy>
+            <copy>
+                <from>0</from>
+                <to variable="output" part="loops"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowForEachOperation" portType="ns1:FlowForEachPortType" variable="output"/>
+    </sequence>
+   
+</process>

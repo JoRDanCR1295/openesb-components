@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+    <requestReplyService>                    
+        <input  partnerLink="{foo}pl0"       
+                roleName="server"            
+                portType="portType"          
+                operation="operation"
+                messageType="replyMessageType"
+                file="map.xsl"               
+                transformJBI="false" />      
+    </requestReplyService>
+    <filterOneWay>                           
+        <input  partnerLink="{foo}pl1"       
+                roleName="server"            
+                portType="portType"          
+                operation="operation"
+                messageType="replyMessageType"
+                file="map.xsl"               
+                transformJBI="false" />      
+        <output partnerLink="{bar}pl2"       
+                roleName="client"            
+                portType="outPortType"       
+                operation="outOp" />      
+    </filterOneWay>
+    <filterRequestReply>                     
+        <input  partnerLink="{foo}pl1"       
+                roleName="server"            
+                portType="portType"          
+                operation="operation"
+                messageType="replyMessageType"
+                file="map.xsl"               
+                transformJBI="false" />      
+        <output partnerLink="{bar}pl2"       
+                roleName="client"            
+                portType="outPortType"       
+                operation="outOp"
+                messageType="replyMessageType"
+                file="map2.xsl"              
+                transformJBI="false" />      
+    </filterRequestReply>
+-->
+<aspectmap>
+    <aspect exchangeType="filterRequestReply" >                     
+        <input  partnerLink="{http://com.sun.jbi/aspect/throttling}throttlingPartner"       
+                roleName="throttlingPortTypeRole"            
+                portType="{http://com.sun.jbi/aspect/throttling}throttlingPortType"          
+                operation="throttlingOperation"
+                messageType="{http://com.sun.jbi/etl/etlengine}inputMsg"
+                file="input.xsl"               
+                transformJBI="true" />    
+        
+        <output partnerLink="{http://com.sun.jbi/etl/etlengine}ThrottlingETL_engine_etlService"       
+                roleName="ThrottlingETL_engine_etlPort"            
+                portType="{http://com.sun.jbi/etl/etlengine}ThrottlingETL_engine_etlPortType"       
+                operation="execute"
+                messageType="{http://com.sun.jbi/etl/etlengine}inputMsg"
+                file="output.xsl"              
+                transformJBI="true" />
+                
+        <advice type="messageTracking" order="2">
+            <attr name="verbosity" value="INFO" />
+            <attr name="rotation-policy" value="DAILY" />
+            <attr name="log-file" value="@tempdir@/loggingse.log" />
+        </advice>       
+        <advice type="logging" order="1">
+        </advice>
+        <advice type="throttling" order="3" />
+        
+    </aspect>
+</aspectmap>

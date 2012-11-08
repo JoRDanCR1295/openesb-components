@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ObjRef" targetNamespace="http://it.imolinfo.jbi4corba.test.ObjRef" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://it.imolinfo.jbi4corba.test.ObjRef" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.ObjRef" xmlns="http://it.imolinfo.jbi4corba.test.ObjRef" xmlns:ns1="http://www.w3.org/2005/08/addressing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="ws-addr.xsd"/>
+    <xs:element name="getobjRef">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="msg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getobjRefResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="ns1:EndpointReferenceType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getobjRefResponse">
+    <wsdl:part name="parameters" element="tns:getobjRefResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getobjRef">
+    <wsdl:part name="parameters" element="tns:getobjRef">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ObjRef">
+    <wsdl:operation name="getobjRef">
+      <wsdl:input name="getobjRef" message="tns:getobjRef">
+    </wsdl:input>
+      <wsdl:output name="getobjRefResponse" message="tns:getobjRefResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ObjRefCorbaBinding" type="tns:ObjRef">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="Test_Object_DP.idl" relativepath=".">
+//IDL
+module it{
+  module imolinfo{
+    module jbi4corba{
+      module test{
+	 
+               interface ObjRef {
+
+                Object getobjRef(in string msg);
+
+                };
+
+
+               interface EchoObj{
+    			   string echoObj(in string msg);
+                };
+
+
+               interface EchoObj2:EchoObj {
+
+                  string echo2(in string msg2);
+               };
+
+};
+};
+};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="getobjRef">
+      <wsdl:input name="getobjRef">
+      </wsdl:input>
+      <wsdl:output name="getobjRefResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ObjRef">
+    <wsdl:port name="ObjRefCorbaPort" binding="tns:ObjRefCorbaBinding">
+<imolacorba:address name="ObjRef" localizationType="NameService">
+<imolacorba:orb>
+            <imolacorba:property name="org.omg.CORBA.ORBClass" value="org.jacorb.orb.ORB"/>
+            <imolacorba:property name="org.omg.CORBA.ORBSingletonClass" value="org.jacorb.orb.ORBSingleton"/>
+            <imolacorba:property name="ORBInitRef.NameService" value="corbaloc::localhost:1050/NameService"/>
+            <imolacorba:property name="orbd.port" value="1050"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="ObjRef">
+<plnk:role name="ObjRefPortTypeRole" portType="tns:ObjRef"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="additions1"
+    targetNamespace="http://www.seebeyond.com/eInsight/additions1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/additions1"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="http://stc.com/additions1"
+    xmlns:ns1="urn:MostDataType"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/additions1"
+    location="additions1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:MostDataType"
+    location="MostDataType.xsd"
+    importType="http://www.w3.org/2001/XMLSchema"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="messageType_Input1"  messageType="ns0:additions1"></variable>
+        <variable name="messageType_Output1" messageType="ns0:additions1"></variable>
+        <variable name="xsdDataType_variable1" element="ns1:integerPart"></variable>
+        <variable name="xsdDataType_variable2" element="ns1:integerPart"></variable>
+        <variable name="xsdDataType_variable3" element="ns1:intPart"></variable>
+        <variable name="xsdDataType_variable4" element="ns1:intPart"></variable>        
+    </variables>
+    <sequence>
+        <receive name="additions1"
+        partnerLink="Client2BP"
+        portType="ns0:additions1"
+        operation="additions1"
+        variable="messageType_Input1"
+        createInstance="yes"></receive>
+        <assign name="Assign_Input_To_XSDVariable">
+            <bpws:copy>
+                <bpws:from>$messageType_Input1.part/ns1:any_integer/ns1:repeat_integer[1]</bpws:from>
+                <bpws:to>$xsdDataType_variable1/ns1:repeat_integer</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Input1.part/ns1:any_integer/ns1:repeat_integer[2]</bpws:from>
+                <bpws:to>$xsdDataType_variable2/ns1:repeat_integer</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Input1.part/ns1:any_int/ns1:repeat_int[1]</bpws:from>
+                <bpws:to>$xsdDataType_variable3/ns1:repeat_int</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$messageType_Input1.part/ns1:any_int/ns1:repeat_int[2]</bpws:from>
+                <bpws:to>$xsdDataType_variable4/ns1:repeat_int</bpws:to>
+            </bpws:copy>
+        </assign>
+        <assign name="AddandAssign">
+            <bpws:copy>
+                <bpws:from> ( $xsdDataType_variable1/ns1:repeat_integer + $xsdDataType_variable2/ns1:repeat_integer ) </bpws:from>
+                <bpws:to>$messageType_Output1.part/ns1:any_integer/ns1:xsd_integer</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from> ( $xsdDataType_variable3/ns1:repeat_int + $xsdDataType_variable4/ns1:repeat_int ) </bpws:from>
+                <bpws:to>$messageType_Output1.part/ns1:any_int/ns1:xsd_int</bpws:to>
+            </bpws:copy>
+        </assign>                 
+        <reply name="additions1.Reply"
+        partnerLink="Client2BP"
+        portType="ns0:additions1"
+        operation="additions1"
+        variable="messageType_Output1"></reply>
+    </sequence>
+</process>

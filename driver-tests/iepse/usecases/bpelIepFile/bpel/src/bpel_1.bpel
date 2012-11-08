@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="bpel_1" 
+    targetNamespace="bpel_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="bpel_1" xmlns:ns1="iep1_iep" xmlns:ns2="bpel_1" xmlns:ns3="iep1_iep">
+    <import location="bpel_1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="bpel_1"/>
+    <import location="newuntitled.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="iep1_iep"/>
+   
+    <partnerLinks>
+        <partnerLink name="p1"
+                     partnerLinkType="wsdlNS:bpel_1PartnerLinkType"
+                     myRole="bpel_1Provider"/>
+        <partnerLink name="p2"
+                     partnerLinkType="ns1:InputPlt"
+                     partnerRole="InputRn"/>
+    </partnerLinks>
+    <variables>
+        <variable name="StreamInput0In1" messageType="ns1:StreamInput0_Msg"/>
+        <variable name="InvokeBPELIn1" messageType="wsdlNS:inputMessage"/>
+    </variables>
+   <sequence>
+      <receive name="Receive1" partnerLink="p1" operation="invokeBPEL" portType="wsdlNS:MyPortType" createInstance="yes" variable="InvokeBPELIn1"/>
+      <assign name="Assign1">
+         <copy>
+         <from>$InvokeBPELIn1.input/ProdName</from><to>$StreamInput0In1.input/ProdName</to>
+         </copy>
+         <copy>
+         <from>1</from><to>$StreamInput0In1.input/ProdID</to>
+         </copy>
+         <copy>
+         <from>212</from><to>$StreamInput0In1.input/ProdQuantity</to>
+         </copy>
+      </assign>
+      <invoke name="Invoke1" partnerLink="p2" operation="StreamInput0" portType="ns1:InputPt" inputVariable="StreamInput0In1"/>
+   </sequence>
+   
+</process>

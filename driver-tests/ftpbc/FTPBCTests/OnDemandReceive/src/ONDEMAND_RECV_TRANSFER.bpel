@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ONDEMAND_RECV_TRANSFER"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnDemandReceive/ONDEMAND_RECV_TRANSFER"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/OnDemandReceive/ONDEMAND_RECV_TRANSFER">
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" location="FILE_LOCAL_READ_WRITE_4_RECV.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV" location="FTP_PUT_4_RECV.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" location="FTP_ON_DEMAND_RECV_MSG.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV" partnerLinkType="tns:FTP_PUT_4_RECV" partnerRole="OutboundOneWayTransferringPortTypeRole"/>
+        <partnerLink name="PartnerLink3" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" partnerLinkType="tns:FTP_ON_DEMAND_RECV_MSG" partnerRole="ReceiveTransferringPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" partnerLinkType="tns:FILE_LOCAL_READ_WRITE_4_RECV" myRole="FileInboundPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReceiveTransferringOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" messageType="tns:ReceiveTransferringOperationResponse"/>
+        <variable name="ReceiveTransferringOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" messageType="tns:ReceiveTransferringOperationRequest"/>
+        <variable name="PollOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" messageType="tns:PollOutputMessage"/>
+        <variable name="OutboundOneWayTransferringOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV" messageType="tns:OutboundOneWayTransferringOperationRequest"/>
+        <variable name="PollIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" messageType="tns:PollInputMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="poll" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" portType="tns:FileInboundPortType" variable="PollIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="PollIn" part="part1"/>
+                <to variable="OutboundOneWayTransferringOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="OutboundOneWayTransferringOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_PUT_4_RECV" portType="tns:OutboundOneWayTransferringPortType" inputVariable="OutboundOneWayTransferringOperationIn"/>
+        <invoke name="Invoke2" partnerLink="PartnerLink3" operation="ReceiveTransferringOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FTP_ON_DEMAND_RECV_MSG" portType="tns:ReceiveTransferringPortType" inputVariable="ReceiveTransferringOperationIn" outputVariable="ReceiveTransferringOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="ReceiveTransferringOperationOut" part="part1"/>
+                <to variable="PollOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="poll" xmlns:tns="http://j2ee.netbeans.org/wsdl/OnDemandReceive/FILE_LOCAL_READ_WRITE_4_RECV" portType="tns:FileInboundPortType" variable="PollOut"/>
+    </sequence>
+</process>

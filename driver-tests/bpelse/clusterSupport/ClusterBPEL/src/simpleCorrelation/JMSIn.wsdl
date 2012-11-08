@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BPELProject/simpleCorrelationJMSIn"
+             name="simpleCorrelationJMSIn"
+             xmlns:tns="http://localhost/BPELProject/simpleCorrelationJMSIn"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <plink:partnerLinkType name="JMSInLinkType">
+        <plink:role name="Server"
+                    portType="tns:portType_JMSIn"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSInLinkType1">
+        <plink:role name="Server1"
+                    portType="tns:portType_JMSIn1"></plink:role>
+    </plink:partnerLinkType>
+    
+    <message name="message_JMSIn">
+        <part name="part_JMSIn"
+              type="xsd:string"></part>
+        <part name="IdProperty" type="xsd:long"/>              
+    </message>
+    <portType name="portType_JMSIn">
+        <operation name="operation_JMSIn">
+            <input name="input"
+                   message="tns:message_JMSIn"></input>
+        </operation>
+    </portType>
+    <portType name="portType_JMSIn1">
+        <operation name="operation_JMSIn1">
+            <input name="input"
+                   message="tns:message_JMSIn"></input>
+        </operation>
+    </portType>    
+    <binding name="binding_simpleCorrelationJMSIn"
+             type="tns:portType_JMSIn">
+        <jms:binding></jms:binding>
+        <operation name="operation_JMSIn">
+            <jms:operation destinationType="Queue"
+            		   maxConcurrentConsumers="1"
+                           destination="QueueIn1"
+                           transaction="XATransaction">
+            </jms:operation>
+            <input name="input">
+                <jms:message textPart="part_JMSIn"
+                             messageType="TextMessage">
+                <jms:properties>
+                        <jms:property part="IdProperty" type="long" name="counter"></jms:property>
+                </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="binding_simpleCorrelationJMSIn1"
+             type="tns:portType_JMSIn1">
+        <jms:binding></jms:binding>
+        <operation name="operation_JMSIn1">
+            <jms:operation destinationType="Queue"
+            		   maxConcurrentConsumers="1"
+                           destination="QueueIn2"
+                           transaction="NoTransaction">
+            </jms:operation>
+            <input name="input">
+                <jms:message textPart="part_JMSIn"
+                             messageType="TextMessage">
+                <jms:properties>
+                        <jms:property part="IdProperty" type="long" name="counter"></jms:property>
+                </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>    
+    <service name="service_simpleCorrelationJMSIn">
+        <port name="port_JMSIn"
+              binding="tns:binding_simpleCorrelationJMSIn">
+            <jms:address password="admin"
+                         username="admin"
+                         connectionURL="mq://localhost:7676"/>
+        </port>
+        <port name="port_JMSIn1"
+              binding="tns:binding_simpleCorrelationJMSIn1">
+            <jms:address password="admin"
+                         username="admin"
+                         connectionURL="mq://localhost:7676"/>
+        </port>        
+    </service>
+    <vprop:property name="property"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property"
+                        messageType="tns:message_JMSIn"
+                        part="part_JMSIn">
+    </vprop:propertyAlias>    
+    
+</definitions>

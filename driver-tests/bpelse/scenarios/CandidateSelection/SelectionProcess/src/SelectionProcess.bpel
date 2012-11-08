@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SelectionProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SelectionProcess/SelectionProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/SelectionProcess/SelectionProcess" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/process" xmlns:ns0="http://xml.netbeans.org/schema/candidate">
+    <import namespace="http://j2ee.netbeans.org/wsdl/process" location="process.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="SelectionProcessorPL" partnerLinkType="ns1:SelectionProcessorPLT" partnerRole="SelectionPTRole"/>
+        <partnerLink name="CandidateListPL" partnerLinkType="ns1:ListProcessorPLT" 
+                     myRole="CandidateListRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CandidatesVarIn" messageType="ns1:CandidateList"/>
+    </variables>
+    <sequence>
+        <receive name="ReceiveCandidateList" createInstance="yes" 
+                 partnerLink="CandidateListPL" 
+                 operation="CandidateListOper" 
+                 portType="ns1:CandidateList" 
+                 variable="CandidatesVarIn"/>
+        <forEach name="ForEach1" parallel="no" counterName="ForEachCounter">
+            <startCounterValue>0</startCounterValue>
+            <finalCounterValue>count($CandidatesVarIn.listpart/ns0:candidate)</finalCounterValue>
+            <scope name="Scope1">
+                <variables>
+                    <variable name="ResultNote" type="xsd:string"/>
+                    <variable name="SelectionProcessVarOut" messageType="ns1:SelectionResult"/>
+                    <variable name="SelectionProcessVarIn" messageType="ns1:CandidateInfo"/>
+                </variables>
+                <sequence name="Sequence1">
+                    <assign name="AssignCandidate">
+                        <copy>
+                            <from>$CandidatesVarIn.listpart/ns0:candidate[ ( $ForEachCounter + 1 ) ]</from>
+                            <to variable="SelectionProcessVarIn" part="infopart"/>
+                        </copy>
+                    </assign>
+                    <invoke name="CallSelectionProcess" partnerLink="SelectionProcessorPL" 
+                            operation="SelectionOper" portType="ns1:SelectionPT" 
+                            inputVariable="SelectionProcessVarIn" 
+                            outputVariable="SelectionProcessVarOut"/>
+                    <if name="IfSelected">
+                        <condition>    ( $SelectionProcessVarOut.resultpart = true() )    </condition>
+                        <assign name="SelectedNote">
+                            <copy>
+                                <from>concat($SelectionProcessVarIn.infopart/ns0:firstname, $SelectionProcessVarIn.infopart/ns0:lastname, ' has been selected.')</from>
+                                <to variable="ResultNote"/>
+                            </copy>
+                        </assign>
+                        <else>
+                            <assign name="NotSelectedNote">
+                                <copy>
+                                    <from>concat($SelectionProcessVarIn.infopart/ns0:firstname, $SelectionProcessVarIn.infopart/ns0:lastname, ' has not been selected.')</from>
+                                    <to variable="ResultNote"/>
+                                </copy>                                
+                            </assign>
+                        </else>
+                    </if>
+                </sequence>
+            </scope>
+        </forEach>
+    </sequence>
+</process>

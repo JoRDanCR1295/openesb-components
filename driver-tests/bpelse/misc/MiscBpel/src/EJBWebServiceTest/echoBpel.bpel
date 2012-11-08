@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoBpel"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoBpel"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoBpel"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/echo"
+         xmlns:ns1="http://localhost/BpelClient/EjbWebServiceBpelWrapper"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns2="urn:EchoEjb/wsdl">
+    <import namespace="http://localhost/BpelClient/EjbWebServiceBpelWrapper"
+            location="EjbWebServiceBpelWrapper.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:EchoEjb/wsdl"
+            location="EjbWebService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>            
+    <import namespace="http://stc.com/echo"
+            location="echo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="bpelImplemented"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+        <partnerLink name="ejbInvoked"
+                     partnerLinkType="ns1:EjbPartner"
+                     partnerRole="ejbPartnerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echo_Output"
+                  messageType="ns0:echo"></variable>
+        <variable name="echo_Input"
+                  messageType="ns0:echo"></variable>
+        <variable name="sayHello_Input"
+                  messageType="ns2:EchoEjbSEI_sayHello"></variable>
+        <variable name="sayHello_Output"
+                  messageType="ns2:EchoEjbSEI_sayHelloResponse"></variable>
+    </variables>
+    <sequence>
+        <receive partnerLink="bpelImplemented"
+                 portType="ns0:echo"
+                 operation="echo"
+                 variable="echo_Input"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$echo_Input.part/value</from>
+                <to>$sayHello_Input.parameters/String_1</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="ejbInvoked"
+                portType="ns2:EchoEjbSEI"
+                operation="sayHello"
+                inputVariable="sayHello_Input"
+                outputVariable="sayHello_Output"></invoke>
+        <assign>
+            <copy>
+                <from>$sayHello_Output.result/result</from>
+                <to>$echo_Output.part/value</to>
+            </copy>
+        </assign>
+        <reply partnerLink="bpelImplemented"
+               portType="ns0:echo"
+               operation="echo"
+               variable="echo_Output"></reply>
+    </sequence>
+</process>

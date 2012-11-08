@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinRepeatUntilProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinRepeatUntilProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinRepeatUntilProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinRepeatUntil" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinRepeatUntil" location="WithinRepeatUntil.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinRepeatUntil1" myRole="WithinRepeatUntilPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="UntilCntr2" type="xsd:int"/>
+        <variable name="UntilCntr1" type="xsd:int"/>
+        <variable name="WithinRepeatUntilOperationOut" messageType="ns1:WithinRepeatUntilOperationReply"/>
+        <variable name="WithinRepeatUntilOperationIn" messageType="ns1:WithinRepeatUntilOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinRepeatUntilOperationReply" faultVariable="WithinRepeatUntilOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinRepeatUntilOperation" portType="ns1:WithinRepeatUntilPortType" variable="WithinRepeatUntilOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinRepeatUntilOperation" portType="ns1:WithinRepeatUntilPortType" variable="WithinRepeatUntilOperationIn"/>
+        <assign name="Assign0">
+            <copy>
+                <from>0.0</from>
+                <to variable="UntilCntr1"/>
+            </copy>
+            <copy>
+                <from>0.0</from>
+                <to variable="UntilCntr2"/>
+            </copy>            
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catch faultName="tns:catchFault" faultMessageType="ns1:WithinRepeatUntilOperationReply" faultVariable="WithinRepeatUntilOperationOut">
+                    <repeatUntil name="RepeatUntil2">
+                        
+                        <sequence name="Sequence4">
+                            <assign name="IncrementCntr2">
+                                <copy>
+                                    <from>$UntilCntr2 + 1.0</from>
+                                    <to variable="UntilCntr2"/>
+                                </copy>
+                            </assign>
+                            <rethrow name="Rethrow2"/>
+                        </sequence>
+                        <condition>$UntilCntr2 = 2.0</condition>                        
+                    </repeatUntil>
+                </catch>
+                <catchAll>
+                    
+                    <repeatUntil name="RepeatUntil1">
+<sequence name="Sequence3">
+                            <assign name="IncrementCntr1">
+                                <copy>
+                                    <from>$UntilCntr1 + 1.0</from>
+                                    <to variable="UntilCntr1"/>
+                                </copy>
+                            </assign>
+                            <rethrow name="Rethrow1"/>
+                        </sequence>
+                         <condition>$UntilCntr1 = 2.0</condition>                                    
+                    </repeatUntil>                    
+                </catchAll>
+            </faultHandlers>
+            <if name="If2">
+                <condition> ( $WithinRepeatUntilOperationIn.part2 = 'catchAll' ) </condition>
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>concat($WithinRepeatUntilOperationIn.part1, '-catchAll-')</from>
+                            <to part="part1" variable="WithinRepeatUntilOperationOut"/>
+                        </copy>
+                    </assign>
+                    <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinRepeatUntilOperationOut"/>
+                </sequence>
+                <else>
+                    <sequence name="Sequence2">
+                        <assign name="Assign2">
+                            <copy>
+                                <from>concat($WithinRepeatUntilOperationIn.part1, '-catch-')</from>
+                                <to part="part1" variable="WithinRepeatUntilOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinRepeatUntilOperationOut"/>
+                    </sequence>
+                </else>
+            </if>
+        </scope>
+    </sequence>
+</process>

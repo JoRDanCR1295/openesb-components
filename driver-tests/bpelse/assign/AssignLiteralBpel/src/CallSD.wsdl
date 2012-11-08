@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/" 
+    xmlns:tns="http://www.truebaseline.com/CallSD.wsdl" 
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" 
+    xmlns:s="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.truebaseline.com/CallSD.wsdl" name="CallSD" 
+    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns0="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+	<wsdl:types>
+<s:schema elementFormDefault="qualified" targetNamespace="http://www.truebaseline.com/CallSD.wsdl">
+    <s:import namespace="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" schemaLocation="WorkflowInformation.xsd"/>
+</s:schema>
+            
+	</wsdl:types>
+	<wsdl:message name="CallSDRequest">
+            <wsdl:part name="solutionDomainName" type="s:string"/>
+	 <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	 <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	</wsdl:message>
+	<wsdl:message name="CallSDResponse">
+	    <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	    <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	</wsdl:message>
+    <wsdl:message name="CallSDFault">
+	    <wsdl:part name="EventMessage" element="ns0:EventMessage"/>
+	    <wsdl:part name="Configuration" element="ns0:Configuration"/>
+	</wsdl:message>
+    <wsdl:portType name="CallSDPortType">
+		
+        <wsdl:operation name="CallSD">
+            <wsdl:input name="CallSDRequest" message="tns:CallSDRequest"/>
+            <wsdl:output name="CallSDResponse" message="tns:CallSDResponse"/>
+            <wsdl:fault name="CallSDFault" message="tns:CallSDFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CallSDPortType" type="tns:CallSDPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CallSD">
+            <wsdl:input name="CallSDRequest">
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output name="CallSDResponse">
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="CallSDFault">
+                <soap:fault name="CallSDFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CallSDService">
+        <wsdl:port name="CallSDServiceSoap" binding="tns:CallSDPortType">
+            <soap:address location="http://DHY4LKB1:18181/TestDeployBPEL/CallSD/CallSDServiceSoap"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="CallSDPartnerLinkType">
+        <plink:role name="CallSDRole" portType="tns:CallSDPortType"/>
+    </plink:partnerLinkType>
+    <vprop:property name="CorrelationId" type="s:string"/>
+ <vprop:propertyAlias propertyName="tns:CorrelationId" messageType="tns:CallSDRequest" part="EventMessage">
+  <vprop:query>/ns0:EventMessage/ns0:CorrelationId</vprop:query>
+ </vprop:propertyAlias>
+</wsdl:definitions>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="flightGetDetailOut"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SAPBCBpel/flightGetDetailOut"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/SAPBCBpel/flightGetDetailOut" xmlns:ns1="http://j2ee.netbeans.org/wsdl/echo" xmlns:ns2="http://enterprise.netbeans.org/bpel/Z_FlightWSD_EUC_SAPWrapper" xmlns:ns3="urn:sap-com:document:sap:soap:functions:mc-style">
+    <import namespace="http://j2ee.netbeans.org/wsdl/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/Z_FlightWSD_EUC_SAPWrapper" location="SAPFlightGetDetailOut/Z_FlightWSD_EUC_SAPWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:sap-com:document:sap:soap:functions:mc-style" location="Z_FlightWSD_EUC_SAP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:Z_FlightWSDLinkType" partnerRole="Z_FlightWSDRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:echo1" myRole="echoRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOut" messageType="ns1:echoReply"/>
+        <variable name="FlightGetDetailOut" messageType="ns3:FlightGetDetailResponse"/>
+        <variable name="FlightGetDetailIn" messageType="ns3:FlightGetDetail"/>
+        <variable name="EchoIn" messageType="ns1:echoRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="echo" portType="ns1:echo" variable="EchoIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$EchoIn.part/ns1:AirlineId</from>
+                <to>$FlightGetDetailIn.parameters/AirlineID</to>
+            </copy>
+            <copy>
+                <from>$EchoIn.part/ns1:ConnectionID</from>
+                <to>$FlightGetDetailIn.parameters/ConnectionID</to>
+            </copy>
+            <copy>
+                <from>$EchoIn.part/ns1:FlightDate</from>
+                <to>$FlightGetDetailIn.parameters/FlightDate</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="FlightGetDetail" portType="ns3:Z_FlightWSD" inputVariable="FlightGetDetailIn" outputVariable="FlightGetDetailOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$FlightGetDetailOut.parameters/FlightData/Airline</from>
+                <to>$EchoOut.part/ns1:response</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="echo" portType="ns1:echo" variable="EchoOut"/>
+    </sequence>
+</process>

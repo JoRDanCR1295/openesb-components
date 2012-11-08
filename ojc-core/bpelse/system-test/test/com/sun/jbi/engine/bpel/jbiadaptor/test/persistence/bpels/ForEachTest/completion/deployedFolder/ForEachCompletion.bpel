@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ForEachCompletion" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/ForEachCompletion"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/ForEachCompletion">
+    <import namespace="http://enterprise.netbeans.org/wsdl/ForEachCompletion" 
+            location="ForEachCompletion.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ForEachInvokePLT" 
+                     partnerRole="ForEachInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ForEachPartnerLinkType" 
+                     myRole="ForEachPLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input1" messageType="wsdlNS:ForEachInputMsg"/>
+        <variable name="output1" messageType="wsdlNS:ForEachOutputMsg"/>
+        <variable name="loopMsg" messageType="wsdlNS:ForEachOutputMsg"/>
+    </variables>
+
+   	<sequence>
+      	<receive name="Receive1" partnerLink="PartnerLink1" 
+        		 operation="ForEachOperation" portType="wsdlNS:ForEachPortType" 
+               	 variable="input1" createInstance="yes"/>
+        <assign name="AssignInit">
+	        <copy>
+	        	<from>''</from>
+	        	<to part="part1" variable="output1"/>
+	        </copy>
+        </assign>
+        <forEach name="ForEach1" parallel="no" counterName="index">
+            <startCounterValue>$input1.part1</startCounterValue>
+            <finalCounterValue>$input1.part2</finalCounterValue>
+            <completionCondition>
+                <branches successfulBranchesOnly="no">$input1.part3</branches>
+            </completionCondition>
+            <scope name="Scope1">
+                <bpws:faultHandlers>
+                    <bpws:catchAll>
+                        <bpws:assign name="Assign3">
+                            <copy>
+                                <from>$index</from>
+                                <to part="part2" variable="output1"/>
+                            </copy>
+                        </bpws:assign>
+                    </bpws:catchAll>
+                </bpws:faultHandlers>
+				<bpws:if name="If1">
+					<bpws:condition> ( $index != 1 ) </bpws:condition>
+					<bpws:sequence name="SequenceIf">
+						<assign name="AssignLoop">
+							<copy>
+								<from>concat('GoLoop1','GoLoop3')</from>
+								<to part="part1" variable="loopMsg"/>
+							</copy>
+							<copy><from>1</from><to part="part2" variable="loopMsg"/></copy>
+						</assign>
+						<invoke name="InvokeLoop" partnerLink="InvokePLT"
+						        operation="ForEachInvokeOp" portType="wsdlNS:InvokePortType"
+								inputVariable="loopMsg"/>
+						<bpws:assign name="Assign1">
+							<bpws:copy>
+								<bpws:from>concat($output1.part1, 'GoLoop', ($index + 1))</bpws:from>
+								<bpws:to part="part1" variable="output1"/>
+							</bpws:copy>
+						</bpws:assign>
+					</bpws:sequence>
+					<bpws:else>
+						<bpws:throw name="Throw1" faultName="bpws:myFault"/>
+					</bpws:else>
+				</bpws:if>
+            </scope>
+        </forEach>
+        <invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="ForEachInvokeOp" portType="wsdlNS:InvokePortType"
+                inputVariable="output1"/>
+   </sequence>
+</process>

@@ -1,0 +1,1 @@
+select * from "COMPANY"."CUSTOMER" where cus_id=1

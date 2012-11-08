@@ -1,0 +1,46 @@
+<definitions name="jmsReadC" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC" xmlns:ns="http://xml.netbeans.org/schema/xxx" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+         <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSOndemand/jmsReadC">
+              <xsd:import namespace="http://xml.netbeans.org/schema/xxx" schemaLocation="xxx.xsd"/>
+         </xsd:schema>
+    </types>
+     <message name="SolicitedReadInputMessage">
+          <part name="part1" type="ns:x"/>
+     </message>
+     <message name="SolicitedReadOutputMessage">
+          <part name="part1" type="ns:x"/>
+     </message>    
+    <portType name="JMSSolicitedReadPortType">
+        <operation name="read">
+            <input name="input1" message="tns:SolicitedReadInputMessage"/>
+            <output name="output1" message="tns:SolicitedReadOutputMessage"/>
+        </operation>
+    </portType>
+    <binding name="JMSSolicitedReadBinding" type="tns:JMSSolicitedReadPortType">
+        <jms:binding/>
+        <operation name="read">
+            <jms:operation verb="read" destination="DefaultQueue" destinationType="Queue" transaction="NoTransaction" messageSelector="" timeout="3000"/>
+            <input name="input1"/>
+            <output name="output1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="JMSSolicitedReadService">
+        <port name="jmsReadC_SolicitedReadPort" binding="tns:JMSSolicitedReadBinding">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin">
+                 <jms:jmsjcaOptions><![CDATA[]]></jms:jmsjcaOptions>
+            </jms:address>
+        </port>
+    </service>
+     <plnk:partnerLinkType name="jmsReadC">
+          <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+          <plnk:role name="JMSSolicitedReadPortTypeRole" portType="tns:JMSSolicitedReadPortType"/>
+     </plnk:partnerLinkType>
+</definitions>

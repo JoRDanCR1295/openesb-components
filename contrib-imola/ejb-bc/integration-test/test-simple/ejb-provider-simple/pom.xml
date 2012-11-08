@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    =========================================================
+    COORDINATES
+    =========================================================
+  -->
+  <parent>
+    <groupId>it.imolinfo.jbi4ejb</groupId>
+    <artifactId>integration-test</artifactId>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <artifactId>ejb-provider-simple</artifactId>
+
+  <!--
+    =========================================================
+    DESCRIPTION
+    =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <!--
+    =========================================================
+    PACKAGING
+    =========================================================
+  -->
+  <packaging>jbi-service-unit</packaging>
+
+  <description>su connection to stateless ejb</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>it.imolinfo.jbi4ejb</groupId>
+      <artifactId>jbi4ejb</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+  </dependencies>
+
+  <!--
+    =========================================================
+    PROFILES
+    =========================================================
+  -->
+
+  <build>
+    <!-- Excludes all (only the xslt result must be included) -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <configuration>
+              <tasks>
+                <mkdir dir="${project.build.directory}/xslt" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.servicemix.tooling</groupId>
+        <artifactId>jbi-maven-plugin</artifactId>
+        <version>3.1.1-incubating</version>
+        <extensions>true</extensions>
+        <configuration>
+          <!-- DO NOT GENERATE THE JBI.XML!!!! -->
+          <generateJbiDescriptor>false</generateJbiDescriptor>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- Aggiungo la customizzazione del WSDL - ORB -->
+          <transformationSets>
+            <transformationSet>
+              <dir>src/main/resources</dir>
+              <stylesheet>src/main/xslt/${orb.xsl}</stylesheet>
+              <outputDir>${project.build.directory}/xslt</outputDir>
+            </transformationSet>
+
+            <transformationSet>
+              <dir>${project.build.directory}/xslt</dir>
+              <stylesheet>src/main/xslt/${AppServer.xsl}</stylesheet>
+              <outputDir>${project.build.directory}/classes</outputDir>
+            </transformationSet>
+          </transformationSets>
+
+        </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <profiles>
+
+    <!-- Profile which creates an assembly for glassfish (default) -->
+    <profile>
+      <id>Glassfish</id>
+      <properties>
+        <orb.xsl>glassfishorb.xsl</orb.xsl>
+        <AppServer.xsl>glassfishApplicationServer.xsl</AppServer.xsl>
+      </properties>
+
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+
+    <!-- Profile which creates an assembly for websphere -->
+    <profile>
+      <id>Websphere</id>
+      <properties>
+        <orb.xsl>ibmorb.xsl</orb.xsl>
+        <AppServer.xsl>websphereApplicationServer.xsl</AppServer.xsl>
+      </properties>
+    </profile>
+
+    <!-- Profile which creates an assembly for websphere -->
+    <profile>
+      <id>Jboss</id>
+      <properties>
+        <orb.xsl>jacorb.xsl</orb.xsl>
+        <AppServer.xsl>jbossApplicationServer.xsl</AppServer.xsl>
+      </properties>
+
+    </profile>
+
+    <!-- Profile which creates an assembly for websphere -->
+    <profile>
+      <id>Weblogic</id>
+
+      <properties>
+        <orb.xsl>glassfishorb.xsl</orb.xsl>
+        <AppServer.xsl>weblogicApplicationServer.xsl</AppServer.xsl>
+      </properties>
+
+    </profile>
+
+  </profiles>
+
+</project>

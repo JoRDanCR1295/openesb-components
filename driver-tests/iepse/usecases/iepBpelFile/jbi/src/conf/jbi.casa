@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="FileOut" xmlns:ns2="testIep_iep" xmlns:ns3="http://www.mycomp.org/bpel/bpel_1" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="OFPort" interface-name="ns1:OF" name="endpoint1" service-name="ns1:OFService"/>
+        <endpoint endpoint-name="InputPort" interface-name="ns2:InputPt" name="endpoint2" service-name="ns2:InputService"/>
+        <endpoint endpoint-name="OutputPort_StreamOutput0" interface-name="ns2:OutputPt_StreamOutput0" name="endpoint3" service-name="ns2:OutputService_StreamOutput0"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="testIep.iep" interface-name="ns2:InputPt" name="endpoint4" process-name="testIep" service-name="ns2:InputPl"/>
+        <endpoint display-name="OutputRn_StreamOutput0" endpoint-name="OutputRn_StreamOutput0" file-path="testIep.iep" interface-name="ns2:OutputPt_StreamOutput0" name="endpoint5" process-name="testIep" service-name="ns2:OutputPl_StreamOutput0"/>
+        <endpoint display-name="p1" endpoint-name="OutputRn_StreamOutput0_myRole" file-path="bpel_1.bpel" interface-name="ns2:OutputPt_StreamOutput0" name="endpoint6" process-name="bpel_1" service-name="ns3:p1"/>
+        <endpoint display-name="p2" endpoint-name="OFRole_partnerRole" file-path="bpel_1.bpel" interface-name="ns1:OF" name="endpoint7" process-name="bpel_1" service-name="ns3:p2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="iep.jar" component-name="sun-iep-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="jbi-iep" unit-name="iep" unknown="false" x="57" y="99">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="jbi-bpel" unit-name="bpel" unknown="false" x="343" y="39">
+            <provides endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="jbi-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="67" y="197">
+                    <link xlink:href="../jbiServiceUnits/bpel/fileOut.wsdl#xpointer(/definitions/service[@name='OFService']/port[@name='OFPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="jbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0']/port[@name='OutputPort_StreamOutput0'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint7" provider="endpoint1" state="unchanged">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="" waitTime="">
+                <on-failure>
+                    <delete/>
+                </on-failure>
+            </redelivery>
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint5" provider="endpoint6" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint5" provider="endpoint3" state="deleted">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint3" provider="endpoint6" state="deleted">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/bpel/fileOut.wsdl#xpointer(/definitions/portType[@name='OF'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bpel/testIep.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bpel/testIep.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/bpel/fileOut.wsdl#xpointer(/definitions/binding[@name='OFBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bpel/testIep.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bpel/testIep.wsdl#xpointer(/definitions/binding[@name='OutputBinding_StreamOutput0'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/binding[@name='OutputBinding_StreamOutput0'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/bpel/fileOut.wsdl#xpointer(/definitions/service[@name='OFService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/testIep.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

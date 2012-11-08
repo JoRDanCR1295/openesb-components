@@ -1,0 +1,71 @@
+<definitions targetNamespace="urn:invoke2childTargetNamespace"
+             name="invoke2childDefinition"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:tns="urn:invoke2childTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <plnk:partnerLinkType name="invoke2childServiceLinkType"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="invoke2childServerRole"
+                   portType="tns:invoke2childPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:property type="xsd:string"
+                   name="invoke2childProp"></bpws:property>
+    <bpws:propertyAlias part="invoke2childPart"
+                        propertyName="tns:invoke2childProp"
+                        messageType="tns:invoke2childMessage">
+        <bpws:query>string</bpws:query>
+    </bpws:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:invoke2childTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:invoke2childTargetNamespace"
+                    xmlns:ns1="urn:invoke2childTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+            
+                    <xsd:complexType name="invoke2childType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="invoke2childMessage">
+        <part name="invoke2childPart"
+              type="tns:invoke2childType"></part>
+    </message>
+    <portType name="invoke2childPortType">
+        <operation name="invoke2childOperation">
+            <input message="tns:invoke2childMessage"></input>
+            <output message="tns:invoke2childMessage"></output>
+        </operation>
+    </portType>
+    <binding name="invoke2childBinding"
+             type="tns:invoke2childPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="invoke2childOperation">
+            <soap:operation soapAction="invoke2childOperation"/>
+            <input>
+                <soap:body parts="invoke2childPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="invoke2childPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="invoke2childService">
+        <port name="invoke2childPort"
+              binding="tns:invoke2childBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/invoke2child"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,97 @@
+        <!-- in-flight schema for user-defined scrubs
+        <unit name="foo">
+            <ns prefix="foo" uri="ns-uri"/>* 
+            <token xpath="some-xpath-expr" value="some-value"/>
+        </unit>
+        -->
+<!--
+        This file uses the syntax $prop for property variables.
+        All property names *** MUST *** be bookended by the '%' char,
+        so when resolving property values, the string "$%" is sought.
+        
+        Also note that property replacement occurs *** BEFORE ***
+        the 'value' attribute is evaluated as an XPath expressions.
+        
+        Supported XPath Functions*
+        ============================
+        concat
+        translate
+        _________________________________________
+        * Other functions may be supported by JDK
+-->
+<scrub-config>
+    <!-- incorporates project into open-jbi-components build -->
+    <!-- NOTE: This unit is fragile as changes can occur in build 
+               system at any time. -->
+    <profile name="ojc">
+        <file path="../pom.xml">
+            <unit name="ojc-core-pom">
+                <token expr="ojc_core_module" regex="add" 
+                       predicate="module[text() = 'wsdlextsl']"
+                       duplicate="module[text() = '$%PROJ_NAME%']"                       
+                       value="'$%PROJ_NAME%'"
+                       comment=" The following project was created by CDK "/>
+            </unit>
+        </file>
+        <file path="../../global-common/ojc-versions/pom.xml">
+            <unit ref="ojc-global-version-pom"/>
+        </file>
+    </profile>
+    
+    <profile name="contrib">
+    
+    </profile>
+    
+    <profile name="external">
+    
+    </profile>
+
+    <!-- this profile will not modify the file...
+         only print the modified version to System.out -->
+    <profile name="test">
+        <file path="../../global-common/ojc-versions/pom.xml">
+            <unit ref="ojc-global-version-pom"/>
+        </file>
+    </profile>    
+    <unit-defs>
+        <!-- Adds the new project as a build dependency for the ojc-core module. -->
+        <unit name="ojc-global-version-pom">
+            <token expr="global_version_properties" regex="add"
+                   predicate="'$%PROJ_NAME%.release.version'"
+                   duplicate="$%PROJ_NAME%.release.version"
+                   value="'${ojc.default.release.version}'"
+                   comment=" The following properties were added by CDK "/>
+            <token expr="global_version_properties" regex="add"
+                   predicate="'$%PROJ_NAME%.artifact.version'"
+                   duplicate="$%PROJ_NAME%.artifact.version"
+                   value="'${jbicomps.currentVersion}'"/>
+            <token expr="global_version_dependencies" regex="add"
+                   duplicate="dependency/artifactId[text() = '$%PROJ_NAME%-installer']"
+                   comment=" The following dependencies were added by CDK ">
+            <dependency>
+                <groupId>open-jbi-components</groupId>
+                <artifactId>foojbiadapter</artifactId>
+                <version>foo.artifact.version</version>
+            </dependency>
+            <dependency>
+                <groupId>open-jbi-components</groupId>
+                <artifactId>foo-installer</artifactId>
+                <version>foo.artifact.version</version>
+            </dependency>
+            </token>
+            <token expr="depend_id" regex="element"
+                   predicate="text() = 'foojbiadapter'"
+                   value="'$%PROJ_SHORT_LC%jbiadapter'"/>
+            <token expr="depend_id" regex="element"
+                   predicate="text() = 'foo-installer'"
+                   value="'$%PROJ_NAME%-installer'"/>
+            <token expr="depend_version" regex="element"
+                   predicate="text() = 'foo.artifact.version'"
+                   value="'${$%PROJ_NAME%.artifact.version}'"/>
+            <token expr="depend_version" regex="element"
+                   predicate="text() = 'foo.artifact.version'"
+                   value="'${$%PROJ_NAME%.artifact.version}'"/>
+        </unit>
+    </unit-defs>
+</scrub-config>
+

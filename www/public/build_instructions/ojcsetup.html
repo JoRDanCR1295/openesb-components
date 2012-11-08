@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+ <head>
+  <title>Open JBI Components</title>
+ </head>
+ <body>
+  <table align="left" border="0" cellpadding="0" cellspacing="0" id="body" width="100%">
+   <tr>
+    <td>
+     <div align="left" id="bodywrap">
+      <h3 class="sd1">Open JBI Components Setup</h3>
+      <ol>
+
+       <hr noshade /><br>
+
+       If you are using Mac OSX please see this blog for extra setup help <a href="http://blogs.sun.com/sambas/entry/mac_osx_how_to_set">http://blogs.sun.com/sambas/entry/mac_osx_how_to_set</a>
+
+       <hr noshade /><br>
+
+       <li><b>Use CVS to check out the Open JBI Components source code</b>
+       <p>For general how-to instructions for using CVS on java.net, click here:
+       <a href="https://open-jbi-components.dev.java.net/servlets/ProjectSource">Source code - CVS</a>.
+       Run the cvs checkout commands in the directory where you want to work on the open-jbi-components source.
+       Navigate to your chosen directory and run the following commands (you may want to use your
+       personal java.net login name instead of <i>guest</i>):
+<pre>
+    cvs -d :pserver:guest@cvs.dev.java.net:/cvs login
+      <i>type your password if you are using your java.net account. guest account has no password.</i>
+    cvs -d :pserver:guest@cvs.dev.java.net:/cvs co open-jbi-components
+</pre>
+      To <i>only</i> build one of the top-level projects, you do not need the driver-tests project,
+      which is quite large.  For example, to build ojc-core, you only need:
+<pre>
+    cvs -d :pserver:guest@cvs.dev.java.net:/cvs co -l open-jbi-components
+    cvs -d :pserver:guest@cvs.dev.java.net:/cvs co
+       open-jbi-components/global-common open-jbi-components/packaging open-jbi-components/ojc-core
+</pre>
+
+       The <code>open-jbi-components</code> directory, created by the cvs checkout, will be
+       the root of your open-jbi-components working directory, and we will subsequently
+       refer to this location as <code>JV_SRCROOT</code>.
+       <p><b>Note:</b> If you just want to view the Open JBI components
+       source code locally you can do so now. Otherwise, continue with this procedure.
+
+       <hr noshade /><br>
+
+       <li><b>Configure the build environment:</b>
+        <p>The maven scripts require two environmental variables:</p>
+        <ol>
+         <ul>
+          <li><code>JV_GFBASE</code> - the directory where you installed
+            <a href="https://glassfish.dev.java.net">Glassfish</a>.
+          <li><code>JV_SRCROOT</code> - your <code>open-jbi-components</code> cvs working directory.
+         </ul>
+        </ol>
+        <p>For unix and linux shells, these variables can be set in the shell start up files.
+        On Windows they can be set in a bat script or in the control panel.
+
+        <p>In unix or linux shell environments, we recommend creating two shell aliases called
+        <code>smvn</code> and <code>smvntest</code>.
+        Throughout this document we will refer to these aliases as the way to compile and run unit tests.
+
+        For example, if you are using the <i>tcsh</i> shell, <code>smvn</code> and <code>smvntest</code>
+        can be defined:
+<pre>
+    alias smvn 'mvn -Dmaven.test.skip=true -Dmaven.repo.local=$JV_SRCROOT/m2/repository'
+    alias smvntest 'mvn -Dmaven.test.skip=false -Dmaven.repo.local=$JV_SRCROOT/m2/repository'
+</pre>
+        <p>On Windows, create two .bat files:
+<pre>
+    smvn.bat:
+        @echo off
+        set JV_SRCROOT=<i>somedrive</i>:\<i>some path</i>\open-jbi-components
+        set JV_GFBASE=<i>somedrive</i>:\<i>some path where you installed glassfish</i>
+        mvn -Dmaven.test.skip=true -Dmaven.repo.local=%JV_SRCROOT%\m2\repository %*
+
+    smvntest.bat:
+        @echo off
+        set JV_SRCROOT=<i>somedrive</i>:\<i>some path</i>\open-jbi-components
+        set JV_GFBASE=<i>somedrive</i>:\<i>some path where you installed glassfish</i>
+        mvn -Dmaven.test.skip=false -Dmaven.repo.local=%JV_SRCROOT%\m2\repository %*
+</pre>
+        <i>Note:</i>  don't forget %* - this allows you to pass arguments to the script.
+
+        <p>The <code>smvn</code> and <code>smvntest</code> are used to simply pass in the location of
+        your maven build repository, which we expect to reside in <code>JV_SRCROOT/m2/repository</code>.
+
+       </li>
+       <hr noshade /><br>
+
+        <li><b>Downloading and installing the Oracle jdbc dependency</b>
+        <p>
+        The <a href="http://www.oracle.com/technology/software/tech/java/sqlj_jdbc/htdocs/jdbc101040.html">Oracle JDBC Driver</a>
+        is required to build and run unit tests.  After agreeing to Oracle's terms and downloading the jar, install it in your
+        maven build repository as follows:
+<pre>
+mvn -Dmaven.repo.local=$JV_SRCROOT/m2/repository install:install-file \
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=oracle.jdbc -DartifactId=ojdbc14 -Dversion=10.1.0.5 \
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path/to/ojdbc14.jar
+</pre>
+On Windows, the command is:<br>
+<pre>
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=oracle.jdbc -DartifactId=ojdbc14 -Dversion=10.1.0.5
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\ojdbc14.jar
+</pre>
+        <i>Note:  the above command must appear on a single line.</i>
+        <p>Alternatively, just add the oracle driver to your team&apos;s private maven repository, as outlined
+        below in the section entitled <i>Installing the dependencies into a local maven2 repository</i>,
+        using these values:
+<pre>
+    $file = "ojdbc14.jar"
+    $groupId = "oracle.jdbc"
+    $artifactId = "ojdbc14"
+    $version = "10.1.0.5"
+</pre>
+
+       </li>
+       <hr noshade /><br>
+       <li><b>Downloading and installing the MQSeriesBC and the SAPBC dependencies</b>
+        <p>Building the MQSeriesBC and SAPBC components require that you download and install dependencies that are not under an open-source license.
+
+        <p>You can choose not to build these components by commenting them out as is described in the
+        <code>open-jbi-components/ojc-core/pom.xml</code> file, and as shown below:
+
+<pre>
+&lt;!--
+# the following projects have non-open-source license dependencies.
+# you must purchase a license or agree to license terms and install
+# the dependencies in local or remote  maven repository by hand,
+# or comment out these projects.
+--&gt;
+&lt;!--
+&lt;module&gt;mqbc&lt;/module&gt;
+&lt;module&gt;msmqbc&lt;/module&gt;
+&lt;module&gt;sapbc&lt;/module&gt;
+--&gt;
+</pre>
+        <p>Once these lines are commented out, you can skip to the next step and run the build.</p>
+        <p>If you decide to build these components you will need to:
+        <ul>
+         <li>download the jar files that are the dependencies
+         <li>install the dependencies into a local maven2 repository
+         <li>update your settings.xml file to alert maven to the location of the internal repository.
+        </ul>
+        <p>These steps are described in more detail below</p>
+        <p><b>Downloading the jar files that are the dependencies:</b><br>
+        The MQSeriesBC compilation requires 2 versions of the com.ibm.mq.jar file. 5.306 and 6.0.0.0.  These file should be
+        obtained from a licensed install of MQ client.
+        The SAPBC has three dependencies: sapidoc.jar, sapidocjco.jar and sapjco.jar.
+        These can be obtained by purchasing a license from SAP.
+
+        <p><b>Installing the dependencies into a local maven2 repository:</b></p>
+        The basic command that you need to run to deploy each of these files is:
+<pre>
+% mvn -Dmaven.repo.local=$local deploy:deploy-file -Durl=file://$remote\
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=$file\
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=$groupId -DartifactId=$artifactId -Dversion=$version
+</pre>
+        <p>When running this command, always set the following two variables the same way:</p>
+        <code>$local</code> is the location of maven2 artifacts you have downloaded locally (for example: /tmp/myjars).<br>
+        <code>$remote</code> is the location of the maven2 repository that you are deploying this file to (for example: /bld/maven2repos).
+        <p>When installing com.ibm.mq.jar use these settings for the other variables:</p>
+<pre>
+    $file = "com.ibm.mq.jar"
+    $groupId = "com.ibm"
+    $artifactId = "mq"
+    $version = "5.306"
+</pre>
+
+<pre>
+    $file = "com.ibm.mq.jar"
+    $groupId = "com.ibm"
+    $artifactId = "mq"
+    $version = "6.0.0.0"
+</pre>
+        When installing sapidoc.jar use these settings for the other variables:
+<pre>
+    $file = "sapidoc.jar"
+    $groupId = "com.sap"
+    $artifactId = "sapidoc"
+    $version = "1.0.3"
+</pre>
+        When installing sapidocjco.jar use these settings for the other variables:
+<pre>
+    $file = "sapidocjco.jar"
+    $groupId = "com.sap"
+    $artifactId = "sapidocjco"
+    $version = "1.0.6"
+</pre>
+        When installing sapjco.jar use these settings for the other variables:
+<pre>
+    $file = "sapjco.jar"
+    $groupId = "com.sap"
+    $artifactId = "sapjco"
+    $version = "2.1.7"
+</pre>
+        When you are done installing these components, your repository should look like this, not including the maven meta files:
+<pre>
+    $remote/com/ibm/mq/5.306/mq-5.306.jar
+    $remote/com/sap/sapidoc/1.0.3/sapidoc-1.0.3.jar
+    $remote/com/sap/sapidocjco/1.0.6/sapidocjco-1.0.6.jar
+    $remote/com/sap/sapjco/2.1.7/sapjco-2.1.7.jar
+</pre>
+        <p><b>Update your settings.xml file</b></p>
+        You need to update your $HOME/.m2/settings.xml (%USERPROFILE%\.m2\settings.xml on Windows)
+        so that it contains a profile that points to your internal maven2 repository.
+        <p>Here is a example of what settings.xml could look like:
+<pre>
+&lt;settings&gt;
+  &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;private-profile&lt;/id&gt;
+      &lt;activation&gt;
+        &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
+      &lt;/activation&gt;
+      &lt;repositories&gt;
+        &lt;repository&gt;
+          &lt;id&gt;private-repository&lt;/id&gt;
+          &lt;name&gt;private artifacts&lt;/name&gt;
+          &lt;url&gt;$remote&lt;/url&gt;
+          &lt;releases&gt; &lt;enabled&gt;true&lt;/enabled&gt; &lt;/releases&gt;
+          &lt;snapshots&gt; &lt;enabled&gt;false&lt;/enabled&gt; &lt;/snapshots&gt;
+        &lt;/repository&gt;
+        &lt;repository&gt;
+          &lt;id&gt;java-net-legacy-repository&lt;/id&gt;
+          &lt;name&gt;java.net Maven 1.x repository&lt;/name&gt;
+          &lt;url&gt;https://maven-repository.dev.java.net/nonav/repository&lt;/url&gt;
+          &lt;layout&gt;legacy&lt;/layout&gt;
+          &lt;releases&gt; &lt;enabled&gt;true&lt;/enabled&gt; &lt;/releases&gt;
+          &lt;snapshots&gt; &lt;enabled&gt;true&lt;/enabled&gt; &lt;/snapshots&gt;
+        &lt;/repository&gt;
+      &lt;/repositories&gt;
+    &lt;/profile&gt;
+  &lt;/profiles&gt;
+&lt;/settings&gt;
+</pre>
+        Once this is all configured, you are ready to proceed to the next step.
+        <p>See <a href="http://www.glassfishwiki.org/jbiwiki/Wiki.jsp?page=MQSeriesBC">MQSeriesBC wiki</a>
+        for more information on the MQSeries binding, and
+        <a href="http://www.glassfishwiki.org/jbiwiki/Wiki.jsp?page=SAPBC">SAPBC wiki</a>
+        for more information on the SAP binding component.
+       </li>
+       <hr noshade /><br>
+       <li><b>Downloading and installing the j-Interop dependencies</b>
+        <p>Building the DCOM BC component requires that you download and install 
+        <a href='http://j-interop.sourceforge.net/'>j-Interop</a> binaries. This is currently a manual 
+        step as the j-Interop jar files are not published on any public maven repository. This additional 
+        step will cease to exist once the j-Interop jars become available.
+        </p>
+        
+        <p> The DCOM BC is not built by default. You can choose to build this component
+        by uncommenting the following line in the <code>open-jbi-components/ojc-core/pom.xml</code> 
+        file:
+
+<pre>
+&lt;!--
+&lt;module&gt;dcombc&lt;/module&gt;
+--&gt;
+</pre>
+        </p>
+        <p> The j-Interop binary can be downloaded from the j-Interop website: 
+        <a href='http://j-interop.sourceforge.net/'> j-interop.sourceforge.net</a>. 
+        You will need to download version 1.17. The j-Interop binary is distributed in zip format 
+        and once you download and unzip the distribution, you will need to install all the artifacts 
+        available in the &lt;j-Interop install&gt;/lib directory
+        </p>
+        <p>
+        You will have to run the following commands:
+
+        <pre>
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=j-interop -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\j-interop.jar
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=iwombat -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\iwombat.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=jarapac -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\jarapac.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=jcifs-1.2.9 -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\jcifs-1.2.9.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=jcifs-ntlm-auth -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\jcifs-ntlm-auth.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=ncacn_ip_tcp -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\ncacn_ip_tcp.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=ncacn_np -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\ncacn_np.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=ntlm-security -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=jar -DgeneratePom=true -Dfile=path\to\ntlm-security.jar
+
+
+mvn -Dmaven.repo.local=%JV_SRCROOT%\m2\repository install:install-file 
+&nbsp;&nbsp;&nbsp;&nbsp;-DgroupId=org.jinterop -DartifactId=progIdVsClsidDB -Dversion=1.17 
+&nbsp;&nbsp;&nbsp;&nbsp;-Dpackaging=properties -DgeneratePom=true -Dfile=path\to\progIdVsClsidDB.properties
+
+        </pre>
+
+
+        </p>
+       <hr noshade /><br>
+       <li><b>Run the build</b>
+       <p><i>Note</i>:  to drive your build from NetBeans, see the <A HREF="mevenide.html">Meven-Ide Tutorial</A>.
+       <p>
+<pre>
+% cd $JV_SRCROOT (%JV_SRCROOT% on windows)
+% smvn clean
+% smvn (equivalent to "smvn install")
+</pre>
+        Then run the tests:
+<pre>
+% smvntest
+</pre>
+        <p><b>IMPORTANT:</b> you must run "smvn clean" before smvn install. The clean step cleans all projects, and then builds the compileconf project, which is responsible for configuring the glassfish compilation path.
+
+        <p>If you are behind a firewall, maven requires that you setup a ~/m2/settings.xml file.  For more information, click <a href="faq.html">HERE</a> to access the build setup FAQ
+       </li>
+       <hr noshade /><br>
+      </ol>
+     </div>
+    </td>
+   </tr>
+   <tr class="white"><td><div class="min1">&nbsp;</div></td></tr>
+  </table>
+ </body>
+</html>

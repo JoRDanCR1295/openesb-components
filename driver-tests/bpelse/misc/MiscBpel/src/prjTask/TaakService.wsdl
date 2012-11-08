@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/prjTask/TaakService"
+             name="TaakService"
+             xmlns:tns="http://localhost/prjTask/TaakService"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <plink:partnerLinkType name="TaakServiceSEIPartnerLink">
+        <plink:role portType="tns:TaakServiceSEI"
+                    name="TaakServiceSEIRole"></plink:role>
+    </plink:partnerLinkType>
+    <types>
+        <schema targetNamespace="http://localhost/prjTask/TaakService"
+                xmlns:tns="http://localhost/prjTask/TaakService"
+                xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+            
+            
+            
+            
+                    <xsd:element name="VentourisWSException">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                     nillable="true"
+                                     name="message"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element type="tns:createTaakRequest"
+                         name="createTaakRequest"></xsd:element>
+            <xsd:element type="xsd:string"
+                         name="createTaakResponse"></xsd:element>
+            <xsd:complexType name="createTaakRequest">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="dossierId"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 nillable="true"
+                                 name="taakType"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </schema>
+    </types>
+    <message name="TaakServiceSEI_createTaakRequest">
+        <part name="parameters"
+              element="tns:createTaakRequest"></part>
+    </message>
+    <message name="TaakServiceSEI_createTaakResponse">
+        <part name="result"
+              element="tns:createTaakResponse"></part>
+    </message>
+    <message name="TaakServiceSEI_VentourisWSException">
+        <part name="VentourisWSException"
+              element="tns:VentourisWSException"></part>
+    </message>
+    <portType name="TaakServiceSEI">
+        <operation name="createTaak">
+            <input message="tns:TaakServiceSEI_createTaakRequest"></input>
+            <output message="tns:TaakServiceSEI_createTaakResponse"></output>
+            <fault name="VentourisWSException"
+                   message="tns:TaakServiceSEI_VentourisWSException"></fault>
+        </operation>
+    </portType>
+    <binding name="TaakServiceSEIBinding"
+             type="tns:TaakServiceSEI">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createTaak">
+            <soap:operation/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="VentourisWSException">
+                <soap:fault name="VentourisWSException"
+                            use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="TaakService">
+        <port name="TaakServiceSEIPort"
+              binding="tns:TaakServiceSEIBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/powell/services/TaakServiceSEIPort"/>
+        </port>
+    </service>
+    <!-- types -->
+    <!-- message -->
+    <!-- porttype -->
+    <!-- binding -->
+    <!-- service -->
+</definitions>

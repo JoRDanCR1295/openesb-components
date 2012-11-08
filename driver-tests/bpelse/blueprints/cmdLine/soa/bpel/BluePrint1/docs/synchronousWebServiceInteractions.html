@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Synchronous Web Service Interactions Using BPEL</title>
+</head>
+<body>
+<h1><small>BPEL BluePrint 1</small></h1>
+<h1>Synchronous Web Service Interactions Using BPEL</h1>
+<p>Kiran Bhumana, Ryan Kennedy, Shauna Pickett-Gordon </p>
+<h2>Problem Description</h2>
+<p>The Business Process Execution Language (BPEL) provides a simple and
+efficient way of bringing multiple web services together into new
+composite services that represent business processes (also called BPEL
+processes).</p>
+<p>Before attempting to model real-world business processes using BPEL,
+we need to understand the steps involved in describing business
+processes in this new language, and how to consume and provide for
+synchronous web service operations from within a BPEL process.</p>
+<h2>Solution</h2>
+<p>Synchronous operations are appropriate in business processes that
+require an immediate response to a request. Execution proceeds on the
+consumer side only after the response arrives and is consumed. </p>
+<p>Two aspects are demonstrated in this solution:</p>
+<ul>
+  <li>A BPEL process that provisions one or more synchronous operations
+  </li>
+  <li>A BPEL process that consumes one or more synchronous operations
+provisioned by one or more partner web services</li>
+</ul>
+<h3>Provisioning a Synchronous Operation </h3>
+<p>Provisioning a synchronous operation (also called a
+request-response, or in-out, operation) involves receiving a message
+and replying with a response message as defined by the web service.
+BPEL defines the following constructs to enable the provisioning of a
+synchronous operation:</p>
+<ul>
+  <li>A <code>receive</code> activity or an <code>onMessage</code>
+activity</li>
+  <li>A <code>reply</code> activity</li>
+</ul>
+<p>A given pair of activities--consisting of a <code>receive</code>
+(or <code>onMessage</code>) and a <code>reply--</code>together
+provision the request-response for a single synchronous operation. </p>
+<h3>Consuming a Synchronous Operation </h3>
+<p>Consuming an in-out operation involves sending a message and
+expecting a response message as defined by the web service. BPEL
+defines an <code>invoke</code> activity that enables the consumption
+of operations defined by partner web services. A BPEL process commonly
+invokes multiple web services as part of its orchestration, and then
+makes use of the response messages.</p>
+<p>With these BPEL constructs and those explained in the second BPEL
+BluePrint, you can
+define complex business processes that mirror relationships and
+dependencies between real-world business interactions.<br>
+<br>
+</p>
+<h2>Design Details</h2>
+<p>You'll need to consider certain design details when you use the
+Business Process Execution Language (BPEL) to describe the following:</p>
+<ul>
+  <li>An executable business process that provisions a synchronous
+operation </li>
+  <li>An executable business process that consumes a synchronous
+operation on a separate web service</li>
+</ul>
+<p>Provisioning a synchronous operation involves receiving a message
+and replying with a message defined by the web service. Consuming a
+synchronous operation involves sending a message and expecting a
+response message defined by the web service. </p>
+<p>When designing a business process that incorporates synchronous web
+service interactions, the following constructs are needed.</p>
+<ul>
+  <li><code>partnerLinks</code> representing partner web services</li>
+  <li><code>variables</code> that store data exchanged between web
+services</li>
+  <li>An <code>invoke</code> activity to consume a service</li>
+  <li>A <code>receive-reply</code> activity pair to provide a service</li>
+  <li>Input and output data mapping to achieve some meaningful business
+logic</li>
+</ul>
+<p>The following solution shows how to create and use the BPEL
+artifacts to both provide for and consume synchronous web service
+operations. First, an external client consumes a single synchronous
+operation provisioned by a BPEL process. Then, this BPEL process
+consumes a synchronous operation provisioned by another BPEL process.
+The solution is illustrated next. </p>
+<p><img alt="" src="images/bp1-fig1.PNG"
+ style="width: 552px; height: 200px;"><br>
+<b>Figure 1: Synchronous Web Service Interaction</b></p>
+<p>Although this example illustrates a business process consisting of
+multiple synchronous interactions, a single BPEL process can provision
+and consume both synchronous and asynchronous operations. Refer to
+BluePrint 2, Asynchronous Web
+Service Interactions
+Using BPEL, for an example of how to combine synchronous and
+asynchronous interactions in a BPEL process.</p>
+<h3>Business Logic of the Services</h3>
+<p>Two web services are involved here: a purchase order service, <code>POService</code>,
+which is consumed by an external client through SOAP over HTTP; and an
+inventory check service, <code>InventoryService</code>, consumed by
+the BPEL process that provisions the purchase order service. Both <code>POService</code>
+and <code>InventoryService</code> are implemented as BPEL services. </p>
+<p>When the purchase order service provider receives the client
+request, the following events happen:</p>
+<ol>
+  <li>The purchase order service provider:
+    <ol type="a">
+      <li>Assigns the price and the current date of the request.</li>
+      <li>Invokes the inventory service to check inventory status.</li>
+    </ol>
+  </li>
+  <li>The inventory service provider's business logic checks the
+availability of an item. <br>
+If the incoming purchase order's <code>orderDescription</code> value
+starts with <code>OrderVal</code>, then the order's status is
+available in the inventory. </li>
+  <li>Based on the result from the inventory service, the purchase
+order service provider responds with one of the following:
+    <ul>
+      <li>The fulfilled purchase order</li>
+      <li>A fault stating that the order cannot be completed</li>
+    </ul>
+  </li>
+</ol>
+<h3>Define the WSDL</h3>
+<p>When you define a business process, you are creating a new web
+service that comprises existing web services. The WSDL for this new web
+service defines the relationships between this and other web services. </p>
+<p><b><code>&lt;partnerLinkType&gt;</code></b></p>
+<p>A <code>partnerLinkType</code> specifies the relationship between
+two services by defining the role that each service implements. Each
+role specifies exactly one WSDL <code>portType</code> type that must
+be implemented by the service that implements that role. </p>
+<p>In this example, the <code>PurchaseOrder</code> WSDL defines a <code>partnerLinkType</code>
+with a role <code>purchaseService</code>. The <code>purchaseService</code>
+role refers to the <code>sendPurchaseOrder</code> WSDL operation
+through a <code>portType</code> called <code>purchaseOrderPT</code>.</p>
+<pre>    &lt;plink:partnerLinkType name="purchasingLT"&gt;<br>        &lt;plink:role name="purchaseService"<br>                    portType="tns:purchaseOrderPT"&gt;&lt;/plink:role&gt;<br>    &lt;/plink:partnerLinkType&gt;   <br></pre>
+<p>The <code>sendPurchaseOrder</code> operation defines an input to be
+sent to the provider, and expects either a reply or a fault. In a web
+service in-out operation, an input message is mandatory. You cannot
+define this kind of operation with only a response or a fault. The
+invoker may send an input message and expect either a response message
+or fault. Synchronous web service calls are similar to method calls or
+subroutines in most programming languages.</p>
+<pre>    &lt;portType name="purchaseOrderPT"&gt;<br>        &lt;operation name="sendPurchaseOrder"&gt;<br>            &lt;input name="sendPurchaseOrderRequest" message="tns:POMessage"&gt;&lt;/input&gt;<br>            &lt;output name="sendPurchaseOrderReply" message="tns:POMessage"&gt;&lt;/output&gt;<br>            &lt;fault name="cannotCompleteOrder"<br>                   message="tns:orderFaultType"&gt;&lt;/fault&gt;<br>        &lt;/operation&gt;<br>    &lt;/portType&gt;<br></pre>
+<p>The <code>InventoryService</code> WSDL defines a <code>partnerLinkType</code>
+with the role <code>inventoryService</code>. This role refers to the <code>inventoryService</code>
+operation through the <code>portType</code> called <code>inventoryPortType</code>.</p>
+<pre>    &lt;plink:partnerLinkType name="inventoryRequestingLT"&gt;<br>        &lt;plink:role name="inventoryService"<br>                    portType="tns:inventoryPortType"&gt;&lt;/plink:role&gt;<br>    &lt;/plink:partnerLinkType&gt;<br></pre>
+<p>The <code>inventoryService</code> operation expects a <code>purchaseOrder</code>
+message, and replies with either <code>inventoryStatus</code> or <code>inventoryFaultType</code>.</p>
+<pre>     &lt;portType name="inventoryPortType"&gt;<br>         &lt;operation name="inventoryService"&gt;<br>             &lt;input name="purchaseOrder"<br>                   message="tns:POMessage"&gt;&lt;/input&gt;<br>             &lt;output name="inventoryStatus"<br>                    message="tns:InventoryMessage"&gt;&lt;/output&gt;<br>             &lt;fault name="inventoryFaultType"<br>                   message="tns:inventoryFault"&gt;&lt;/fault&gt;<br>         &lt;/operation&gt;<br>     &lt;/portType&gt;<br></pre>
+<p><b>NOTE:</b> If the WSDL file of an existing web service does not
+contain a definition for <code>partnerLinkType</code>, you can create
+a wrapper WSDL file to import the original WSDL file, and then add the <code>partnerLinkType</code>
+definition in the wrapper. Afterwards, you can refer to the wrapper
+from your BPEL process. </p>
+<h3>Define the BPEL Process</h3>
+<p><code><b>&lt;partnerLink&gt;</b></code></p>
+<p>The <code>partnerLink</code> elements specify the partners and
+clients with which a BPEL process interacts. Each <code>partnerLink</code>
+corresponds to a specific <code>partnerLinkType</code> as defined in
+the WSDL.</p>
+<p>A <code>partnerLink</code> element must also contain one or two
+roles: </p>
+<ul>
+  <li><code>myRole</code>. This specifies the role of the BPEL process.
+If you define only myRole for <code>partnerLink</code>, you enable any
+partner or client to interact with the BPEL process, without requiring
+anything of the other partner or client. </li>
+  <li><code>partnerRole</code>. This specifies the role of the partner
+or client. If you define only partnerRole for <code>partnerLink</code>,
+you enable interactions with a partner or client, without imposing
+requirements on its caller.</li>
+</ul>
+<p>The <code>POService</code> BPEL process defines a <code>partnerLink</code>
+called <code>POServicePLink</code> to indicate its role as a provider
+of the operation <code>sendPurchaseOrder</code>. </p>
+<pre>        &lt;partnerLink name="POServicePLink"<br>                     partnerLinkType="pos:purchasingLT"<br>                     myRole="purchaseService"/&gt;<br></pre>
+<p>Since <code>POService</code> also consumes the <code>InventoryService</code>,
+a <code>partnerLink</code> called <code>requestInventoryPLink</code>
+is also defined. </p>
+<pre>        &lt;partnerLink name="requestInventoryPLink"<br>                     partnerLinkType="invs:inventoryRequestingLT"<br>                     partnerRole="inventoryService"/&gt;<br></pre>
+<p><b><code>&lt;variables&gt;</code></b></p>
+<p>BPEL defines variables that the business process uses as part of its
+logic. Next are some variables defined by the <code>POService</code>
+BPEL process.
+</p>
+<pre>    &lt;variables&gt;<br>        &lt;variable name="purchaseOrderRequest"<br>                  messageType="pos:POMessage"&gt;&lt;/variable&gt;<br>        &lt;variable name="purchaseOrderReply"<br>                  messageType="pos:POMessage"&gt;&lt;/variable&gt;<br>        &lt;variable name="inventoryServiceRequest"<br>                  messageType="invs:POMessage"&gt;&lt;/variable&gt;<br>        &lt;variable name="inventoryServiceReply"<br>                  messageType="invs:InventoryMessage"&gt;&lt;/variable&gt;<br>    &lt;/variables&gt;<br></pre>
+<p><b><code>&lt;receive&gt;</code> and <code>&lt;reply&gt;</code></b></p>
+<p>In a <code>receive-reply</code> pair, only one outstanding <code>reply</code>
+activity can correspond to an executed <code>receive</code>. This
+means that, at most, one <code>reply</code> is executed for a given <code>receive</code>.
+In this example, one <code>receive</code> is matched by two <code>reply</code>
+activities: one corresponds to the expected valid response, and the
+other corresponds to a fault defined on the operation. </p>
+<p>In the static BPEL model, there are two matching <code>reply</code>
+activities for a single <code>receive</code>. However, at runtime,
+only one <code>reply</code> is executed, because the <code>reply</code>
+activities are on mutually exclusive branches of execution. Therefore,
+the execution doesn't result in a <code>missingRequest</code> standard
+fault, as defined in the BPEL specification. </p>
+<pre>    &lt;receive name="sendPurchaseOrder"<br>                 partnerLink="POServicePLink"<br>                 portType="pos:purchaseOrderPT"<br>                 operation="sendPurchaseOrder"<br>                 variable="purchaseOrderRequest"<br>                 createInstance="yes"&gt;<br>    &lt;/receive&gt;<br> <br>    &lt;reply name="sendPurchaseOrder.Reply"<br>                 partnerLink="POServicePLink"<br>                 portType="pos:purchaseOrderPT"<br>                 operation="sendPurchaseOrder"<br>                 variable="purchaseOrderRequest"&gt;<br>    &lt;/reply&gt;<br></pre>
+<p><b><code>&lt;invoke&gt;</code></b></p>
+<p>An <code>invoke</code> activity has the effect of consuming a web
+service.</p>
+<pre>    &lt;invoke name="inventoryService"<br>                 partnerLink="requestInventoryPLink"<br>                 portType="invs:inventoryPortType"<br>                 operation="inventoryService"<br>                 inputVariable="inventoryServiceRequest"<br>                 outputVariable="inventoryServiceReply"&gt;<br>    &lt;/invoke&gt;<br></pre>
+<p>A visual form of the <code>POService </code>BPEL process is shown
+next. </p>
+<p><img alt="" src="images/bp1-fig2.PNG"
+ style="width: 546px; height: 697px;"><br>
+<b>Figure 2: The POService BPEL Process<br>
+</b></p>
+<p><span style="font-weight: bold;">Note: </span>While the WS-BPEL
+specification itself does not include a graphical
+notation, many tools provide visual diagramming environments that
+generate BPEL source code. The BPEL Designer available in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a> provides a visual editor for
+diagramming business processes, as seen above.<br>
+</p>
+<h3>The InventoryService BPEL Process </h3>
+<p>The BPEL process <code>InventoryService</code> defines a <code>partnerLink</code>
+called <code>inventoryServicePLink</code>, indicating its role as the
+service provider.<br>
+</p>
+<pre>       &lt;partnerLink name="inventoryServicePLink"<br>                     partnerLinkType="invs:inventoryRequestingLT"<br>                     myRole="inventoryService"/&gt;<br></pre>
+<p>Here are some of the <code>variables</code> defined by the <code>InventoryService</code>
+process. <br>
+</p>
+<pre>       &lt;variables&gt;<br>            &lt;variable name="purchaseOrder"<br>                  messageType="invs:POMessage"&gt;&lt;/variable&gt;<br>            &lt;variable name="inventoryStatus"<br>                  messageType="invs:InventoryMessage"&gt;&lt;/variable&gt;<br>       &lt;/variables&gt;<br></pre>
+<p>The <code>InventoryService</code> process defines a matching <code>receive</code>
+and <code>reply</code> for the operation, as follows.<br>
+</p>
+<pre>       &lt;receive name="inventoryService"<br>                 partnerLink="inventoryServicePLink"<br>                 portType="invs:inventoryPortType"<br>                 operation="inventoryService"<br>                 variable="purchaseOrder"<br>                 createInstance="yes"&gt;<br>        &lt;/receive&gt;<br><br>        &lt;reply name="inventoryService.Reply"<br>               partnerLink="inventoryServicePLink"<br>               portType="invs:inventoryPortType"<br>               operation="inventoryService"<br>               variable="inventoryStatus"&gt;<br>        &lt;/reply&gt;<br></pre>
+<p>A visual form of the <code>InventoryService </code>BPEL process is
+shown next. </p>
+<p><img alt="" src="images/bp1-fig3.PNG"
+ style="width: 488px; height: 544px;"><br>
+<b>Figure 3: The InventoryService BPEL Process</b></p>
+<p>Refer to the <a
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html"
+ target="_blank">BPEL process
+code</a> for further details of the business logic implementation. </p>
+<h3>Input Data XML</h3>
+<p>The following input XML instance gives a valid response.<br>
+</p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" <br>xmlns="http://manufacturing.org/xsd/purchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>&nbsp; &lt;soapenv:Body&gt;<br>&nbsp;&nbsp;&nbsp; &lt;sendPurchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;orderId&gt;012341&lt;/orderId&gt;<br>&nbsp;&nbsp;&nbsp; &nbsp; 	  &lt;customerId&gt;9876&lt;/customerId&gt;<br>    &nbsp;&nbsp;&nbsp; &nbsp; &lt;orderDescription&gt;OrderVal_Any_Description&lt;/orderDescription&gt;<br>&nbsp;&nbsp;&nbsp;     &nbsp; &lt;price&gt;&lt;/price&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/purchaseOrder&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/sendPurchaseOrder&gt;<br>&nbsp; &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<small><span style="font-family: courier new;" class="m"></span></small>
+<div style="font-family: courier new;" class="k"><small>
+<script>f(clean);</script> </small></div>
+<h2>References</h2>
+<ul>
+  <li>Browse the <a target="_blank"
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+code</a>
+for this
+BluePrint, including the
+BPEL process files and WSDL files.</li>
+  <li>See the BPEL BluePrint sample projects included in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a>.</li>
+</ul>
+<hr> <small> &copy; Sun Microsystems 2006. All of the material in The
+Java BluePrints Solutions Catalog is <a
+ href="https://bpcatalog.dev.java.net/nonav/COPYRIGHT.html">copyright</a>-protected
+and may not be published in other works without express written
+permission from Sun Microsystems.</small><br>
+<small> </small>
+</body>
+</html>

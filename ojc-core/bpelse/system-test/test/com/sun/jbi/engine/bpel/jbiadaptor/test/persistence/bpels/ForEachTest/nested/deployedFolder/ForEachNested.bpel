@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ForEachNested" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/ForEachNested"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/ForEachNested">
+    <import namespace="http://enterprise.netbeans.org/wsdl/ForEachNested" 
+            location="ForEachNested.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ForEachInvokePLT" 
+                     partnerRole="ForEachInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ForEachPartnerLinkType" 
+                     myRole="ForEachPLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input" messageType="wsdlNS:ForEachInputMsg"/>
+        <variable name="output" messageType="wsdlNS:ForEachOutputMsg"/>
+        <variable name="loopMsg" messageType="wsdlNS:ForEachOutputMsg"/>
+    </variables>
+
+    <sequence>
+    	<receive name="Receive1" partnerLink="PartnerLink1" 
+               	 operation="ForEachOperation" portType="wsdlNS:ForEachPortType" 
+               	 variable="input" createInstance="yes"/>
+      	<assign name="AssignLoopMsg">
+      		<copy>
+      			<from>concat('abc12345','abc12345','abc12345')</from>
+      			<to part="result" variable="loopMsg"/>
+      		</copy>
+      		<copy>
+      			<from>''</from><to part="result" variable="output"/>
+      		</copy>
+      	</assign>
+      	<forEach name="ForEach1" counterName="ForEachCounter" parallel="no">
+          	<startCounterValue>$input.startIndex</startCounterValue>
+          	<finalCounterValue>$input.outerEnd</finalCounterValue>
+          	<scope name="Scope1">
+              	<sequence>
+			      	<invoke name="InvokeLoop" partnerLink="InvokePLT"
+		              	  	operation="ForEachInvokeOp" portType="wsdlNS:InvokePortType"
+		              	  	inputVariable="loopMsg"/>
+	              	<assign name="AssignOuter">
+	               	   <copy>
+	               	       <from>concat($output.result, 'abc')</from>
+	               	       <to part="result" variable="output"/>
+	               	   </copy>
+	              	</assign>
+	             	<forEach name="ForEach2" counterName="innerIndex" parallel="no">
+	              	  	<startCounterValue>$input.startIndex</startCounterValue>
+	              	  	<finalCounterValue>$input.innerEnd</finalCounterValue>
+	              	  	<scope name="Scope2">
+	              	  		<sequence>
+	              	  			<assign name="AssignInner">
+	              	  				<copy>
+	              	  					<from>concat($output.result, ($innerIndex + 1))</from>
+	              	  					<to part="result" variable="output"/>
+	              	  				</copy>
+	              	  			</assign>
+	              	  			<invoke name="InvokeInnerLoop" partnerLink="InvokePLT"
+		              	  				operation="ForEachInvokeOp" portType="wsdlNS:InvokePortType"
+		              	  				inputVariable="loopMsg"/>
+	              			</sequence>
+	              		</scope>
+	              	</forEach>
+	            </sequence>
+            </scope>
+      	</forEach>
+      	<invoke name="Invoke1" partnerLink="InvokePLT"
+              	operation="ForEachInvokeOp" portType="wsdlNS:InvokePortType"
+              	inputVariable="output"/>
+	</sequence>
+</process>

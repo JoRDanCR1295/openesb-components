@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoSimple" targetNamespace="urn:jbi4corba/test-consumer-fromidl-simple" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-simple" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:jbi4corba/test-consumer-fromidl-simple" 
+                    elementFormDefault="qualified" attributeFormDefault="qualified" 
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="echo">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" name="msg" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="echoResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="echo">
+        <wsdl:part name="parameters" element="tns:echo">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echoResponse">
+        <wsdl:part name="parameters" element="tns:echoResponse">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EchoSimplePortType">
+        <wsdl:operation name="echo">
+            <wsdl:input name="echo" message="tns:echo">
+            </wsdl:input>
+            <wsdl:output name="echoResponse" message="tns:echoResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EchoSimpleCorbaBinding" type="tns:EchoSimplePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="echo">
+            <soap:operation/>
+            <wsdl:input name="echo">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echoResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EchoSimple">
+        <wsdl:port name="EchoSimpleCorbaPort" binding="tns:EchoSimpleCorbaBinding">
+            <soap:address location="http://localhost:8192/Service/test-consumer-fromidl-simple/"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="EchoSimple">
+        <plnk:role name="EchoSimplePortTypeRole" portType="tns:EchoSimplePortType"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>

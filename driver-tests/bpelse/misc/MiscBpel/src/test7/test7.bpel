@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><bpel_20:process xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="urn:Test7TargetNamespace" xmlns:ns1="http://www.xmethods.net/sd/CurrencyExchangeService.wsdl" xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation" xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel" xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/" xmlns:tns="http://www.seebeyond.com/eInsight/test7" name="test7" sbynpxp:end_XLoc="840.0" sbynpxp:end_YLoc="341.0" sbynpxp:linkStyle="angular" sbynpxp:start_XLoc="50.0" sbynpxp:start_YLoc="120.0" targetNamespace="http://www.seebeyond.com/eInsight/test7">
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="test7.wsdl" namespace="urn:Test7TargetNamespace"/>
+    <bpel_20:import importType="http://schemas.xmlsoap.org/wsdl/" location="CurrencyExchangeService.wsdl" namespace="http://www.xmethods.net/sd/CurrencyExchangeService.wsdl"/>
+    
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink myRole="Test7ServerRole" name="Partner1" partnerLinkType="ns0:Test7ServiceLinkType"/>
+        <bpel_20:partnerLink name="Partner2" partnerLinkType="ns1:SLT" partnerRole="Server"/>
+    </bpel_20:partnerLinks>
+    
+    <bpel_20:variables>
+        <bpel_20:variable messageType="ns0:Test7Message" name="MyRole_Test7Operation_Output" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns0:Test7Message" name="MyRole_Test7Operation_Input" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns1:getRateRequest" name="PartnerRole_getRate_Input" sbyncreation:type="auto"/>
+        <bpel_20:variable messageType="ns1:getRateResponse" name="PartnerRole_getRate_Output" sbyncreation:type="auto"/>
+    </bpel_20:variables>
+    
+    <bpel_20:sequence>
+        <bpel_20:receive createInstance="yes" name="MyRole.Test7Operation.Receive" operation="Test7Operation" partnerLink="Partner1" portType="ns0:Test7PortType" sbynpxp:XLoc="141.0" sbynpxp:YLoc="113.0" variable="MyRole_Test7Operation_Output"/>
+        <bpel_20:assign name="assign1" sbynpxp:XLoc="278.0" sbynpxp:YLoc="91.0">
+            <bpel_20:copy>
+                <bpel_20:from>$MyRole_Test7Operation_Output.Test7Part/FromCountry</bpel_20:from>
+                <bpel_20:to part="country1" variable="PartnerRole_getRate_Input"/>
+            </bpel_20:copy>
+            <bpel_20:copy>
+                <bpel_20:from>$MyRole_Test7Operation_Output.Test7Part/ToCountry</bpel_20:from>
+                <bpel_20:to part="country2" variable="PartnerRole_getRate_Input"/>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:invoke inputVariable="PartnerRole_getRate_Input" name="PartnerRole.getRate" operation="getRate" outputVariable="PartnerRole_getRate_Output" partnerLink="Partner2" portType="ns1:CurrencyExchangePortType" sbynpxp:XLoc="361.0" sbynpxp:YLoc="188.0"/>
+        <bpel_20:assign name="assign" sbynpxp:XLoc="547.0" sbynpxp:YLoc="191.0">
+            <bpel_20:copy>
+                <bpel_20:from part="Result" variable="PartnerRole_getRate_Output"/>
+                <bpel_20:to>$MyRole_Test7Operation_Input.Test7Part/FromCountry</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:reply name="MyRole.Test7Operation.Reply" operation="Test7Operation" partnerLink="Partner1" portType="ns0:Test7PortType" sbynpxp:XLoc="659.0" sbynpxp:YLoc="308.0" variable="MyRole_Test7Operation_Input"/>
+    </bpel_20:sequence>
+</bpel_20:process>

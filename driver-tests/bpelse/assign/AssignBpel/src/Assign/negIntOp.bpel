@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="negIntOp"
+         targetNamespace="http://www.seebeyond.com/eInsight/OperationTest"
+         sbynpxp:end_YLoc="341.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="840.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/negIntOp"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/Operation"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/Operation"
+            location="operation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="OperationLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="NegIntOp_Output"
+                  messageType="ns0:Operation"></variable>
+        <variable name="NegIntOp_Input"
+                  messageType="ns0:Operation"></variable>
+    </variables>
+    <sequence>
+        <receive name="NegIntOp"
+                 partnerLink="OperationLink"
+                 portType="ns0:Operation"
+                 operation="NegIntOp"
+                 variable="NegIntOp_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="237.0"
+                 sbynpxp:YLoc="139.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="355.0"
+                sbynpxp:YLoc="143.0">
+            <copy>
+                <from>-$NegIntOp_Output.part/Int0</from>
+                <to>$NegIntOp_Input.part/retInt</to>
+            </copy>
+        </assign>
+        <reply name="NegIntOp.Reply"
+               partnerLink="OperationLink"
+               portType="ns0:Operation"
+               operation="NegIntOp"
+               variable="NegIntOp_Input"
+               sbynpxp:XLoc="509.0"
+               sbynpxp:YLoc="121.0"></reply>
+    </sequence>
+</process>

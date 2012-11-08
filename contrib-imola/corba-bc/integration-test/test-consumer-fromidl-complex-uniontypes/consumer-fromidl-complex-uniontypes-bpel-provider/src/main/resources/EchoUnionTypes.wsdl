@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoUnionTypes" 
+targetNamespace="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+        <xs:schema attributeFormDefault="qualified" 
+        elementFormDefault="qualified" 
+        targetNamespace="http://testconsumerfromidluniontypes.test.jbi4corba.imolinfo.it/" 
+        xmlns="http://testconsumerfromidluniontypes.test.jbi4corba.imolinfo.it/" 
+        xmlns:ns1="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+        xmlns:ns2="http://jaxb.dev.java.net/array" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes"/>
+            <xs:import namespace="http://jaxb.dev.java.net/array"/>
+<xs:complexType name="SecondUnion">
+<xs:sequence>
+<xs:choice>
+<xs:element name="alfanumeric" type="xs:string"/>
+<xs:element name="numeric" type="xs:int"/>
+<xs:element name="two_format" type="ns1:any"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ThirdUnion">
+<xs:sequence>
+<xs:choice>
+<xs:element name="primo" type="xs:int"/>
+<xs:element name="altro" type="xs:boolean"/>
+<xs:element name="secondo" type="xs:short"/>
+<xs:element name="third" type="FirstUnionArray"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="FirstUnion">
+<xs:sequence>
+<xs:choice>
+<xs:element name="uni1" type="TempUnion"/>
+<xs:element name="alfanumeric" type="xs:string"/>
+<xs:element name="numeric" type="xs:int"/>
+<xs:element name="uni2" type="TempUnionArray"/>
+<xs:element name="two_format" type="xs:anyType"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="TempUnion">
+<xs:sequence>
+<xs:choice>
+<xs:element name="alfanumeric" type="xs:string"/>
+<xs:element name="numeric" type="xs:int"/>
+<xs:element name="two_format" type="xs:anyType"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="complexStruct1">
+<xs:sequence>
+<xs:element name="fieldBoolean" type="xs:boolean"/>
+<xs:element name="fieldChar" type="xs:unsignedShort"/>
+<xs:element name="fieldWChar" type="SecondUnion"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="ForthUnion">
+<xs:sequence>
+<xs:choice>
+<xs:element name="primo" type="xs:int"/>
+<xs:element name="altro" type="xs:boolean"/>
+<xs:element name="secondo" type="xs:short"/>
+<xs:element name="third" type="FirstUnion"/>
+</xs:choice>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="TempUnionArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="TempUnion"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="FirstUnionArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="FirstUnion"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType final="#all" name="complexStruct1Array">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="complexStruct1"/>
+</xs:sequence>
+</xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://jaxb.dev.java.net/array" xmlns="http://jaxb.dev.java.net/array" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:complexType final="#all" name="anyTypeArray">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="xs:anyType"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema attributeFormDefault="unqualified" 
+            elementFormDefault="qualified" 
+            targetNamespace="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+            xmlns="urn:jbi4corba/test-consumer-fromidl-complex-uniontypes" 
+            xmlns:ns1="http://testconsumerfromidluniontypes.test.jbi4corba.imolinfo.it/" 
+            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:import namespace="http://testconsumerfromidluniontypes.test.jbi4corba.imolinfo.it/"/>
+            <xs:element name="echo1">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="ns1:ThirdUnion"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo1Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo2">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="ns1:SecondUnion"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo2Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="ns1:ThirdUnion"/>
+<xs:element name="msg" type="ns1:SecondUnion"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo3">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo3Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="ns1:complexStruct1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo4">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="ns1:complexStruct1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo4Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo5">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="ns1:complexStruct1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo5Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="xs:string"/>
+<xs:element name="msg" type="ns1:complexStruct1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo6">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo6Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="ns1:complexStruct1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo7">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo7Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element maxOccurs="unbounded" name="return" type="ns1:complexStruct1Array"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo8">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="msg" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo8Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="ns1:SecondUnion"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo9">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element maxOccurs="unbounded" name="msg" type="ns1:complexStruct1Array"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="echo9Response">
+                <xs:complexType>
+                    <xs:sequence>
+<xs:element name="return" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType abstract="true" name="any"/>
+            <xs:element name="EchoUnionException" type="EchoUnionException"/>
+            <xs:complexType name="EchoUnionException">
+                <xs:sequence>
+<xs:element name="reason" nillable="true" type="ns1:ThirdUnion"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="echo9Response">
+        <wsdl:part name="parameters" element="tns:echo9Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo3Response">
+        <wsdl:part name="parameters" element="tns:echo3Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo8">
+        <wsdl:part name="parameters" element="tns:echo8">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo1">
+        <wsdl:part name="parameters" element="tns:echo1">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo6">
+        <wsdl:part name="parameters" element="tns:echo6">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo2">
+        <wsdl:part name="parameters" element="tns:echo2">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo7Response">
+        <wsdl:part name="parameters" element="tns:echo7Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo7">
+        <wsdl:part name="parameters" element="tns:echo7">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo5Response">
+        <wsdl:part name="parameters" element="tns:echo5Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo2Response">
+        <wsdl:part name="parameters" element="tns:echo2Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo1Response">
+        <wsdl:part name="parameters" element="tns:echo1Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo3">
+        <wsdl:part name="parameters" element="tns:echo3">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo4Response">
+        <wsdl:part name="parameters" element="tns:echo4Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo9">
+        <wsdl:part name="parameters" element="tns:echo9">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo8Response">
+        <wsdl:part name="parameters" element="tns:echo8Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="EchoUnionException">
+        <wsdl:part name="EchoUnionException" element="tns:EchoUnionException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo4">
+        <wsdl:part name="parameters" element="tns:echo4">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo6Response">
+        <wsdl:part name="parameters" element="tns:echo6Response">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="echo5">
+        <wsdl:part name="parameters" element="tns:echo5">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="EchoUnionTypesPortType">
+        <wsdl:operation name="echo8">
+            <wsdl:input name="echo8" message="tns:echo8">
+            </wsdl:input>
+            <wsdl:output name="echo8Response" message="tns:echo8Response">
+            </wsdl:output>
+            <wsdl:fault name="EchoUnionException" message="tns:EchoUnionException">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="echo1">
+            <wsdl:input name="echo1" message="tns:echo1">
+            </wsdl:input>
+            <wsdl:output name="echo1Response" message="tns:echo1Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo3">
+            <wsdl:input name="echo3" message="tns:echo3">
+            </wsdl:input>
+            <wsdl:output name="echo3Response" message="tns:echo3Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo6">
+            <wsdl:input name="echo6" message="tns:echo6">
+            </wsdl:input>
+            <wsdl:output name="echo6Response" message="tns:echo6Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo9">
+            <wsdl:input name="echo9" message="tns:echo9">
+            </wsdl:input>
+            <wsdl:output name="echo9Response" message="tns:echo9Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo2">
+            <wsdl:input name="echo2" message="tns:echo2">
+            </wsdl:input>
+            <wsdl:output name="echo2Response" message="tns:echo2Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo7">
+            <wsdl:input name="echo7" message="tns:echo7">
+            </wsdl:input>
+            <wsdl:output name="echo7Response" message="tns:echo7Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo4">
+            <wsdl:input name="echo4" message="tns:echo4">
+            </wsdl:input>
+            <wsdl:output name="echo4Response" message="tns:echo4Response">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo5">
+            <wsdl:input name="echo5" message="tns:echo5">
+            </wsdl:input>
+            <wsdl:output name="echo5Response" message="tns:echo5Response">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="EchoUnionTypesCorbaBinding" type="tns:EchoUnionTypesPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="echo8">
+            <soap:operation/>
+            <wsdl:input name="echo8">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo8Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="EchoUnionException">
+                <soap:fault name="EchoUnionException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="echo7">
+            <soap:operation/>
+            <wsdl:input name="echo7">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo7Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo6">
+            <soap:operation/>
+            <wsdl:input name="echo6">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo6Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo9">
+            <soap:operation/>
+            <wsdl:input name="echo9">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo9Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo2">
+            <soap:operation/>
+            <wsdl:input name="echo2">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo2Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo1">
+            <soap:operation/>
+            <wsdl:input name="echo1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo1Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo4">
+            <soap:operation/>
+            <wsdl:input name="echo4">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo4Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo3">
+            <soap:operation/>
+            <wsdl:input name="echo3">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo3Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="echo5">
+            <soap:operation/>
+            <wsdl:input name="echo5">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echo5Response">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EchoUnionTypes">
+        <wsdl:port name="EchoUnionTypesCorbaPort" binding="tns:EchoUnionTypesCorbaBinding">
+            <soap:address location="http://localhost:8192/Service/test-consumer-fromidl-complex-uniontypes/"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="echoUnionTypesProcess">
+        <plnk:role name="echoUnionTypesProcess" portType="tns:EchoUnionTypesPortType"/>
+    </plnk:partnerLinkType>
+
+</wsdl:definitions>

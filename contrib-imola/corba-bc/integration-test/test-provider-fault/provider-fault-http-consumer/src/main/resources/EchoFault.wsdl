@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoFault" targetNamespace="urn:jbi4corba/test-provider-fault" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-provider-fault" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-provider-fault" xmlns="urn:jbi4corba/test-provider-fault" xmlns:ns0="http://testproviderfault.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:import namespace="http://testproviderfault.test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_testproviderfault.test.jbi4corba.imolinfo.it.xsd"/>
+    <xs:element name="echo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="msg" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="EchoComplexArrayException" type="EchoComplexArrayException"/>
+    <xs:complexType name="EchoComplexArrayException">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="reasons" type="ns0:echoStruct"/>
+        </xs:sequence>
+    </xs:complexType>    
+    <xs:element name="EchoComplexException" type="EchoComplexException"/>
+    <xs:complexType name="EchoComplexException">
+        <xs:sequence>
+            <xs:element name="reason" nillable="true" type="ns0:echoStruct"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="EchoSimpleException" type="EchoSimpleException"/>
+    <xs:complexType name="EchoSimpleException">
+        <xs:sequence>
+            <xs:element name="reason" nillable="true" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="EchoSimpleException">
+    <wsdl:part name="EchoSimpleException" element="tns:EchoSimpleException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoComplexException">
+    <wsdl:part name="EchoComplexException" element="tns:EchoComplexException">
+    </wsdl:part>
+  </wsdl:message>
+    <wsdl:message name="EchoComplexArrayException">
+    <wsdl:part name="EchoComplexArrayException" element="tns:EchoComplexArrayException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoFaultOperations">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+      <wsdl:fault name="EchoSimpleException" message="tns:EchoSimpleException">
+    </wsdl:fault>
+      <wsdl:fault name="EchoComplexException" message="tns:EchoComplexException">
+    </wsdl:fault>
+          <wsdl:fault name="EchoComplexArrayException" message="tns:EchoComplexArrayException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoFaultOperationsCorbaBinding" type="tns:EchoFaultOperations">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <wsdl:operation name="echo">
+      <soap:operation/>
+      <wsdl:input name="echo">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="EchoComplexException">
+        <soap:fault name="EchoComplexException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="EchoSimpleException">
+        <soap:fault name="EchoSimpleException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoFault">
+    <wsdl:port name="EchoFaultOperationsCorbaPort" binding="tns:EchoFaultOperationsCorbaBinding">
+
+      <soap:address location="http://localhost:8192/Service/test-provider-fault/"/>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoFaultOperations">
+<plnk:role name="EchoFaultOperationsPortTypeRole" portType="tns:EchoFaultOperations"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

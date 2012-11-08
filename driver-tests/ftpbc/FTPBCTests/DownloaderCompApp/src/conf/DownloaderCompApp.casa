@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FILE_WRITER" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FILE_IN" xmlns:ns3="http://j2ee.netbeans.org/wsdl/FTP_OUT" xmlns:ns4="http://j2ee.netbeans.org/wsdl/FTP_IN_ONLY" xmlns:ns5="http://enterprise.netbeans.org/bpel/put" xmlns:ns6="http://enterprise.netbeans.org/bpel/DOWN_2_LOCAL" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="FILE_WRITERPort" interface-name="ns1:FILE_WRITERPortType" name="endpoint1" service-name="ns1:FILE_WRITERService"/>
+<endpoint endpoint-name="FILE_INPort" interface-name="ns2:FILE_INPortType" name="endpoint2" service-name="ns2:FILE_INService"/>
+<endpoint endpoint-name="port1" interface-name="ns3:FTP_OUTPortType" name="endpoint3" service-name="ns3:service1"/>
+<endpoint endpoint-name="port1" interface-name="ns4:FTP_IN_ONLYPortType" name="endpoint4" service-name="ns4:service1"/>
+<endpoint display-name="PartnerLink1" endpoint-name="FILE_INPortTypeRole_myRole" file-path="put.bpel" interface-name="ns2:FILE_INPortType" name="endpoint5" process-name="put" service-name="ns5:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="FTP_OUTPortTypeRole_partnerRole" file-path="put.bpel" interface-name="ns3:FTP_OUTPortType" name="endpoint6" process-name="put" service-name="ns5:PartnerLink2"/>
+<endpoint display-name="PartnerLink2" endpoint-name="FTP_IN_ONLYPortTypeRole_myRole" file-path="DOWN_2_LOCAL.bpel" interface-name="ns4:FTP_IN_ONLYPortType" name="endpoint7" process-name="DOWN_2_LOCAL" service-name="ns6:PartnerLink2"/>
+<endpoint display-name="PartnerLink1" endpoint-name="FILE_WRITERPortTypeRole_partnerRole" file-path="DOWN_2_LOCAL.bpel" interface-name="ns1:FILE_WRITERPortType" name="endpoint8" process-name="DOWN_2_LOCAL" service-name="ns6:PartnerLink1"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="DownLoaderFeeder.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="DownloaderCompApp-DownLoaderFeeder" unit-name="DownLoaderFeeder" unknown="false" x="133" y="99">
+<provides endpoint="endpoint5"/>
+<consumes endpoint="endpoint6"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="Downloader.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="DownloaderCompApp-Downloader" unit-name="Downloader" unknown="false" x="154" y="260">
+<provides endpoint="endpoint7"/>
+<consumes endpoint="endpoint8"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="DownloaderCompApp-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="434">
+<link xlink:href="../jbiServiceUnits/Downloader/FILE_WRITER.wsdl#xpointer(/definitions/service[@name='FILE_WRITERService']/port[@name='FILE_WRITERPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+<port x="67" y="355">
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FILE_IN.wsdl#xpointer(/definitions/service[@name='FILE_INService']/port[@name='FILE_INPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-ftp-binding.jar" component-name="sun-ftp-binding" description="Represents this Service Unit" name="DownloaderCompApp-sun-ftp-binding" unit-name="sun-ftp-binding">
+<ports>
+<port x="67" y="276">
+<link xlink:href="../jbiServiceUnits/Downloader/FTP_IN_ONLY.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+<port x="67" y="197">
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FTP_OUT.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint8" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint2" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint7" state="unchanged">
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="3" waitTime="30000">
+        <on-failure>
+          <redirect xmlns:ns7="http://enterprise.netbeans.org/bpel/Downloader/DUMMY_F2F" endpoint-name="FileOutboundPortTypeRole_partnerRole" operation="write" service-name="ns7:PartnerLink2"/>
+        </on-failure>
+    </redelivery>
+</connection>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/Downloader/FILE_WRITER.wsdl#xpointer(/definitions/portType[@name='FILE_WRITERPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Downloader/FTP_IN_ONLY.wsdl#xpointer(/definitions/portType[@name='FTP_IN_ONLYPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FILE_IN.wsdl#xpointer(/definitions/portType[@name='FILE_INPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FTP_OUT.wsdl#xpointer(/definitions/portType[@name='FTP_OUTPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/Downloader/FILE_WRITER.wsdl#xpointer(/definitions/binding[@name='FILE_WRITERBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Downloader/FTP_IN_ONLY.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FILE_IN.wsdl#xpointer(/definitions/binding[@name='FILE_INBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FTP_OUT.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/Downloader/FILE_WRITER.wsdl#xpointer(/definitions/service[@name='FILE_WRITERService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/Downloader/FTP_IN_ONLY.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FILE_IN.wsdl#xpointer(/definitions/service[@name='FILE_INService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DownLoaderFeeder/FTP_OUT.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

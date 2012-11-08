@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/bpel/JMSInOutTest"
+             name="JMSInOutTest"
+             xmlns:tns="http://localhost/bpel/JMSInOutTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <plink:partnerLinkType name="JMSInOutTestRequestReplyLnkType">
+        <plink:role name="roleJMSInOutTestTrigger"
+                    portType="tns:portTypeRequestReply"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSInOutTestSendRecvLnkType">
+        <plink:role name="roleJMSInOutTestSendRecv"
+                    portType="tns:portTypeInOut1"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSInOutTestRecvSendLnkType">
+        <plink:role name="roleJMSInOutTestRecvSend"
+                    portType="tns:portTypeInOut2"></plink:role>
+    </plink:partnerLinkType>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/bpel/JMSInOutTest"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://localhost/bpel/JMSInOutTest"
+                    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+                    xmlns:ns1="http://localhost/bpel/JMSInOutTest"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">            
+            <xsd:complexType name="RequestType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="correlationId"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="aProperty"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="textPayLoad"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ReplyType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="correlationId"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="aProperty"></xsd:element>
+                    <xsd:element type="xsd:boolean"
+                                 name="boolean"></xsd:element>
+                    <xsd:element type="xsd:byte"
+                                 name="char"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="double"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="messageRequest">
+        <part name="partRequest"
+              type="tns:RequestType"></part>
+    </message>
+    <message name="messageReply">
+        <part name="partReply"
+              type="tns:ReplyType"></part>
+    </message>
+    <message name="messageRequestTextMessage">
+        <part name="partCorrelationID"
+              type="xsd:string"></part>
+        <part name="partTextPayload"
+              type="xsd:string"></part>
+        <part name="partProp1"
+              type="xsd:string"></part>
+    </message>
+    <message name="messageReplyMapMessage">
+        <part name="partCorrelationID"
+              type="xsd:string"></part>
+        <part name="partBoolean"
+              type="xsd:boolean"></part>
+        <part name="partChar"
+              type="xsd:byte"></part>
+        <part name="partDouble"
+              type="xsd:double"></part>
+        <part name="partFloat"
+              type="xsd:float"></part>
+        <part name="partInt"
+              type="xsd:int"></part>
+        <part name="partLong"
+              type="xsd:long"></part>
+        <part name="partShort"
+              type="xsd:short"></part>
+        <part name="partString"
+              type="xsd:string"></part>
+        <part name="partProp1"
+              type="xsd:string"></part>
+    </message>
+    <portType name="portTypeRequestReply">
+        <operation name="operationRequestReply">
+            <input name="input"
+                   message="tns:messageRequest"></input>
+            <output name="output"
+                    message="tns:messageReply"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeInOut1">
+        <operation name="operationInOut">
+            <input name="input"
+                   message="tns:messageRequestTextMessage"></input>
+            <output name="output"
+                    message="tns:messageReplyMapMessage"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeInOut2">
+        <operation name="operationInOut">
+            <input name="input"
+                   message="tns:messageRequestTextMessage"></input>
+            <output name="output"
+                    message="tns:messageReplyMapMessage"></output>
+        </operation>
+    </portType>
+    <binding name="bindingHttpRequestReply"
+             type="tns:portTypeRequestReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operationRequestReply">
+            <soap:operation soapAction="soapActionJMSInOutTest"/>
+            <input name="input">
+                <soap:body parts="partRequest"
+                           use="literal"/>
+            </input>
+            <output name="output">
+                <soap:body parts="partReply"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSInout1"
+             type="tns:portTypeInOut1">
+        <jms:binding></jms:binding>
+        <operation name="operationInOut">
+            <jms:operation destination="InOutTestRequestDestination" destinationType="Topic" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" timeout="120000" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partTextPayload" correlationIdPart="partCorrelationID">
+                    <jms:properties>
+                        <jms:property part="partProp1" type="string" name="fooName"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+            <output name="output">
+                <jms:message messageType="MapMessage" correlationIdPart="partCorrelationID">
+                    <jms:properties>
+                        <jms:property part="partProp1" type="string" name="fooName"></jms:property>
+                    </jms:properties>
+                    <jms:mapmessage>
+                        <jms:mappart type="boolean" part="partBoolean" name="BooleanMapEntry"></jms:mappart>
+                        <jms:mappart type="char" part="partChar" name="CharMapEntry"></jms:mappart>
+                        <jms:mappart type="double" part="partDouble" name="DoubleMapEntry"></jms:mappart>
+                        <jms:mappart type="float" part="partFloat" name="FloatMapEntry"></jms:mappart>
+                        <jms:mappart type="int" part="partInt" name="IntMapEntry"></jms:mappart>
+                        <jms:mappart type="long" part="partLong" name="LongMapEntry"></jms:mappart>
+                        <jms:mappart type="short" part="partShort" name="ShortMapEntry"></jms:mappart>
+                        <jms:mappart type="string" part="partString" name="StringMapEntry"></jms:mappart>
+                    </jms:mapmessage>
+                </jms:message>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSInout2"
+             type="tns:portTypeInOut2">
+        <jms:binding></jms:binding>
+        <operation name="operationInOut">
+            <jms:operation destination="InOutTestRequestDestination" destinationType="Topic" transaction="NoTransaction" subscriptionDurability="NonDurable"/>
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partTextPayload" correlationIdPart="partCorrelationID">
+                    <jms:properties>
+                        <jms:property part="partProp1" type="string" name="fooName"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+            <output name="output">
+                <jms:message messageType="MapMessage" correlationIdPart="partCorrelationID">
+                    <jms:properties>
+                        <jms:property part="partProp1" type="string" name="fooName"></jms:property>
+                    </jms:properties>
+                    <jms:mapmessage>
+                        <jms:mappart type="boolean" part="partBoolean" name="BooleanMapEntry"></jms:mappart>
+                        <jms:mappart type="char" part="partChar" name="CharMapEntry"></jms:mappart>
+                        <jms:mappart type="double" part="partDouble" name="DoubleMapEntry"></jms:mappart>
+                        <jms:mappart type="float" part="partFloat" name="FloatMapEntry"></jms:mappart>
+                        <jms:mappart type="int" part="partInt" name="IntMapEntry"></jms:mappart>
+                        <jms:mappart type="long" part="partLong" name="LongMapEntry"></jms:mappart>
+                        <jms:mappart type="short" part="partShort" name="ShortMapEntry"></jms:mappart>
+                        <jms:mappart type="string" part="partString" name="StringMapEntry"></jms:mappart>
+                    </jms:mapmessage>
+                </jms:message>
+            </output>
+        </operation>
+    </binding>
+    <service name="service_0">
+        <port name="portJMSInOutTestTrigger"
+              binding="tns:bindingHttpRequestReply">
+            <soap:address location="http://localhost:12100/service/testJMSInOut"/>
+        </port>
+        <port name="portJMSInOutTestSendReceive"
+              binding="tns:bindingJMSInout1">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portJMSInOutTestReceiveSend"
+              binding="tns:bindingJMSInout2">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>        
+    </service>
+</definitions>

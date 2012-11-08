@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" xmlns:ns2="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" xmlns:ns3="http://j2ee.netbeans.org/wsdl/content-based-router" xmlns:ns4="http://enterprise.netbeans.org/bpel/pattern-demo-content-based-router/content-based-router" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="pattern-demo-ejb-customerPort" interface-name="ns1:pattern-demo-ejb-customerPortType" name="endpoint1" service-name="ns1:pattern-demo-ejb-customerService"/>
+        <endpoint endpoint-name="pattern-demo-ejb-phonePort" interface-name="ns2:pattern-demo-ejb-phonePortType" name="endpoint2" service-name="ns2:pattern-demo-ejb-phoneService"/>
+        <endpoint endpoint-name="content-based-routerPort" interface-name="ns3:content-based-routerPortType" name="endpoint3" service-name="ns3:content-based-routerService"/>
+        <endpoint display-name="content-based-router" endpoint-name="content-based-routerPortTypeRole_myRole" file-path="content-based-router.bpel" interface-name="ns3:content-based-routerPortType" name="endpoint4" process-name="content-based-router" service-name="ns4:content-based-router"/>
+        <endpoint display-name="customer" endpoint-name="pattern-demo-ejb-customerPortTypeRole_partnerRole" file-path="content-based-router.bpel" interface-name="ns1:pattern-demo-ejb-customerPortType" name="endpoint5" process-name="content-based-router" service-name="ns4:customer"/>
+        <endpoint display-name="phone" endpoint-name="pattern-demo-ejb-phonePortTypeRole_partnerRole" file-path="content-based-router.bpel" interface-name="ns2:pattern-demo-ejb-phonePortType" name="endpoint6" process-name="content-based-router" service-name="ns4:phone"/>
+        <endpoint endpoint-name="javaee_pattern-demo-ejb-phonePort" interface-name="ns2:pattern-demo-ejb-phonePortType" name="endpoint7" service-name="ns2:pattern-demo-ejb-phoneService"/>
+        <endpoint endpoint-name="javaee_pattern-demo-ejb-customerPort" interface-name="ns1:pattern-demo-ejb-customerPortType" name="endpoint8" service-name="ns1:pattern-demo-ejb-customerService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="pattern-demo-content-based-router.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="pattern-demo-app-pattern-demo-content-based-router" unit-name="pattern-demo-content-based-router" unknown="false" x="78" y="398">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="pattern-demo-ejb.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="pattern-demo-app-pattern-demo-ejb" unit-name="pattern-demo-ejb" unknown="false" x="136" y="638">
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="pattern-demo-app-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="441">
+                    <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/content-based-router.wsdl#xpointer(/definitions/service[@name='content-based-routerService']/port[@name='content-based-routerPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="67" y="678">
+                    <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-customerService']/port[@name='pattern-demo-ejb-customerPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="67" y="599">
+                    <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-phoneService']/port[@name='pattern-demo-ejb-phonePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint8" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint8" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/content-based-router.wsdl#xpointer(/definitions/portType[@name='content-based-routerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-customerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-phonePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/CustomerService/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-customerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/PhoneService/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-phonePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-customerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/portType[@name='pattern-demo-ejb-phonePortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/content-based-router.wsdl#xpointer(/definitions/binding[@name='content-based-routerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-customerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-phoneBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/CustomerService/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-customerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/PhoneService/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-phoneBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-customerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/binding[@name='pattern-demo-ejb-phoneBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/content-based-router.wsdl#xpointer(/definitions/service[@name='content-based-routerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-customerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-content-based-router/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-phoneService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/CustomerService/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-customerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/META-INF/wsdl/PhoneService/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-phoneService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-customer.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-customerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/pattern-demo-ejb/pattern-demo-ejb-phone.wsdl#xpointer(/definitions/service[@name='pattern-demo-ejb-phoneService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

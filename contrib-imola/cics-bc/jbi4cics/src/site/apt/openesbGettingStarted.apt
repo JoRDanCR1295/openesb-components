@@ -1,0 +1,344 @@
+											---
+											Getting Started
+											---
+											Raffaele Spazzoli, Amedeo Cannone
+											---
+											02/03/2007
+
+OpenESB - Getting Started
+
+  This getting started guide shows how to install Jbi4Cics and a sample service assembly in {{{https://open-esb.dev.java.net/}OpenESB}} environment. 
+
+	{{{openesbGettingStarted.html#Installing CICS JCA Resource Adapter}Installing CICS JCA Resource Adapter}}
+	
+	{{{openesbGettingStarted.html#Configuring JNDI resource}Configuring JNDI resource}}
+	
+	{{{openesbGettingStarted.html#Environment setup}Environment setup}}
+
+	{{{openesbGettingStarted.html#Installing and starting Jbi4Cics Binding Component}Installing and starting Jbi4Cics Binding Component}}
+	
+	{{{openesbGettingStarted.html#Creating a service assembly}Creating a service assembly}}
+	
+	{{{openesbGettingStarted.html#Deploying a service assembly}Deploying a service assembly}}
+
+{Installing CICS JCA Resource Adapter}
+
+  Jbi4Cics calls CICS ECI services via IBM's CTG Transaction Gateway. 
+  CTG Transaction Gateway may be called with JCA connector as shown in the following figure:
+  
+[images/JCACTGArchitecture.jpg] JCA CTG Architecture.
+  
+  first thing to do is to install the connector.
+  If you have a CICS Transaction Gateway you should also have a file named cicseci.rar.
+  This file is a deployable resource adapter see {{{http://www-306.ibm.com/software/htp/cics/ctg/} CICS Transaction Gateway Home Page}} and {{{http://java.sun.com/j2ee/connector/} J2EE Connector Architecture Home Page}} for more information on this topic.
+
+* Deploying in OpenESB
+
+    To deploy the cicseci.rar open the Admin Console. After log-in, press button help and follow the instructions under the section <<Applications/Deploying Application and Modules/To deploy a connector module>>.
+
+{Configuring JNDI resource}
+
+	Next step is to configure a connection to your CICS Transaction Gateway and make it visible to the Jbi4Cics Binding Component through JNDI. 
+	To do this, you have to follow the instructions in the Admin Console's help section <<Resources/Connectors/Managing Connector Connection Pools/To create a connector connection pool>>.
+	In the last page named <<Create Connector Connection Pool>> you find the Additional Properties table in which you can add any required properties.
+	Here's the Additional Properties table:
+
+[images/AdditionalPropertiesTable.jpg] Additional Properties table.
+			
+	Set the following properties in the additional properties table:
+	
+	* ServerName: is the name of the CICS server you want to connect to.
+	
+	* ConnectionUrl: is the ip address of the CICS Transaction Gateway server you want to connect to.
+	
+	* PortNumber: is the ip port where the CICS Transaction Gateway server is listening on.
+	
+	[]	
+	
+        Finally you have to make the steps in section <<Resources/Connectors/Managing Connector Resources/To create a connector resource>>.
+        You need the following informations:
+	
+            * Pool Name: is the name of the connection pool previously created.
+        
+            * JNDI name: is the name you want to give to this connection, the J2EE standard for this type of connection advices to use a name such a eis/<connectionName>.
+	
+	    []	
+	
+{Environment setup}
+
+	Install the {{{http://www.netbeans.org/index.html}Netbeans 5.5}} (or newer) IDE and the 
+	{{{http://www.netbeans.org/products/enterprise/}NetBeans Enterprise Pack}}. When installing the 
+	Enterprise Pack, select to install also the Sun Java System Application Server 9 (that contains OpenESB).
+
+
+{Installing and starting Jbi4Cics Binding Component}
+
+	Download the {{{http://sourceforge.net/projects/jbi4cics}Jbi4Cics}} component. 
+	Install and start the component using the contextual menu on the server JBI module. 
+
+[images/installJBI4CicsComponent.jpg]Install the jbi4cics component  
+  
+ 	After these operations, you can deploy a Service Assembly that uses the Jbi4Cics component.
+  
+{Creating a service assembly}
+
+  A service assembly is a deployable item that configure one or more endpoint inside a JBI ESB.
+  We are going set up a configuration that take a CICS ECI service and expose it a SOAP/HTTP Webservice.
+  The configuration is shown in the following figure:
+  
+[images/sampleConfiguration.jpg] A CICS ECI service exposed as a SOAP/HTTP Webservice.
+
+  The Jbi4Cics component is used to create an internal (i.e. visible inside the ESB) endpoint. 
+  This internal endpoint is then used to create an external endpoint with the OpenESB http soap Binding Component. 
+  The http component will proxy the incoming external calls to the internal endpoint exploiting the JBI routing mechanisms.
+  
+  A service assembly is a zip file containing one or more service unit file, each service unit defines one or more endpoint.
+  We need two endpoint so we're going to configure two service units:
+  
+  * <<JBI4CicsSU>> containing the definition for the Jbi4Cics endpoint.
+  
+  * <<HttpSU>> containing the definition for the http endpoint.
+  
+  []
+  
+  Both service units are a zip file.
+  
+* Jbi4Cics service unit
+
+  A Jbi4Cics service unit has the following layout:
+  
++----------------------------------------------------------+
+
++- xbean.xml
++- <COPY_COBOL>
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+  
+  * xbean.xml contains the informations for defining the endpoint.
+  
+  * COPY_COBOL is the copy cobol used by the service to bo called.
+  
+  * jbi.xml is a JBI mandatory file but at the moment doesn't contains useful information.
+  
+  []
+  
+  xbean.xml is a standard xbean file like those used by the {{{http://www.springframework.org}Spring framework}}.
+  It has the following content:
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0"?>
+<beans>
+  <bean class="it.imolinfo.jbi4cics.jbi.Jbi4cicsEndpoint">
+  	<property name="copyCobolFileName" value="<COPY_COBOL>"/>
+ 	<property name="codePage" value="<CODE_PAGE>"/>
+    <property name="serviceDescriptor">    
+      <bean class="it.imolinfo.jbi4cics.webservices.descriptor.ServiceDescriptor">
+      	<property name="serviceName" value="<SERVICE_NAME>" />
+      	<property name="serviceInterfacePackageName" value="<SERVICE_PACKAGE_NAME>"/>	
+     	  <property name="account">
+      		<bean class="it.imolinfo.jbi4cics.security.J2CAccount">
+      			<property name="username" value="<USERNAME>"/>
+      		  <property name="password" value="<PASSWORD>"/>      		  
+      		</bean>
+      	</property>	
+     	<property name="serviceLocation">
+      		<bean class="it.imolinfo.jbi4cics.locator.SimpleLocation">
+      			<property name="connectionTypeName" value="CICS"/>
+      		  <property name="locationName" value="<JNDI_CONNECTION_NAME>"/>
+      		</bean>
+      	</property> 
+      	<property name="interactionDescription">
+      		<bean class="it.imolinfo.jbi4cics.connection.jca.cics.CICSInteractionDescription">
+      			<property name="programName" value="<PROGRAM_NAME>"/>
+      		  <property name="transactionName" value="<TRANSACTION_NAME>"/>
+      		  <property name="tpn" value="true"/>      		  
+      		</bean>
+      	</property>     	
+      </bean>
+    </property>
+  </bean>
+</beans>
+
++-----------------------------------------------------------+
+
+  where:
+
+  * COPY_COBOL is name of the fine containing the copy cobol.
+  
+  * SERVICE_NAME is the name of the service this endpoint represents. It must be a valid java class name.
+  
+  * SERVICE_PACKAGE_NAME is the name of the package of the dynamically generated classes for this service.
+  It must be a valid java package name.
+  It will also be used (reversed) to generate the webservice namespace.
+  So if the package is aaa.bbb.ccc the webservice namespace will be http://ccc.bbb.aaa.
+  
+  * USERNAME is the username used for the connection to the CICS Transaction Gateway.
+  
+  * PASSWORD is the password used for the connection to the CICS Transaction Gateway.
+
+  * JNDI_CONNECTION_NAME is the previously defined JNDI name for the connection used by this service.
+  
+  * PROGRAM_NAME is the cobol program name. 
+  
+  * TRANSACTION_NAME is the transaction associated to the cobol program in the CICS server.
+  
+  []
+  
+  jbi.xml has the following content:
+  
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+  <services binding-component="true"/>
+</jbi>
+
++-----------------------------------------------------------+  
+
+  There is no parameter to specify.
+  
+  Zip all the files in the specified layout and name the archive JBI4CicsSU.zip.
+    
+* Http service unit
+
+  A http service unit using the OpenESB http soap binding component (com.sun.httpsoapbc-1.0-2) must have the following layout:
+  
++----------------------------------------------------------+
+
++- <SERVICE_WSDL.wsdl>
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+  
+  * SERVICE_WSDL contains the wsdl definition of the proxied internal service.
+  
+  * jbi.xml is a JBI mandatory file.
+  
+  []
+      
+  the jbi.xml has the following content:
+  
++----------------------------------------------------------+
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<jbi xmlns="http://java.sun.com/xml/ns/jbi" 
+		xmlns:ns1="<SERVICE_NAMESPACE>" version="1.0">
+		<services binding-component="true">
+			<consumes endpoint-name="<ENDPOINT_NAME>" interface-name="ns1:<SERVICE_INTERFACE>" service-name="ns1:<SERVICE_NAME>"/>
+		</services>
+	</jbi>
+
+
++----------------------------------------------------------+  
+  
+  where:
+    
+  * <SERVICE_NAMESPACE> is the service namespace as defined in the Jbi4Cics service unit's xbean.xml
+  
+  * <SERVICE_NAME> is the proxied service name.
+  
+  * <ENDPOINT_NAME> is the proxied service endpoint name
+  
+  * <SERVICE_INTERFACE> is the proxied service interface
+
+  []
+  
+  Zip all the files in the specified layout and name the archive HttpSU.zip.
+  
+* The service assembly
+
+	The service assembly is unit of deployable configuration in JBI, in our sample it has the following layout:
+
++----------------------------------------------------------+
+
++- JBI4CicsSU.zip
++- HttpSU.zip
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+	
+
+  where:
+  
+  * JBI4CicsSU.zip and HttpSU.zip are the previously created service units.
+  
+  *	jbi.xml is the service assembly deployment descriptor.
+  
+  []
+  
+  The jbi.xml has the following format as described in the {{{http://jcp.org/en/jsr/detail?id=208}JBI Specification}}: 
+	 
++----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+  <service-assembly>
+    <identification>
+      <name><SA_NAME></name>
+      <description><SA_DESCRIPTION></description>
+    </identification>
+    <service-unit>
+      <identification>
+        <name><SU1_NAME></name>
+        <description><SU1_DESCRIPTION></description>
+      </identification>
+      <target>
+        <artifacts-zip>JBI4CicsSU.zip</artifacts-zip>
+        <component-name>jbi4cics</component-name>
+      </target>
+    </service-unit>
+    <service-unit>
+      <identification>
+        <name><SU1_NAME></name>
+        <description><SU2_DESCRIPTION></description>
+      </identification>
+      <target>
+        <artifacts-zip>HttpSU.zip</artifacts-zip>
+        <component-name>com.sun.httpsoapbc-1.0-2</component-name>
+      </target>
+    </service-unit>
+  </service-assembly>
+</jbi>    
+
++----------------------------------------------------------+	 
+
+  where:
+  
+  * SA_NAME is the name of the service assembly for documentation purposes.
+  
+  * SA_DESCRIPTION is the service assembly desription for documentation purposes.
+
+  * <SU1_NAME> and <SU2_NAME> are the service units names for documentation purposes.
+  
+  * SU1_DESCRIPTION and SU2_DESCRIPTION are the service units description for documentation purposes.
+  
+  []
+  
+  Notice that the BC filenames (JBI4CicsSU.zip and HttpSU.zip) are specified with the respective component (jbi4cics and com.sun.httpsoapbc-1.0-2).
+  Zip all the files in the specified layout and name the archive HttpToCicsSA.zip (the archive name is not important).
+    
+  
+{Deploying a service assembly}
+
+  In NetBeans, with the server started, select from "Service Assemblies" the "Deploy New Service Assembly" option and then starts it.
+  
+[images/deployJBI4CicsSA.jpg] Deploy the Service Assembly
+  
+  
+  
+  If the Service Assembly starts correctly, you should see both the BC running
+  
+[images/JBI4CicsSACorrectlyStarted.jpg] The Service Assembly correctly started
+  
+  
+  
+  Now you can test the service assembly sending a SOAP message to the HTTP endpoint (the service address is specified in the <SERVICE_WSDL.wsdl> description 
+  inside the HttpSU.zip).

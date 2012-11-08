@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://com.sun.jbi/etl/etlengine" xmlns:ns2="http://com.sun.jbi/aspect/throttling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+<service-assembly>
+<identification>
+<name>ThrottlingCompositeApp</name>
+<description>Represents the Service Assembly of ThrottlingCompositeApp</description>
+</identification>
+<service-unit>
+<identification>
+<name>ThrottlingCompositeApp-ThrottlingETLApp</name>
+<description>Represents this Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>ThrottlingETLApp.jar</artifacts-zip>
+<component-name>sun-etl-engine</component-name>
+</target>
+</service-unit>
+<service-unit>
+<identification>
+<name>ThrottlingCompositeApp-ThrottlingAspectApp</name>
+<description>Represents this Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>ThrottlingAspectApp.jar</artifacts-zip>
+<component-name>sun-aspect-engine</component-name>
+</target>
+</service-unit>
+
+
+
+<service-unit>
+<identification>
+<name>ThrottlingCompositeApp-com.sun.httpsoapbc-1.0-2</name>
+<description>Represents this Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>com.sun.httpsoapbc-1.0-2.jar</artifacts-zip>
+<component-name>com.sun.httpsoapbc-1.0-2</component-name>
+</target>
+</service-unit>
+
+
+
+
+
+
+<connections>
+<connection>
+<consumer endpoint-name="ThrottlingETL_engine_etlPort" service-name="ns1:ThrottlingETL_engine_etlService"/>
+<provider endpoint-name="ThrottlingETL_engine_myrole" service-name="ns1:ThrottlingETL_engine_etlPartnerLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="ThrottlingETL_engine_etlPort" service-name="ns1:ThrottlingETL_engine_etlService"/>
+<provider endpoint-name="ThrottlingETL_engine_myrole" service-name="ns1:ThrottlingETL_engine_etlPartnerLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="throttlingPort" service-name="ns2:throttlingService"/>
+<provider endpoint-name="throttlingPortTypeRole" service-name="ns2:throttlingPartner"/>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

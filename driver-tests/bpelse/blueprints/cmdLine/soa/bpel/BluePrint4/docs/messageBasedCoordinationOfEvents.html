@@ -1,0 +1,273 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0062)file://H:\coke\orch\bluePrints\latest\BP1_ProblemSolution.html -->
+  <title>Message-Based Coordination of Events Using BPEL</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta content="MSHTML 6.00.2900.2604" name="GENERATOR">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="GENERATOR" content="Dreamweaver">
+  <meta name="CREATED" content="20060325">
+  <meta name="CHANGEDBY" content="Shauna Pickett-Gordon">
+  <meta name="CHANGED" content="20060601">
+  <style>
+	<!--
+		@page { size: 8.5in 11in; margin: 0.79in }
+		P { margin-bottom: 0.08in }
+	-->
+	</style>
+</head>
+<body>
+<h1 style="font-weight: normal;"><small style="font-style: italic;"><span
+ style="font-weight: normal;"></span></small><small>BPEL BluePrint 4</small></h1>
+<h1>Message-Based Coordination of Events Using BPEL</h1>
+<p>Kiran Bhumana, Ryan Kennedy, Shauna Pickett-Gordon </p>
+<h2>Problem Description</h2>
+<p>Message-driven execution has become an important aspect of many
+programming languages. If you are familiar with JMS or any other
+messaging architecture, especially with the usage of event listener
+patterns, you'll find a similar approach in the BPEL language. </p>
+<p>Consider the purchase order service example discussed in the first
+three BluePrints. It would also be useful to be able to respond to an
+event--external or internal--that might occur after the BPEL process
+begins executing. An example of such an event is a client sending a
+cancellation message or a confirmation message.</p>
+<p>The Java language itself supports message-based coordination of
+events. However, BPEL provides a message-driven execution pattern that
+helps minimize the additional code needed for coordination. BPEL also
+provides an important and useful construct: a timer-based execution
+path, as an alternative to a message-driven path. These advantages
+leave developers free to spend more time thinking about the core
+business logic of their BPEL processes.</p>
+<p>This BluePrint focuses on the design aspects and common usage
+patterns of message-driven event coordination using BPEL.</p>
+<h2>Solution</h2>
+<p>BPEL lets developers define alternative execution paths based on <code>Timer</code>
+or <code>Message</code> events. </p>
+<p>A <code>Message</code> event, defined by an <code>onMessage</code>
+construct, waits for a corresponding message to arrive before
+proceeding with a specified execution path. An <code>onMessage</code>
+construct is defined exactly the same way as a <code>receive</code>
+activity where <code>partnerLink</code>, <code>portType</code>, and <code>operation</code>
+attributes are specified. </p>
+<p>A <code>Timer</code> event, defined by an <code>onAlarm</code>
+activity, waits for a specified duration or deadline before triggering
+the appropriate execution path. </p>
+<p>BPEL provides a <code>pick</code> construct for situations
+requiring multiple alternative execution paths. When a BPEL process
+encounters a <code>pick</code> activity, it waits until either an <code>onMessage</code>
+or an <code>onAlarm</code>
+construct occurs. In this manner, <code>onAlarm</code> and <code>onMessage</code>
+constructs contend for the execution path of the instance. Of the
+multiple alternative paths provided by the <code>pick</code>
+construct, only one path is ultimately executed.</p>
+<p>If you worked through the second BluePrint, Asynchronous Web Service
+Interactions
+Using BPEL, you noticed two usage patterns of the <code>pick</code>
+construct: a timer-based path and an alternative message-event-based
+path. Both BluePrints use correlation, too; if you're not already
+familiar with it, see the second BluePrint.</p>
+<h2>Design Details</h2>
+<p>The services used in this BluePrint go beyond
+the scope of the first three BluePrints. For the basic BPEL business
+logic and behavior of this example, see the first
+BPEL BluePrint. For more
+information on using correlation, see the second
+BPEL BluePrint.</p>
+<p>In addition to the BPEL processes <code>POService</code> and <code>InventoryService</code>
+as defined in the first BluePrint, this BluePrint uses the web services
+<code>confirmPO</code> and <code>cancelPO</code>.
+The <code>POService</code> process orchestrates all
+purchase-order-related services, and it provisions the two additional
+web services. </p>
+<p>The following figure shows a message-driven path implementing an
+asynchronous service.</p>
+<p><img
+ alt="Message-driven Path with Asynchronous Service Implementation"
+ src="images/bp4-fig1.PNG" style="width: 534px; height: 181px;"></p>
+<p><b>Figure 1: A Message-driven Path With Asynchronous Service
+Implementation</b></p>
+<p>The following constructs are used in this BluePrint's scenario:</p>
+<ul>
+  <li><code>pick</code></li>
+  <ul>
+    <li><code>onMessage</code> with correlations</li>
+    <li><code>onAlarm</code></li>
+  </ul>
+  <li>Correlations</li>
+</ul>
+<p>When you're developing a BPEL process, carefully consider the events
+to which the process should react, as well as how long a process should
+wait when orchestrating services.</p>
+<p>A <code>pick</code> activity demonstrates the orchestration of the
+process in which a different path of execution is chosen, based on
+either the arrival of messages or a time-triggered event.</p>
+<!-- =============================================== -->
+<h3>Business Logic of the Services</h3>
+<!-- =============================================== -->
+<p>Let's look at how a message-driven execution path can be used. In
+this pattern, four services are involved. Three of those services are
+consumed by an external client through SOAP over HTTP: </p>
+<ul>
+  <li>A purchase order service</li>
+  <li>A purchase order confirmation service </li>
+  <li>A purchase order cancellation service</li>
+</ul>
+<p>The fourth is an inventory check service consumed by the BPEL
+process that provisions the purchase order service.</p>
+<p>An external client consumes <code>POService</code>. Upon receiving
+a request, <code>POService</code> checks with <code>InventoryService</code>
+and returns either a reply or a fault to the external consumer. If the
+returned value is a valid reply, the instance is associated with a
+correlation ID. If a fault is replied, the instance is terminated.</p>
+<p>Upon receiving the reply, the external consumer decides whether to
+send a confirmation of the purchase order, to send a cancellation of
+the purchase order, or to not take any action at all. The purchase
+order service, after returning a valid response, awaits either a
+confirmation or cancellation of the order within a specified length of
+time. The <code>POService</code> BPEL process defined here waits for
+100 seconds, as stipulated. </p>
+<p>Since the purchase order request and the request's confirmation or
+cancellation are events that need to be coordinated, correlation is
+used to route the associated messages. The purchase order instance is
+associated with the correlation ID while the reply to the purchase
+order service is being executed. The same correlation ID is expected to
+appear in the <code>orderId</code> attribute of the confirmation or
+cancellation message.</p>
+<!-- =============================================== -->
+<h3>Define the WSDL</h3>
+<!-- =============================================== -->
+<p>Refer to the first
+BluePrint
+for an explanation of how the <code>POService</code> and <code>InventoryService</code>
+WSDLs are declared.</p>
+<p>The <code>POStatus</code> WSDL defines
+two operations: a confirmation and a cancellation.</p>
+<pre>   &lt;portType name="POStatusPortType"&gt;<br>     <span
+ style="font-weight: bold;"> &lt;operation name="confirmPO"&gt;</span><br>         &lt;input name="confirmPO"<br>                message="tns:POConfirmMesg"&gt;&lt;/input&gt;<br>         &lt;output name="confirmPOStatus"<br>                message="tns:POStatusMesg"&gt;&lt;/output&gt;<br>         &lt;fault name="confirmPOFault"<br>                message="ns:orderFaultType"&gt;&lt;/fault&gt;<br>      <span
+ style="font-weight: bold;">&lt;/operation&gt;</span><br>      <span
+ style="font-weight: bold;">&lt;operation name="cancelPO"&gt;</span><br>         &lt;input name="cancelPO"<br>                message="tns:POCancelMesg"&gt;&lt;/input&gt;<br>         &lt;output name="cancelPOStatus"<br>                message="tns:POStatusMesg"&gt;&lt;/output&gt;<br>         &lt;fault name="cancelPOFault"<br>                message="ns:orderFaultType"&gt;&lt;/fault&gt;<br>      <span
+ style="font-weight: bold;">&lt;/operation&gt;</span><br>   &lt;/portType&gt;</pre>
+The <code>postatus </code>WSDL defines a <code>property, </code><small><span
+ style="font-family: courier new;"><big>OrderID</big>, </span></small>and
+three
+property aliases.<br>
+<pre>    &lt;bpws:property name="OrderID"<br>                   type="xsd:int"/&gt;<br>    &lt;bpws:propertyAlias part="purchaseOrder"<br>                        propertyName="tns:OrderID"<br>                        messageType="tns:POConfirmMesg"&gt;<br>        &lt;bpws:query&gt;/purchaseOrder/orderId&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt;<br>    &lt;bpws:propertyAlias part="purchaseOrder"<br>                        propertyName="tns:OrderID"<br>                        messageType="tns:POCancelMesg"&gt;<br>        &lt;bpws:query&gt;/purchaseOrder/orderId&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt;    <br>    &lt;bpws:propertyAlias part="purchaseOrder"<br>                        propertyName="tns:OrderID"<br>                        messageType="ns:POMessage"&gt;<br>        &lt;bpws:query&gt;/purchaseOrder/orderId&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt;  </pre>
+<h4>Important Design Note</h4>
+<p>Three property aliases--different because they are associated with
+different messages--are defined on the same property. If you define a
+correlation on such a property (in this case, <code>OrderID</code>),
+you can use the correlation for multiple messages with which this
+property is associated. The association is made indirectly through the
+property aliases.</p>
+In this case, the same correlation set can be used for the messages <code>POService
+</code>WSDL's <code>POMessage </code>and <code>POStatus </code>WSDL's
+<code>POConfirmMesg</code>
+and <code>POCancelMesg</code>.
+<p>For details on how to use correlation, refer to the <a
+ href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wsbpel">BPEL
+specification</a>.</p>
+<!-- =============================================== -->
+<h3>Define the BPEL</h3>
+<!-- =============================================== -->
+<p>See the first
+BluePrint for
+information on how the <code>POService</code> and <code>InventoryService</code>
+processes are defined.</p>
+<p>The following <span style="font-family: courier new;">correlationSet</span><big>
+</big>is defined in <code>POService</code>.</p>
+<pre>    &lt;correlationSets&gt;<br>        &lt;correlationSet name="<span
+ style="font-weight: bold;">POConfirmationSet</span>"<br>                        properties="ns0:OrderID"/&gt;<br>    &lt;/correlationSets&gt;<br></pre>
+<h4 style="font-weight: normal;">Correlation is initialized here when
+the<span style="font-family: monospace;"> </span><small><span
+ style="font-family: courier new;">reply </span></small>is executed.</h4>
+<pre>    &lt;reply name="sendPurchaseOrder.Reply"<br>           partnerLink="POServicePLink"<br>           portType="pos:purchaseOrderPT"<br>           operation="sendPurchaseOrder"<br>           variable="purchaseOrderRequest"&gt;<br>       <span
+ style="font-weight: bold;">&lt;correlations&gt;</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">           &lt;correlation set="POConfirmationSet"</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">                        initiate="yes"/&gt;</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">       &lt;/correlations&gt;</span><br>    &lt;/reply&gt;<br></pre>
+<p>Within a <code>pick</code> activity, you can define one or more <code>onMessage</code>
+activities and zero or more <code>onAlarm</code> activities. The
+following code sample shows how multiple <code>onMessage</code>
+activities can be used to receive either an order confirmation message
+or an order cancellation message.</p>
+<p> Correlation value is evaluated and set during the process of the
+reply activity.<br>
+</p>
+<i>
+</i>
+<pre>   &lt;reply name="sendPurchaseOrder.Reply"<br>   	partnerLink="POServicePLink"<br>        portType="pos:purchaseOrderPT"<br>        operation="sendPurchaseOrder"<br>        variable="purchaseOrderRequest"&gt;<br>        &lt;correlations&gt;<br>        	&lt;correlation set="POConfirmationSet"<br>                	initiate="yes"/&gt;<br>    	&lt;/correlations&gt;<br>   &lt;/reply&gt;<br></pre>
+<p>The <code>onMessage</code> activity has the same set of attributes
+as the <code>receive</code> activity. Notice also how correlations are
+used to route these messages to the appropriate process instance. </p>
+<pre>   &lt;pick&gt;<br>     &lt;onMessage partnerLink="POStatusPLink"<br>                portType="ns0:POStatusPortType"<br>                operation="confirmPO"<br>                variable="confirmPORequest"&gt;<br>         &lt;correlations&gt;<br>            &lt;correlation set="POConfirmationSet"<br>                initiate="no"/&gt;<br>        &lt;/correlations&gt;<br><br>     &lt;onMessage partnerLink="POStatusPLink"<br>                portType="ns0:POStatusPortType"<br>                operation="cancelPO"<br>                variable="cancelPORequest"&gt;<br>        &lt;correlations&gt;<br>            &lt;correlation set="POConfirmationSet"<br>                initiate="no"/&gt;<br>        &lt;/correlations&gt;<br>     ....<br>  &lt;/pick&gt;<br></pre>
+<p>Within a<span style="font-family: monospace;"> </span><small><span
+ style="font-family: courier new;">pick</span></small>,<small> </small>the
+developer
+can also use an <code>onAlarm</code> activity to specify
+either a duration or a deadline expression. In this example, a <code>for</code>
+attribute is used to specify the duration of 100 seconds, after which
+an alarm will occur.</p>
+<pre>  &lt;pick&gt;<br>     .... <br>     &lt;onAlarm&gt;<br>        &lt;for&gt;'P0Y0DT100S'&lt;/for&gt;<br>        &lt;sequence&gt;<br>                   ....<br>        &lt;/sequence&gt;<br>     &lt;/onAlarm&gt;<br>  &lt;/pick&gt;<br></pre>
+<p>You would use the following expression to specify a duration of 2
+years, 10 months, 14 days, 7 hours, 11 minutes, and 44 seconds: </p>
+<blockquote><code>P2Y10M14DT7H11M44S</code></blockquote>
+<p>When you specify a point in time, the <code>until</code> attribute
+decides the exact date on which the alarm occurs.<br>
+</p>
+<p>A visual form of the <code>POService</code>&nbsp; BPEL process is
+shown next. For implementation details, see the <a
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+files</a>.<br>
+</p>
+<p><span style="text-decoration: underline;"><img alt="POService.bpel"
+ src="images/bp4_po.png" style="width: 609px; height: 898px;"><br>
+</span><b>Figure 2: The <code>POservice</code> BPEL Process</b></p>
+<p>
+The following diagram illustrates the <code>InventoryService </code>BPEL
+process. <br>
+</p>
+<p><img alt="InventoryService.bpel" src="images/bp4_inventory.png"
+ style="width: 522px; height: 545px;"><br>
+<b>Figure 3: The <code>InventoryService</code> BPEL Process<br>
+<br>
+</b></p>
+<h3>Input Data XML for Different Scenarios</h3>
+<p>To run the scenarios, the user
+needs to first invoke the poServiceRequest and then call either a
+poRequestConfirm or poRequestCancel. Notice that the <small><span
+ style="font-family: courier new,courier,monospace;">orderId </span></small>value
+is
+same in all the requests.<br>
+</p>
+<p>This instance of input XML initiates a PORequest:</p>
+<pre>&lt;soapenv:Envelope xmlns="http://manufacturing.org/xsd/purchase" <br>xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;sendPurchaseOrder&gt;<br>      &lt;purchaseOrder&gt;<br>        &lt;purchaseOrder xmlns="http://manufacturing.org/xsd/purchase"&gt;<br>          &lt;orderId&gt;00001234&lt;/orderId&gt;<br>	  &lt;customerId&gt;999666333&lt;/customerId&gt;<br>	  &lt;orderDescription&gt;OrderVal_Any_Description&lt;/orderDescription&gt;<br>	  &lt;price&gt;&lt;/price&gt;<br>        &lt;/purchaseOrder&gt;<br>      &lt;/purchaseOrder&gt;<br>    &lt;/sendPurchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;<br></pre>
+<p>This instance of input XML confirms the earlier requested purchase
+order:</p>
+<pre>&lt;soapenv:Envelope xmlns="http://manufacturing.org/xsd/purchase" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:pur="http://manufacturing.org/xsd/purchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;pur:purchaseOrder&gt;<br>      &lt;pur:orderId&gt;00001234&lt;/pur:orderId&gt;<br>      &lt;pur:customerId&gt;999666333&lt;/pur:customerId&gt;<br>      &lt;pur:orderDescription&gt;I Want to confirm the order&lt;/pur:orderDescription&gt;<br>    &lt;/pur:purchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;<br></pre>
+<i><font color="#ff0000">
+</font></i>
+<p>This instance of input XML cancels the earlier requested purchase
+order:</p>
+<pre>&lt;soapenv:Envelope xmlns="http://manufacturing.org/xsd/purchase" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:pur="http://manufacturing.org/xsd/purchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;pur:purchaseOrder&gt;<br>      &lt;pur:orderId&gt;00001234&lt;/pur:orderId&gt;<br>      &lt;pur:customerId&gt;999666333&lt;/pur:customerId&gt;<br>      &lt;pur:orderDescription&gt;Naa, i will cancel the oder&lt;/pur:orderDescription&gt;<br>    &lt;/pur:purchaseOrder&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<h2>References</h2>
+<ul>
+  <li>Browse the <a target="_blank"
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+code</a> for this BluePrint, including the
+BPEL process files and WSDL files.</li>
+  <li>See the BPEL BluePrint sample projects included in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a>.</li>
+  <li>For general information on BPEL, see <a
+ href="http://developers.sun.com/prodtech/javatools/jsenterprise/tpr/reference/techart/bpel.html">Business
+Process Execution Language, Part 1: An Introduction</a>.</li>
+</ul>
+<hr>
+<small>© Sun Microsystems 2006. All of the material in The Java
+BluePrints Solutions Catalog is <a
+ href="https://bpcatalog.dev.java.net/nonav/COPYRIGHT.html">copyright</a>-protected
+and may not be published in other works without express written
+permission from Sun Microsystems. </small>
+</body>
+</html>

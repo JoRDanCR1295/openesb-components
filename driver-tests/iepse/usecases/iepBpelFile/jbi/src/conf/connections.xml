@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://www.mycomp.org/bpel/bpel_1" xmlns:ns2="FileOut" xmlns:ns3="testIep_iep" version="1.0">
+    <service-assembly>
+        <identification>
+            <name>jbi</name>
+            <description>Represents the Service Assembly of jbi</description>
+        </identification>
+        <connections>
+            <connection>
+                <consumer endpoint-name="OFRole_partnerRole" service-name="ns1:p2"/>
+                <provider endpoint-name="OFPort" service-name="ns2:OFService"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="InputPort" service-name="ns3:InputService"/>
+                <provider endpoint-name="InputRn" service-name="ns3:InputPl"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns3:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="OutputRn_StreamOutput0_myRole" service-name="ns1:p1"/>
+            </connection>
+        </connections>
+        <connections xmlns="http://www.sun.com/jbi/qos">
+            <connection>
+                <consumer endpoint-name="OFRole_partnerRole" service-name="ns1:p2"/>
+                <provider endpoint-name="OFPort" service-name="ns2:OFService"/>
+                <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="" waitTime="">
+                <on-failure>
+                    <delete/>
+                </on-failure>
+            </redelivery>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

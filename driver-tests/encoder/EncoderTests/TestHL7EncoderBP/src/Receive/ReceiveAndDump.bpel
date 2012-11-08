@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DumpInputToFile"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestHL7Encoder/DumpInputToFile"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReceiveInput"
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/WriteToFile">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReceiveInput"
+        location="ReceiveInput.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/WriteToFile"
+        location="WriteToFile.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:WriteToFile1"
+            partnerRole="WriteToFilePortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:ReceiveInput1"
+            myRole="ReceiveInputPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="ReceiveInputOperationOut"
+            messageType="ns1:ReceiveInputOperationReply"/>
+        <bpws:variable name="WriteToFileOperationIn"
+            messageType="ns2:WriteToFileOperationRequest"/>
+        <bpws:variable name="ReceiveInputOperationIn"
+            messageType="ns1:ReceiveInputOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes"
+            partnerLink="PartnerLink1" operation="ReceiveInputOperation"
+            portType="ns1:ReceiveInputPortType" variable="ReceiveInputOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="ReceiveInputOperationIn" part="rioIn"/>
+                <bpws:to variable="WriteToFileOperationIn" part="wtfoIn"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke-WriteToFile" partnerLink="PartnerLink2"
+            operation="WriteToFileOperation" portType="ns2:WriteToFilePortType"
+            inputVariable="WriteToFileOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Done-Dump Into input.txt</bpws:literal>
+                </bpws:from>
+                <bpws:to part="rioOut" variable="ReceiveInputOperationOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1"
+            operation="ReceiveInputOperation" portType="ns1:ReceiveInputPortType"
+            variable="ReceiveInputOperationOut"/>
+    </sequence>
+</process>

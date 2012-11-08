@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="XslPartAsType"
+    targetNamespace="http://enterprise.netbeans.org/bpel/XslPartAsType"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/XslPartAsType" xmlns:ns1="http://j2ee.netbeans.org/wsdl/XslPartAsType"
+    xmlns:nsEmplIn="http://sun.com/EmplInput" xmlns:nsEmplOut="http://sun.com/EmplOutput">
+    <import namespace="http://j2ee.netbeans.org/wsdl/XslPartAsType" 
+            location="XslPartAsType.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://sun.com/EmplInput"
+            location="EmployeeInput.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <import namespace="http://sun.com/EmplOutput"
+            location="EmployeeOutput.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:XslPartAsType1" myRole="XslPartAsTypePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="var1" type="xsd:string"/>
+        <bpws:variable name="input" messageType="ns1:XslPartAsTypeOperationRequest"/>
+        <bpws:variable name="output" messageType="ns1:XslPartAsTypeOperationReply"/>
+        <bpws:variable name="emplInput" type="nsEmplIn:emplInput"/>
+        <bpws:variable name="emplOutput" type="nsEmplOut:emplOutput"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="XslPartAsTypeOperation" portType="ns1:XslPartAsTypePortType" variable="input"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Code Monkey</bpws:literal>
+                </bpws:from>
+                <bpws:to variable="var1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>bpws:doXslTransform("urn:stylesheets:Empl-Input2Output.xsl", $input.part1, "var1", $var1)</bpws:from>
+                <bpws:to variable="output" part="part1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="input" part="part1"/>
+                <bpws:to variable="emplInput"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>bpws:doXslTransform("urn:stylesheets:Empl-Input2Output.xsl", $emplInput, "var1", $var1)</bpws:from>
+                <bpws:to variable="emplOutput"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:if name="If1">
+            <bpws:condition> ( $output.part1 != $emplOutput ) </bpws:condition>
+            <bpws:assign name="Assign2">
+                <bpws:copy>
+                    <bpws:from>
+                        <bpws:literal>Super Bad Monkey</bpws:literal>
+                    </bpws:from>
+                    <bpws:to>$output.part1/Title</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:if>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="XslPartAsTypeOperation" portType="ns1:XslPartAsTypePortType" variable="output"/>
+    </sequence>
+</process>

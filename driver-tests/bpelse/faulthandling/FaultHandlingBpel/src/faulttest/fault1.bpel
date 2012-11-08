@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="fault1"
+         targetNamespace="http://www.seebeyond.com/eInsight/faulttestbp"
+         sbynpxp:end_YLoc="50.0"
+         sbynpxp:start_YLoc="199.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="967.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/faulttestbp"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/FaultTest"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/FaultTest"
+            location="faulttest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="faulttestLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InOutOp_Output"
+                  messageType="ns0:FaultTest"></variable>
+        <variable name="InOutOp_Input"
+                  messageType="ns0:FaultTest"></variable>
+    </variables>
+    <sequence>
+        <scope>
+            <faultHandlers>
+                <catch faultName="tns:myfault"
+                       faultVariable="unusedInOutOp_Output"
+                       faultMessageType="ns0:FaultTest"
+                       sbynpxp:XLoc="587.0"
+                       sbynpxp:YLoc="478.0"
+                       sbynpxp:isExpanded="false">
+                    <sequence>
+                        <assign name="Assign"
+                                sbynpxp:XLoc="647.0"
+                                sbynpxp:YLoc="521.0">
+                            <copy>
+                                <from>&apos;hello&apos;</from>
+                                <to>$InOutOp_Input.part/retString</to>
+                            </copy>
+                        </assign>
+                        <reply partnerLink="faulttestLink"
+                               portType="ns0:FaultTest"
+                               operation="InOutOp"
+                               variable="InOutOp_Output"
+                               sbynpxp:XLoc="705.0"
+                               sbynpxp:YLoc="508.0"></reply>
+                    </sequence>
+                </catch>
+            </faultHandlers>
+            <sequence>
+                <receive name="InOutOp"
+                         partnerLink="faulttestLink"
+                         portType="ns0:FaultTest"
+                         operation="InOutOp"
+                         variable="InOutOp_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="425.0"
+                         sbynpxp:YLoc="118.0"></receive>
+                <throw name="Throw"
+                       faultName="tns:myfault"
+                       faultVariable="InOutOp_Output"
+                       sbynpxp:XLoc="505.0"
+                       sbynpxp:YLoc="125.0"></throw>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

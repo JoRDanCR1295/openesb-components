@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="oneWayMEError"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeErrorME/oneWayMEError"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InvokeErrorME/oneWayMEError" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeErrorME" location="InvokeErrorME.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ErrorInvokePL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" partnerLinkType="tns:OneWayMEErrorPLT" partnerRole="OneWayMEErrorPTRole"/>
+        <partnerLink name="InvokeTestReplyPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" partnerLinkType="tns:InvokeTestReplyPLT" partnerRole="InvokeTestReplyPTRole"/>
+        <partnerLink name="ReceivePL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" partnerLinkType="tns:ReceivePLT" myRole="receivePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InvokeTestReplyPTOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" messageType="tns:message1"/>
+        <variable name="OneWayMEErrorPTOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" messageType="tns:message1"/>
+        <variable name="ReceiveOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" messageType="tns:message1"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                            <from>concat($ReceiveOperIn.part1, ' Invoke returned with Error on ME: ')</from>
+                                <to variable="InvokeTestReplyPTOperIn" part="part1"/>
+                        </copy>
+                </assign>
+                <invoke name="TestReply" partnerLink="InvokeTestReplyPL" operation="InvokeTestReplyPTOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" portType="tns:InvokeTestReplyPT" inputVariable="InvokeTestReplyPTOperIn"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ReceivePL" operation="receiveOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" portType="tns:receivePortType" variable="ReceiveOperIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="ReceiveOperIn" part="part1"/>
+                <to variable="OneWayMEErrorPTOperIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="ErrorInvoke" partnerLink="ErrorInvokePL" operation="OneWayMEErrorPTOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" portType="tns:OneWayMEErrorPT" inputVariable="OneWayMEErrorPTOperIn"/>
+    </sequence>
+</process>

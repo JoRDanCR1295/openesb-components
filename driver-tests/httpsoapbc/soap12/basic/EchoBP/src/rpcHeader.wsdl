@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="rpcHeader" targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" xmlns:tns="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader">
+            <xsd:element name="header1" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="rpcHeaderOperationRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" element="tns:header1"/>
+    </message>
+    <message name="rpcHeaderOperationResponse">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" element="tns:header1"/>
+    </message>
+    <portType name="rpcHeaderPortType">
+        <operation name="rpcHeaderOperation">
+            <input name="input1" message="tns:rpcHeaderOperationRequest"/>
+            <output name="output1" message="tns:rpcHeaderOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="rpcHeaderPortTypeBinding" type="tns:rpcHeaderPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="rpcHeaderOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" parts="part1"/>
+                <soap:header message="tns:rpcHeaderOperationRequest" part="part2" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" parts="part1"/>
+                <soap:header message="tns:rpcHeaderOperationResponse" part="part2" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="rpcHeaderPortTypeBinding1" type="tns:rpcHeaderPortType">
+        <soap12:binding style="rpc" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <operation name="rpcHeaderOperation">
+            <soap12:operation/>
+            <input name="input1">
+                <soap12:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" parts="part1"/>
+                <soap12:header message="tns:rpcHeaderOperationRequest" part="part2" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap12:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/EchoBP/rpcHeader" parts="part1"/>
+                <soap12:header message="tns:rpcHeaderOperationResponse" part="part2" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="rpcSoap11Header">
+        <port name="rpcSoap11Port" binding="tns:rpcHeaderPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/EchoBP/rpcHeader/rpcSoap11Port"/>
+        </port>
+    </service>
+    <service name="rpcSoap12Service">
+        <port name="rpcSoap12Port" binding="tns:rpcHeaderPortTypeBinding1">
+            <soap12:address location="http://localhost:${HttpDefaultPort}/EchoBP/rpcHeader/rpcSoap12Port"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="rpcHeader">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="rpcHeaderPortTypeRole" portType="tns:rpcHeaderPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

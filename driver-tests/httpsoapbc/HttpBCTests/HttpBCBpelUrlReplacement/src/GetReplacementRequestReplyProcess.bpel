@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="GetReplacementRequestReplyProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/HttpBCBpelUrlReplacement/GetReplacementRequestReplyProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/HttpBCBpelUrlReplacement/GetReplacementRequestReplyProcess">
+    <import namespace="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" location="HttpGetUrlInOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/Trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/Trigger" partnerLinkType="tns:Trigger1" myRole="TriggerPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" partnerLinkType="tns:HttpGetUrlEncodedInOut1" partnerRole="HttpGetUrlReplacementInOutPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="HttpGetUrlReplacementInOutOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" messageType="tns:HttpGetUrlReplacementInOutOperationReply"/>
+        <variable name="HttpGetUrlReplacementInOutOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" messageType="tns:HttpGetUrlReplacementInOutOperationRequest"/>
+        <variable name="TriggerReplacementOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/Trigger" messageType="tns:TriggerReplacementOperationReply"/>
+        <variable name="TriggerReplacementOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/Trigger" messageType="tns:TriggerReplacementOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink2" operation="TriggerReplacementOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/Trigger" portType="tns:TriggerPortType" variable="TriggerReplacementOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>'Bar'</from>
+                <to variable="HttpGetUrlReplacementInOutOperationIn" part="param1"/>
+            </copy>
+            <copy>
+                <from>'Fly'</from>
+                <to variable="HttpGetUrlReplacementInOutOperationIn" part="param2"/>
+            </copy>
+            <copy>
+                <from>'Foo'</from>
+                <to variable="HttpGetUrlReplacementInOutOperationIn" part="param3"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink1" operation="HttpGetUrlReplacementInOutOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpGetUrlInOut" portType="tns:HttpGetUrlInOutPortType" inputVariable="HttpGetUrlReplacementInOutOperationIn" outputVariable="HttpGetUrlReplacementInOutOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="HttpGetUrlReplacementInOutOperationOut" part="result"/>
+                <to variable="TriggerReplacementOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink2" operation="TriggerReplacementOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/Trigger" portType="tns:TriggerPortType" variable="TriggerReplacementOperationOut"/>
+    </sequence>
+</process>

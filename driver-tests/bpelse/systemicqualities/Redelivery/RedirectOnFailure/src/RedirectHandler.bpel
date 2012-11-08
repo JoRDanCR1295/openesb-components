@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RedirectHandler"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RedirectOnFailure/RedirectHandler"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/RedirectOnFailure/RedirectHandler" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/RedirectOnFailure">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" 
+            location="RedirectOnFailure.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="redirectToDriver" partnerLinkType="ns0:ConfirmRedirectPLT" 
+                     partnerRole="ConfirmRedirectPTRole"/>
+        <partnerLink name="redirectPartner" partnerLinkType="ns0:RedirectOnFailurePLT" 
+                     myRole="RedirectOnFailurePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ConfirmRedirectOperIn" messageType="ns0:TestMsg"/>
+        <variable name="RedirectOnFailureOperationIn" messageType="ns0:TestMsg"/>
+    </variables>
+    <sequence>
+        <receive name="redirectRec" createInstance="yes" 
+                 partnerLink="redirectPartner" 
+                 operation="RedirectOnFailureOperation" 
+                 portType="ns0:RedirectOnFailurePortType" 
+                 variable="RedirectOnFailureOperationIn"/>
+        <wait name="Wait1">
+            <for>'P0Y0M0DT0H0M1S'</for>
+        </wait>
+        <assign name="AssignToSend">
+            <copy>
+                <from>$RedirectOnFailureOperationIn.TestPart/id</from>
+                <to>$ConfirmRedirectOperIn.TestPart/id</to>
+            </copy>
+            <copy>
+                <from>concat($RedirectOnFailureOperationIn.TestPart/val, ' Arrived in redirect endpoint:')</from>
+                <to>$ConfirmRedirectOperIn.TestPart/val</to>
+            </copy>
+        </assign>
+        <invoke name="SendTodriver" partnerLink="redirectToDriver" 
+                operation="ConfirmRedirectOper" 
+                portType="ns0:ConfirmRedirectPT" 
+                inputVariable="ConfirmRedirectOperIn"/>
+    </sequence>
+</process>

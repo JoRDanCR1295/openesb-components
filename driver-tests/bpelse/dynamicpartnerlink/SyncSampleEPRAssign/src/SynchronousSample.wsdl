@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    name="SynchronousSample" 
+    targetNamespace="http://localhost/SynchronousSample/SynchronousSample" 
+    xmlns:tns="http://localhost/SynchronousSample/SynchronousSample" 
+    xmlns:ns="http://xml.netbeans.org/schema/SynchronousSample" 
+    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+            xmlns:sref="http://docs.oasis-open.org/wsbpel/2.0/serviceref">
+    <types>
+        <xsd:schema targetNamespace="http://localhost/SynchronousSample/SynchronousSample">
+            <xsd:import namespace="http://xml.netbeans.org/schema/SynchronousSample" schemaLocation="SynchronousSample.xsd"/>
+            <xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+            <xsd:import schemaLocation="http://docs.oasis-open.org/wsbpel/2.0/OS/serviceref/ws-bpel_serviceref.xsd" namespace="http://docs.oasis-open.org/wsbpel/2.0/serviceref"/>
+            <xsd:element name="EndpointReference" type="wsa:EndpointReferenceType"/>
+            <xsd:complexType name="serviceRef">
+                <xsd:sequence>
+                    <xsd:element ref="sref:service-ref"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="EPR">
+                <xsd:sequence>
+                    <xsd:element ref="tns:EndpointReference"/>
+                </xsd:sequence>
+            </xsd:complexType>            
+        </xsd:schema>
+    </types>
+    <message name="requestMessage">
+        <part name="inputType" element="ns:typeA"/>
+    </message>
+    <message name="responseMessage">
+        <part name="resultType" element="ns:typeA"/>
+    </message>
+    <portType name="portType1">
+        <operation name="operation1">
+            <input name="input1" message="tns:requestMessage"/>
+            <output name="output1" message="tns:responseMessage"/>
+        </operation>
+    </portType>
+    <binding name="binding1" type="tns:portType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="operation1">
+        <input name="input1">
+          <soap:body use="literal"/>
+        </input>
+        <output name="output1">
+          <soap:body use="literal"/>
+        </output>
+        </operation>
+    </binding>
+    <service name="service1">
+        <port name="port1" binding="tns:binding1">
+            <documentation/>
+            <soap:address location="http://localhost:${HttpDefaultPort}/SynchronousSample"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="partnerlinktyperole1" portType="tns:portType1"/>
+    </plink:partnerLinkType>
+</definitions>

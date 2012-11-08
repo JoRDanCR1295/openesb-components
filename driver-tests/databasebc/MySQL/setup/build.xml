@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MySQLTables" default="setup" basedir=".">
+    <description>Setup tables for Derby</description>
+    <property name="database.baseURL" value="jdbc:mysql://localhost:3306" />
+    <property name="database.driver" value="com.mysql.jdbc.Driver" />
+    <property name="database.driver.classpath" value="/glassfish/domains/domain1/lib/ext/mysql-connector-java-5.1.5-bin.jar" />
+    <property name="database.name" value="sample" />
+    <property name="database.user" value="root" />
+    <property name="database.password" value="mysql" />
+
+    <target name="setup">
+	<echo>${database.baseURL}/${database.name}  </echo>
+        <sql driver="${database.driver}" url="${database.baseURL}/?create=true" userid="${database.user}" password="${database.password}" src="setup.sql">
+            <classpath>
+                <pathelement location="${database.driver.classpath}"/>
+            </classpath>
+        </sql>
+    </target>
+
+    <target name="shutdown">
+        <sql driver="${database.driver}" url="${database.baseURL}/${database.name};create=true" userid="${database.user}" password="${database.password}" src="shutdown.sql">
+            <classpath>
+                <pathelement location="${database.driver.classpath}"/>
+            </classpath>
+        </sql>
+    </target>
+
+</project>

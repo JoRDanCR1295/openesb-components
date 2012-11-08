@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="Echo1" targetNamespace="it.imolinfo.jbi4corba.test.Echo1" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="it.imolinfo.jbi4corba.test.Echo1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="it.imolinfo.jbi4corba.test.Echo1" xmlns="it.imolinfo.jbi4corba.test.Echo1" xmlns:ns1="http://test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="http://test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_test.jbi4corba.imolinfo.it.xsd"/>
+<xs:element name="echo1">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="msg" type="ns1:ThirdUnion"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echo1Response">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="ns1:ForthUnion"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo1">
+    <wsdl:part name="parameters" element="tns:echo1">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo1Response">
+    <wsdl:part name="parameters" element="tns:echo1Response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Echo1">
+    <wsdl:operation name="echo1">
+      <wsdl:input name="echo1" message="tns:echo1">
+    </wsdl:input>
+      <wsdl:output name="echo1Response" message="tns:echo1Response">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Echo1CorbaBinding" type="tns:Echo1">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="UnionTypes.idl" relativepath=".">
+module it{
+module imolinfo{
+module jbi4corba{
+module test{
+	
+	union TempUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+	
+	union FirstUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		case 3: TempUnion uni1;
+		case 4: sequence &lt;TempUnion&gt; uni2;
+		default: any two_format;
+	};
+
+	union SecondUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+
+	union ThirdUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: sequence &lt;FirstUnion&gt; third;
+		default: boolean altro; 
+	}; 
+	
+	union ForthUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: FirstUnion third;
+		default: boolean altro; 
+	}; 
+	
+	struct ComplexStruct1 {
+		boolean          fieldBoolean;
+		char               fieldChar;
+	        SecondUnion    fieldWChar;
+	};
+	
+	typedef ComplexStruct1 ArrayComplexStruct1[2][3];
+	
+	interface Echo {
+		string echo1(in ThirdUnion msg);
+		ThirdUnion echo2(in SecondUnion msg);
+		ComplexStruct1 echo3(in string msg);
+		string echo4(in ComplexStruct1 msg);
+		string echo5(in ArrayComplexStruct1 msg);
+		ArrayComplexStruct1 echo6(in string msg);
+		};
+		
+	interface Echo1 {
+		ForthUnion echo1(in ThirdUnion msg);
+	};		
+};};};}; 
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo1">
+      <wsdl:input name="echo1">
+      </wsdl:input>
+      <wsdl:output name="echo1Response">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Echo1">
+    <wsdl:port name="Echo1CorbaPort" binding="tns:Echo1CorbaBinding">
+<imolacorba:address name="Echo1" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

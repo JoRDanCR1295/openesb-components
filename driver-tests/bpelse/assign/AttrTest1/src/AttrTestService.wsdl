@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="AttrTestService" targetNamespace="http://j2ee.netbeans.org/wsdl/AttrTest1/AttrTestService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/AttrTest1/AttrTestService" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:ns0="http://j2ee.netbeans.org/xsd/AttrTest1/AttrTestxsd" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/xsd/AttrTest1/AttrTestxsd" 
+            xmlns:tns="http://j2ee.netbeans.org/xsd/AttrTest1/AttrTestxsd">
+            <xsd:complexType name="SubType">
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:int"></xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="code" type="xsd:int"/>
+            </xsd:complexType>
+            <xsd:complexType name="MainType">
+                <xsd:sequence>
+                    <xsd:element name="info" type="xsd:int"></xsd:element>
+                    <xsd:element name="child" type="tns:SubType"></xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="infoAttr" type="xsd:int"/>
+            </xsd:complexType>
+            <xsd:element name="MsgElem" type="tns:MainType"></xsd:element>
+            <xsd:element name="ReqElem" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="Request">
+        <part name="ReqPart" element="ns0:ReqElem"/>
+    </message>
+    <message name="Response">
+        <part name="ResPart" element="ns0:MsgElem"/>
+    </message>
+    <portType name="AttrTestPT">
+        <operation name="AttrTestOper">
+            <input name="input1" message="tns:Request"/>
+            <output name="output1" message="tns:Response"/>
+            <fault name="fault1" message="tns:Response"/>
+        </operation>
+    </portType>
+    <binding name="AttrTestPTBinding" type="tns:AttrTestPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AttrTestOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="ReqPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="ResPart"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="AttrTestService">
+        <port name="AttrTestPTServPort" binding="tns:AttrTestPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/AttrTServ"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="AttrTestPLT">
+        <plnk:role name="AttrTestRole" portType="tns:AttrTestPT"/>
+    </plnk:partnerLinkType>
+</definitions>

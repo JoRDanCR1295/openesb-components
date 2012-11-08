@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:SampleXSD"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    xmlns:tns ="urn:SampleXSD">
+    
+    <xsd:element name="Comment" type="xsd:string"/>
+    <xsd:simpleType name="partNumberType"
+        final="union"
+        id="catalog.partNumber.sType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                Declaration of a part number.
+                Each part number consists of one to
+                three alphabetic characters followed by
+                one to eight digits. The following part
+                numbers, for example, are valid:
+                J1
+                ABC32897
+                ZZ22233344
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:token">
+            <xsd:pattern value="[A-Z]{1,3}\d{1,8}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:element name="MessageContainer">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="MessageDescription" type="xsd:string" form="qualified" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="Item">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element type="xsd:string" name="value"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="person">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="home" type="tns:USAddressType"/>
+                <xsd:element name="work" type="tns:USAddressType" minOccurs="0"/>
+            </xsd:sequence>
+            <xsd:attribute name="name" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="USAddressType" >
+        <xsd:sequence>
+            <xsd:element name="name"   type="xsd:string" minOccurs="0"/>
+            <xsd:element name="street" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="city"   type="xsd:string" minOccurs="0"/>
+            <xsd:element name="state"  type="xsd:string" minOccurs="0"/>
+            <xsd:element name="zip"    type="xsd:decimal" />
+        </xsd:sequence>
+        <xsd:attribute name="country" type="xsd:NMTOKEN" fixed="US"/>
+    </xsd:complexType>
+    
+</xsd:schema>

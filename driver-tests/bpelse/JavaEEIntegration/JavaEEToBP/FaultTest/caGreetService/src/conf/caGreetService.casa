@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/greetService" xmlns:ns2="http://j2ee.netbeans.org/wsdl/TestDriver" xmlns:ns3="http://j2ee.netbeans.org/wsdl/EJBTestDriver" xmlns:ns4="http://enterprise.netbeans.org/bpel/greetCust" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="svcPort" interface-name="ns1:greetServicePortType" name="endpoint1" service-name="ns1:svcGreet"/>
+        <endpoint endpoint-name="TestDriverPort" interface-name="ns2:TestDriverPortType" name="endpoint2" service-name="ns2:TestDriverService"/>
+        <endpoint endpoint-name="javaee_EJBTestDriverPort" interface-name="ns3:EJBTestDriverPortType" name="endpoint3" service-name="ns3:EJBTestDriverService"/>
+        <endpoint endpoint-name="javaee_svcPort" interface-name="ns1:greetServicePortType" name="endpoint4" service-name="ns1:svcGreet"/>
+        <endpoint endpoint-name="javaee_TestDriverPort" interface-name="ns2:TestDriverPortType" name="endpoint5" service-name="ns2:TestDriverService"/>
+        <endpoint display-name="GreetCustClientPL" endpoint-name="greetServicePortTypeRole_myRole" file-path="greetCust.bpel" interface-name="ns1:greetServicePortType" name="endpoint6" process-name="greetCust" service-name="ns4:GreetCustClientPL"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="ejbCallGreetSvcs.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="caGreetService-ejbCallGreetSvcs" unit-name="ejbCallGreetSvcs" unknown="false" x="135" y="99">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="webCallGreetSvc.war" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="caGreetService-webCallGreetSvc" unit-name="webCallGreetSvc" unknown="false" x="135" y="238">
+            <provides endpoint="endpoint5"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="bplGreetService.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="caGreetService-bplGreetService" unit-name="bplGreetService" unknown="false" x="146" y="377">
+            <provides endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="caGreetService-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/bplGreetService/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet']/port[@name='svcPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port state="deleted" x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/classes/TestDriver.wsdl#xpointer(/definitions/service[@name='TestDriverService']/port[@name='TestDriverPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint6" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint6" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint5" state="deleted"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/bplGreetService/greetService.wsdl#xpointer(/definitions/portType[@name='greetServicePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/EJBTestDriver.wsdl#xpointer(/definitions/portType[@name='EJBTestDriverPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/portType[@name='greetServicePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/EJBTestDriverWs/EJBTestDriver.wsdl#xpointer(/definitions/portType[@name='EJBTestDriverPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/greetService.wsdl#xpointer(/definitions/portType[@name='greetServicePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/classes/TestDriver.wsdl#xpointer(/definitions/portType[@name='TestDriverPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/portType[@name='greetServicePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/greetService.wsdl#xpointer(/definitions/portType[@name='greetServicePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/TestDriverWS/TestDriver.wsdl#xpointer(/definitions/portType[@name='TestDriverPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/bplGreetService/greetService.wsdl#xpointer(/definitions/binding[@name='greetBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/EJBTestDriver.wsdl#xpointer(/definitions/binding[@name='EJBTestDriverBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/binding[@name='greetBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/EJBTestDriverWs/EJBTestDriver.wsdl#xpointer(/definitions/binding[@name='EJBTestDriverBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/greetService.wsdl#xpointer(/definitions/binding[@name='greetBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/classes/TestDriver.wsdl#xpointer(/definitions/binding[@name='TestDriverBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/binding[@name='greetBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/greetService.wsdl#xpointer(/definitions/binding[@name='greetBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/TestDriverWS/TestDriver.wsdl#xpointer(/definitions/binding[@name='TestDriverBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/bplGreetService/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/EJBTestDriver.wsdl#xpointer(/definitions/service[@name='EJBTestDriverService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/EJBTestDriverWs/EJBTestDriver.wsdl#xpointer(/definitions/service[@name='EJBTestDriverService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ejbCallGreetSvcs/META-INF/wsdl/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/classes/TestDriver.wsdl#xpointer(/definitions/service[@name='TestDriverService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/client/greetService/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/greetService.wsdl#xpointer(/definitions/service[@name='svcGreet'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/webCallGreetSvc/WEB-INF/wsdl/TestDriverWS/TestDriver.wsdl#xpointer(/definitions/service[@name='TestDriverService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

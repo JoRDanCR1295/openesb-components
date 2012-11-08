@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="TimeBasedAggregator" title="Plan" type="/IEP/Model/Plan" xmlns="http://jbi.com.sun/iep" packageName="TimeBasedAggregator">
+    <property name="version" value="1.0"/>
+    <component name="Metadata" title="Metadata" type="/IEP/Model/Plan|Metadata">
+        <component name="View" title="View" type="/IEP/Model/Plan|Metadata|View">
+            <property name="orthoflow" value="false"/>
+        </component>
+    </component>
+    <component name="Schemas" title="Schemas" type="/IEP/Model/Plan|Schemas">
+        <component type="/IEP/Metadata/Schema" name="schema0" title="schema0">
+            <component type="/IEP/Metadata/ColumnMetadata" name="id" title="id">
+                <property name="name" value="id"/>
+                <property name="type" value="INTEGER"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="name" title="name">
+                <property name="name" value="name"/>
+                <property name="type" value="VARCHAR"/>
+                <property name="size" value="100"/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="price" title="price">
+                <property name="name" value="price"/>
+                <property name="type" value="DOUBLE"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="parentID" title="parentID">
+                <property name="name" value="parentID"/>
+                <property name="type" value="BIGINT"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="orderTimeStamp" title="orderTimeStamp">
+                <property name="name" value="orderTimeStamp"/>
+                <property name="type" value="TIMESTAMP"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="orderDate" title="orderDate">
+                <property name="name" value="orderDate"/>
+                <property name="type" value="DATE"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+        </component>
+        <component type="/IEP/Metadata/Schema" name="schema1" title="schema1">
+            <component type="/IEP/Metadata/ColumnMetadata" name="price" title="price">
+                <property name="name" value="price"/>
+                <property name="type" value="DOUBLE"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="parentID" title="parentID">
+                <property name="name" value="parentID"/>
+                <property name="type" value="BIGINT"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+            <component type="/IEP/Metadata/ColumnMetadata" name="id" title="id">
+                <property name="name" value="id"/>
+                <property name="type" value="INTEGER"/>
+                <property name="size" value=""/>
+                <property name="scale" value=""/>
+                <property name="comment" value=""/>
+            </component>
+        </component>
+    </component>
+    <component name="Operators" title="Operators" type="/IEP/Model/Plan|Operators">
+        <component type="/IEP/Input/StreamInput" name="o0" title="o0">
+            <property name="x" value="76"/>
+            <property name="y" value="101"/>
+            <property name="z" value="0"/>
+            <property name="name" value="StreamInput0"/>
+            <property name="id" value="o0"/>
+            <property name="inputSchemaIdList" value=""/>
+            <property name="outputSchemaId" value="schema0"/>
+            <property name="description" value=""/>
+            <property name="topoScore" value="0"/>
+            <property name="inputIdList" value=""/>
+            <property name="staticInputIdList" value=""/>
+            <property name="isGlobal" value="false"/>
+            <property name="globalId" value=""/>
+            <property name="batchMode" value="false"/>
+        </component>
+        <component type="/IEP/Operator/TimeBasedAggregator" name="o1" title="o1">
+            <property name="x" value="184"/>
+            <property name="y" value="126"/>
+            <property name="z" value="0"/>
+            <property name="name" value="TimeBasedAggregator0"/>
+            <property name="id" value="o1"/>
+            <property name="inputSchemaIdList" value="schema0"/>
+            <property name="outputSchemaId" value="schema1"/>
+            <property name="description" value=""/>
+            <property name="topoScore" value="1"/>
+            <property name="inputIdList" value="o0"/>
+            <property name="staticInputIdList" value=""/>
+            <property name="isGlobal" value="false"/>
+            <property name="globalId" value=""/>
+            <property name="batchMode" value="false"/>
+            <property name="fromColumnList" value="SUM(StreamInput0.price)\StreamInput0.parentID\StreamInput0.id"/>
+            <property name="toColumnList" value="price\parentID\id"/>
+            <property name="groupByColumnList" value="StreamInput0.parentID\StreamInput0.id"/>
+            <property name="fromClause" value="StreamInput0"/>
+            <property name="whereClause" value=""/>
+            <property name="start" value="1970-01-01 00:00:00.000-0000"/>
+            <property name="increment" value="15"/>
+            <property name="incrementUnit" value="second"/>
+            <property name="size" value="15"/>
+            <property name="unit" value="second"/>
+        </component>
+        <component type="/IEP/Output/StreamOutput" name="o2" title="o2">
+            <property name="x" value="336"/>
+            <property name="y" value="173"/>
+            <property name="z" value="0"/>
+            <property name="name" value="StreamOutput0"/>
+            <property name="id" value="o2"/>
+            <property name="inputSchemaIdList" value="schema1"/>
+            <property name="outputSchemaId" value="schema1"/>
+            <property name="description" value=""/>
+            <property name="topoScore" value="2"/>
+            <property name="inputIdList" value="o1"/>
+            <property name="staticInputIdList" value=""/>
+            <property name="isGlobal" value="false"/>
+            <property name="globalId" value=""/>
+            <property name="batchMode" value="false"/>
+            <property name="includeTimestamp" value="false"/>
+        </component>
+    </component>
+    <component name="Links" title="Links" type="/IEP/Model/Plan|Links">
+        <component type="/IEP/Model/Link" name="link0" title="link0">
+            <property name="from" value="o0"/>
+            <property name="to" value="o1"/>
+        </component>
+        <component type="/IEP/Model/Link" name="link1" title="link1">
+            <property name="from" value="o1"/>
+            <property name="to" value="o2"/>
+        </component>
+    </component>
+</component>

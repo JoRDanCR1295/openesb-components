@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OnEventTerminationInScope_Driver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OnEventTerminationInScope_Driver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_PTypes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:ns4="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:tns="http://enterprise.netbeans.org/bpel/OnEventTerminationInScope_Driver">
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_Driver" location="OnEventTerminationInScope_Driver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/OnEventTerminationInScope_PTypes" location="OnEventTerminationInScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink4" partnerLinkType="ns2:OnEventTerminationInScope_PTypesPartner2" partnerRole="OnEventTerminationInScope_PTypesPortType2Role"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="ns2:OnEventTerminationInScope_PTypesPartner1" partnerRole="OnEventTerminationInScope_PTypesPortType1Role"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:OnEventTerminationInScope_PTypesPartner" partnerRole="OnEventTerminationInScope_PTypesPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:OnEventTerminationInScope_DriverPartner" myRole="OnEventTerminationInScope_DriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OnEventTerminationInScope_PTypesOperationOut2" messageType="ns3:message1"/>
+        <variable name="OnEventTerminationInScope_PTypesOperationOut" messageType="ns3:message1"/>
+        <variable name="OnEventTerminationInScope_PTypesOperationIn" messageType="ns3:message1"/>
+        <variable name="OnEventTerminationInScope_DriverOperationIn" messageType="ns1:message1"/>
+        <variable name="OnEventTerminationInScope_DriverOperationOut" messageType="ns1:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns3:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="OnEventTerminationInScope_DriverOperation" portType="ns1:OnEventTerminationInScope_DriverPortType" variable="OnEventTerminationInScope_DriverOperationIn"></receive>
+        <assign name="Assign1">
+            <copy>
+                <from>
+                    <literal>Id1</literal>
+                </from>
+                <to>$OnEventTerminationInScope_PTypesOperationIn.part1/Id1</to>
+            </copy>
+             <copy>
+                  <from>
+                       <literal>InitialAssignInDriver</literal>
+                  </from>
+                  <to part="part1" variable="OnEventTerminationInScope_DriverOperationOut"/>
+             </copy>
+        </assign>
+        <forEach name="ForEach1" counterName="foreachVar" parallel="no" >
+            <startCounterValue>1</startCounterValue>
+            <finalCounterValue>2</finalCounterValue>
+            <scope name="Scope1">
+                <faultHandlers>
+                    <catchAll>
+                        <empty name="Empty1"/>
+                    </catchAll>
+                </faultHandlers>
+                <flow name="Flow1">
+                    <sequence name="Sequence3">
+                            <invoke name="Invoke1" partnerLink="PartnerLink2" operation="OnEventTerminationInScope_PTypesOperation" portType="ns2:OnEventTerminationInScope_PTypesPortType" inputVariable="OnEventTerminationInScope_PTypesOperationIn" outputVariable="OnEventTerminationInScope_PTypesOperationOut"/>
+                                <assign name="Assign2">
+                                     <copy>
+                                          <from>concat($OnEventTerminationInScope_DriverOperationOut.part1, ', OutputFromSubBPForIteration', $foreachVar, ':', $OnEventTerminationInScope_PTypesOperationOut.part1/Id1)</from>
+                                          <to part="part1" variable="OnEventTerminationInScope_DriverOperationOut"/>
+                                     </copy>
+                                </assign>
+                                <throw name="Throw1" faultName="tns:cleanUpFault"/>
+                        </sequence>
+                        <sequence name="Sequence1">
+                            <wait name="Wait1">
+                                    <for>'P0Y0M0DT0H0M2S'</for>
+                                </wait>
+                                <invoke name="Invoke2" partnerLink="PartnerLink3" operation="OnEventTerminationInScope_PTypesOperation" portType="ns2:OnEventTerminationInScope_PTypesPortType1" inputVariable="OnEventTerminationInScope_PTypesOperationIn"/>
+                        </sequence>
+                        <sequence name="Sequence2">
+                            <wait name="Wait2">
+                                    <for>'P0Y0M0DT0H0M2S'</for>
+                                </wait>
+                                <invoke name="Invoke3" partnerLink="PartnerLink4" operation="OnEventTerminationInScope_PTypesOperation" portType="ns2:OnEventTerminationInScope_PTypesPortType2" inputVariable="OnEventTerminationInScope_PTypesOperationIn" outputVariable="OnEventTerminationInScope_PTypesOperationOut2"/>
+                        </sequence>
+                </flow>
+            </scope>
+        </forEach>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="OnEventTerminationInScope_DriverOperation" portType="ns1:OnEventTerminationInScope_DriverPortType" variable="OnEventTerminationInScope_DriverOperationOut"/>
+    </sequence>
+</process>

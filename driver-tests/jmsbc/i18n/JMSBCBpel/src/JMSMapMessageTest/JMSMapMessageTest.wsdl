@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/bpel/JMSMapMessageTest"
+             name="JMSMapMessageTest"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="http://localhost/bpel/JMSMapMessageTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <plink:partnerLinkType name="JMSMapMessageTestRequestReplyLnkType">
+        <plink:role name="roleJMSMapMessageTestTrigger"
+                    portType="tns:portTypeRequestReply"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSMapMessageTestOutLnkType">
+        <plink:role name="roleJMSMapMessageTestSender"
+                    portType="tns:portTypeOneWayOut"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSMapMessageTestInLnkType">
+        <plink:role name="roleJMSMapMessageTestReceiver"
+                    portType="tns:portTypeOneWayIn"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:property name="propJMSMapMessageName1"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:propJMSMapMessageName1"
+                        messageType="tns:messageRequestReply"
+                        part="partReqReply">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:propJMSMapMessageName1"
+                        messageType="tns:messageOneWayIn"
+                        part="partString">
+        <vprop:query></vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/bpel/JMSMapMessageTest"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://localhost/bpel/JMSMapMessageTest"
+                    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+                    xmlns:ns1="http://localhost/bpel/JMSMapMessageTest"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+            <xsd:complexType name="RequestReplyType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:boolean"
+                                 name="boolean"></xsd:element>
+                    <xsd:element type="xsd:byte"
+                                 name="char"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="double"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="messageRequestReply">
+        <part name="partReqReply"
+              type="tns:RequestReplyType"></part>
+    </message>
+    <message name="messageOneWayOut">
+        <part name="partBoolean"
+              type="xsd:boolean"></part>
+        <part name="partChar"
+              type="xsd:byte"></part>
+        <part name="partDouble"
+              type="xsd:double"></part>
+        <part name="partFloat"
+              type="xsd:float"></part>
+        <part name="partInt"
+              type="xsd:int"></part>
+        <part name="partLong"
+              type="xsd:long"></part>
+        <part name="partShort"
+              type="xsd:short"></part>
+        <part name="partString"
+              type="xsd:string"></part>
+    </message>
+    <message name="messageOneWayIn">
+        <part name="partBoolean"
+              type="xsd:boolean"></part>
+        <part name="partChar"
+              type="xsd:byte"></part>
+        <part name="partDouble"
+              type="xsd:double"></part>
+        <part name="partFloat"
+              type="xsd:float"></part>
+        <part name="partInt"
+              type="xsd:int"></part>
+        <part name="partLong"
+              type="xsd:long"></part>
+        <part name="partShort"
+              type="xsd:short"></part>
+        <part name="partString"
+              type="xsd:string"></part>
+    </message>
+    <portType name="portTypeRequestReply">
+        <operation name="operationRequestReply">
+            <input name="input"
+                   message="tns:messageRequestReply"></input>
+            <output name="output"
+                    message="tns:messageRequestReply"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayOut">
+        <operation name="operationOneWayOut">
+            <input name="input"
+                   message="tns:messageOneWayOut"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayIn">
+        <operation name="operationOneWayIn">
+            <input name="input"
+                   message="tns:messageOneWayIn"></input>
+        </operation>
+    </portType>
+    <binding name="bindingHttpRequestReply"
+             type="tns:portTypeRequestReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operationRequestReply">
+            <soap:operation soapAction="soapActionJMSMapMessageTest"/>
+            <input name="input">
+                <soap:body parts="partReqReply"
+                           use="literal"/>
+            </input>
+            <output name="output">
+                <soap:body parts="partReqReply"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayOut"
+             type="tns:portTypeOneWayOut">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayOut">
+            <jms:operation destination="MapMessageTestDestination" destinationType="Topic" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="MapMessage">
+                    <jms:mapmessage>
+                        <jms:mappart part="partBoolean" type="boolean" name="BooleanMapEntry"></jms:mappart>
+                        <jms:mappart part="partChar" type="char" name="CharMapEntry"></jms:mappart>
+                        <jms:mappart part="partDouble" type="double" name="DoubleMapEntry"></jms:mappart>
+                        <jms:mappart part="partFloat" type="float" name="FloatMapEntry"></jms:mappart>
+                        <jms:mappart part="partInt" type="int" name="IntMapEntry"></jms:mappart>
+                        <jms:mappart part="partLong" type="long" name="LongMapEntry"></jms:mappart>
+                        <jms:mappart part="partShort" type="short" name="ShortMapEntry"></jms:mappart>
+                        <jms:mappart part="partString" type="string" name="StringMapEntry"></jms:mappart>
+                    </jms:mapmessage>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayIn"
+             type="tns:portTypeOneWayIn">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayIn">
+            <jms:operation destination="MapMessageTestDestination" destinationType="Topic" transaction="NoTransaction" subscriptionDurability="NonDurable" />
+            <input name="input">
+                <jms:message messageType="MapMessage">
+                    <jms:mapmessage>
+                        <jms:mappart part="partBoolean" type="boolean" name="BooleanMapEntry"></jms:mappart>
+                        <jms:mappart part="partChar" type="char" name="CharMapEntry"></jms:mappart>
+                        <jms:mappart part="partDouble" type="double" name="DoubleMapEntry"></jms:mappart>
+                        <jms:mappart part="partFloat" type="float" name="FloatMapEntry"></jms:mappart>
+                        <jms:mappart part="partInt" type="int" name="IntMapEntry"></jms:mappart>
+                        <jms:mappart part="partLong" type="long" name="LongMapEntry"></jms:mappart>
+                        <jms:mappart part="partShort" type="short" name="ShortMapEntry"></jms:mappart>
+                        <jms:mappart part="partString" type="string" name="StringMapEntry"></jms:mappart>
+                    </jms:mapmessage>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceJMSMapMessageTest">
+        <port name="portJMSMapMessageTestTrigger"
+              binding="tns:bindingHttpRequestReply">
+            <soap:address location="http://localhost:12100/service/testJMSMapMessage"/>
+        </port>
+        <port name="portJMSMapMessageTestSend"
+              binding="tns:bindingJMSOneWayOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portJMSMapMessageTestRecv"
+              binding="tns:bindingJMSOneWayIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>    
+</definitions>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://sun.com/JMSBCXATest/JMSBCXAInOnlyTest"
+             name="JMSBCXAInOnlyTest"
+             xmlns:tns="http://sun.com/JMSBCXATest/JMSBCXAInOnlyTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:nsInput="http://sun.com/JMSBCXATest/EmplInput"
+             xmlns:nsOutput="http://sun.com/JMSBCXATest/EmplOutput"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <import namespace="http://sun.com/JMSBCXATest/EmplInput" location="EmployeeInput.xsd"/>
+    <import namespace="http://sun.com/JMSBCXATest/EmplOutput" location="EmployeeOutput.xsd"/>
+    <message name="input-msg">
+        <part name="empl-in" element="nsInput:EmployeeInput" />
+    </message>
+    <message name="output-msg">
+        <part name="empl-out" element="nsOutput:EmployeeOutput" />
+    </message>
+    <portType name="portTypeOneWayIn">
+        <operation name="operationOneWayIn">
+            <input name="input"
+                   message="tns:input-msg"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayOut">
+        <operation name="operationOneWayOut">
+            <input name="input"
+                   message="tns:output-msg"></input>
+        </operation>
+    </portType>
+    <binding name="bindingJMSOneWayIn"
+             type="tns:portTypeOneWayIn">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayIn">
+            <jms:operation destination="JMSXAInOnlyTestInQueue" destinationType="Queue" transaction="XATransaction" >
+                <jms:options>
+                    <jms:option name="endpointPoolMaxSize" value="1"/>
+                </jms:options>
+            </jms:operation>
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="empl-in" />
+            </input>
+        </operation>
+    </binding>        
+    <binding name="bindingJMSOneWayOut"
+             type="tns:portTypeOneWayOut">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayOut">
+            <jms:operation destination="JMSXAInOnlyTestOutQueue" destinationType="Queue" transaction="XATransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="empl-out"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="JMSXAInOnlyTestService">
+        <port name="portJMSInTestSend"
+              binding="tns:bindingJMSOneWayOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portJMSInTestRecv"
+              binding="tns:bindingJMSOneWayIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="JMSInTestInLnkType">
+        <plink:role name="roleTransformReceive"
+                    portType="tns:portTypeOneWayIn"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSInTestOutLnkType">
+        <plink:role name="roleTransformSend"
+                    portType="tns:portTypeOneWayOut"></plink:role>
+    </plink:partnerLinkType>
+</definitions>

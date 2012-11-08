@@ -1,0 +1,77 @@
+
+//IDL
+#pragma prefix "3hh4.123"
+module rttitypes{
+	//union
+	union TempUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+	
+	union FirstUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		case 3: TempUnion uni1;
+		case 4: sequence <TempUnion> uni2;
+		default: any two_format;
+	};
+
+	union SecondUnion switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+
+	union ThirdUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: sequence <FirstUnion> third;
+		default: boolean altro; 
+	}; 
+	
+	union ForthUnion switch (short) { 
+		case 1: long primo; 
+		case 2: short secondo; 
+		case 3: FirstUnion third;
+		default: boolean altro; 
+	}; 
+	
+	struct ComplexStruct1 {
+		boolean          fieldBoolean;
+		char               fieldChar;
+	        SecondUnion    fieldWChar;
+	};
+
+	// exception
+        					exception EchoUnionException {
+            					ThirdUnion reason;
+            				};     
+	
+	typedef ComplexStruct1 ArrayComplexStruct1[2][3];
+
+	//enum
+	enum EchoComplexEnum {E1, E2, E3};
+	
+	//any
+	union TempUnion1 switch (short){
+		case 1: long numeric;
+		case 2: string alfanumeric;
+		default: any two_format;
+	};
+	
+	struct ComplexStruct2 {
+		boolean          fieldBoolean;
+		char               fieldChar;
+	        sequence<any>    fieldAny;
+	};
+	
+	typedef any ArrayOfAny[2][3];
+	// exception
+	exception EchoAnyException {
+	any reason;
+	};
+
+};
+	
+

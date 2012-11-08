@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="LSP_Europe_SubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/prjPfizerSupplyChainEAP_BPEL/LSP_Europe_SubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/prjPfizerSupplyChainEAP_BPEL/LSP_Europe_SubBP"
+    xmlns:load_attr="http://xml.netbeans.org/schema/pfizer/OTDLoadAttributes" xmlns:ns="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace">
+    <import namespace="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" location="LSP_SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" location="SupplyChainMessageWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/jcdLoadBuiltInManuWrapper" location="Partners/jcdLoadBuiltInManu/jcdLoadBuiltInManuWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:stc:egate:jce:prjPfizerSupplyChainEAP_CAPS_prjLoadTracker_TechnicalSvcs_OTDs_Custom_jcdLoadBuiltInManu" location="Partners/jcdLoadBuiltInManu/jcdLoadBuiltInManu.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="LSP_CheckStatus_InvokePL" xmlns:tns="http://enterprise.netbeans.org/bpel/jcdLoadBuiltInManuWrapper" partnerLinkType="tns:ExecuteLinkType" partnerRole="ExecuteRole"/>
+        <partnerLink name="CallBackMainBPPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" partnerLinkType="tns:LSP_SubBPWSDLCallBackPT" partnerRole="LSP_SubBPWSDLCallBackPortTypeRole"/>
+        <partnerLink name="LSP_SubBPReceivePL" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" partnerLinkType="tns:LSP_SubBPReceivePT" myRole="LSP_SubBPWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="LSP_SubBPWSDLCallBackOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_SubBPReply"/>
+        <variable name="ProcessStatus" type="xsd:string"/>
+        <variable name="InvokeOut" xmlns:tns="urn:stc:egate:jce:prjPfizerSupplyChainEAP_CAPS_prjLoadTracker_TechnicalSvcs_OTDs_Custom_jcdLoadBuiltInManu" messageType="tns:Output"/>
+        <variable name="InvokeIn" xmlns:tns="urn:stc:egate:jce:prjPfizerSupplyChainEAP_CAPS_prjLoadTracker_TechnicalSvcs_OTDs_Custom_jcdLoadBuiltInManu" messageType="tns:Input"/>
+        <variable name="LSP_SubBPWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SupplyChainMessageWSDL" messageType="tns:Load_Attribute_SubBPInput"/>
+    </variables>
+    <sequence>
+        <receive name="Receive_LSP_Input" createInstance="yes" partnerLink="LSP_SubBPReceivePL" operation="LSP_SubBPWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" portType="tns:LSP_SubBPWSDLPortType" variable="LSP_SubBPWSDLOperationIn"/>
+        <assign name="Init">
+            <copy>
+                <from variable="LSP_SubBPWSDLOperationIn" part="part1"/>
+                <to variable="InvokeIn" part="Body"/>
+            </copy>
+            <copy>
+                <from>'InComplete'</from>
+                <to variable="ProcessStatus"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <invoke name="CheckStatus" partnerLink="LSP_CheckStatus_InvokePL" operation="invoke" xmlns:tns="urn:stc:egate:jce:prjPfizerSupplyChainEAP_CAPS_prjLoadTracker_TechnicalSvcs_OTDs_Custom_jcdLoadBuiltInManu" portType="tns:ExecutePortType" inputVariable="InvokeIn" outputVariable="InvokeOut">
+                    <ns:trace>
+                        <ns:log level="info" location="onComplete">
+                            <from>concat(concat('Load Id:', $InvokeOut.Body/load_attr:LOAD_ATTRIBUTES/load_attr:LOAD_ID), concat(' LSP Status:', $InvokeOut.Body/load_attr:Status))</from>
+                        </ns:log>
+                    </ns:trace>
+                </invoke>
+                <assign name="AssignStatus">
+                    <copy>
+                        <from>$InvokeOut.Body/load_attr:Status</from>
+                        <to variable="ProcessStatus"/>
+                    </copy>
+                </assign>
+                <if name="If1">
+                    <condition>starts-with($ProcessStatus, 'InComplete')</condition>
+                    <wait name="Wait">
+                        <for>'P0Y0M0DT0H0M5S'</for>
+                    </wait>
+                </if>
+            </sequence>
+            <condition>starts-with($ProcessStatus, 'Complete')</condition>
+        </repeatUntil>
+        <assign name="AssignResult">
+            <copy>
+                <from variable="InvokeOut" part="Body"/>
+                <to variable="LSP_SubBPWSDLCallBackOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="CallBack" partnerLink="CallBackMainBPPL" operation="LSP_SubBPWSDLCallBackOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/LSP_SubBPWSDL" portType="tns:LSP_SubBPWSDLCallBackPortType" inputVariable="LSP_SubBPWSDLCallBackOperationIn"/>
+    </sequence>
+</process>

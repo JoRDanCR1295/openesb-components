@@ -1,0 +1,42 @@
+<task name="ApprovePurchase" portType="wsdl:ApprovePurchasePT" operation="ApprovePurchase" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase"
+xmlns="http://jbi.com.sun/wfse" xmlns:wsdl="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_BPEL"
+ xmlns:po="http://wlmse.sample/po">
+	<import namespace="http://jbi.com.sun/wfse/wsdl/workflow_po_3/ApprovePurchase_TM_BPEL" location="ApprovePurchase_TM_BPEL_Variable.wsdl"/>
+	<title expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">concat(' Purchase Order for', $TaskInput/po:purchaserName)</title>
+  	<priority expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$TaskInput/po:priority</priority>
+	<init>
+		<variables/>
+		<variable-init>
+			<copy>
+				<from>'Approved'</from>
+				<to>$TaskOutput/po:approveResult</to>
+			</copy>		
+		</variable-init>		
+	</init>
+	<assignment>
+            <user>$TaskInput/po:user</user>
+     </assignment>
+     
+	  <action type="Completed">
+			<changeVariables>
+				<copy>
+					<from>current-dateTime()</from>
+					<to>$TaskOutput/po:approveDate</to>
+				</copy>	
+				<copy>
+					<from>$TaskInput/po:orderId</from>
+					<to>$TaskOutput/po:orderId</to>
+				</copy>								
+			</changeVariables>
+		</action>
+		
+	    <action type="Claimed">
+			<changeVariables>
+				<copy>
+					<from>'Rejected'</from>
+					<to>$TaskOutput/po:approveResult</to>
+				</copy>				
+			</changeVariables>
+		</action>
+		
+	</task>

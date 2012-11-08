@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="StockQuoteService_ProcLevelFaultFromInnerScope1"
+    targetNamespace="http://www.seebeyond.com/eInsight/Stock_ProcLevelFaultFromInnerScope1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/Stock_ProcLevelFaultFromInnerScope1"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:StockQuoteService/Stock_ProcLevelFaultFromInnerScope1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:StockQuoteService/Stock_ProcLevelFaultFromInnerScope1"
+    location="Stock_ProcLevelFaultFromInnerScope1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="StockQuoteServiceLink1"
+        partnerLinkType="ns0:StockQuoteServiceLT"
+        myRole="StockQuoteServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="GetQuote_Output"
+        messageType="ns0:GetQuoteSoapIn"></variable>
+        <variable name="GetQuote_Input"
+        messageType="ns0:GetQuoteSoapOut"></variable>
+    </variables>
+    <faultHandlers>
+        <catch faultName="tns:Fault1">
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>&apos;Caught by catch(Q1) at Process level scope&apos;</from>
+                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="StockQuoteServiceLink1"
+                portType="ns0:StockQuoteSoap"
+                operation="GetQuote"
+                variable="GetQuote_Input"/>                                                
+            </sequence>
+        </catch>
+        <catch faultName="tns:Fault1"
+            faultVariable="GetQuote_Input1" 
+            faultMessageType="ns0:GetQuoteSoapOut">
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>&apos;Caught by catch(Q1,M1) at Process level scope&apos;</from>
+                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="StockQuoteServiceLink1"
+                portType="ns0:StockQuoteSoap"
+                operation="GetQuote"
+                variable="GetQuote_Input"/>                        
+            </sequence>
+        </catch>
+        <catchAll>
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>&apos;Caught by catchAll at Process level scope&apos;</from>
+                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                    </copy>
+                </assign>
+                <reply partnerLink="StockQuoteServiceLink1"
+                portType="ns0:StockQuoteSoap"
+                operation="GetQuote"
+                variable="GetQuote_Input"/>                                                
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="GetQuote"
+        partnerLink="StockQuoteServiceLink1"
+        portType="ns0:StockQuoteSoap"
+        operation="GetQuote"
+        variable="GetQuote_Output"
+        createInstance="yes"/>
+        <scope name="OuterScope">
+            <sequence>
+                <scope name="InnerScope">
+                    <faultHandlers>
+                        <catch faultName="tns:Fault1"
+                            faultVariable="GetQuote_Output2" 
+                            faultMessageType="ns0:GetQuoteSoapIn">
+                            <sequence>
+                                <assign>
+                                    <copy>
+                                        <from>&apos;Caught by catch(Q1, M2) InnerScope&apos;</from>
+                                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </catch>
+                    </faultHandlers>
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>'Throwing Fault1'</from>
+                                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                            </copy>
+                        </assign>                    
+                        <throw faultName="tns:Fault1" 
+                        faultVariable="GetQuote_Input"/>
+                    </sequence>
+                </scope>
+                <assign>
+                    <copy>
+                        <from>&apos;Erroneously continuing in a faulted scope - OuterScope&apos;</from>
+                        <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+                    </copy>
+                </assign>     
+                <reply partnerLink="StockQuoteServiceLink1"
+	               portType="ns0:StockQuoteSoap"
+	               operation="GetQuote"
+	               variable="GetQuote_Input"/>
+                       <exit/>
+            </sequence>
+        </scope>
+        <assign>
+            <copy>
+                <from>&apos;Erroneously continuing in the Process level scope after a fault occured&apos;</from>
+                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+            </copy>
+        </assign>                        
+        <reply partnerLink="StockQuoteServiceLink1"
+        portType="ns0:StockQuoteSoap"
+        operation="GetQuote"
+        variable="GetQuote_Input"/>
+    </sequence>
+</process>

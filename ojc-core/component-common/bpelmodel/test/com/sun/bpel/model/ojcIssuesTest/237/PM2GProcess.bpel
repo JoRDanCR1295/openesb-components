@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PM2GProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BPELPM2G/PM2GProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/BPELPM2G/PM2GProcess" xmlns:ns1="http://enterprise.netbeans.org/bpel/DeneigementServiceServiceWrapper" xmlns:ns2="http://j2ee.netbeans.org/wsdl/PM2GProcess" xmlns:ns3="http://enterprise.netbeans.org/bpel/TrajetServiceServiceWrapper" xmlns:ns4="http://trajet.utbm.fr/" xmlns:ns0="http://www.utbm.fr/schema/GPSPoint2Schema" xmlns:ns5="http://deneigement.utbm.fr/" xmlns:ns6="http://www.utbm.fr/schema/GPSPointSchema">
+    <import namespace="http://enterprise.netbeans.org/bpel/DeneigementServiceServiceWrapper" location="Partners/DeneigementServiceServiceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://deneigement.utbm.fr/" location="Partners/DeneigementServiceService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/PM2GProcess" location="PM2GProcess.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/bpel/TrajetServiceServiceWrapper" location="Partners/TrajetServiceServiceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://trajet.utbm.fr/" location="Partners/TrajetServiceService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ClientPL" partnerLinkType="ns2:PM2GProcess1" myRole="PM2GProcessPortTypeRole"/>
+        <partnerLink name="TrajetPL" partnerLinkType="ns3:TrajetServiceLinkType" partnerRole="TrajetServiceRole"/>
+        <partnerLink name="DeneigementPL" partnerLinkType="ns1:DeneigementServiceLinkType" partnerRole="DeneigementServiceRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="PM2GProcessOperationOut" messageType="ns2:PM2GProcessOperationReply"/>
+        <variable name="GetEtatDeneigementOut" messageType="ns5:getEtatDeneigementResponse"/>
+        <variable name="GetEtatDeneigementIn" messageType="ns5:getEtatDeneigement"/>
+        <variable name="GetTrajetOut" messageType="ns4:getTrajetResponse"/>
+        <variable name="GetTrajetIn" messageType="ns4:getTrajet"/>
+        <variable name="PM2GProcessOperationIn" messageType="ns2:PM2GProcessOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ClientPL" operation="PM2GProcessOperation" portType="ns2:PM2GProcessPortType" variable="PM2GProcessOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/depart/ns0:x</from>
+                <to>$GetTrajetIn.parameters/depart/ns0:x</to>
+            </copy>
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/depart/ns0:y</from>
+                <to>$GetTrajetIn.parameters/depart/ns0:y</to>
+            </copy>
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/depart/ns0:z</from>
+                <to>$GetTrajetIn.parameters/depart/ns0:z</to>
+            </copy>
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/arrivee/ns0:x</from>
+                <to>$GetTrajetIn.parameters/arrivee/ns0:x</to>
+            </copy>
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/arrivee/ns0:y</from>
+                <to>$GetTrajetIn.parameters/arrivee/ns0:y</to>
+            </copy>
+            <copy>
+                <from>$PM2GProcessOperationIn.part1/arrivee/ns0:z</from>
+                <to>$GetTrajetIn.parameters/arrivee/ns0:z</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="TrajetPL" operation="getTrajet" portType="ns4:TrajetService" inputVariable="GetTrajetIn" outputVariable="GetTrajetOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from>$GetTrajetOut.parameters/return/ns0:x</from>
+                <to>$GetEtatDeneigementIn.parameters/trajet/ns6:x</to>
+            </copy>
+            <copy>
+                <from>$GetTrajetOut.parameters/return/ns0:y</from>
+                <to>$GetEtatDeneigementIn.parameters/trajet/ns6:y</to>
+            </copy>
+            <copy>
+                <from>$GetTrajetOut.parameters/return/ns0:z</from>
+                <to>$GetEtatDeneigementIn.parameters/trajet/ns6:z</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke2" partnerLink="DeneigementPL" operation="getEtatDeneigement" portType="ns5:DeneigementService" inputVariable="GetEtatDeneigementIn" outputVariable="GetEtatDeneigementOut"/>
+        <assign name="Assign3">
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:depart/ns6:x</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:depart/ns6:x</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:depart/ns6:y</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:depart/ns6:y</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:depart/ns6:z</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:depart/ns6:z</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:arrivee/ns6:x</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:arrivee/ns6:x</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:arrivee/ns6:y</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:arrivee/ns6:y</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:etat</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:etat</to>
+            </copy>
+            <copy>
+                <from>$GetEtatDeneigementOut.parameters/return/ns6:arrivee/ns6:z</from>
+                <to>$PM2GProcessOperationOut.outputType/return/ns6:arrivee/ns6:z</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="ClientPL" operation="PM2GProcessOperation" portType="ns2:PM2GProcessPortType" variable="PM2GProcessOperationOut"/>
+    </sequence>
+</process>

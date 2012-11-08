@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="unqualified" targetNamespace="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1">
+      <s:element name="GetQuote">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="symbol" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetQuoteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetQuoteResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetQuoteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetQuote" />
+  </wsdl:message>
+  <wsdl:message name="GetQuoteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetQuoteResponse" />
+  </wsdl:message>
+  <wsdl:portType name="StockQuoteSoap">
+    <wsdl:operation name="GetQuote">
+      <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Get Stock quote for a company Symbol</documentation>
+      <wsdl:input message="tns:GetQuoteSoapIn" />
+      <wsdl:output message="tns:GetQuoteSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="StockQuoteSoap" type="tns:StockQuoteSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <wsdl:operation name="GetQuote">
+      <soap:operation soapAction="urn:StockQuoteService/Stock_DiscontExecInFaultedScope1/GetQuote" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Stock_DiscontExecInFaultedScope1">
+    <wsdl:port name="StockQuoteSoap" binding="tns:StockQuoteSoap">
+      <soap:address location="http://localhost:${HttpDefaultPort}/service/Stock_DiscontExecInFaultedScope1" />
+    </wsdl:port>
+  </wsdl:service>
+      
+  <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="StockQuoteServiceLT">
+  	<plnk:role name="StockQuoteServiceProvider" portType="tns:StockQuoteSoap"/>
+   </plnk:partnerLinkType>
+  
+</wsdl:definitions>

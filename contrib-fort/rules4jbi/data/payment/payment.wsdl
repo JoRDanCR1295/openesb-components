@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions name="paymentWSDL"
+                  targetNamespace="http://www.example.org/payment/definitions"
+                  xmlns:tns="http://www.example.org/payment/definitions"
+                  xmlns:types="http://www.example.org/payment/types"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <wsdl:types>
+        <xsd:schema>
+            <xsd:import namespace="http://www.example.org/payment/types" schemaLocation="payment.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="InputMessage">
+        <wsdl:part name="body" element="types:payment"/>
+    </wsdl:message>
+
+    <wsdl:message name="OutputMessage">
+        <wsdl:part name="body" element="types:payment" />
+    </wsdl:message>
+
+    <wsdl:portType name="PaymentPortType">
+        <wsdl:operation name="pay">
+            <wsdl:input name="payInput" message="tns:InputMessage" />
+            <wsdl:output name="payOutput" message="tns:OutputMessage" />
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="PaymentBinding" type="tns:PaymentPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+
+        <wsdl:operation name="pay">
+            <soap:operation style="document" soapAction="http://www.example.org/payment/pay" />
+            
+            <wsdl:input name="payInput">
+                <soap:body parts="body" use="literal" />
+            </wsdl:input>
+
+            <wsdl:output name="payOutput">
+                <soap:body parts="body" use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="PaymentService">
+        <wsdl:port binding="tns:PaymentBinding" name="PaymentPort">
+            <soap:address location="http://localhost:12321/payment/request"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarmWithWaitBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarmWithWaitBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarmWithWaitBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarmWithWaitWSDL">
+   <import namespace="http://j2ee.netbeans.org/wsdl/onAlarmWithWaitWSDL" location="onAlarmWithWaitWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarmWithWaitWSDL1" myRole="onAlarmWithWaitWSDLPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="OnAlarmWithWaitWSDLOperationIn" messageType="ns1:onAlarmWithWaitWSDLOperationRequest"/>
+      <bpws:variable name="OnAlarmWithWaitWSDLOperationOut" messageType="ns1:onAlarmWithWaitWSDLOperationReply"/>
+      <bpws:variable name="tempVariable1" type="xsd:string"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarmWithWaitWSDLOperation" portType="ns1:onAlarmWithWaitWSDLPortType" variable="OnAlarmWithWaitWSDLOperationIn"/>
+      <bpws:assign name="Assign5">
+         <bpws:copy>
+            <bpws:from variable="OnAlarmWithWaitWSDLOperationIn" part="part1"/>
+            <bpws:to variable="tempVariable1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:scope name="Scope1">
+         <bpws:eventHandlers>
+            <bpws:onAlarm>
+               <bpws:documentation>ver0.3</bpws:documentation>
+               <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+               <bpws:scope name="Scope2">
+                  <bpws:sequence name="Sequence1">
+                     <bpws:assign name="Assign2">
+                        <bpws:copy>
+                           <bpws:from>concat($tempVariable1, 'Time Before-', current-time())</bpws:from>
+                           <bpws:to variable="tempVariable1"/>
+                        </bpws:copy>
+                     </bpws:assign>
+                     <bpws:wait name="Wait1">
+                     <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+                  </bpws:wait>
+                     <bpws:assign name="Assign3">
+                        <bpws:copy>
+                           <bpws:from>concat($tempVariable1, 'Time After-', current-time())</bpws:from>
+                           <bpws:to variable="tempVariable1"/>
+                        </bpws:copy>
+                     </bpws:assign>
+                  </bpws:sequence>
+               </bpws:scope>
+            </bpws:onAlarm>
+         </bpws:eventHandlers>
+         <bpws:wait name="Wait2">
+            <bpws:for>'P0Y0M0DT0H0M18S'</bpws:for>
+         </bpws:wait>
+      </bpws:scope>
+      <bpws:assign name="Assign4">
+         <bpws:copy>
+            <bpws:from variable="tempVariable1"/>
+            <bpws:to variable="OnAlarmWithWaitWSDLOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarmWithWaitWSDLOperation" portType="ns1:onAlarmWithWaitWSDLPortType" variable="OnAlarmWithWaitWSDLOperationOut"/>
+   </sequence>
+</process>

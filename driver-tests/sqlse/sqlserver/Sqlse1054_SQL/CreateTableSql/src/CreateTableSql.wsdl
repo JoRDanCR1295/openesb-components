@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CreateTableSql" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="CreateTableRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="CreateTableResponse">
+    <part name="CreateTableResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="CreateTableRequest">
+    <part name="CreateTableRequestPart" element="tns:CreateTableRequest"/>
+  </message>
+  <portType name="CreateTableSql_sqlsePortType">
+    <operation name="CreateTable">
+      <input name="CreateTableRequest" message="tns:CreateTableRequest"/>
+      <output name="CreateTableResponse" message="tns:CreateTableResponse"/>
+    </operation>
+  </portType>
+  <binding name="CreateTableSqlBinding" type="tns:CreateTableSql_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="CreateTable">
+      <soap:operation/>
+      <input name="CreateTableRequest">
+        <soap:body/>
+      </input>
+      <output name="CreateTableResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="CreateTableSql_sqlseService">
+    <port name="CreateTableSql_sqlsePort" binding="tns:CreateTableSqlBinding">
+      <soap:address location="http://localhost:18181/CreateTableSql/CreateTableSql/CreateTableSql_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="CreateTableSql_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="CreateTableSql_myrole" portType="tns:CreateTableSql_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

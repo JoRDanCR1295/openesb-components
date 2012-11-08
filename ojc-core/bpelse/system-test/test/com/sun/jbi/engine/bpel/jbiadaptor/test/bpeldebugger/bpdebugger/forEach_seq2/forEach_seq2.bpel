@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echo"
+         targetNamespace="http://www.seebeyond.com/eInsight/forEach_seq2"
+         sbynpxp:end_YLoc="122.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="604.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/forEach_seq2"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/forEach_test"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/forEach_test"
+            location="forEachTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="forEachSeq2Link"
+                     partnerLinkType="ns0:forEachLT_seq2"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="forEach_Output"
+                  messageType="ns0:forEach_seq1"></variable>
+        <variable name="forEach_Temp"
+                  messageType="ns0:forEach_seq1"></variable>                  
+        <variable name="forEach_Input"
+                  messageType="ns0:forEach_seq1"></variable>
+    </variables>
+    <sequence>
+        <receive name="forEach_receive.Receive"
+                 partnerLink="forEachSeq2Link"
+                 portType="ns0:forEach_seq2"
+                 operation="calculate2"
+                 variable="forEach_Input"
+                 createInstance="yes"
+                 sbynpxp:XLoc="155.0"
+                 sbynpxp:YLoc="117.0"></receive>
+                 
+        <assign
+                sbynpxp:XLoc="250.0"
+                sbynpxp:YLoc="83.0">
+            <copy>
+                <from>$forEach_Input.part/value</from>
+                <to>$forEach_Temp.part/value</to>
+            </copy>
+        </assign>                 
+        <forEach name="forEach2" counterName="forEachCounter2" parallel="no">
+        	<startCounterValue>$forEach_Temp.part/value - 0.2</startCounterValue>
+        	<finalCounterValue>5</finalCounterValue>
+        	<completionCondition>
+        		<branches>4</branches>
+        	</completionCondition>
+        	<scope>
+        		<assign name="Assign"
+                	sbynpxp:XLoc="250.0"
+                	sbynpxp:YLoc="83.0">
+            		<copy>
+                		<from>$forEach_Input.part/value + 1</from>
+                		<to>$forEach_Input.part/value</to>
+            		</copy>
+        		</assign>        	
+        	</scope>
+        </forEach>              
+        <assign name="Assign"
+                sbynpxp:XLoc="250.0"
+                sbynpxp:YLoc="83.0">
+            <copy>
+                <from>$forEach_Input.part/value</from>
+                <to>$forEach_Output.part/value</to>
+            </copy>
+        </assign>
+        <reply name="forEach_receive.Reply"
+               partnerLink="forEachSeq2Link"
+               portType="ns0:forEach_seq2"
+               operation="calculate2"
+               variable="forEach_Output"
+               sbynpxp:XLoc="470.0"
+               sbynpxp:YLoc="85.0"></reply>
+    </sequence>
+</process>

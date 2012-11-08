@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>ServiceMix SOAP Binding Example</title>
+<script type="text/javascript">
+
+function getHTTPObject() {
+  var xmlhttp = false;
+
+  /* Compilation conditionnelle d'IE */
+  /*@cc_on
+  @if (@_jscript_version >= 5)
+     try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+     } catch (e) {
+        try {
+           xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+           xmlhttp = false;
+        }
+     }
+  @else
+     xmlhttp = false;
+  @end @*/
+
+  /* on essaie de cr�er l'objet si ce n'est pas d�j� fait */
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+     try {
+        netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead UniversalBrowserWrite");
+        xmlhttp = new XMLHttpRequest();
+     } catch (e) {
+        xmlhttp = false;
+     }
+  }
+
+  if (xmlhttp) {
+     /* on d�finit ce qui doit se passer quand la page r�pondra */
+     xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4) { /* 4 : �tat "complete" */
+           var response = document.getElementById("response");
+           response.value = "STATUS: " + xmlhttp.status + "\n" + xmlhttp.responseText
+        }
+     }
+  }
+  return xmlhttp;
+}
+
+function send() {
+  var xmlhttp = getHTTPObject();
+  if (!xmlhttp) {
+    alert('cound not create XMLHttpRequest object');
+    return;
+  }
+  var request = document.getElementById("request");
+  var response = document.getElementById("response");
+  try {
+    xmlhttp.open("POST", "http://localhost:8192/Service/VinciService", true);
+  } catch (e) {
+    alert('error opening:'+e);
+  }
+  xmlhttp.send(request.value);
+}
+
+</script>
+</head>
+
+<body>
+
+<h1>ServiceMix SOAP Binding Example</h1>
+
+<p>Welcome to the soap binding example for ServiceMix</p>
+
+Perform a POST into the HTTP binding <p>
+
+<table>
+  <tr>
+    <td>
+  <textarea id="request" style="width:600px;height:400px" onKeyUp="send();"><?xml version="1.0" encoding="UTF-8"?>
+	<SOAP-ENV:Body xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+		<m:vinciOperation xmlns:m="http://vinci.test.jbi4cics.imolinfo.it">
+			<m:in0>
+				<m:binStrlen>0</m:binStrlen>
+				<m:compStrlen>0</m:compStrlen>
+				<m:inputString>Hello World</m:inputString>
+				<m:plusZonedStrlen>0</m:plusZonedStrlen>
+				<m:signedZonedStrlen>0</m:signedZonedStrlen>
+				<m:strlen>0</m:strlen>
+				<m:zonedStrlen>0</m:zonedStrlen>
+			</m:in0>
+		</m:vinciOperation>
+	</SOAP-ENV:Body>
+
+  </textarea>
+    </td>
+    <td>
+  <textarea id="response" style="width:600px;height:400px">
+  </textarea>
+    </td>
+  </tr>
+  <tr>
+    <td colspan=2>
+  <input type="button" value="Send" onClick="send();"/>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

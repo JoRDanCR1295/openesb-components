@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/bpel/JMSMsgSelectorTest"
+             name="JMSMsgSelectorTest"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="http://localhost/bpel/JMSMsgSelectorTest"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <plink:partnerLinkType name="JMSMsgSelectorTestRequestReplyLnkType">
+        <plink:role name="roleJMSMsgSelectorTestTrigger"
+                    portType="tns:portTypeRequestReply"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSMsgSelectorTestOutLnkType">
+        <plink:role name="roleJMSMsgSelectorTestSender"
+                    portType="tns:portTypeOneWayOut"></plink:role>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="JMSMsgSelectorTestInLnkType">
+        <plink:role name="roleJMSMsgSelectorTestReceiver"
+                    portType="tns:portTypeOneWayIn"></plink:role>
+    </plink:partnerLinkType>
+    <vprop:property name="propJMSMsgSelectorName1"
+                   type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:propJMSMsgSelectorName1"
+                        messageType="tns:messageRequestReply"
+                        part="partReqReply">
+        <vprop:query>JMSCorrelationID</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:propJMSMsgSelectorName1"
+                        messageType="tns:messageOneWayIn"
+                        part="partCorrelationId">
+        <vprop:query></vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/bpel/JMSMsgSelectorTest"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://localhost/bpel/JMSMsgSelectorTest"
+                    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+                    xmlns:ns1="http://localhost/bpel/JMSMsgSelectorTest"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">                        
+            
+                    <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="JMSCorrelationID"></xsd:element>
+                    <xsd:element type="xsd:string"
+                                 name="StockSymbol"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="StockPrice"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="messageRequestReply">
+        <part name="partReqReply"
+              type="tns:helloObjType"></part>
+    </message>
+    <message name="messageOneWayOut">
+        <part name="partMsgBody"
+              type="xsd:string"></part>
+        <part name="partCorrelationId"
+              type="xsd:string"></part>
+        <part name="partStockSymbol"
+              type="xsd:string"></part>
+        <part name="partStockPrice"
+              type="xsd:float"></part>
+    </message>
+    <message name="messageOneWayIn">
+        <part name="partMsgBody"
+              type="xsd:string"></part>
+        <part name="partCorrelationId"
+              type="xsd:string"></part>
+        <part name="partStockSymbol"
+              type="xsd:string"></part>
+        <part name="partStockPrice"
+              type="xsd:float"></part>
+    </message>
+    <portType name="portTypeRequestReply">
+        <operation name="operationRequestReply">
+            <input name="input"
+                   message="tns:messageRequestReply"></input>
+            <output name="output"
+                    message="tns:messageRequestReply"></output>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayOut">
+        <operation name="operationOneWayOut">
+            <input name="input"
+                   message="tns:messageOneWayOut"></input>
+        </operation>
+    </portType>
+    <portType name="portTypeOneWayIn">
+        <operation name="operationOneWayIn">
+            <input name="input"
+                   message="tns:messageOneWayIn"></input>
+        </operation>
+    </portType>
+    <binding name="bindingHttpRequestReply"
+             type="tns:portTypeRequestReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operationRequestReply">
+            <soap:operation soapAction="soapActionJMSMsgSelectorTest"/>
+            <input name="input">
+                <soap:body parts="partReqReply"
+                           use="literal"/>
+            </input>
+            <output name="output">
+                <soap:body parts="partReqReply"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayOut"
+             type="tns:portTypeOneWayOut">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayOut">
+            <jms:operation destination="MsgSelectorTestDestination2" destinationType="Topic" transaction="NoTransaction" deliveryMode="NON_PERSISTENT" disableMessageTimeStamp="true" disableMessageID="true" priority="4" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partMsgBody" correlationIdPart="partCorrelationId">
+                    <jms:properties>
+                        <jms:property part="partStockSymbol" type="string" name="StockSymbol"></jms:property>
+                        <jms:property part="partStockPrice" type="float" name="StockPrice"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSOneWayIn"
+             type="tns:portTypeOneWayIn">
+        <jms:binding></jms:binding>
+        <operation name="operationOneWayIn">
+            <jms:operation destination="MsgSelectorTestDestination2" destinationType="Topic" transaction="NoTransaction" subscriptionDurability="NonDurable" messageSelector="StockSymbol=&apos;SUNW&apos; AND StockPrice>99.00" />
+            <input name="input">
+                <jms:message messageType="TextMessage" textPart="partMsgBody" correlationIdPart="partCorrelationId">
+                    <jms:properties>
+                        <jms:property part="partStockSymbol" type="string" name="StockSymbol"></jms:property>
+                        <jms:property part="partStockPrice" type="float" name="StockPrice"></jms:property>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceJMSMsgSelectorTest">
+        <port name="portJMSMsgSelectorTestTrigger"
+              binding="tns:bindingHttpRequestReply">
+            <soap:address location="http://localhost:12100/service/testJMSMsgSelectorTest"/>
+        </port>
+        <port name="portJMSMsgSelectorTestSend"
+              binding="tns:bindingJMSOneWayOut">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+        <port name="portJMSMsgSelectorTestRecv"
+              binding="tns:bindingJMSOneWayIn">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </port>
+    </service>
+</definitions>

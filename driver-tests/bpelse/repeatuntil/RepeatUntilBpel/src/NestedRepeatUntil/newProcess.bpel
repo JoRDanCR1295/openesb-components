@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="newProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/zProject/newProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/zProject/newProcess" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Client" location="Client.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/Client" partnerLinkType="tns:Client" myRole="ClientPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ClientOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/Client" messageType="tns:ClientOperationResponse"/>
+        <variable name="ClientOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/Client" messageType="tns:ClientOperationRequest"/>
+    </variables>
+    <sequence name="seq1">
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ClientOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/Client" portType="tns:ClientPortType" variable="ClientOperationIn"/>
+        <sequence name="seq2">
+            <repeatUntil name="RepeatUntil1">
+                <repeatUntil name="RepeatUntil2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>'hello'</from>
+                            <to variable="ClientOperationOut" part="part1"/>
+                        </copy>
+                        <copy>
+                            <from>'aaa'</from>
+                            <to variable="ClientOperationIn" part="part1"/>
+                        </copy>
+                        <copy>
+                            <from>'bbb'</from>
+                            <to variable="ClientOperationIn" part="part2"/>
+                        </copy>
+                    </assign>
+                    <condition>$ClientOperationIn.part2 = 'bbb'</condition>
+                </repeatUntil>
+                <condition>$ClientOperationIn.part1 = 'aaa'</condition>
+            </repeatUntil>
+            <reply name="Reply1" partnerLink="PartnerLink1" operation="ClientOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/Client" portType="tns:ClientPortType" variable="ClientOperationOut"/>
+        </sequence>
+    </sequence>
+</process>

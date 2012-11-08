@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FTP" targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeXSDTransType/FTP"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDukeXSDTransType/FTP" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://xml.netbeans.org/schema/Greeting">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeXSDTransType/FTP">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Greeting" schemaLocation="Greeting.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="OutboundRequestResponseTransferringOperationRequest">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <message name="OutboundRequestResponseTransferringOperationResponse">
+        <part name="part1" element="ns:greeting"/>
+    </message>
+    <portType name="OutboundRequestResponseTransferringPortType">
+        <operation name="OutboundRequestResponseTransferringOperation">
+            <input name="input1" message="tns:OutboundRequestResponseTransferringOperationRequest"/>
+            <output name="output1" message="tns:OutboundRequestResponseTransferringOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="OutboundRequestResponseTransferringBinding" type="tns:OutboundRequestResponseTransferringPortType">
+        <ftp:binding/>
+        <operation name="OutboundRequestResponseTransferringOperation">
+            <ftp:operation/>
+            <input name="input1">
+                <ftp:transfer sendTo="HELLO_DUKE_TRANS/IN_STAGE/input_file_place_holder.txt" sendToHasPatterns="false" append="false" preSendCommand="NONE" preSendLocation="" preSendLocationHasPatterns="false" postSendCommand="RENAME" postSendLocation="HELLO_DUKE_TRANS/INBOX/%f" postSendLocationHasPatterns="true" use="literal" messageCorrelate="true" part="part1"/>
+            </input>
+            <output name="output1">
+                <ftp:transfer receiveFrom="HELLO_DUKE_TRANS/OUTBOX/output_file_place_holder.txt" receiveFromHasRegexs="false" pollIntervalMillis="5000" preReceiveCommand="NONE" preReceiveLocation="" preReceiveLocationHasPatterns="false" postReceiveCommand="RENAME" postReceiveLocation="HELLO_DUKE_TRANS/OUT_ARCHIVE/%f.bak" postReceiveLocationHasPatterns="true" use="literal" messageCorrelate="true" part="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="OutboundRequestResponseTransferringService">
+        <port name="OutboundRequestResponseTransferringPort" binding="tns:OutboundRequestResponseTransferringBinding">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" userDefDirListStyle="" userDefDirListHeuristics="" mode="BINARY" securedFTP="None" enableCCC="false" cmdChannelTimeout="45000" dataChannelTimeout="45000" controlChannelEncoding=""/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FTP">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="OutboundRequestResponseTransferringPortTypeRole" portType="tns:OutboundRequestResponseTransferringPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

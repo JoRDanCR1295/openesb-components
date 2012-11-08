@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="InventoryService"
+    targetNamespace="http://www.seebeyond.com/eInsight/newuntitled"
+    xmlns:tns="http://www.seebeyond.com/eInsight/newuntitled"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:invs="http://manufacturing.org/wsdl/inventory/bp3">
+    <!-- $Header: /cvs/open-jbi-components/driver-tests/bpelse/blueprints/bp3/BluePrint3/src/InventoryService.bpel,v 1.10 2010/02/04 06:07:06 fkieviet Exp $ -->
+    <import namespace="http://manufacturing.org/wsdl/inventory/bp3"
+    location="InventoryService.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="inventorySevicePLink"
+        partnerLinkType="invs:inventoryRequestingLT"
+        myRole="inventoryService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="purchaseOrder"
+        messageType="invs:POMessage"></variable>
+        <variable name="inventoryStatus"
+        messageType="invs:InventoryMessage"></variable>
+        <variable name="inventoryService_Fault"
+        messageType="invs:inventoryFault"></variable>
+    </variables>
+    <sequence>
+        <receive name="inventoryService"
+        partnerLink="inventorySevicePLink"
+        portType="invs:inventoryPortType"
+        operation="inventoryService"
+        variable="purchaseOrder"
+        createInstance="yes"/>
+        <if name="checkAvailability">
+            <condition>starts-with($purchaseOrder.purchaseOrder/orderDescription, 'OrderVal')</condition>
+            <sequence>
+                <assign name="Case1">
+                    <copy>
+                        <from>true()</from><to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                    </copy>
+                    <copy>
+                        <from>'available'</from><to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                    </copy>
+                </assign>
+                <reply name="inventoryService.Reply_2"
+                        partnerLink="inventorySevicePLink"
+                        portType="invs:inventoryPortType"
+                        operation="inventoryService"
+                        variable="inventoryStatus"/>
+            </sequence>
+            <elseif>
+                <condition>starts-with($purchaseOrder.purchaseOrder/orderDescription, 'ThrowInventoryFault')</condition>
+                <sequence>
+                    <assign name="Assign2">
+                        <copy>
+                            <from>concat('Inventory Fault thrown for PurchaseOrder ID ', $purchaseOrder.purchaseOrder/orderId, ' customer ID ', $purchaseOrder.purchaseOrder/customerId)</from><to part="faultInfo" variable="inventoryService_Fault"/>
+                        </copy>
+                    </assign>
+                    <reply name="inventoryService.Reply_1"
+                            partnerLink="inventorySevicePLink"
+                            portType="invs:inventoryPortType"
+                            operation="inventoryService"
+                            variable="inventoryService_Fault" faultName="invs:inventoryFaultType"/>
+                </sequence>
+            </elseif>
+            <else>
+                <sequence>
+                    <assign name="Case2">
+                        <copy>
+                            <from>false()</from><to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                        </copy>
+                        <copy>
+                            <from>'currently out of stock'</from><to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                        </copy>
+                    </assign>
+                    <reply name="inventoryService.Reply_3"
+                           partnerLink="inventorySevicePLink"
+                           portType="invs:inventoryPortType"
+                           operation="inventoryService"
+                           variable="inventoryStatus"/>
+                 </sequence>
+            </else>
+        </if>
+    </sequence>
+</process>

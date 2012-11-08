@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="cdk" default="help" basedir=".">
+
+    <property environment="env"/>
+    <property name="gf.home" value="${env.JV_GFBASE}"/>
+    <property name="ojc" value="${env.JV_SRCROOT}"/>
+    <property file="build.properties"/>
+
+    <path id="ojc.classpath">
+        <pathelement path="lib/common-util.jar"/>
+        <pathelement path="lib/qos.jar"/>
+        <pathelement path="lib/component-toolkit.jar"/>
+        <pathelement path="lib/wsdl4jext.jar"/>
+        <pathelement path="lib/wsdl4j.jar"/>
+        <pathelement path="lib/jbi.jar"/>
+    </path>
+
+    <target name="open" depends="compile">
+        <antcall target="exec-java">
+            <param name="axn" value="open"/>
+        </antcall>
+    </target>
+    
+    <target name="create" 
+            description="Creates a new JBI component project."
+            depends="token-wizard,create-project,create-jbic-file">
+    </target>
+
+	<target name="create-project" 
+            depends="copy-template,generate-src"/>
+    
+    <target name="copy-template">
+        <mkdir dir="${proj.root}"/>
+        <copy todir="${proj.root}">
+            <fileset dir="${template.project}">
+                <exclude name="**/CVS/**"/>
+                <exclude name="**/bld/**"/>
+                <exclude name="*.jbic"/>
+                <exclude name="**/${jbi.src.root}/**"/>
+                <exclude name="**/packaging/src/*-config.properties"/>
+            </fileset>
+            <!--
+            <mapper type="glob" from="*.java" to="${@CLASS_PREFIX@}*.java"/> -->
+        </copy>
+        <mkdir dir="${proj.root}/${jbi.src.root}/${component.type}/${project.name}"/>
+        <touch file="${proj.root}/packaging/src/${project.name}-config.properties"/>
+    	<!-- jar up CDK utilities -->
+    	<jar destfile="${basedir}/lib/cdk.jar"
+    	     basedir="${clz}"/>
+        <!-- copy dependent jars -->
+         <copy todir="${proj.root}/packaging/lib">
+             <fileset dir="${basedir}/lib">
+                 <include name="*.jar"/>
+                 <exclude name="*saxon*"/>
+             </fileset>
+         </copy>
+    </target>
+    
+    <target name="generate-src" depends="compile">
+        <ant antfile="templates.xml" dir="${templates}" 
+             target="generate-all" inheritrefs="true">
+        </ant>
+    </target>
+    
+    <target name="create-jbic-file" depends="compile">
+        <!-- append token properties to project's build.properties -->
+        <concat destfile="${proj.root}/build.properties" append="true">
+            <fileset file="${bld}/${project.name}.properties"/>
+        </concat>
+        <antcall target="exec-java">
+            <param name="axn" value="create"/>
+        </antcall>
+    </target>
+
+    <target name="token-wizard" depends="compile">
+        <antcall target="exec-java">
+            <param name="axn" value="wizard"/>
+        </antcall>
+        <loadproperties srcfile="wizard.properties"/>
+        <property name="project.name" value="${%PROJ_NAME%}"/>
+        <property name="component.type" value="${%COMP_TYPE_FLAG%}"/>
+        <property name="proj.root" value="${%PROJ_ROOT%}"/>
+        <concat destfile="${bld}/${project.name}.properties">
+            <fileset dir="${basedir}" includes="wizard.properties*"/>
+        </concat>
+        <delete file="${basedir}/wizard.properties"/>
+        <property name="token.file" value="${project.name}.properties"/>
+    </target>
+
+    <target name="exec-java" depends="compile">
+        <java classname="${proj.clz}" fork="true" failonerror="true">
+            <arg value="${axn}"/>
+        	<arg path="${ant.home}"/>
+            <arg path="${env.JV_SRCROOT}"/>
+            <arg path="${env.JV_GFBASE}"/>
+            <arg path="${basedir}"/>
+            <arg path="${project.name}"/>
+            <classpath>
+                <path refid="ojc.classpath"/>
+                <pathelement path="${clz}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${bld}"/>
+        <mkdir dir="${clz}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src}" destdir="${clz}" debug="true">
+            <classpath refid="ojc.classpath"/>
+        </javac>
+        <copy todir="${clz}">
+            <fileset dir="${src}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xsl"/>
+            	<include name="**/*.png"/>
+            	<include name="**/jbic.xml"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean">
+        <delete dir="${bld}"/>
+    </target>
+
+    <target name="help" description="Displays instructions for Component Development Kit build script.">
+        <echo>The following commands are available from this Ant script:</echo>
+        <echo/>
+        <echo>    create           Creates a new JBI component project.</echo>
+        <echo/>
+        <echo>    open             Displays a JBI component project in the JBIC Editor.</echo>
+        <echo/>
+        <echo>    help             Displays this set of instructions.</echo>
+        <echo/>
+    </target>
+</project>

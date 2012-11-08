@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FlowPick" targetNamespace="http://j2ee.netbeans.org/wsdl/FlowPick"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/FlowPick"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/FlowPick/types"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    
+  <types>
+    <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/FlowPick/types">
+    </xsd:schema>
+  </types>
+
+    <message name="RequestMessage">
+        <part name="OnAlarmBranch" type="xsd:string"/>
+        <part name="OnMessageBranch" type="xsd:string"/>
+        <part name="FlowBranch" type="xsd:string"/>
+    </message>
+    
+    <message name="ResponseMessage">
+        <part name="OnAlarmBranch" type="xsd:string"/>
+        <part name="OnMessageBranch" type="xsd:string"/>
+        <part name="FlowBranch" type="xsd:string"/>
+    </message>
+    <portType name="MainPortType">
+        <operation name="FlowPickMainOperation">
+            <input name="input1" message="tns:RequestMessage"/>
+            <output name="output1" message="tns:ResponseMessage"/>
+        </operation>
+    </portType>
+    <portType name="PickPortType">
+        <operation name="FlowPickPickOperation">
+            <input name="input1" message="tns:RequestMessage"/>
+        </operation>
+    </portType>
+    <binding name="FlowPickMainBinding" type="tns:MainPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="FlowPickMainOperation">
+            <input name="input1">
+                <soap:body/>
+            </input>
+            <output name="output1">
+                <soap:body/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="FlowPickPickBinding" type="tns:PickPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="FlowPickPickOperation">
+            <input name="input1">
+                <soap:body/>
+            </input>
+        </operation>
+    </binding>
+    <service name="FlowPickMainService">
+        <port name="FlowPickMainPort" binding="tns:FlowPickMainBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/FlowPick_Main"/>
+        </port>
+    </service>
+    <service name="FlowPickPickService">
+        <port name="FlowPickPickPort" binding="tns:FlowPickPickBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/FlowPick_Pick"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="FlowPickMainPLT">
+        <plink:role name="FlowPickMainPLTRole" portType="tns:MainPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="FlowPickPickPLT">
+        <plink:role name="FlowPickPickPLTRole" portType="tns:PickPortType"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:RequestMessage" part="FlowBranch"/>
+</definitions>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="functionalBenchMark" soapui-version="1.7.5" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@projectRoot">C:\openEsb\open-jbi-components\driver-tests\bpelse\benchmark\BenchmarkJbi\test</con:setting></con:settings><con:interface name="benchMarkBinding" bindingName="{http://localhost/MultiDepBpel/benchMark}benchMarkBinding" soapVersion="1_1" definition="http://localhost:12100/service/benchMark?WSDL"><con:settings/><con:endpoints><con:endpoint>http://MPOTTLAPELLI-TECRA.stc.com:12100/service/benchMark</con:endpoint></con:endpoints><con:operation action="benchMarkOperation1" name="benchMarkOperation1" bindingOperationName="benchMarkOperation1" inputName="" isOneWay="false" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://MPOTTLAPELLI-TECRA.stc.com:12100/service/benchMark</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://localhost/MultiDepBpel/benchMark">
+  <soapenv:Body>
+    <tns:benchMarkElement>
+      <tns:string>input</tns:string>
+      <tns:waitTime>P0Y0DT1S</tns:waitTime>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+    </tns:benchMarkElement>
+  </soapenv:Body>
+</soapenv:Envelope>]]></con:request></con:call></con:operation><con:operation action="benchMarkOperation2" name="benchMarkOperation2" bindingOperationName="benchMarkOperation2" inputName="" isOneWay="false" sendsAttachments="false"><con:settings/></con:operation><con:definitionCache rootPart="http://localhost:12100/service/benchMark?WSDL"><con:part><con:url>http://localhost:12100/service/benchMark?WSDL</con:url><con:content><definitions name="benchMark" targetNamespace="http://localhost/MultiDepBpel/benchMark" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://localhost/MultiDepBpel/benchMark" xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://localhost/MultiDepBpel/benchMark">
+            <xsd:element name="benchMarkElement" type="tns:benchMarkType"/>                    
+            <xsd:complexType name="benchMarkType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="waitTime" type="xsd:string"/>
+                    <xsd:element maxOccurs="unbounded" name="payLoad" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+  </types>
+  <message name="MWInt">
+    <part name="value" type="xsd:int">
+    </part>
+  </message>
+  <message name="benchMarkMessage">
+    <part name="benchMarkPart" element="tns:benchMarkElement">
+    </part>
+  </message>
+  <portType name="benchMarkPortType">
+    <operation name="benchMarkOperation1">
+      <input message="tns:benchMarkMessage">
+    </input>
+      <output message="tns:benchMarkMessage">
+    </output>
+    </operation>
+    <operation name="benchMarkOperation2">
+      <input message="tns:benchMarkMessage">
+    </input>
+    </operation>
+  </portType>
+  <portType name="benchMarkSubBPPortType">
+    <operation name="benchMarkSubBPOperation1">
+      <input message="tns:benchMarkMessage">
+    </input>
+      <output message="tns:benchMarkMessage">
+    </output>
+      <fault name="subBPFault" message="tns:benchMarkMessage">
+    </fault>
+    </operation>
+  </portType>
+  <binding name="benchMarkBinding" type="tns:benchMarkPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="benchMarkOperation1">
+      <soap:operation soapAction="benchMarkOperation1"/>
+      <input>
+        <soap:body parts="benchMarkPart" use="literal"/>
+      </input>
+      <output>
+        <soap:body parts="benchMarkPart" use="literal"/>
+      </output>
+    </operation>
+    <operation name="benchMarkOperation2">
+      <soap:operation soapAction="benchMarkOperation2"/>
+      <input>
+        <soap:body parts="benchMarkPart" use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  <binding name="benchMarkSubBPBinding" type="tns:benchMarkSubBPPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="benchMarkSubBPOperation1">
+      <soap:operation soapAction="benchMarkSubBPOperation1"/>
+      <input>
+        <soap:body parts="benchMarkPart" use="literal"/>
+      </input>
+      <output>
+        <soap:body parts="benchMarkPart" use="literal"/>
+      </output>
+      <fault name="subBPFault">
+        <soap:fault name="subBPFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="benchMarkService">
+    <port name="benchMarkPort" binding="tns:benchMarkBinding">
+      <soap:address location="http://MPOTTLAPELLI-TECRA.stc.com:12100/service/benchMark"/>
+    </port>
+  </service>
+  <service name="benchMarkSubBPService">
+    <port name="benchMarkPort" binding="tns:benchMarkSubBPBinding">
+      <soap:address location="http://MPOTTLAPELLI-TECRA.stc.com:12100/service/benchMarkSubBP"/>
+    </port>
+  </service>
+    <plnk:partnerLinkType name="benchMarkLinkType" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Server" portType="tns:benchMarkPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="benchMarkSubBPLinkType" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Server" portType="tns:benchMarkSubBPPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="property" type="xsd:string"/>
+    <vprop:propertyAlias messageType="tns:benchMarkMessage" part="benchMarkPart" propertyName="tns:property">
+    	<vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+</definitions></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:testSuite name="functionalBenchMarkTestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" name="functionalBenchMarkTestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="benchMarkOperation1 - Request 1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>benchMarkBinding</con:interface><con:operation>benchMarkOperation1</con:operation><con:request name="benchMarkOperation1 - Request 1" wssPasswordType=""><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://MPOTTLAPELLI-TECRA.stc.com:12100/service/benchMark</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://localhost/MultiDepBpel/benchMark">
+  <soapenv:Body>
+    <tns:benchMarkElement>
+      <tns:string>input</tns:string>
+      <tns:waitTime>P0Y0DT0S</tns:waitTime>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+      <tns:payLoad>This is test payload</tns:payLoad>
+    </tns:benchMarkElement>
+  </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/></con:request></con:config></con:testStep><con:loadTest name="functionalBMLoadTest"><con:settings><con:setting id="HttpSettings@include_request_in_time_taken">false</con:setting><con:setting id="HttpSettings@include_response_in_time_taken">false</con:setting></con:settings><con:threadCount>10</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>false</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>600</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>0</testDelay><randomFactor>0.5</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/></con:loadTest><con:loadTest name="warmupFunctionalBMLoadTest"><con:settings/><con:threadCount>10</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>false</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>120</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>0</testDelay><randomFactor>0.0</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/></con:loadTest></con:testCase></con:testSuite></con:soapui-project>

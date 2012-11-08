@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="WithinPickOnMessage" targetNamespace="http://j2ee.netbeans.org/wsdl/WithinPickOnMessage"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://j2ee.netbeans.org/wsdl/WithinPickOnMessage" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="WithinPickOnMessageOperationRequest">
+        <part name="InputPart" type="xsd:string"/>
+    </message>
+    <message name="WithinPickOnMessageOperationReply">
+        <part name="OutputPart" type="xsd:string"/>
+    </message>
+    <message name="MainBPOneWayRequest">
+        <wsdl:part name="InputPart" type="xsd:string"/>
+    </message>
+    <portType name="WithinPickOnMessagePortType">
+        <wsdl:operation name="WithinPickOnMessageOperation">
+            <wsdl:input name="input1" message="tns:WithinPickOnMessageOperationRequest"/>
+            <wsdl:output name="output1" message="tns:WithinPickOnMessageOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="MainBPOneWayWSDLPortType">
+        <wsdl:operation name="MainBPOneWayWSDLOperation">
+            <wsdl:input name="input1" message="tns:MainBPOneWayRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="WithinPickOnMessageBinding" type="tns:WithinPickOnMessagePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="WithinPickOnMessageOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinPickOnMessage"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinPickOnMessage"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="MainBPOneWayBinding" type="tns:MainBPOneWayWSDLPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MainBPOneWayWSDLOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/WithinPickOnMessage"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="WithinPickOnMessageService">
+        <wsdl:port name="WithinPickOnMessagePort" binding="tns:WithinPickOnMessageBinding">
+            <soap:address location="http://localhost:18181/WithinPickOnMessageService/WithinPickOnMessagePort"/>
+        </wsdl:port>
+    </service>
+    <service name="MainBPOneWayService">
+        <wsdl:port name="MainBPOneWayPort" binding="tns:MainBPOneWayBinding">
+            <soap:address location="http://localhost:18181/WithinPickOnMessage/MainBPOneWayPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="MainBPIOPLink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="WithinPickOnMessagePortTypeRole" portType="tns:WithinPickOnMessagePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="MainBPOneWayPLink">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="MainBPOneWayWSDLPortTypeRole" portType="tns:MainBPOneWayWSDLPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="CorrelationVariable" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationVariable" messageType="tns:WithinPickOnMessageOperationRequest" part="InputPart"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationVariable" messageType="tns:MainBPOneWayRequest" part="InputPart"/>
+</definitions>

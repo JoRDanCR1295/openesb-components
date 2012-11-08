@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:simpleFlowTargetNamespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="simpleFlowDefinition" targetNamespace="urn:simpleFlowTargetNamespace">
+    <types>
+        <xsd:schema xmlns:ns1="urn:simpleFlowTargetNamespace" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:simpleFlowTargetNamespace">
+            <xsd:complexType name="simpleFlowType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="simpleFlowMessage">
+        <part name="simpleFlowPart" type="tns:simpleFlowType"/>
+    </message>
+    <portType name="simpleFlowPortType">
+        <operation name="simpleFlowOperation">
+            <input message="tns:simpleFlowMessage"/>
+            <output message="tns:simpleFlowMessage"/>
+        </operation>
+    </portType>
+    <binding name="simpleFlowBinding" type="tns:simpleFlowPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="simpleFlowOperation">
+            <soap:operation soapAction="simpleFlowOperation"/>
+            <input>
+                <soap:body parts="simpleFlowPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simpleFlowPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="simpleFlowService">
+        <port binding="tns:simpleFlowBinding" name="simpleFlowPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/simpleFlow"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="simpleFlowServiceLinkType">
+	<plnk:role name="simpleFlowServerRole" portType="tns:simpleFlowPortType"/>
+   </plnk:partnerLinkType>
+</definitions>

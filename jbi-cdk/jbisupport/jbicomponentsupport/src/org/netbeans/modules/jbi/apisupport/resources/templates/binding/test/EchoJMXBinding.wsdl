@@ -1,0 +1,53 @@
+<definitions
+             targetNamespace="http://www.sun.com/sample-service/echo"
+             name="echo"
+             xmlns:tns="http://www.sun.com/sample-service/echo"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jmx="http://java.sun.com/jbi/wsdl-extensions/jmx/">
+
+    <types>
+        <xsd:schema targetNamespace="http://www.sun.com/sample-service/echo">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string" name="value"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <message name="echo">
+        <part name="part"
+              element="tns:item">
+        </part>
+    </message>
+    
+    <portType name="echo">
+        <operation name="echo">
+            <input message="tns:echo"></input>
+            <output message="tns:echo"></output>
+        </operation>
+    </portType>
+    
+    <binding name="Binding" type="tns:echo">
+        <jmx:binding />
+        <operation name="echo">
+            <jmx:operation name="echo"/>
+            <input>
+                <jmx:body use="literal"/>
+            </input>
+            <output>
+                <jmx:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="echoService">
+        <port name="port" binding="tns:Binding">
+            <jmx:address url="__JMX_ENDPOINT_ADDRESS_URL_" mbean="__JMX_ENDPOINT_ADDRESS_MBEAN__"/>
+        </port>
+    </service>
+    
+</definitions>

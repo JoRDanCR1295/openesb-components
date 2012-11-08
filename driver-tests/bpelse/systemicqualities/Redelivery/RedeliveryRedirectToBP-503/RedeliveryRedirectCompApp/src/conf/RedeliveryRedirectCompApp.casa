@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/OutputToFile" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OneWayBpelService1" xmlns:ns3="http://j2ee.netbeans.org/wsdl/RedeliveryRedirectToBPFail1" xmlns:ns4="http://enterprise.netbeans.org/bpel/OneWayBpelService1Bpel/OneWayBpelService1" xmlns:ns5="http://enterprise.netbeans.org/bpel/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="OutputToFilePort" interface-name="ns1:OutputToFilePortType" name="endpoint1" service-name="ns1:OutputToFileService"/>
+<endpoint endpoint-name="DummyWsdlPort" interface-name="ns2:DummyWsdlPortType" name="endpoint2" service-name="ns2:DummyWsdlService"/>
+<endpoint endpoint-name="OneWayBpelService1InPort" interface-name="ns2:OneWayBpelService1InPortType" name="endpoint3" service-name="ns2:OneWayBpelService1InService"/>
+<endpoint endpoint-name="RedeliveryRedirectToBPFail1Port" interface-name="ns3:RedeliveryRedirectToBPFail1PortType" name="endpoint4" service-name="ns3:RedeliveryRedirectToBPFail1Service"/>
+<endpoint display-name="PartnerLink1" endpoint-name="OneWayBpelService1InPortTypeRole_myRole" file-path="OneWayBpelService1.bpel" interface-name="ns2:OneWayBpelService1InPortType" name="endpoint5" process-name="OneWayBpelService1" service-name="ns4:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="OutputToFilePortTypeRole_partnerRole" file-path="OneWayBpelService1.bpel" interface-name="ns1:OutputToFilePortType" name="endpoint6" process-name="OneWayBpelService1" service-name="ns4:PartnerLink2"/>
+<endpoint display-name="PartnerLink1" endpoint-name="RedeliveryRedirectToBPFail1PortTypeRole_myRole" file-path="RedeliveryRedirectToBPFail1.bpel" interface-name="ns3:RedeliveryRedirectToBPFail1PortType" name="endpoint7" process-name="RedeliveryRedirectToBPFail1" service-name="ns5:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="DummyWsdlPortTypeRole_partnerRole" file-path="RedeliveryRedirectToBPFail1.bpel" interface-name="ns2:DummyWsdlPortType" name="endpoint8" process-name="RedeliveryRedirectToBPFail1" service-name="ns5:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="DPL_OneWayBpelService1Bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="RedeliveryRedirectCompApp-DPL_OneWayBpelService1Bpel" unit-name="DPL_OneWayBpelService1Bpel" unknown="false" x="107" y="232">
+<provides endpoint="endpoint5"/>
+<consumes endpoint="endpoint6"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="RedeliveryRedirectToBPFail1Bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="RedeliveryRedirectCompApp-RedeliveryRedirectToBPFail1Bpel" unit-name="RedeliveryRedirectToBPFail1Bpel" unknown="false" x="124" y="71">
+<provides endpoint="endpoint7"/>
+<consumes endpoint="endpoint8"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="RedeliveryRedirectCompApp-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="276">
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OutputToFile.wsdl#xpointer(/definitions/service[@name='OutputToFileService']/port[@name='OutputToFilePort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="RedeliveryRedirectCompApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="67" y="197">
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/service[@name='OneWayBpelService1InService']/port[@name='OneWayBpelService1InPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+<port x="67" y="118">
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/DummyWsdl.wsdl#xpointer(/definitions/service[@name='DummyWsdlService']/port[@name='DummyWsdlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="67" y="39">
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1.wsdl#xpointer(/definitions/service[@name='RedeliveryRedirectToBPFail1Service']/port[@name='RedeliveryRedirectToBPFail1Port'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint6" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint8" provider="endpoint2" state="unchanged">
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="1" waitTime="">
+                <on-failure>
+                    <redirect xmlns:ns1="http://enterprise.netbeans.org/bpel/OneWayBpelService1Bpel/OneWayBpelService1" endpoint-name="OneWayBpelService1InPortTypeRole_myRole" operation="OneWayBpelService1InOperation" service-name="ns1:PartnerLink1"/>
+                </on-failure>
+            </redelivery>
+</connection>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/portType[@name='OneWayBpelService1InPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/portType[@name='OneWayBpelService1OutPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OutputToFile.wsdl#xpointer(/definitions/portType[@name='OutputToFilePortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/DummyWsdl.wsdl#xpointer(/definitions/portType[@name='DummyWsdlPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1.wsdl#xpointer(/definitions/portType[@name='RedeliveryRedirectToBPFail1PortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/binding[@name='OneWayBpelService1InBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/binding[@name='OneWayBpelService1OutBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OutputToFile.wsdl#xpointer(/definitions/binding[@name='OutputToFileBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/DummyWsdl.wsdl#xpointer(/definitions/binding[@name='DummyWsdlBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1.wsdl#xpointer(/definitions/binding[@name='RedeliveryRedirectToBPFail1Binding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/service[@name='OneWayBpelService1InService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OneWayBpelService1.wsdl#xpointer(/definitions/service[@name='OneWayBpelService1OutService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/DPL_OneWayBpelService1Bpel/OutputToFile.wsdl#xpointer(/definitions/service[@name='OutputToFileService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/DummyWsdl.wsdl#xpointer(/definitions/service[@name='DummyWsdlService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1.wsdl#xpointer(/definitions/service[@name='RedeliveryRedirectToBPFail1Service'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

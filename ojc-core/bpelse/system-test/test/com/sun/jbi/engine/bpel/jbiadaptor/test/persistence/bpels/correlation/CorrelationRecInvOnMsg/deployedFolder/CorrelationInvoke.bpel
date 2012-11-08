@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="CorrelationInvoke" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/CorrelationInvoke"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/CorrelationInvoke" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CorrelationInvoke">
+   <import namespace="http://j2ee.netbeans.org/wsdl/CorrelationInvoke" location="CorrelationInvoke.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink2" partnerLinkType="ns1:CorrelationInvokePartner2" partnerRole="CorrelationInvokePortType2PartnerRole"/>
+      <partnerLink name="PartnerLink4" partnerLinkType="ns1:CorrelationInvokePartner4" partnerRole="CorrelationInvokePortType4PartnerRole"/>
+      <partnerLink name="PartnerLink3" partnerLinkType="ns1:CorrelationInvokePartner3" myRole="CorrelationInvokePortType3MyRole"/>
+      <partnerLink name="PartnerLink1" partnerLinkType="ns1:CorrelationInvokePartner1" myRole="CorrelationInvokePortType1MyRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="CorrelationInvokeOperation3In1" messageType="ns1:CorrelationInvokeOperationRequest3"/>
+      <variable name="CorrelationInvokeOperation4In1" messageType="ns1:CorrelationInvokeOperationRequest4"/>
+      <variable name="CorrelationInvokeOperation2Out1" messageType="ns1:CorrelationInvokeOperationRequest2"/>
+      <variable name="CorrelationInvokeOperation2In1" messageType="ns1:CorrelationInvokeOperationRequest2"/>
+      <variable name="CorrelationInvokeOperation1In1" messageType="ns1:CorrelationInvokeOperationRequest1"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="CorrelationSet11" properties="ns1:property11 ns1:property111"/>
+      <correlationSet name="CorrelationSet10" properties="ns1:property10 ns1:property101"/>
+      <correlationSet name="CorrelationSet9" properties="ns1:property9"/>
+      <correlationSet name="CorrelationSet8" properties="ns1:property8"/>
+      <correlationSet name="CorrelationSet7" properties="ns1:property7"/>
+      <correlationSet name="CorrelationSet6" properties="ns1:property6"/>
+      <correlationSet name="CorrelationSet5" properties="ns1:property5"/>
+      <correlationSet name="CorrelationSet4" properties="ns1:property4"/>
+      <correlationSet name="CorrelationSet3" properties="ns1:property3"/>
+      <correlationSet name="CorrelationSet2" properties="ns1:property2"/>
+      <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+   </correlationSets>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="CorrelationInvokeOperation1" portType="ns1:CorrelationInvokePortType1" variable="CorrelationInvokeOperation1In1">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="yes"/>
+         </correlations>
+      </receive>
+      <assign name="Assign1">
+         <copy>
+            <from variable="CorrelationInvokeOperation1In1" part="part1"/>
+            <to variable="CorrelationInvokeOperation2In1" part="part1"/>
+         </copy>
+      </assign>
+      <invoke name="Invoke2" partnerLink="PartnerLink2" operation="CorrelationInvokeOperation2" portType="ns1:CorrelationInvokePortType2" inputVariable="CorrelationInvokeOperation2In1" outputVariable="CorrelationInvokeOperation2Out1">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="no" pattern="request"/>
+            <correlation set="CorrelationSet2" initiate="yes" pattern="request"/>
+            <correlation set="CorrelationSet3" initiate="join" pattern="request"/>
+            <correlation set="CorrelationSet1" initiate="no" pattern="response"/>
+            <correlation set="CorrelationSet4" initiate="yes" pattern="response"/>
+            <correlation set="CorrelationSet5" initiate="join" pattern="response"/>
+            <correlation set="CorrelationSet6" initiate="yes" pattern="request-response"/>
+            <correlation set="CorrelationSet7" initiate="join" pattern="request-response"/>
+<!--            <correlation set="CorrelationSet2" initiate="no" pattern="request-response"/> -->
+         </correlations>
+      </invoke>
+      <pick name="Pick1">
+         <onMessage partnerLink="PartnerLink3" operation="CorrelationInvokeOperation3" portType="ns1:CorrelationInvokePortType3" variable="CorrelationInvokeOperation3In1">
+            <correlations>
+               <correlation set="CorrelationSet1" initiate="no"/>
+               <correlation set="CorrelationSet2" initiate="no"/>
+               <correlation set="CorrelationSet3" initiate="no"/>
+               <correlation set="CorrelationSet4" initiate="no"/>
+               <correlation set="CorrelationSet5" initiate="no"/>
+               <correlation set="CorrelationSet6" initiate="no"/>
+               <correlation set="CorrelationSet7" initiate="no"/>
+               <correlation set="CorrelationSet8" initiate="yes"/>
+               <correlation set="CorrelationSet9" initiate="join"/>
+            </correlations>
+            <assign name="Assign2">
+               <copy>
+                  <from variable="CorrelationInvokeOperation3In1" part="part1"/>
+                  <to variable="CorrelationInvokeOperation4In1" part="part1"/>
+               </copy>
+            </assign>
+         </onMessage>
+      </pick>
+      <invoke name="Invoke1" partnerLink="PartnerLink4" operation="CorrelationInvokeOperation4" portType="ns1:CorrelationInvokePortType4" inputVariable="CorrelationInvokeOperation4In1">
+         <correlations>
+            <correlation set="CorrelationSet10" initiate="yes"/>
+            <correlation set="CorrelationSet11" initiate="join"/>
+            <correlation set="CorrelationSet8" initiate="no"/>
+            <correlation set="CorrelationSet9" initiate="no"/>
+         </correlations>
+      </invoke>
+   </sequence>
+   
+</process>

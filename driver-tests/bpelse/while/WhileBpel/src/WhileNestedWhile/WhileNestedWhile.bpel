@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhileNestedWhile" 
+    targetNamespace="http://www.mycomp.org/NestedWhile/NestedWhile"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/NestedWhile/NestedWhile" xmlns:ns1="http://www.mycomp.org/NestedWhile/NestedWhileTest">
+    <import namespace="http://www.mycomp.org/NestedWhile/NestedWhileTest" location="WhileNestedWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:NestedWhileTestPartnerLinkType" myRole="NestedWhileTestProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Count" messageType="ns1:Counter"/>
+        <variable name="WhileIn" messageType="ns1:ReqMsg"/>
+        <variable name="WhileOut" messageType="ns1:ResponseMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="NestedWhileOperation" portType="ns1:NestedPort" variable="WhileIn" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="Count" variable="Count"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $Count.Count &lt;= 2 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                <copy>
+                <from> ( $Count.Count + 1 ) </from><to part="Count" variable="Count"/>
+                </copy>
+                    <copy>
+                    <from>concat($WhileIn.Req, '  OuterLoop:')</from><to part="Req" variable="WhileIn"/>
+                    </copy>
+                </assign>
+                <assign name="Assign3">
+                    <copy>
+                    <from>1</from><to part="Count1" variable="Count"/>
+                    </copy>
+                </assign>
+                <while name="While2">
+                    <condition> ( $Count.Count1 &lt;= 4 ) </condition>
+                    <sequence name="Sequence2">
+                        <assign name="Assign4">
+                        <copy>
+                        <from> ( $Count.Count1 + 1 ) </from><to part="Count1" variable="Count"/>
+                        </copy>
+                            <copy>
+                            <from>concat($WhileIn.Req, '  InnerLoop')</from><to part="Req" variable="WhileIn"/>
+                            </copy>
+                        </assign>
+                    </sequence>
+                </while>
+            </sequence>
+        </while>
+        <assign name="Assign5">
+            <copy>
+            <from variable="WhileIn" part="Req"/><to variable="WhileOut" part="Res"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="NestedWhileOperation" portType="ns1:NestedPort" variable="WhileOut"/>
+    </sequence>
+   
+</process>

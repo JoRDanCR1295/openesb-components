@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoComplexOneWayProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoComplexOneWayProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/echoComplexOneWayProcess" xmlns:ns1="http://enterprise.netbeans.org/bpel/EchoSimpleWrapper" xmlns:ns2="urn:jbi4corba/test-consumer-fromidl-simple" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="urn:jbi4corba/test-consumer-fromidl-complex-oneway" location="EchoOneway.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="echoComplexOneWayProcess" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" partnerLinkType="tns:echoComplexOneWayProcess" myRole="echoComplexOneWayProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOnewayStructIn" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" messageType="tns:echoOnewayStruct"/>
+        <variable name="EchoOnewayIn" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" messageType="tns:echoOneway"/>
+    </variables>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="echoComplexOneWayProcess" operation="echoOneway" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" portType="tns:EchoOnewayPortType" variable="EchoOnewayIn">
+                <exit name="Exit1"/>
+            </onMessage>
+            <onMessage partnerLink="echoComplexOneWayProcess" operation="echoOnewayStruct" xmlns:tns="urn:jbi4corba/test-consumer-fromidl-complex-oneway" portType="tns:EchoOnewayPortType" variable="EchoOnewayStructIn">
+                <exit name="Exit2"/>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

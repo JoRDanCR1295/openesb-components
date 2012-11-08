@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Echo_InvokeLevelCatch1"
+         targetNamespace="http://www.seebeyond.com/eInsight/Echo_InvokeLevelCatch1"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Echo_InvokeLevelCatch1"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:EchoService/Echo_InvokeLevelCatch1"
+         xmlns:ns1="urn:AdditionService/AS_InvokeLevelCatch1"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:EchoService/Echo_InvokeLevelCatch1"
+            location="Echo_InvokeLevelCatch1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:AdditionService/AS_InvokeLevelCatch1"
+            location="AS_InvokeLevelCatch1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="EchoServiceLink1"
+                     partnerLinkType="ns0:EchoServiceLT"
+                     myRole="EchoServiceProvider"/>
+        <partnerLink name="AdditionServiceLink1"
+                     partnerLinkType="ns1:AdditionServiceLT"
+                     partnerRole="AdditionServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Echo_Output"
+                  messageType="ns0:EchoServiceRequest"></variable>
+        <variable name="Echo_Input"
+                  messageType="ns0:EchoServiceResponse"></variable>
+        <variable name="Add_Input"
+                  messageType="ns1:AdditionServiceRequest"></variable>
+        <variable name="Add_Output"
+                  messageType="ns1:AdditionServiceResponse"></variable>
+        <variable name="Add_Fault"
+                  messageType="ns1:AdditionServiceFaultResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="Echo"
+                 partnerLink="EchoServiceLink1"
+                 portType="ns0:EchoService"
+                 operation="Echo"
+                 variable="Echo_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="148.0"
+                 sbynpxp:YLoc="335.0"></receive>
+        <scope name="Scope">
+            <sequence>
+                <assign
+                        sbynpxp:XLoc="605.0"
+                        sbynpxp:YLoc="409.0">
+                    <copy>
+                        <from>1</from>
+                        <to>$Add_Input.parameters/Number1</to>
+                    </copy>
+                    <copy>
+                        <from>2</from>
+                        <to>$Add_Input.parameters/Number2</to>
+                    </copy>
+                </assign>
+                <invoke name="Add"
+                        partnerLink="AdditionServiceLink1"
+                        portType="ns1:AdditionPortType"
+                        operation="Add"
+                        inputVariable="Add_Input"
+                        outputVariable="Add_Output">
+                      <!--  
+			<catch faultName="ns1:InvalidInput" 
+			       faultVariable="Add_Fault" 
+			       faultMessageType="ns1:AdditionServiceFaultResponse">
+			    <sequence>
+				<assign>
+				    <copy>
+					<from>&apos;Caught at Invoke level catch (Q1, M1).&apos;</from>
+					<to>$Echo_Input.parameters/Message</to>
+				    </copy>
+				</assign>
+				<reply partnerLink="EchoServiceLink1"
+				       portType="ns0:EchoService"
+				       operation="Echo"
+				       variable="Echo_Input"/>
+			    </sequence>
+			</catch>
+			<catchAll>
+			    <sequence>
+				<assign>
+				    <copy>
+					<from>&apos;Caught at Invoke level catchAll.&apos;</from>
+					<to>$Echo_Input.parameters/Message</to>
+				    </copy>
+				</assign>
+				<reply partnerLink="EchoServiceLink1" 
+				       portType="ns0:EchoService" 
+				       operation="Echo" 
+				       variable="Echo_Input"/>
+			    </sequence>
+			</catchAll>
+		      -->	
+               </invoke>
+            </sequence>
+        </scope>
+        <assign
+                sbynpxp:XLoc="1029.0"
+                sbynpxp:YLoc="403.0">
+            <copy>
+                <from>$Echo_Output.parameters/Message</from>
+                <to>$Echo_Input.parameters/Message</to>
+            </copy>
+        </assign>
+        <reply name="Echo.Reply"
+               partnerLink="EchoServiceLink1"
+               portType="ns0:EchoService"
+               operation="Echo"
+               variable="Echo_Input"
+               sbynpxp:XLoc="1099.0"
+               sbynpxp:YLoc="471.0"></reply>
+    </sequence>
+</process>

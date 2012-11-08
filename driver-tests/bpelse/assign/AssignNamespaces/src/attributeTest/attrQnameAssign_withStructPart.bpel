@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="attrQnameAssign_withStructPart"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignNamespaces/attrQnameAssign_withStructPart"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AssignNamespaces/attrQnameAssign_withStructPart" xmlns:ns1="http://j2ee.netbeans.org/wsdl/attrQnameAssign_withStructPart">
+    <import namespace="http://j2ee.netbeans.org/wsdl/attrQnameAssign_withStructPart" location="attrQnameAssign_withStructPart.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:attrQnameAssign_withStructPart1" myRole="attrQnameAssign_withStructPartPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="AttrQnameAssign_withStructPartOperationOut" messageType="ns1:attrQnameAssign_withStructPartOperationReply"/>
+        <variable name="AttrQnameAssign_withStructPartOperationIn" messageType="ns1:attrQnameAssign_withStructPartOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="attrQnameAssign_withStructPartOperation" portType="ns1:attrQnameAssign_withStructPartPortType" variable="AttrQnameAssign_withStructPartOperationIn"/>
+        <if name="If1">
+            <condition> ( $AttrQnameAssign_withStructPartOperationIn.part1/ns1:newElement = 'AttrQnameLiteral' ) </condition>
+            <assign name="Assign2">
+                <copy>
+                    <from>concat($AttrQnameAssign_withStructPartOperationIn.part1/ns1:newElement, ' In BPEL Assignment')</from>
+                    <to>$AttrQnameAssign_withStructPartOperationOut.part1/ns1:newElement</to>
+                </copy>
+                <copy>
+                    <from>
+                        <literal>ns1:valueInBPEL</literal>
+                    </from>
+                    <to>$AttrQnameAssign_withStructPartOperationOut.part1/@ns1:newAttribute</to>
+                </copy>
+            </assign>
+            <elseif>
+                <condition> (  ( $AttrQnameAssign_withStructPartOperationIn.part1/ns1:newElement = 'AttrQname5' )  or  ( $AttrQnameAssign_withStructPartOperationIn.part1/ns1:newElement = 'AttrQname6' )  ) </condition>
+                <assign name="Assign3">
+                    <copy>
+                        <from variable="AttrQnameAssign_withStructPartOperationIn" part="part1"/>
+                        <to variable="AttrQnameAssign_withStructPartOperationOut" part="part1"/>
+                    </copy>
+                </assign>
+            </elseif>
+            <else>
+                <assign name="Assign1">
+                    <copy>
+                            <from>concat($AttrQnameAssign_withStructPartOperationIn.part1/ns1:newElement, ' In BPEL Assignment')</from>
+                                <to>$AttrQnameAssign_withStructPartOperationOut.part1/ns1:newElement</to>
+                        </copy>
+                        <copy>
+                            <from>$AttrQnameAssign_withStructPartOperationIn.part1/@ns1:newAttribute</from>
+                                <to>$AttrQnameAssign_withStructPartOperationOut.part1/@ns1:newAttribute</to>
+                        </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="attrQnameAssign_withStructPartOperation" portType="ns1:attrQnameAssign_withStructPartPortType" variable="AttrQnameAssign_withStructPartOperationOut"/>
+    </sequence>
+</process>

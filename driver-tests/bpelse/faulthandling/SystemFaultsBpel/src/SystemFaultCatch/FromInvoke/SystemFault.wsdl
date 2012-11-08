@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SystemFault" targetNamespace="http://j2ee.netbeans.org/wsdl/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/SystemFault"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/SystemFault" xmlns:ns="http://xml.netbeans.org/schema/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/XmlSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/SystemFault">
+            <xsd:import namespace="http://xml.netbeans.org/schema/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/XmlSchema" schemaLocation="XmlSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SysFaultTestOperationRequest">
+        <part name="part1" element="ns:Message"/>
+    </message>
+    <message name="SysFaultTestOperationReply">
+        <part name="part1" element="ns:Message"/>
+    </message>
+    <message name="SysFaultTestOperationFault">
+        <part name="part1" element="ns:FaultMessage"/>
+    </message>
+    <portType name="SysFaultTestPortType">
+        <wsdl:operation name="SysFaultTestOperation">
+            <wsdl:input name="input1" message="tns:SysFaultTestOperationRequest"/>
+            <wsdl:output name="output1" message="tns:SysFaultTestOperationReply"/>
+            <wsdl:fault name="fault1" message="tns:SysFaultTestOperationFault"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="SubBPPortType">
+        <wsdl:operation name="SubBPOperation">
+            <wsdl:input name="input1" message="tns:SysFaultTestOperationRequest"/>
+            <wsdl:output name="output1" message="tns:SysFaultTestOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="SystemFaultBinding" type="tns:SysFaultTestPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SysFaultTestOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </binding>
+    <binding name="SubBPBinding" type="tns:SubBPPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SubBPOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="SystemFaultService">
+        <wsdl:port name="SystemFaultPort" binding="tns:SystemFaultBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SystemFaultService/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/SystemFaultPort"/>
+        </wsdl:port>
+    </service>
+    <service name="SubBPService">
+        <wsdl:port name="SubBPPort" binding="tns:SubBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SystemFaultService/SystemFaultsBpel/src/SystemFaultCatch/FromInvoke/SubBPPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="SystemFault1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SysFaultTestPortTypeRole" portType="tns:SysFaultTestPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="SubBP1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SubBPPortTypeRole" portType="tns:SubBPPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

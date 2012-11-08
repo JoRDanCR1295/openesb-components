@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBCXAjavaeeSEInOnlyTestDriver"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="JMSBCXAjavaeeSEInOnlyTestDriver" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSBCXAjavaeeSEInOnlyTestDriver" xmlns:ns="http://xml.netbeans.org/schema/JMSBCjavaeeXAInOnlyTest" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBCXAjavaeeSEInOnlyTestDriver">
+            <xsd:import namespace="http://xml.netbeans.org/schema/JMSBCjavaeeXAInOnlyTest" schemaLocation="JMSBCjavaeeXAInOnlyTest.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="JMSBCXAjavaeeSEInOnlyTestDriverMsg">
+        <part name="part1" element="ns:message"/>
+    </message>
+    <portType name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOut">
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperation">
+            <wsdl:input name="input1" message="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQ">
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv">
+            <wsdl:input name="input1" message="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQ">
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv">
+            <wsdl:input name="input1" message="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriver">
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperation">
+            <wsdl:input name="input1" message="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+            <wsdl:output name="output1" message="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSBCXAjavaeeSEInOnlyTestDriverBindingOut" type="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOut">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperation">
+            <jms:operation destination="JMSBCXAjavaeeInOnlyTestInQ" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCXAjavaeeSEInOnlyTestDriverBindingInFromOutQ" type="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQ">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv">
+            <jms:operation destination="JMSBCXAjavaeeInOnlyTestOutQ" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCXAjavaeeSEInOnlyTestDriverBindingInFromDLQ" type="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQ">
+        <jms:binding/>
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperationRecv">
+            <jms:operation destination="JMSBCXAjavaeeInOnlyTestDLQ" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSBCXAjavaeeSEInOnlyTestDriverBinding" type="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriver">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="JMSBCXAjavaeeSEInOnlyTestDriverOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSBCXAjavaeeSEInOnlyTestDriverService">
+        <wsdl:port name="JMSBCXAjavaeeSEInOnlyTestDriverPortOut" binding="tns:JMSBCXAjavaeeSEInOnlyTestDriverBindingOut">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCXAjavaeeSEInOnlyTestDriverPortInFromOutQ" binding="tns:JMSBCXAjavaeeSEInOnlyTestDriverBindingInFromOutQ">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCXAjavaeeSEInOnlyTestDriverPortInFromDLQ" binding="tns:JMSBCXAjavaeeSEInOnlyTestDriverBindingInFromDLQ">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+        <wsdl:port name="JMSBCXAjavaeeSEInOnlyTestDriverPort" binding="tns:JMSBCXAjavaeeSEInOnlyTestDriverBinding">
+            <soap:address location="http://localhost:18181/JMSBCjavaeeSETestDriverBpel/JMSBCXAjavaeeSEInOnlyTestDriver/JMSBCXAjavaeeSEInOnlyTestDriverPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="JMSBCXAjavaeeSEInOnlyTestDriverOut">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOutRole" portType="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeOut"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCXAjavaeeSEInOnlyTestDriverInFromOutQ">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQRole" portType="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromOutQ"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCXAjavaeeSEInOnlyTestDriverInFromDLQ">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQRole" portType="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeInFromDLQ"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JMSBCXAjavaeeSEInOnlyTestDriver">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriverRole" portType="tns:JMSBCXAjavaeeSEInOnlyTestDriverPortTypeDriver"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="prop1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:prop1" part="part1" messageType="tns:JMSBCXAjavaeeSEInOnlyTestDriverMsg">
+        <vprop:query>corrId</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

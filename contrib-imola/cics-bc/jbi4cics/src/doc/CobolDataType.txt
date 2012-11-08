@@ -1,0 +1,26 @@
+Tipi di dati in cobol:
+9 indica un tipo di dato numerico, la parentesi è il numero di cifre
+V la virgola virtuale di un tipo di dato decimale (a destra e a sinistra della virgola ci sta una dichiarazione di un tipo di dato numerico)
+X indica un dipo di dato alfanumerico
+A indica un tipo di dato decimale
+S indica il segno (anche +) può essere usato
+
+PIC 9(6) --> PIC 999999
+PIC 9(6)V9(3) --> PIC 999999V999
+
+in ebcidic le cifre vanno da f0 a f6 quindi i dati delgi esempi sopra sono stringhe in esadecimale di questo tipo f0f0f0f0f0f0
+se abbiamo
+PIC S9(6) allora l'ultimo semibyte superiore (f) sarà f in caso +, d in caso di -
+invece se abbiamo
+PIC +9(6) allora il pirmo byte è il segno (il campo è più lungo di un byte) NON so la codifica del segno
+
+Passiamo ai comp
+comp-3 significa che ogni semibyte rappresenta una cifra (quindi spariscono le costanti f)
+comp significa che la rappresnetazione è binaria ma il dato contenuto ha un range massimo come se non fosse rappresentato in comp cioè
+PIC 9(4) comp ha una rappresnetazione binaria (un intero di quattro byte) ma al massimo può valere 9999
+comp-4 supea la limitazione precedente e il numero sfrutta tutti i byte (non so la questione del big endian, little endian).
+
+esiste anche una rappresentazione cosiddetta edited che dice anche come il dato deve essere visualizzato ad esempio
+
+PIC +zzz.zz9,99 
+z significa che se la cifra non è segnificativa il numero deve essere rappresentato come blank, che ci deve essere il punto e la virgola (questa volta non virtuali!!)

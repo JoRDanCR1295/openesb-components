@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="onAlarm2BPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/onAlarm2BPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/onAlarm2BPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/onAlarm2WSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/onAlarm2WSDL" location="onAlarm2WSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:onAlarm2WSDL1" myRole="onAlarm2WSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="tempVariable1" type="xsd:string"/>
+        <bpws:variable name="OnAlarm2WSDLOperationOut" messageType="ns1:onAlarm2WSDLOperationReply"/>
+        <bpws:variable name="OnAlarm2WSDLOperationIn" messageType="ns1:onAlarm2WSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="onAlarm2WSDLOperation" portType="ns1:onAlarm2WSDLPortType" variable="OnAlarm2WSDLOperationIn"/>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>concat($OnAlarm2WSDLOperationIn.part1, 'Testing zero duration on Alarm in Event Handler')</bpws:from>
+                <bpws:to variable="tempVariable1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onAlarm>
+                    <bpws:documentation>ver0.3</bpws:documentation>
+                    <bpws:for>'P0Y0M0DT0H0M0S'</bpws:for>
+                    <bpws:scope name="Scope2">
+                        <bpws:assign name="Assign1">
+                            <bpws:copy>
+                                <bpws:from>concat($tempVariable1, 'Assign inside The Event Handler')</bpws:from>
+                                <bpws:to variable="tempVariable1"/>
+                            </bpws:copy>
+                        </bpws:assign>
+                    </bpws:scope>
+                </bpws:onAlarm>
+            </bpws:eventHandlers>
+            <bpws:wait name="Wait1">
+                <bpws:for>'P0Y0M0DT0H0M5S'</bpws:for>
+            </bpws:wait>
+        </bpws:scope>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="tempVariable1"/>
+                <bpws:to variable="OnAlarm2WSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="onAlarm2WSDLOperation" portType="ns1:onAlarm2WSDLPortType" variable="OnAlarm2WSDLOperationOut"/>
+    </sequence>
+</process>

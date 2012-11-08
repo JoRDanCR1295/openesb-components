@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/messageTracking" xmlns:ns2="http://com.sun.jbi/etl/etlengine" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="messageTrackingPortTypeRole" interface-name="ns1:messageTrackingPortType" name="endpoint1" service-name="ns1:messageTrackingPartner"/>
+<endpoint endpoint-name="hello_engine_etlPort" interface-name="ns2:hello_engine_etlPortType" name="endpoint2" service-name="ns2:hello_engine_etlService"/>
+<endpoint endpoint-name="hello_engine_myrole" interface-name="ns2:hello_engine_etlPortType" name="endpoint3" service-name="ns2:hello_engine_etlPartnerLink"/>
+<endpoint endpoint-name="hello_engine_etlPort" interface-name="ns2:hello_engine_etlPortType" name="endpoint4" service-name="ns2:hello_engine_etlService"/>
+<endpoint endpoint-name="messageTrackingPort" interface-name="ns1:messageTrackingPortType" name="endpoint5" service-name="ns1:messageTrackingService"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="AspectApp.jar" component-name="com.sun.aspect.aspectse-1.0.2" defined="true" description="Represents this Service Unit" internal="true" name="CompositeApp-AspectApp" unit-name="AspectApp" unknown="false" x="118" y="100">
+<provides endpoint="endpoint1"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="ETLApp.jar" component-name="sun-etel-engine" defined="true" description="Represents this Service Unit" internal="true" name="CompositeApp-ETLApp" unit-name="ETLApp" unknown="false" x="118" y="230">
+<provides endpoint="endpoint3"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="CompositeApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="60">
+<link xlink:href="../jbiServiceUnits/AspectApp/hello_engine.wsdl#xpointer(/definitions/service[@name='hello_engine_etlService']/port[@name='hello_engine_etlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+</port>
+<port x="0" y="150">
+<link xlink:href="../jbiServiceUnits/AspectApp/messageTracking.wsdl#xpointer(/definitions/service[@name='messageTrackingService']/port[@name='messageTrackingPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+</port>
+<port x="0" y="240">
+<link xlink:href="../jbiServiceUnits/ETLApp/hello_engine.wsdl#xpointer(/definitions/service[@name='hello_engine_etlService']/port[@name='hello_engine_etlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint4" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/AspectApp/hello_engine.wsdl#xpointer(/definitions/portType[@name='hello_engine_etlPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AspectApp/messageTracking.wsdl#xpointer(/definitions/portType[@name='messageTrackingPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ETLApp/hello_engine.wsdl#xpointer(/definitions/portType[@name='hello_engine_etlPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/AspectApp/hello_engine.wsdl#xpointer(/definitions/binding[@name='Binding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AspectApp/messageTracking.wsdl#xpointer(/definitions/binding[@name='messageTrackingBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ETLApp/hello_engine.wsdl#xpointer(/definitions/binding[@name='Binding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/AspectApp/hello_engine.wsdl#xpointer(/definitions/service[@name='hello_engine_etlService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AspectApp/messageTracking.wsdl#xpointer(/definitions/service[@name='messageTrackingService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ETLApp/hello_engine.wsdl#xpointer(/definitions/service[@name='hello_engine_etlService'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

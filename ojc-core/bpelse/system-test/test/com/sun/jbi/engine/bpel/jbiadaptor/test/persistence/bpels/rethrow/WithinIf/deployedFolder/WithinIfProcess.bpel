@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinIfProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinIfProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinIfProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinIf" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinIf" location="WithinIf.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinIf1" myRole="WithinIfPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="IntVar2" type="xsd:int"/>
+        <variable name="IntVar1" type="xsd:int"/>
+        <variable name="WithinIfOperationOut" messageType="ns1:WithinIfOperationReply"/>
+        <variable name="WithinIfOperationIn" messageType="ns1:WithinIfOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinIfOperationReply" faultVariable="WithinIfOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinIfOperation" portType="ns1:WithinIfPortType" variable="WithinIfOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinIfOperation" portType="ns1:WithinIfPortType" variable="WithinIfOperationIn"/>
+        <assign name="Assign0">
+            <copy>
+                <from>2.0</from>
+                <to variable="IntVar1"/>
+            </copy>
+            <copy>
+                <from>2.0</from>
+                <to variable="IntVar2"/>
+            </copy>            
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catch faultName="tns:catchFault" faultMessageType="ns1:WithinIfOperationReply" faultVariable="WithinIfOperationOut">
+                    <if name="If2">
+                        <condition>$IntVar2 &lt; 2.0</condition>
+                        <empty name="Empty2"/>
+                        <elseif>
+                            <condition>$IntVar2 = 2.0</condition>
+                            <sequence name="Sequence4">
+                                <assign name="IncrementCntr2">
+                                    <copy>
+                                        <from>$IntVar2 + 1.0</from>
+                                        <to variable="IntVar2"/>
+                                    </copy>
+                                </assign>
+                                <rethrow name="Rethrow2"/>
+                            </sequence>
+                        </elseif>
+                    </if>                        
+                </catch>
+                <catchAll>
+                    <if name="If1">
+                        <condition>$IntVar1 &gt; 2.0</condition>
+                        <empty name="Empty1"/>
+                        <else>
+                            <sequence name="Sequence3">
+                                <assign name="IncrementCntr1">
+                                    <copy>
+                                        <from>$IntVar1 + 1.0</from>
+                                        <to variable="IntVar1"/>
+                                    </copy>
+                                </assign>
+                                <rethrow name="Rethrow1">
+                                </rethrow>
+                            </sequence>
+                        </else>
+                    </if>
+                </catchAll>
+            </faultHandlers>
+            <if name="If">
+                <condition> ( $WithinIfOperationIn.part2 = 'catchAll' ) </condition>
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>concat($WithinIfOperationIn.part1, '-catchAll-')</from>
+                            <to part="part1" variable="WithinIfOperationOut"/>
+                        </copy>
+                    </assign>
+                    <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinIfOperationOut"/>
+                </sequence>
+                <else>
+                    <sequence name="Sequence2">
+                        <assign name="Assign2">
+                            <copy>
+                                <from>concat($WithinIfOperationIn.part1, '-catch-')</from>
+                                <to part="part1" variable="WithinIfOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinIfOperationOut"/>
+                    </sequence>
+                </else>
+            </if>
+        </scope>
+    </sequence>
+</process>

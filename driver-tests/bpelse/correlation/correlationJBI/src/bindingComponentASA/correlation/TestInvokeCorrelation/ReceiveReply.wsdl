@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://stc.com/ReceiveReply"
+             name="ReceiveReply"
+             xmlns:tns="http://stc.com/ReceiveReply"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:slnk1="http://schemas.xmlsoap.org/ws/2004/03/partner-link/"
+             xmlns:ns1="http://lab201:8080/heraldws/services/LodeStarDocLiteral"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:ns2="http://stc.com/GetStockQuote"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+    <plnk:partnerLinkType name="ReceiveReply"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="server"
+                   portType="tns:ReceiveReply"></plnk:role>
+    </plnk:partnerLinkType>
+    <bpws:property name="mycor"
+                   type="xsd:string"/>
+    <bpws:propertyAlias propertyName="tns:mycor"
+                        messageType="ns1:validateResponse"
+                        part="validateReturn">
+    <bpws:query></bpws:query>
+    </bpws:propertyAlias>
+     <bpws:propertyAlias propertyName="tns:mycor"
+                        messageType="ns2:GetQuoteSoapIn"
+                        part="parameters">
+    <bpws:query>symbol</bpws:query>
+    </bpws:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="http://stc.com/ReceiveReply"
+                    elementFormDefault="qualified"
+                    xmlns:tns="http://stc.com/ReceiveReply"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+                    xmlns:slnk1="http://schemas.xmlsoap.org/ws/2004/03/partner-link/"
+                    xmlns:ns1="http://lab201:8080/heraldws/services/LodeStar"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns2="http://stc.com/GetStockQuote"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+                    
+                    
+                    
+                    
+                    
+                    
+                    <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                     name="value"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="ReceiveReply">
+        <part name="part"
+              element="tns:item"></part>
+    </message>
+    <portType name="ReceiveReply">
+        <operation name="ReceiveReply">
+            <input message="tns:ReceiveReply"></input>
+            <output message="tns:ReceiveReply"></output>
+        </operation>
+    </portType>
+    <binding name="Binding"
+             type="tns:ReceiveReply">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ReceiveReply">
+            <soap:operation soapAction="ReceiveReply"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ReceiveReplyService">
+        <port name="port"
+              binding="tns:Binding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ReceiveReply"/>
+        </port>
+    </service>
+    <import namespace="http://lab201:8080/heraldws/services/LodeStar"
+            location="LodeStar.wsdl"></import>
+    <import namespace="http://stc.com/GetStockQuote"
+            location="stockquote2.wsdl"></import>
+   </definitions>

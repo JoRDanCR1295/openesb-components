@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="Task" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/Task"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Task" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon">
+    <bpws:import namespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" location="TaskCommon.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:TaskCommonLT" myRole="TaskCommon_Server"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="out2" messageType="ns1:RevokeTask_Output"/>
+        <bpws:variable name="in2" messageType="ns1:RevokeTask_Input"/>
+        <bpws:variable name="in1" messageType="ns1:ClaimTask_Input"/>
+        <bpws:variable name="out1" messageType="ns1:ClaimTask_Output"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:pick name="Pick1" createInstance="yes">
+            <bpws:onMessage partnerLink="PartnerLink1" operation="ClaimTask" portType="ns1:TaskCommOptPT" variable="in1">
+                <bpws:sequence name="Sequence1">
+                    <bpws:assign name="Assign1">
+                        <bpws:copy>
+                            <bpws:from variable="in1" part="taskId"/>
+                            <bpws:to variable="out1" part="resultCode"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="ClaimTask" portType="ns1:TaskCommOptPT" variable="out1"/>
+                </bpws:sequence>
+            </bpws:onMessage>
+            <bpws:onMessage partnerLink="PartnerLink1" operation="RevokeTask" portType="ns1:TaskCommOptPT" variable="in2">
+                <bpws:sequence name="Sequence2">
+                    <bpws:assign name="Assign2">
+                        <bpws:copy>
+                            <bpws:from variable="in2" part="taskId"/>
+                            <bpws:to variable="out2" part="resultCode"/>
+                        </bpws:copy>
+                    </bpws:assign>
+                    <bpws:reply name="Reply2" partnerLink="PartnerLink1" operation="RevokeTask" portType="ns1:TaskCommOptPT" variable="out2"/>
+                </bpws:sequence>
+            </bpws:onMessage>
+        </bpws:pick>
+    </sequence>
+   
+</process>

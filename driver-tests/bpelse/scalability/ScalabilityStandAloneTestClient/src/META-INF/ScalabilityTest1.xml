@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    name="TroubleTicketWrapper" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" 
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:ns="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl" 
+    xmlns:ns0="http://java.sun.com/products/oss/xml/TroubleTicket">
+        
+    <import location="TroubleTicket.xml" namespace="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl"/>
+    <types>
+        <xsd:schema targetNamespace="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper">
+            <xsd:import namespace="http://java.sun.com/products/oss/xml/TroubleTicket" schemaLocation="XmlTroubleTicketSchema.xsd"/>
+            <xsd:simpleType name="AssingmentsLoad">
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="SMALL"/>
+                    <xsd:enumeration value="MEDIUM"/>
+                    <xsd:enumeration value="LARGE"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:complexType name="TestOptionsType">
+                <xsd:sequence>
+                    <xsd:element name="messageId" type="xsd:int"></xsd:element>
+                    <xsd:element name="bpelWaitDuration" type="xsd:duration"></xsd:element>
+                    <xsd:element name="partnerWaitDuration" type="xsd:duration"></xsd:element>
+                    <xsd:element name="assignActivityLoad" type="tns:AssingmentsLoad"></xsd:element>
+                    <xsd:element name="outputReplyMessage" type="xsd:boolean"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ScalabilityTestRequestType">
+                <xsd:sequence>
+                    <xsd:element name="testOptions" type="tns:TestOptionsType"/>
+                    <xsd:element ref="ns0:createTroubleTicketByValueRequest"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="InputMessage" type="tns:ScalabilityTestRequestType"></xsd:element>
+            <xsd:complexType name="ScalabilityTestResponseType">
+                <xsd:sequence>
+                    <xsd:element name="testOptions" type="tns:TestOptionsType"></xsd:element>
+                    <xsd:element ref="ns0:createTroubleTicketByValueResponse"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="OutputMessage" type="tns:ScalabilityTestResponseType"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="RequesetMessage">
+        <wsdl:part name="part1" element="tns:InputMessage"/>
+    </message>
+    <message name="ResponseMessage">
+        <wsdl:part name="part1" element="tns:InputMessage"/>
+    </message>
+    <portType name="createTroubleTicketPortType">
+        <wsdl:operation name="createTTOperation">
+            <wsdl:input name="Input" message="tns:RequesetMessage"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="Invoke1PortType">
+        <wsdl:operation name="ScalabilityTest1Operation">
+            <wsdl:input name="input1" message="tns:ResponseMessage"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="createTroubleTicketBinding" type="tns:createTroubleTicketPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="createTTOperation">
+            <soap:operation/>
+            <wsdl:input name="Input">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="InvokeBinding1" type="tns:Invoke1PortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="ScalabilityTest1Operation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="TroubleTicketService">
+        <wsdl:port name="createTTPort" binding="tns:createTroubleTicketBinding">
+            <soap:address location="http://localhost:18181/OssjTroubleTicket/TroubleTicketWrapper/createTTPort"/>
+        </wsdl:port>
+        <wsdl:port name="invokePort1" binding="tns:InvokeBinding1">
+            <soap:address location="http://localhost:18181/ScalabilityBpel/ScalabilityTest1/invokePort1"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="createTTPartnerLinkType">
+        <plnk:role name="createTroubleTicketPortTypeRole" portType="tns:createTroubleTicketPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="TroubleTicketWrapper1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="Invoke1PortTypeRole" portType="tns:Invoke1PortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="invokePartnerlinktype">
+        <plnk:role name="role1" portType="tns:Invoke1PortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<jbi version="1.0"
+     xmlns="http://java.sun.com/xml/ns/jbi"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0">
+
+    <component type="service-engine"> <!--component-class-loader-delegation="self-first"-->
+        <identification>
+            <name>fort-rules-engine</name>
+            <description>Business rules service engine. Allows to integrate a JSR-94 compliant rules engine into a JBI container.</description>
+            <identification:VersionInfo component-version="0.4" build-number="20090106"/>
+        </identification>
+        
+        <component-class-name>org.openesb.components.rules4jbi.engine.component.Rules4JBIComponent</component-class-name>
+        
+        <component-class-path>
+            <path-element>lib/brse.jar</path-element>
+            <path-element>lib/guice-1.0.jar</path-element>
+            <path-element>lib/aopalliance.jar</path-element>
+            <path-element>lib/xom-1.1.jar</path-element>
+            <path-element>lib/asm-3.1.jar</path-element>
+            <path-element>lib/wsdl4j-1.6.2.jar</path-element>
+            <path-element>lib/jcip-annotations.jar</path-element>
+            <path-element>lib/jsr94-1.1.jar</path-element>
+        </component-class-path>
+        
+        <bootstrap-class-name>org.openesb.components.rules4jbi.engine.component.Rules4JBIBootstrap</bootstrap-class-name>
+        
+        <bootstrap-class-path>
+            <path-element>lib/brse.jar</path-element>
+            <path-element>lib/guice-1.0.jar</path-element>
+            <path-element>lib/aopalliance.jar</path-element>
+            <path-element>lib/xom-1.1.jar</path-element>
+            <path-element>lib/wsdl4j-1.6.2.jar</path-element>
+            <path-element>lib/jcip-annotations.jar</path-element>
+        </bootstrap-class-path>
+
+        <config:Configuration xmlns:config="http://www.sun.com/jbi/Configuration/V1.0">
+            <config:Property name="PoolSize"
+                     displayName="Thread Pool Size"
+                     displayDescription="Number of threads executing rules."
+                     defaultValue="10"
+                     type="xsd:int"
+                     showDisplay="all"
+                     isComponentRestartRequired="true">
+                         
+                    <config:Constraint facet="minInclusive" value="1"/>
+                    <config:Constraint facet="maxInclusive" value="100"/>
+            </config:Property>
+            <config:Property name="MaxServiceUnits"
+                     displayName="Maximum Service Units"
+                     displayDescription="Maximum number of service units that can be deployed into this service engine."
+                     defaultValue="10"
+                     type="xsd:int"
+                     showDisplay="all"
+                     isComponentRestartRequired="true">
+                         
+                    <config:Constraint facet="minInclusive" value="1"/>
+                    <config:Constraint facet="maxInclusive" value="25"/>
+            </config:Property>
+        </config:Configuration>
+    </component>
+</jbi>

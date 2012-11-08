@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="TwoWay" targetNamespace="http://j2ee.netbeans.org/wsdl/TwoWay"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/TwoWay" xmlns:ns0="http://xml.netbeans.org/schema/twoWaySchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/twoWaySchema" xmlns:tns1="http://xml.netbeans.org/schema/twoWaySchema">
+            <xsd:complexType name="msgType">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"></xsd:element>
+                    <xsd:element name="msg" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="msgElem" type="tns1:msgType"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="TwoWayMsg">
+        <wsdl:part name="TwoWayPart" element="ns0:msgElem"/>
+    </message>
+    <portType name="TwoWayPT">
+        <wsdl:operation name="TwoWayOper">
+            <wsdl:input name="input1" message="tns:TwoWayMsg"/>
+            <wsdl:output name="output1" message="tns:TwoWayMsg"/>
+            <wsdl:fault name="TwoWayFault" message="tns:TwoWayMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="TwoWayBinding" type="tns:TwoWayPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="TwoWayOper">
+            <wsdl:input name="input1">
+                <soap:body parts="TwoWayPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="TwoWayPart" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="TwoWayFault">
+                <soap:fault name="TwoWayFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </binding>
+    <service name="TwoWaySrv">
+        <wsdl:port name="TwoWaySrvPort" binding="tns:TwoWayBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/TwoWay/TwoWay/TwoWaySrvPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="TwoWayPLT">
+        <plnk:role name="TwoWayPTRole" portType="tns:TwoWayPT"/>
+    </plnk:partnerLinkType>
+</definitions>

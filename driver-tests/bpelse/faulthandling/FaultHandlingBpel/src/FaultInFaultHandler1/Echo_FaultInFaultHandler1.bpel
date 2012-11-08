@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Echo_FaultInFaultHandler1"
+         targetNamespace="http://www.seebeyond.com/eInsight/Echo_FaultInFaultHandler1"
+         sbynpxp:end_YLoc="255.0"
+         sbynpxp:start_YLoc="252.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="972.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Echo_FaultInFaultHandler1"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:EchoService/Echo_FaultInFaultHandler1"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:EchoService/Echo_FaultInFaultHandler1"
+            location="Echo_FaultInFaultHandler1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="EchoServiceLink1"
+                     partnerLinkType="ns0:EchoServiceLT"
+                     myRole="EchoServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Echo_Output"
+                  messageType="ns0:EchoServiceRequest"></variable>
+        <variable name="Echo_Input"
+                  messageType="ns0:EchoServiceResponse"></variable>
+    </variables>
+    <faultHandlers sbynpxp:XLoc="112.0"
+                   sbynpxp:YLoc="104.0">
+        <catch faultName="tns:Fault1"
+               sbynpxp:XLoc="438.0"
+               sbynpxp:YLoc="62.0"
+               sbynpxp:isExpanded="true">
+            <sequence>
+                <throw faultName="tns:Fault1"
+                       sbynpxp:XLoc="322.0"
+                       sbynpxp:YLoc="484.0"></throw>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Echo"
+                 partnerLink="EchoServiceLink1"
+                 portType="ns0:EchoService"
+                 operation="Echo"
+                 variable="Echo_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="142.0"
+                 sbynpxp:YLoc="327.0"></receive>
+        <scope name="Scope"
+               sbynpxp:XLoc="370.0"
+               sbynpxp:YLoc="223.0"
+               sbynpxp:isExpanded="true">
+            <faultHandlers>
+                <catch faultName="tns:Fault1"
+                       sbynpxp:XLoc="221.0"
+                       sbynpxp:YLoc="450.0"
+                       sbynpxp:isExpanded="true">
+                    <sequence>
+                        <throw faultName="tns:Fault1"
+                               sbynpxp:XLoc="322.0"
+                               sbynpxp:YLoc="484.0"></throw>
+                    </sequence>
+                </catch>
+                <catchAll sbynpxp:XLoc="466.0"
+                       sbynpxp:YLoc="611.0"
+                       sbynpxp:isExpanded="true">
+                    <sequence>
+                        <assign name="Assign"
+                                sbynpxp:XLoc="526.0"
+                                sbynpxp:YLoc="643.0">
+                            <copy>
+                                <from>&apos;Caught Fault2 by the catchAll in the faulted scope&apos;</from>
+                                <to>$Echo_Input.parameters/Message</to>
+                            </copy>
+                        </assign>
+                        <reply partnerLink="EchoServiceLink1"
+                               portType="ns0:EchoService"
+                               operation="Echo"
+                               variable="Echo_Input"
+                               sbynpxp:XLoc="611.0"
+                               sbynpxp:YLoc="641.0"></reply>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence>
+                <throw faultName="tns:Fault1"
+                       sbynpxp:XLoc="430.0"
+                       sbynpxp:YLoc="253.0"></throw>
+            </sequence>
+        </scope>
+        <assign sbynpxp:XLoc="730.0"
+                sbynpxp:YLoc="261.0">
+            <copy>
+                <from>$Echo_Output.parameters/Message</from>
+                <to>$Echo_Input.parameters/Message</to>
+            </copy>
+        </assign>
+        <reply partnerLink="EchoServiceLink1"
+               portType="ns0:EchoService"
+               operation="Echo"
+               variable="Echo_Input"
+               sbynpxp:XLoc="847.0"
+               sbynpxp:YLoc="245.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:Test6TargetNamespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Test6Definition" targetNamespace="urn:Test6TargetNamespace">
+    <types>
+        <xsd:schema xmlns:ns1="urn:Test6TargetNamespace" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:Test6TargetNamespace">
+            <xsd:complexType name="Test6Type">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="Test6Message">
+        <part name="Test6Part" type="tns:Test6Type"/>
+    </message>
+    <portType name="Test6PortType">
+        <operation name="Test6Operation">
+            <input message="tns:Test6Message"/>
+            <output message="tns:Test6Message"/>
+        </operation>
+    </portType>
+    <binding name="Test6Binding" type="tns:Test6PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Test6Operation">
+            <soap:operation soapAction="Test6Operation"/>
+            <input>
+                <soap:body parts="Test6Part" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="Test6Part" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="Test6Service">
+        <port binding="tns:Test6Binding" name="Test6Port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/Test6"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="Test6ServiceLinkType">
+	<plnk:role name="Test6ServerRole" portType="tns:Test6PortType"/>
+   </plnk:partnerLinkType>
+</definitions>

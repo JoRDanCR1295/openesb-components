@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FTP_In_File_Out_Services" xmlns:ns2="http://j2ee.netbeans.org/wsdl/File_In_FTP_Out_Services" xmlns:ns3="http://enterprise.netbeans.org/transformmap/UploadWithXSLTTransform" xmlns:ns4="http://enterprise.netbeans.org/transformmap/DownloadWithXSLTTransform" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="LocalPort" interface-name="ns1:FILE_WRITE" name="endpoint1" service-name="ns1:Remote2LocalService"/>
+        <endpoint endpoint-name="LocalPort" interface-name="ns2:FILE_READ" name="endpoint2" service-name="ns2:Local2RemoteService"/>
+        <endpoint endpoint-name="RemotePort" interface-name="ns2:FTP_PUT" name="endpoint3" service-name="ns2:Local2RemoteService"/>
+        <endpoint endpoint-name="RemotePort" interface-name="ns1:FTP_POLL" name="endpoint4" service-name="ns1:Remote2LocalService"/>
+        <endpoint display-name="FILE_READ" endpoint-name="Local2Transform2RemoteService" file-path="Empl-Input2Output.xsl" interface-name="ns2:FILE_READ" name="endpoint5" process-name="FILE_READ" service-name="ns3:xsltse"/>
+        <endpoint endpoint-name="Invoke1" interface-name="ns2:FTP_PUT" name="endpoint6" service-name="ns3:xsltse"/>
+        <endpoint display-name="FTP_POLL" endpoint-name="Remote2Transform2LocalService" file-path="Empl-Input2Output.xsl" interface-name="ns1:FTP_POLL" name="endpoint7" process-name="FTP_POLL" service-name="ns4:xsltse"/>
+        <endpoint endpoint-name="Invoke1" interface-name="ns1:FILE_WRITE" name="endpoint8" service-name="ns4:xsltse"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="UploadWithXSLTTransform.jar" component-name="sun-xslt-engine" defined="true" description="Represents this Service Unit" internal="true" name="UpXSLT_DownXSLT_CompApp-UploadWithXSLTTransform" unit-name="UploadWithXSLTTransform" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="DownloadWithXSLTTransform.jar" component-name="sun-xslt-engine" defined="true" description="Represents this Service Unit" internal="true" name="UpXSLT_DownXSLT_CompApp-DownloadWithXSLTTransform" unit-name="DownloadWithXSLTTransform" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint7"/>
+            <consumes endpoint="endpoint8"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="UpXSLT_DownXSLT_CompApp-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/service[@name='Remote2LocalService']/port[@name='LocalPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/service[@name='Local2RemoteService']/port[@name='LocalPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-ftp-binding.jar" component-name="sun-ftp-binding" description="Represents this Service Unit" name="UpXSLT_DownXSLT_CompApp-sun-ftp-binding" unit-name="sun-ftp-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/service[@name='Remote2LocalService']/port[@name='RemotePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/service[@name='Local2RemoteService']/port[@name='RemotePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint8" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint5" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/portType[@name='FILE_WRITE'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/portType[@name='FTP_POLL'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/portType[@name='FILE_READ'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/portType[@name='FTP_PUT'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/binding[@name='FILE_OUT_BIND'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/binding[@name='FTP_POLL_BIND'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/binding[@name='FILE_IN_BIND'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/binding[@name='FTP_PUT_BIND'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/DownloadWithXSLTTransform/FTP_In_File_Out_Services.wsdl#xpointer(/definitions/service[@name='Remote2LocalService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/UploadWithXSLTTransform/File_In_FTP_Out_Services.wsdl#xpointer(/definitions/service[@name='Local2RemoteService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

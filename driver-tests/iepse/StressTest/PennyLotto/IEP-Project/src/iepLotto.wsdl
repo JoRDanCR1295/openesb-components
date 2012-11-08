@@ -1,0 +1,223 @@
+<definitions targetNamespace="iepLotto_iep"
+             xmlns:tns="iepLotto_iep"
+             xmlns:typens="iepLotto_iep"
+             xmlns:defns="iepLotto_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="iepLotto_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="CC_to_Lotto_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                    <xsd:element name="AMOUNT" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="CC_to_LottoBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="CC_to_Lotto_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                    <xsd:element name="AMOUNT" type="xsd:double"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Betting_Activity_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Betting_ActivityBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Betting_Activity_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Lotto_to_Bank_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                    <xsd:element name="AMOUNT" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Lotto_to_BankBatch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Lotto_to_Bank_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="USERNAME" type="xsd:string"/>
+                    <xsd:element name="AMOUNT" type="xsd:double"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Send_Alert_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="USERNAME" type="xsd:string"/>
+                   <xsd:element name="AMOUNT" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="CC_to_Lotto_Msg">
+    <part name="input" element="typens:CC_to_Lotto_MsgObj"/>
+</message>
+<message name="CC_to_LottoBatch_Msg">
+    <part name="input" element="typens:CC_to_LottoBatch_MsgObj"/>
+</message>
+<message name="Betting_Activity_Msg">
+    <part name="input" element="typens:Betting_Activity_MsgObj"/>
+</message>
+<message name="Betting_ActivityBatch_Msg">
+    <part name="input" element="typens:Betting_ActivityBatch_MsgObj"/>
+</message>
+<message name="Lotto_to_Bank_Msg">
+    <part name="input" element="typens:Lotto_to_Bank_MsgObj"/>
+</message>
+<message name="Lotto_to_BankBatch_Msg">
+    <part name="input" element="typens:Lotto_to_BankBatch_MsgObj"/>
+</message>
+<message name="Send_Alert_Msg">
+    <part name="output" element="typens:Send_Alert_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="CC_to_Lotto">
+        <input message="tns:CC_to_Lotto_Msg"/>
+    </operation>
+    <operation name="CC_to_LottoBatch">
+        <input message="tns:CC_to_LottoBatch_Msg"/>
+    </operation>
+    <operation name="Betting_Activity">
+        <input message="tns:Betting_Activity_Msg"/>
+    </operation>
+    <operation name="Betting_ActivityBatch">
+        <input message="tns:Betting_ActivityBatch_Msg"/>
+    </operation>
+    <operation name="Lotto_to_Bank">
+        <input message="tns:Lotto_to_Bank_Msg"/>
+    </operation>
+    <operation name="Lotto_to_BankBatch">
+        <input message="tns:Lotto_to_BankBatch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_Send_Alert">
+    <operation name="Send_Alert">
+        <input message="tns:Send_Alert_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_Send_Alert" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_Send_Alert" portType="tns:OutputPt_Send_Alert"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="CC_to_Lotto">
+        <soap:operation soapAction="CC_to_Lotto"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="CC_to_LottoBatch">
+        <soap:operation soapAction="CC_to_LottoBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="Betting_Activity">
+        <soap:operation soapAction="Betting_Activity"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="Betting_ActivityBatch">
+        <soap:operation soapAction="Betting_ActivityBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="Lotto_to_Bank">
+        <soap:operation soapAction="Lotto_to_Bank"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="Lotto_to_BankBatch">
+        <soap:operation soapAction="Lotto_to_BankBatch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:12100/service/iepLotto_iep"/>
+    </port>
+</service>
+
+<!-- http output binding and service
+<binding name="OutputBinding_Send_Alert" type="defns:OutputPt_Send_Alert">
+    <operation name="Send_Alert">
+        <soap:operation soapAction="Send_Alert"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_Send_Alert">
+    <port name="OutputPort_Send_Alert" binding="tns:OutputBinding_Send_Alert">
+        <soap:address location="http://localhost:12100/service/iepLotto_iep_Send_Alert_callee"/>
+    </port>
+</service>
+ end of http output binding and service -->
+
+<!-- file output binding and service -->
+<binding name="OutputBinding_Send_Alert" type="defns:OutputPt_Send_Alert">
+    <file:binding/>
+    <operation name="Send_Alert">
+        <file:operation/>
+        <input>
+            <file:message fileName="Send_Alert.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_Send_Alert">
+    <port name="OutputPort_Send_Alert" binding="tns:OutputBinding_Send_Alert">
+        <file:address fileDirectory="C:/temp/iepLotto_iep"/>
+    </port>
+</service>
+<!-- end of file output binding and service -->
+</definitions>

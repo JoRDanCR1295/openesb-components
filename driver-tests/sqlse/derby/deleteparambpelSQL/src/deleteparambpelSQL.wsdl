@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="deleteparambpelSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="deleteparambpelRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:int"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="deleteparambpelResponse">
+    <part name="deleteparambpelResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="deleteparambpelRequest">
+    <part name="deleteparambpelRequestPart" element="tns:deleteparambpelRequest"/>
+  </message>
+  <portType name="deleteparambpelSQL_sqlsePortType">
+    <operation name="deleteparambpel">
+      <input name="deleteparambpelRequest" message="tns:deleteparambpelRequest"/>
+      <output name="deleteparambpelResponse" message="tns:deleteparambpelResponse"/>
+    </operation>
+  </portType>
+  <binding name="deleteparambpelSQLBinding" type="tns:deleteparambpelSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="deleteparambpel">
+      <soap:operation style="document"/>
+      <input name="deleteparambpelRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="deleteparambpelResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="deleteparambpelSQL_sqlseService">
+    <port name="deleteparambpelSQL_sqlsePort" binding="tns:deleteparambpelSQLBinding">
+      <soap:address location="http://localhost:18181/deleteparambpelSQL/deleteparambpelSQL/deleteparambpelSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="deleteparambpelSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="deleteparambpelSQL_myrole" portType="tns:deleteparambpelSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

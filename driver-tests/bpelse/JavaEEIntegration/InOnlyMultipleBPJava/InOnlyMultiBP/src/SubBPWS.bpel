@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="SubBPWS"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SubBPWS"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SubBPWS" xmlns:ns1="http://j2ee.netbeans.org/wsdl/BPToJava">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/BPToJava" location="BPToJava.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="CallFeederBPPartnerLink" partnerLinkType="ns1:BPToMainBPPartnerLinkType" partnerRole="BPToMainBPPTRole"/>
+        <bpws:partnerLink name="JavaEEToBPPartnerLink" partnerLinkType="ns1:JavaEEToBPPartnerLinkType" myRole="JavaEEToBPPTRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="BPToMainBPPTIn" messageType="ns1:Message"/>
+        <bpws:variable name="JavaEEToBPOperIn" messageType="ns1:Message"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="ReceiveFromJavaEE" createInstance="yes" partnerLink="JavaEEToBPPartnerLink" operation="JavaEEToBPOper" portType="ns1:JavaEEToBPPT" variable="JavaEEToBPOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JavaEEToBPOperIn.Msg/intElem</bpws:from>
+                <bpws:to>$BPToMainBPPTIn.Msg/intElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($JavaEEToBPOperIn.Msg/strElem, ' Pass through subBP:')</bpws:from>
+                <bpws:to>$BPToMainBPPTIn.Msg/strElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InvokeToFeederBP" partnerLink="CallFeederBPPartnerLink" operation="BPToMainBPPT" portType="ns1:BPToMainBPPT" inputVariable="BPToMainBPPTIn"/>
+    </sequence>
+</process>

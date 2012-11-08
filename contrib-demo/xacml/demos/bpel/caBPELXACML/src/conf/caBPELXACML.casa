@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SampleXACMLAccess" xmlns:ns2="http://enterprise.netbeans.org/bpel/AuthorizedBPEL/ControlledAccessBPEL" xmlns:xlink="http://www.w3.org/2000/xlink" xmlns:ns="caBPELXACML">
+    <endpoints>
+        <endpoint endpoint-name="endpoint" interface-name="ns1:interface" name="endpoint1" service-name="ns1:XACMLService"/>
+        <endpoint endpoint-name="BPELInterfaceRole_myRole" interface-name="ns1:interface" name="endpoint2" service-name="ns2:ExternalRequester"/>
+        <endpoint endpoint-name="interfaceRole_partnerRole" interface-name="ns1:interface" name="endpoint3" service-name="ns2:InternalService"/>
+        <endpoint name="endpoint4" endpoint-name="xacmlBPEL" interface-name="ns1:interface" service-name="ns:casaService1"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="testc2.jar" component-name="xacml-service-engine" defined="true" description="Represents this Service Unit" internal="true" name="caBPELXACML-testc2" unit-name="testc2" unknown="false" x="185" y="262">
+            <provides endpoint="endpoint1"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit unit-name="sun-jms-binding" component-name="sun-jms-binding" name="sun-jms-binding" description="Represents this Service Unit" artifacts-zip="sun-jms-binding.jar">
+            <ports>
+                <port x="67" y="256" bindingType="jms">
+                    <link xlink:href="../jbiasa/caBPELXACML.wsdl#xpointer(/definitions/service[@name=&apos;casaService1&apos;]/port[@name=&apos;xacmlBPEL&apos;])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <service-engine-service-unit artifacts-zip="AuthorizedBPEL.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="caBPELXACML-AuthorizedBPEL" unit-name="AuthorizedBPEL" unknown="false" x="81" y="86">
+            <provides endpoint="endpoint2"/>
+            <consumes endpoint="endpoint3"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="caBPELXACML-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/AuthorizedBPEL/XACMLAccess4BPEL.wsdl#xpointer(/definitions/service[@name='XACMLService']/port[@name='endpoint'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                    <link xlink:href="../jbiServiceUnits/testc2/SampleXACMLAccess.wsdl#xpointer(/definitions/service[@name='XACMLService']/port[@name='endpoint'])" xlink:type="simple"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint3" provider="endpoint1" state="unchanged"/>
+        <connection state="new" consumer="endpoint1" provider="endpoint2"/>
+        <connection state="new" consumer="endpoint4" provider="endpoint2"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/AuthorizedBPEL/XACMLAccess4BPEL.wsdl#xpointer(/definitions/portType[@name='interface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/testc2/SampleXACMLAccess.wsdl#xpointer(/definitions/portType[@name='interface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/caBPELXACML.wsdl#xpointer(/definitions/portType[@name=&apos;dummyCasaPortType&apos;])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/AuthorizedBPEL/XACMLAccess4BPEL.wsdl#xpointer(/definitions/binding[@name='binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/testc2/SampleXACMLAccess.wsdl#xpointer(/definitions/binding[@name='binding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/AuthorizedBPEL/XACMLAccess4BPEL.wsdl#xpointer(/definitions/service[@name='XACMLService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/testc2/SampleXACMLAccess.wsdl#xpointer(/definitions/service[@name='XACMLService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

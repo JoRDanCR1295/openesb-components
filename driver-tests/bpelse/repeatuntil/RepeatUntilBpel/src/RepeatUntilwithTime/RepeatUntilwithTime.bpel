@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilwithTime" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilwithTime"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilwithTime" xmlns:ns1="http://localhost/RepeatUntilBPEL/RepeatUntilNested1" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://localhost/RepeatUntilBPEL/RepeatUntilNested1" location="RepeatUntilwithTime.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation12Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Operation1Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Operation1In1" messageType="ns1:RptMessage1"/>
+    </variables>
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence1">
+                <assign name="Assign4">
+                    <copy>
+                        <from>'Fault : AS expected ...'</from>
+                        <to part="part1" variable="Operation12Out1"/>
+                    </copy>
+                    <copy>
+                        <from>0</from>
+                        <to variable="Operation12Out1" part="innerCnt"/>
+                    </copy>
+                    <copy>
+                        <from>0</from>
+                        <to variable="Operation12Out1" part="timer"/>
+                    </copy>
+                </assign>
+                <reply name="Reply2" partnerLink="PartnerLink1" operation="operation12" portType="ns1:RptTimePortType1" variable="Operation12Out1"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation12" portType="ns1:RptTimePortType1" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+            <from>'P0Y0M0DT0H0M0S'</from><to part="timer" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <bpws:throw name="Throw1" faultName="ns1:fault1" faultVariable="Operation12Out1"/>
+            <condition>   ( $Operation1In1.timer >= 'P0Y0M0DT0H0M20S' )   </condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+            <from variable="Operation1In1" part="part1"/><to variable="Operation1Out1" part="part1"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="innerCnt"/><to variable="Operation1Out1" part="innerCnt"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="timer"/><to variable="Operation1Out1" part="timer"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation12" portType="ns1:RptTimePortType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

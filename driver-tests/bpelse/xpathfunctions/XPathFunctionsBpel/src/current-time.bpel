@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="current-time" targetNamespace="http://www.seebeyond.com/eInsight/current-time" xmlns:tns="http://www.seebeyond.com/eInsight/current-time" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://stc.com/current-time" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/current-time" location="current-time.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+    </partnerLinks>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <variables>
+        <variable name="current-time_Output" messageType="ns0:current-time"/>
+        <variable name="current-time_Input" messageType="ns0:current-time"/>
+    </variables>
+    <sequence>
+        <receive name="current-time" partnerLink="Client2BP" portType="ns0:current-time" operation="current-time" variable="current-time_Output" createInstance="yes"/>
+        <assign name="Assign">
+            <copy>
+                <from>current-time()</from><to>$current-time_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="current-time.Reply" partnerLink="Client2BP" portType="ns0:current-time" operation="current-time" variable="current-time_Input"/>
+    </sequence>
+</process>

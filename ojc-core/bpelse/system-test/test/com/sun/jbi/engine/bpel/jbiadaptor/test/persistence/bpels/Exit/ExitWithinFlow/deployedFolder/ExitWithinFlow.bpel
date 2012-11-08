@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="ExitWithinFlow" 
+    targetNamespace="http://www.mycomp.org/ExitWithinFlow"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/ExitWithinFlow">
+    <import namespace="http://www.mycomp.org/ExitWithinFlow" location="ExitWithinFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ExitWithinFlowPartnerLinkType" myRole="ExitWithinFlowProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ExitFlowOpOutput" messageType="wsdlNS:ExitResponseMsg"/>
+        <variable name="ExitFlowOpInput" messageType="wsdlNS:ExitRequestMsg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ExitFlowOp" portType="wsdlNS:ExitFlowPortType" variable="ExitFlowOpInput"/>
+        <flow name="Flow1">
+            
+            <scope name="scope1">
+                <wait name="Wait1">
+                    <for>'P0Y0M0DT0H1M0S'</for>
+                </wait>
+            </scope>
+            <!--
+            <flow>
+                <scope name="scope2">
+                    <wait name="Wait2">
+                        <for>'P0Y0M0DT0H1M0S'</for>
+                    </wait>
+                </scope>
+            </flow>
+            -->
+            <sequence name="Sequence1">
+                <assign name="Assign1">
+                    <copy>
+                        <from>concat($ExitFlowOpInput.request, '::Assign before Exit::')</from><to part="response" variable="ExitFlowOpOutput"/>
+                    </copy>
+                </assign>
+                <exit name="Exit1"/>
+                <assign name="Assign2">
+                    <copy>
+                        <from>concat($ExitFlowOpInput.request, '::Assign after Exit::')</from><to part="response" variable="ExitFlowOpOutput"/>
+                    </copy>
+                </assign>            
+            </sequence>
+        </flow>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="ExitFlowOp" portType="wsdlNS:ExitFlowPortType" variable="ExitFlowOpOutput"/>        
+    </sequence>
+</process>

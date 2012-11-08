@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrRecRecB4"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrRecRecTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SubBPWSDL">
+    <import namespace="urn:corrRecRecTargetNamespace"
+            location="MainBPWSDL.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="InvokePartnerLink" partnerLinkType="ns0:InvokePartnerlinktype" partnerRole="InvokeClientRole"/>
+        <bpws:partnerLink name="SubBpPartnerLink" partnerLinkType="ns1:SubBPWSDL1" partnerRole="SubBPWSDLPortTypeRole"/>
+        <bpws:partnerLink name="Receive3PartnerLink" partnerLinkType="ns0:Receive3PartnerLinkType" myRole="Receive3ServerRole"/>
+        <bpws:partnerLink name="Receive2PartnerLink" partnerLinkType="ns0:Receive2PartnerLinkType" myRole="Receive2ServerRole"/>
+        <bpws:partnerLink name="Receive1PartnerLink" partnerLinkType="ns0:Receive1PartnerLinkType" myRole="Receive1ServerRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="Receive3OperationIn" messageType="ns0:Message1"/>
+        <bpws:variable name="SubBPWSDLOperationOut" messageType="ns1:SubBPWSDLOperationReply"/>
+        <bpws:variable name="SubBPWSDLOperationIn" messageType="ns1:SubBPWSDLOperationRequest"/>
+        <variable name="Receive1OperationIn" messageType="ns0:Message1"></variable>
+        <variable name="Receive2OperationIn" messageType="ns0:Message1"></variable>
+        <variable name="InvokeOperationIn" messageType="ns0:Message1"></variable>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns0:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="Receive1PartnerLink" operation="Operation1" portType="ns0:Receive1PortType" variable="Receive1OperationIn">
+            <correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$Receive1OperationIn.Part1/ns0:string</bpws:from>
+                <bpws:to variable="SubBPWSDLOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:flow name="Flow1">
+            <bpws:receive name="Receive2" createInstance="no" partnerLink="Receive2PartnerLink" operation="Operation1" portType="ns0:Receive2PortType" variable="Receive2OperationIn">
+                <bpws:correlations>
+                    <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                </bpws:correlations>
+            </bpws:receive>
+            <bpws:sequence name="Sequence1">
+                <bpws:pick name="Pick1">
+                    <bpws:onMessage partnerLink="Receive3PartnerLink" operation="Operation1" portType="ns0:Receive3PortType" variable="Receive3OperationIn">
+                        <bpws:correlations>
+                            <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                        </bpws:correlations>
+                        <bpws:empty name="Empty1"/>
+                    </bpws:onMessage>
+                    <bpws:onAlarm>
+                        <bpws:for>'P0Y0M0DT1H0M30S'</bpws:for>
+                        <bpws:empty name="Empty2"/>
+                    </bpws:onAlarm>
+                </bpws:pick>
+            </bpws:sequence>
+            <bpws:invoke name="Invoke1" partnerLink="SubBpPartnerLink" operation="SubBPWSDLOperation" portType="ns1:SubBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut"></bpws:invoke>
+        </bpws:flow>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($Receive1OperationIn.Part1/ns0:string, $Receive2OperationIn.Part1/ns0:string, $Receive3OperationIn.Part1/ns0:string, $SubBPWSDLOperationIn.part1)</from>
+                <to>$InvokeOperationIn.Part1/ns0:string</to>
+            </copy>
+        </assign>
+        <bpws:invoke name="Invoke2" partnerLink="InvokePartnerLink" operation="Operation1" inputVariable="InvokeOperationIn" portType="ns0:InvokePortType"/>
+    </sequence>
+</process>

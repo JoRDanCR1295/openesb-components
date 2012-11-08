@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BPELProject/JMSOut"
+             name="JMSOut"
+             xmlns:tns="http://localhost/BPELProject/JMSOut"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <plink:partnerLinkType name="JMSOutLinkType">
+        <plink:role name="Server"
+                    portType="tns:portType_JMSOut"></plink:role>
+    </plink:partnerLinkType>
+    <message name="message_JMSOut">
+        <part name="part_JMSOut"
+              type="xsd:string"></part>
+        <part name="IdProperty" type="xsd:long"/>
+    </message>
+    <portType name="portType_JMSOut">
+        <operation name="operation_JMSOut">
+            <input name="input"
+                   message="tns:message_JMSOut"></input>
+        </operation>
+    </portType>
+    <binding name="binding_JMSOut"
+             type="tns:portType_JMSOut">
+        <jms:binding></jms:binding>
+        <operation name="operation_JMSOut">
+            <jms:operation deliveryMode="PERSISTENT"
+                           disableMessageTimeStamp="true"
+                           disableMessageID="true"
+                           transaction="NoTransaction"
+                           destinationType="Queue"
+                           destination="jms_bpelSE_ext_client_will_consume"/>
+            <input name="input">
+                <jms:message messageType="TextMessage"
+                             textPart="part_JMSOut">
+                <jms:properties>
+                        <jms:property part="IdProperty" type="long" name="counter"></jms:property>
+                </jms:properties>
+                </jms:message>
+                                 
+            </input>
+        </operation>
+    </binding>
+    <service name="service_JMSOut">
+        <port name="port_JMSOut"
+              binding="tns:binding_JMSOut">
+            <jms:address password="admin"
+                         username="admin"
+                         connectionURL="mq://localhost:7676" />
+        </port>
+    </service>
+</definitions>

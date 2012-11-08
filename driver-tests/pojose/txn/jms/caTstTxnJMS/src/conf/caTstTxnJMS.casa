@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/jseJMSTxn/JMSOut" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jseJMSTxn/JMSInOut" xmlns:ns3="caTstTxnJMS" xmlns:ns4="http://driver.txn.tst.sun.com/JMSTxnTestDriver/" xmlns:ns5="http://enterprise.netbeans.org/bpel/bpl2JMS/bpl2JMS" xmlns:ns6="http://j2ee.netbeans.org/wsdl/bpl2JMS/bplInOut" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="JMSOut_OutPort" interface-name="ns1:JMSOutPortType" name="endpoint1" service-name="ns1:JMSOutService"/>
+        <endpoint endpoint-name="JMSInOut_Port" interface-name="ns2:JMSPortType" name="endpoint2" service-name="ns2:JMSService"/>
+        <endpoint endpoint-name="pojoTxnJmsTstDriverPort" interface-name="ns4:JMSTxnTestDriverInterface" name="endpoint3" service-name="ns3:caTstTxnJMSService1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="bplInOutPortTypeRole_myRole" file-path="bpl2JMS.bpel" interface-name="ns6:bplInOutPortType" name="endpoint4" process-name="bpl2JMS" service-name="ns5:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="JMSOutPortTypeRole_partnerRole" file-path="bpl2JMS.bpel" interface-name="ns1:JMSOutPortType" name="endpoint5" process-name="bpl2JMS" service-name="ns5:PartnerLink2"/>
+        <endpoint endpoint-name="JMSTxnTestDriver" interface-name="ns4:JMSTxnTestDriverInterface" name="endpoint6" service-name="ns4:JMSTxnTestDriverService"/>
+        <endpoint endpoint-name="JMSInOut" interface-name="ns2:JMSPortType" name="endpoint7" service-name="ns2:JMSPortTypeService"/>
+        <endpoint endpoint-name="epJMSOutPortTyp" interface-name="ns1:JMSOutPortType" name="endpoint8" service-name="ns1:epJMSOutPortTypService"/>
+        <endpoint endpoint-name="epBplInOutPortTyp" interface-name="ns6:bplInOutPortType" name="endpoint9" service-name="ns6:epBplInOutPortTypService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="bpl2JMS.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="caTstTxnJMS-bpl2JMS" unit-name="bpl2JMS" unknown="false" x="276" y="197">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="jseJMSTxn.jar" component-name="sun-pojo-engine" defined="true" description="Represents this Service Unit" internal="true" name="caTstTxnJMS-jseJMSTxn" unit-name="jseJMSTxn" unknown="false" x="39" y="121">
+            <provides endpoint="endpoint6"/>
+            <provides endpoint="endpoint7"/>
+            <consumes endpoint="endpoint8"/>
+            <consumes endpoint="endpoint9"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="caTstTxnJMS-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port bindingType="soap" x="67" y="158">
+                    <link xlink:href="../jbiasa/caTstTxnJMS.wsdl#xpointer(/definitions/service[@name='caTstTxnJMSService1']/port[@name='pojoTxnJmsTstDriverPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="caTstTxnJMS-sun-jms-binding" unit-name="sun-jms-binding">
+            <ports>
+                <port x="67" y="243">
+                    <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSInOut.wsdl#xpointer(/definitions/service[@name='JMSService']/port[@name='JMSInOut_Port'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/service[@name='JMSOutService']/port[@name='JMSOut_OutPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint8" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint6" state="new"/>
+        <connection consumer="endpoint2" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint9" provider="endpoint4" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/caTstTxnJMS.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/bpl2JMS/bplInOut.wsdl#xpointer(/definitions/portType[@name='bplInOutPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caTstTxnJMS.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/driver/JMSTxnTestDriver.wsdl#xpointer(/definitions/portType[@name='JMSTxnTestDriverInterface'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSInOut.wsdl#xpointer(/definitions/portType[@name='JMSPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/portType[@name='JMSOutPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/META-INF/bpl2JMS/src/_references/_projects/jseJMSTxn/src/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/portType[@name='JMSOutPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/caTstTxnJMS.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caTstTxnJMS.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSInOut.wsdl#xpointer(/definitions/binding[@name='JMSBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/binding[@name='JMSOutBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/META-INF/bpl2JMS/src/_references/_projects/jseJMSTxn/src/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/binding[@name='JMSOutBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/caTstTxnJMS.wsdl#xpointer(/definitions/service[@name='caTstTxnJMSService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/caTstTxnJMS.wsdl#xpointer(/definitions/service[@name='caTstTxnJMSService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSInOut.wsdl#xpointer(/definitions/service[@name='JMSService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/jseJMSTxn/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/service[@name='JMSOutService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/META-INF/bpl2JMS/src/_references/_projects/jseJMSTxn/src/com/sun/tst/txn/jms/JMSOut.wsdl#xpointer(/definitions/service[@name='JMSOutService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

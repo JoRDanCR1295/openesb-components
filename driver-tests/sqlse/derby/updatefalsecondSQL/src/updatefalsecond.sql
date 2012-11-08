@@ -1,0 +1,1 @@
+update "COMPANY"."emp" set sal =sal+20 where eno=900

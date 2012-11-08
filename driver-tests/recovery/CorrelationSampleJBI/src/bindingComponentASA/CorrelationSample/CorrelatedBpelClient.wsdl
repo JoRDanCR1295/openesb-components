@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CorrelatedBpelClient" targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpelClient"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/CorrelatedBpelClient" xmlns:ns="http://xml.netbeans.org/schema/CorrelationSample" xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:ns0="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/">
+    <import location="CorrelatedBpel.wsdl" namespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel"/>
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpelClient">
+            <xsd:import namespace="http://xml.netbeans.org/schema/CorrelationSample" schemaLocation="CorrelationSample.xsd"/>
+        </xsd:schema>
+    </types>
+    <portType name="PostReplyToJMSPortType">
+        <operation name="PostReplyToJMSOperation">
+            <input name="OutMessage" message="ns0:CallBackOperationRequest"/>
+        </operation>
+    </portType>
+    <wsdl:portType name="CorrelatedBpelClientPortType">
+        <wsdl:operation name="MessageInOperation">
+            <wsdl:input name="InMessage" message="ns0:CallInOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="CorrelatedBpelClientBinding" type="tns:CorrelatedBpelClientPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MessageInOperation">
+            <soap:operation/>
+            <wsdl:input name="InMessage">
+                <soap:body/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSOutBinding" type="tns:PostReplyToJMSPortType">
+        <jms:binding></jms:binding>
+        <operation name="PostReplyToJMSOperation">
+            <jms:operation deliveryMode="PERSISTENT"
+                           disableMessageTimeStamp="true"
+                           disableMessageID="true"
+                           transaction="NoTransaction"
+                           destinationType="Queue"
+                           destination="JMS_TEST_QUEUE"/>
+            <input name="OutMessage">
+                <jms:message messageType="TextMessage" textPart="OutMessage"/>            
+            </input>
+        </operation>
+    </binding>
+    <service name="JMSOutService">
+        <port name="PostReplyToJMSPort"
+              binding="tns:JMSOutBinding">
+            <jms:address password="admin" username="admin" connectionURL="mq://localhost:20000" />
+        </port>
+    </service>
+    <service name="CorrelatedBpelClientService">
+        <port name="CorrelatedBpelClientPort" binding="tns:CorrelatedBpelClientBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/CorrelatedBpelClientService/CorrelatedBpelClientPort"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="CorrelatedBpelClientPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="CorrelatedBpelClientPortTypeRole" portType="tns:CorrelatedBpelClientPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="PostReplyToJMSPartner">
+        <plink:role name="PostReplyToJMSPortTypeRole" portType="tns:PostReplyToJMSPortType"/>
+    </plink:partnerLinkType>
+    <bpws:property name="correlationId" type="xsd:int"/>
+    <bpws:propertyAlias propertyName="tns:correlationId" messageType="ns0:CallInOperationRequest" part="InMessage">
+        <bpws:query>/CSInput/Id</bpws:query>
+    </bpws:propertyAlias>
+    <bpws:propertyAlias propertyName="tns:correlationId" messageType="ns0:CallBackOperationRequest" part="OutMessage">
+        <bpws:query>/CSOutput/Id</bpws:query>
+    </bpws:propertyAlias>
+</definitions>

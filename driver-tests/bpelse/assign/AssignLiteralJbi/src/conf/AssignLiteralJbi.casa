@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://www.truebaseline.com/CallMef.wsdl" xmlns:ns2="http://www.truebaseline.com/CallSD.wsdl" xmlns:ns3="http://www.truebaseline.com/AlertMefBpel" xmlns:ns4="http://www.truebaseline.com/bpel/MefWorkflow/AlertMef" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="CallMefServiceSoap" interface-name="ns1:CallMefPortType" name="endpoint1" service-name="ns1:CallMefService"/>
+        <endpoint endpoint-name="CallSDServiceSoap" interface-name="ns2:CallSDPortType" name="endpoint2" service-name="ns2:CallSDService"/>
+        <endpoint endpoint-name="AlertMefBpelServiceSoap" interface-name="ns3:AlertMefBpelPortType" name="endpoint3" service-name="ns3:AlertMefBpelService"/>
+        <endpoint display-name="AlertMefBpelPartnerLink" endpoint-name="AlertMefBpelRole_myRole" file-path="AlertMef.bpel" interface-name="ns3:AlertMefBpelPortType" name="endpoint4" process-name="AlertMef" service-name="ns4:AlertMefBpelPartnerLink"/>
+        <endpoint display-name="CallMefPartnerLink" endpoint-name="CallMefRole_partnerRole" file-path="AlertMef.bpel" interface-name="ns1:CallMefPortType" name="endpoint5" process-name="AlertMef" service-name="ns4:CallMefPartnerLink"/>
+        <endpoint display-name="CallSDPartnerLink" endpoint-name="CallSDRole_partnerRole" file-path="AlertMef.bpel" interface-name="ns2:CallSDPortType" name="endpoint6" process-name="AlertMef" service-name="ns4:CallSDPartnerLink"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="AssignLiteralBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="AssignLiteralJbi-AssignLiteralBpel" unit-name="AssignLiteralBpel" unknown="false" x="138" y="99">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="AssignLiteralJbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="197">
+                    <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/AlertMefBpel.wsdl#xpointer(/definitions/service[@name='AlertMefBpelService']/port[@name='AlertMefBpelServiceSoap'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="67" y="118">
+                    <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallMef.wsdl#xpointer(/definitions/service[@name='CallMefService']/port[@name='CallMefServiceSoap'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallSD.wsdl#xpointer(/definitions/service[@name='CallSDService']/port[@name='CallSDServiceSoap'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint2" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/AlertMefBpel.wsdl#xpointer(/definitions/portType[@name='AlertMefBpelPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallMef.wsdl#xpointer(/definitions/portType[@name='CallMefPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallSD.wsdl#xpointer(/definitions/portType[@name='CallSDPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/MEFWEBService.wsdl#xpointer(/definitions/portType[@name='MEFWEBServiceSoap'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/AlertMefBpel.wsdl#xpointer(/definitions/binding[@name='AlertMefBpelBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallMef.wsdl#xpointer(/definitions/binding[@name='CallMefPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallSD.wsdl#xpointer(/definitions/binding[@name='CallSDPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/MEFWEBService.wsdl#xpointer(/definitions/binding[@name='MEFWEBServiceSoap'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/AlertMefBpel.wsdl#xpointer(/definitions/service[@name='AlertMefBpelService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallMef.wsdl#xpointer(/definitions/service[@name='CallMefService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AssignLiteralBpel/CallSD.wsdl#xpointer(/definitions/service[@name='CallSDService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WhilewithRepeat" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/WhilewithRepeat"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/WhilewithRepeat" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WhilewithRepeat">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WhilewithRepeat" location="WhilewithRepeat.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:RptMessage1"/>
+        <variable name="Operation1In1" messageType="ns1:RptMessage1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($Operation1In1.Name, 'Before While  ')</from>
+                <to part="Name" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <while name="While1">
+            <condition> ( $Operation1In1.WhileCnt &lt;= 3 ) </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                        <from>concat($Operation1In1.Name, 'In While..')</from>
+                        <to part="Name" variable="Operation1In1"/>
+                    </copy>
+                    <copy>
+                        <from>0</from>
+                        <to part="RPTCnt" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+                <repeatUntil name="RepeatUntil1">
+                    <assign name="Assign3">
+                        <copy>
+                            <from> ( $Operation1In1.RPTCnt + 1 ) </from>
+                            <to part="RPTCnt" variable="Operation1In1"/>
+                        </copy>
+                        <copy>
+                            <from>concat($Operation1In1.Name, ' In RPT..')</from>
+                            <to part="Name" variable="Operation1In1"/>
+                        </copy>
+                    </assign>
+                    <condition> ( $Operation1In1.RPTCnt >= 2 ) </condition>
+                </repeatUntil>
+                <assign name="Assign5">
+                    <copy>
+                        <from> ( $Operation1In1.WhileCnt + 1 ) </from>
+                        <to part="WhileCnt" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </while>
+        <assign name="Assign6">
+            <copy>
+                <from>concat($Operation1In1.Name, ' After While ')</from>
+                <to part="Name" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <assign name="Assign4">
+            <copy>
+                <from variable="Operation1In1" part="Name"/>
+                <to variable="Operation1Out1" part="Name"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="WhileCnt"/>
+                <to variable="Operation1Out1" part="WhileCnt"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="RPTCnt"/>
+                <to variable="Operation1Out1" part="RPTCnt"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:portType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

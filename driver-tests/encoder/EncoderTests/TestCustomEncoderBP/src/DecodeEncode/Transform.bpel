@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Transform"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestCustomEncoderTransform"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/TestCustomEncoderTransform"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/Transform"
+    xmlns:ns0="http://xml.netbeans.org/schema/TestCustomEncoder/CustomEncoder" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/Transform"
+        location="Transform.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:Transform1"
+            myRole="TransformPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="TransformOperationOut"
+            messageType="ns1:TransformOperationReply"/>
+        <bpws:variable name="TransformOperationIn"
+            messageType="ns1:TransformOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive-input.txt" createInstance="yes"
+            partnerLink="PartnerLink1" operation="TransformOperation"
+            portType="ns1:TransformPortType" variable="TransformOperationIn"/>
+        <bpws:assign name="Assign-Mappings">
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:groupNode/ns0:element2/ns0:fixedField2</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:groupNode/ns0:element1/ns0:delimField1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$TransformOperationIn.toIn/ns0:groupNode/ns0:element2/ns0:fixedField1</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:groupNode/ns0:element1/ns0:delimField2</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($TransformOperationIn.toIn/ns0:groupNode/ns0:element1/ns0:delimField1, $TransformOperationIn.toIn/ns0:groupNode/ns0:element2/ns0:fixedField1)</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:groupNode/ns0:element2/ns0:fixedField1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($TransformOperationIn.toIn/ns0:groupNode/ns0:element1/ns0:delimField2, $TransformOperationIn.toIn/ns0:groupNode/ns0:element2/ns0:fixedField2)</bpws:from>
+                <bpws:to>$TransformOperationOut.toOut/ns0:groupNode/ns0:element2/ns0:fixedField2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1"
+            operation="TransformOperation" portType="ns1:TransformPortType"
+            variable="TransformOperationOut"/>
+    </sequence>
+</process>

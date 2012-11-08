@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+        *** GENERATED FROM project.xml - DO NOT EDIT  ***
+        ***         EDIT ../build.xml INSTEAD         ***
+        -->
+<project xmlns:earlink="http://www.netbeans.org/ns/j2ee-earlink/1" xmlns:data="data" name="-impl" default="dist-se" basedir="..">
+    <target name="pre-init">
+        <!--
+                Empty placeholder for easier customization.
+                You can override this target in the ../build.xml file.
+                -->
+    </target>
+    <target name="init-props" depends="pre-init">
+        <property file="nbproject/private/private.properties"/>
+        <property file="nbproject/project.properties"/>
+        <fail message="CAPS Earlink building from commandline is not supported.">
+            <condition>
+                <isset property="from.commandline"/>
+            </condition>
+        </fail>
+    </target>
+    <target name="dist_se" depends="init-props,caps-dist-se"/>
+    <target name="clean" depends="init-props">
+        <delete dir="${build.dir}"/>
+    </target>
+    <target name="caps-dist-se" depends="caps-build-add,caps-build-clean,caps-build-build"/>
+    <target name="eval-caps-build-on">
+        <condition property="caps.build.on.add" value="true">
+            <equals trim="true" casesensitive="false" arg1="${caps.build.on}" arg2="add"/>
+        </condition>
+        <condition property="caps.build.on.clean" value="true">
+            <equals trim="true" casesensitive="false" arg1="${caps.build.on}" arg2="clean"/>
+        </condition>
+        <condition property="caps.build.on.build" value="true">
+            <equals trim="true" casesensitive="false" arg1="${caps.build.on}" arg2="build"/>
+        </condition>
+    </target>
+    <target name="eval-caps-build-on-clean" if="caps.build.on.clean">
+        <condition property="caps.build.on.clean.build" value="true">
+            <not>
+                <available file="${build.dir}/${caps.ear.name}" type="file"/>
+            </not>
+        </condition>
+    </target>
+    <target name="caps-build-add" depends="eval-caps-build-on" if="caps.build.on.add">
+        <copy todir="build">
+            <fileset file="${caps.ear.lib}/${caps.ear.name}"/>
+        </copy>
+    </target>
+    <target name="caps-build-clean" depends="eval-caps-build-on,eval-caps-build-on-clean" if="caps.build.on.clean.build">
+        <antcall target="caps-build" inheritAll="true">
+            <param name="caps.toDir" value="build"/>
+        </antcall>
+    </target>
+    <target name="caps-build-build" depends="eval-caps-build-on" if="caps.build.on.build">
+        <antcall target="caps-build" inheritAll="true">
+            <param name="caps.toDir" value="build"/>
+        </antcall>
+    </target>
+    <target name="caps-build">
+        <CodeGen capsProjectDir="${caps.project.dir}" projectPath="${caps.rep.project.path}" deploymentProfileName="${caps.rep.dp.name}" destDir="${caps.toDir}" wsdlDir="${ca.wsdl.dir}" compAppsProjectName="${ca.project.name}" deployThruCompApp="${ca.depThru.compApp}"/>
+    </target>
+</project>

@@ -1,0 +1,23 @@
+<task xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns="http://jbi.com.sun/wfse" 
+        targetNamespace="http://localhost/ManualApprove/ManualApprove" 
+        name="ManualApproveTask" 
+        xmlns:ns0="http://j2ee.netbeans.org/wsdl/ManualApprove/ManualApprove" 
+        portType="ns0:ManualApprovePortType" operation="ManualApproveOperation" 
+        xmlns:ns="http://xml.netbeans.org/schema/PurchaseOrder">
+    <import location="ManualApprove.wsdl" namespace="http://j2ee.netbeans.org/wsdl/ManualApprove/ManualApprove"/>
+    <title>concat('Purchase order for ', $TaskInput.part1/ns:productName, ' (Amount=', $TaskInput.part1/ns:amount, ' Price=', $TaskInput.part1/ns:price, ')')</title>
+    <priority>'5'</priority>
+    <assignment>
+        <group>$TaskInput.part1/ns:userGroup</group>
+    </assignment>
+    <action name="completed" type="Completed">
+        <changeVariables>
+            <copy>
+                <from>$TaskInput.part1/ns:orderId</from>
+                <to>$TaskOutput.part1/ns:orderId</to>
+            </copy>
+        </changeVariables>
+    </action>
+</task>
+ 

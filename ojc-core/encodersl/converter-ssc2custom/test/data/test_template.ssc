@@ -1,0 +1,53 @@
+;:- STC MsgStruct Version 3.1
+
+;:- MsgStructure Header
+;:- MsgStructure "root"
+;:- UserComment "         "
+;:- Version "e*Gate 4.1.1"
+;:- FormatOption DELIMITED
+;:- RepSeparator "Repetition Delimiter  " " "
+;:- Escape "Escape Character Delimiter        " "\\"
+;:- DefaultDelimiters "HL7"
+;:- End MsgStructure Header
+
+;:- Delimiter Structure
+(define root-delm '(
+ ("\r" (EscD "\\") endofrec)
+ ("|" separator)
+ ("~" array)
+ ("^" separator)
+ ("&" separator)
+ ))
+
+;:- Global Template Reference
+(load "simpletemplate.ssc")
+;:- End Global Template Reference
+
+;:- Local Template Definition
+(define field_2 ($resolve-event-definition (quote
+  (((NofN (2 INF))) field_2 ON 0 1 und und und -1
+    (comp_1 ON 1 1 und und und -1)	;:= {0.0:N}
+    (comp_2 ON 1 1 und und und -1)	;:= {0.1:N}
+    (comp_3 ON 1 1 und und und -1
+      (sub_1 ON 1 1 und und und -1)	;:= {0.2.0:N}
+      (sub_2 ON 1 1 und und und -1)	;:= {0.2.1:N}
+    )	;:= {0.2:N}
+  )	;:= {0:N}
+)))
+;:- End Local Template Definition
+
+;:- MsgStructure Definition
+(define root-struct ($resolve-event-definition (quote
+  ((Ex) root ON 1 1 und und und -1
+    (((NofN (2 2))) seg_1 ON 1 1 und und und -1
+      (field_1 ON 1 1 und und und -1)	;:= {0.0.0:N}
+      (simpletemplate GTN 1 1 "simpletemplate.ssc" simpletemplate-struct und und)	;:= {0.0.1:Y}
+    )	;:= {0.0:N}
+    (seg_2 ON 1 1 und und und -1
+      (field_1 ON 1 1 und und und -1)	;:= {0.1.0:N}
+      (((NofN (2 INF))) field_2 LTN 0 1 und field_2 und und)	;:= {0.1.1:Y}
+    )	;:= {0.1:N}
+    (((NofN (2 INF))) field_2 LTN 1 1 und field_2 und und)	;:= {0.2:Y}
+  )	;:= {0:N}
+)))
+;:- End MsgStructure Definition

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="subBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/requestlifespan/onevent/subBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxtx="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension" 
+    xmlns:tns="http://enterprise.netbeans.org/bpel/requestlifespan/subBpel" xmlns:ns0="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" sxtx:waitingRequestLifeSpan="10" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+   <import namespace="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" location="wsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" partnerLinkType="tns:subOne" myRole="subPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="SupOneOperationOut" messageType="ns0:operationResponse"/>
+      <variable name="SupOneOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" messageType="tns:operationRequest"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="CorrelationSet1" properties="ns0:corr"/>
+   </correlationSets>
+   <eventHandlers>
+      <onEvent partnerLink="PartnerLink1" operation="subTwoOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" portType="tns:subPortType" variable="eventVar" messageType="tns:operationRequest">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="no"/>
+         </correlations>
+         <scope name="Scope1">
+            <empty name="Empty1"/>
+         </scope>
+      </onEvent>
+   </eventHandlers>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="supOneOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" portType="tns:subPortType" variable="SupOneOperationIn">
+         <correlations>
+            <correlation set="CorrelationSet1" initiate="yes"/>
+         </correlations>
+      </receive>
+      <wait name="Wait1">
+         <for>'P0Y0M0DT0H0M20.0S'</for>
+      </wait>
+      <assign name="Assign1">
+         <copy>
+            <from variable="SupOneOperationIn" part="input"/>
+            <to variable="SupOneOperationOut" part="output"/>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="PartnerLink1" operation="supOneOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/requestlifespan/onevent/wsdl" portType="tns:subPortType" variable="SupOneOperationOut"/>
+   </sequence>
+</process>

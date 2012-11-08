@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://services/fm" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jmsTest" xmlns:ns3="http://j2ee.netbeans.org/wsdl/SubBPWSDL" xmlns:ns4="http://enterprise.netbeans.org/bpel/AlarmIRPBpel2/AlarmIRPProcess2" xmlns:ns5="http://enterprise.netbeans.org/bpel/ScalabilityBpel/SubProcess" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="AlarmIRPPortTypePort" interface-name="ns1:AlarmIRPPortType" name="endpoint1" service-name="ns1:AlarmIRP"/>
+        <endpoint endpoint-name="AlarmIRPProxyPortTypePort" interface-name="ns1:AlarmIRPProxyPortType" name="endpoint2" service-name="ns1:AlarmIRPProxy"/>
+        <endpoint endpoint-name="jmsTestPort" interface-name="ns2:jmsTestPortType" name="endpoint3" service-name="ns2:jmsTestService"/>
+        <endpoint endpoint-name="SubBPWSDLPort" interface-name="ns3:SubBPWSDLPortType" name="endpoint4" service-name="ns3:SubBPWSDLService"/>
+        <endpoint endpoint-name="port1" interface-name="ns2:ProcessedPortType" name="endpoint5" service-name="ns2:JMSOUT_Service2"/>
+        <endpoint endpoint-name="port1" interface-name="ns1:SubBPRecvPortType1" name="endpoint6" service-name="ns1:SubBPRecvService"/>
+        <endpoint endpoint-name="AlarmIRPProxyRole_myRole" file-path="MainPProcess.bpel" interface-name="ns1:AlarmIRPProxyPortType" name="endpoint7" process-name="AlarmIRPProcess2" service-name="ns4:AlarmIRPProxyPartnerLink"/>
+        <endpoint endpoint-name="subBPRecvRole_myRole" file-path="MainPProcess.bpel" interface-name="ns1:SubBPRecvPortType1" name="endpoint8" process-name="AlarmIRPProcess2" service-name="ns4:SubBPRecvPartnerLink"/>
+        <endpoint endpoint-name="SubBPWSDLPortTypeRole_myRole" file-path="Partners\SubBP\SubProcess.bpel" interface-name="ns3:SubBPWSDLPortType" name="endpoint9" process-name="SubProcess" service-name="ns5:ParentPartnerLink"/>
+        <endpoint endpoint-name="AlarmIRPRole_partnerRole" file-path="MainPProcess.bpel" interface-name="ns1:AlarmIRPPortType" name="endpoint10" process-name="AlarmIRPProcess2" service-name="ns4:PartnerLink1"/>
+        <endpoint endpoint-name="jmsTestPortTypeRole_partnerRole" file-path="MainPProcess.bpel" interface-name="ns2:jmsTestPortType" name="endpoint11" process-name="AlarmIRPProcess2" service-name="ns4:JMSSTartPartnerLink"/>
+        <endpoint endpoint-name="SubBPWSDLPortTypeRole_partnerRole" file-path="MainPProcess.bpel" interface-name="ns3:SubBPWSDLPortType" name="endpoint12" process-name="AlarmIRPProcess2" service-name="ns4:SubBPPartnerLink"/>
+        <endpoint endpoint-name="Finish_PLT_partnerRole" file-path="MainPProcess.bpel" interface-name="ns2:ProcessedPortType" name="endpoint13" process-name="AlarmIRPProcess2" service-name="ns4:JMSFinshPartnerLink"/>
+        <endpoint endpoint-name="subBPRecvRole_partnerRole" file-path="Partners\SubBP\SubProcess.bpel" interface-name="ns1:SubBPRecvPortType1" name="endpoint14" process-name="SubProcess" service-name="ns5:ParentInvokePartnerLink"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="ScalabilityTest2BP.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="ScalabilityTest2CompApp-ScalabilityTest2BP" unit-name="ScalabilityTest2BP" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+            <provides endpoint="endpoint9"/>
+            <consumes endpoint="endpoint10"/>
+            <consumes endpoint="endpoint11"/>
+            <consumes endpoint="endpoint12"/>
+            <consumes endpoint="endpoint13"/>
+            <consumes endpoint="endpoint14"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="ScalabilityTest2CompApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/service[@name='AlarmIRPProxy']/port[@name='AlarmIRPProxyPortTypePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/service[@name='SubBPRecvService']/port[@name='port1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                    <provides endpoint="endpoint6"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/AlarmIRP/AlarmIRPPortType.wsdl#xpointer(/definitions/service[@name='AlarmIRP']/port[@name='AlarmIRPPortTypePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/SubBP/SubBPWSDL.wsdl#xpointer(/definitions/service[@name='SubBPWSDLService']/port[@name='SubBPWSDLPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="ScalabilityTest2CompApp-sun-jms-binding" unit-name="sun-jms-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/service[@name='jmsTestService']/port[@name='jmsTestPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/service[@name='JMSOUT_Service2']/port[@name='port1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint10" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint8" state="unchanged"/>
+        <connection consumer="endpoint14" provider="endpoint8" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint11" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint13" provider="endpoint5" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint9" state="unchanged"/>
+        <connection consumer="endpoint12" provider="endpoint9" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/portType[@name='AlarmIRPProxyPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/portType[@name='SubBPRecvPortType1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/AlarmIRP/AlarmIRPPortType.wsdl#xpointer(/definitions/portType[@name='AlarmIRPPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/portType[@name='jmsTestPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/portType[@name='ProcessedPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/SubBP/SubBPWSDL.wsdl#xpointer(/definitions/portType[@name='SubBPWSDLPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/binding[@name='AlarmIRPProxyPortTypePortBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/binding[@name='SubBPRecvPortType1Binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/AlarmIRP/AlarmIRPPortType.wsdl#xpointer(/definitions/binding[@name='AlarmIRPPortTypePortBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/binding[@name='jmsTestBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/binding[@name='JMSOut2Binding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/SubBP/SubBPWSDL.wsdl#xpointer(/definitions/binding[@name='SubBPWSDLBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/service[@name='AlarmIRPProxy'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/MainProcessWSDL.wsdl#xpointer(/definitions/service[@name='SubBPRecvService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/AlarmIRP/AlarmIRPPortType.wsdl#xpointer(/definitions/service[@name='AlarmIRP'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/service[@name='jmsTestService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/JMS/JMSPartner.wsdl#xpointer(/definitions/service[@name='JMSOUT_Service2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/ScalabilityTest2BP/Partners/SubBP/SubBPWSDL.wsdl#xpointer(/definitions/service[@name='SubBPWSDLService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

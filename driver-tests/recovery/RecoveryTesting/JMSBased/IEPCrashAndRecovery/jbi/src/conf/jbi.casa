@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="test_iep" xmlns:ns2="http://localhost/BPELProject/JMSOut/IEPCrashAndRecovery" xmlns:ns3="http://localhost/BPELProject/JMSIn/IEPCrashAndRecovery" xmlns:ns4="http://www.seebeyond.com/eInsight/IEPCrashAndRecovery" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="InputPort" interface-name="ns1:InputPt" name="endpoint1" service-name="ns1:InputService"/>
+<endpoint endpoint-name="OutputPort_StreamOutput0" interface-name="ns1:OutputPt_StreamOutput0" name="endpoint2" service-name="ns1:OutputService_StreamOutput0"/>
+<endpoint endpoint-name="port_JMSOut" interface-name="ns2:portType_JMSOut" name="endpoint3" service-name="ns2:service_JMSOut"/>
+<endpoint endpoint-name="port_JMSIn" interface-name="ns3:portType_JMSIn" name="endpoint4" service-name="ns3:service_JMSIn"/>
+<endpoint endpoint-name="InputRn" interface-name="ns1:InputPt" name="endpoint5" service-name="ns1:InputPl"/>
+<endpoint endpoint-name="OutputRn_StreamOutput0" interface-name="ns1:OutputPt_StreamOutput0" name="endpoint6" service-name="ns1:OutputPl_StreamOutput0"/>
+<endpoint endpoint-name="OutputRn_StreamOutput0_myRole" interface-name="ns1:OutputPt_StreamOutput0" name="endpoint7" service-name="ns4:fromIepLink"/>
+<endpoint endpoint-name="Server_myRole" interface-name="ns3:portType_JMSIn" name="endpoint8" service-name="ns4:jmsInLink"/>
+<endpoint endpoint-name="InputRn_partnerRole" interface-name="ns1:InputPt" name="endpoint9" service-name="ns4:toIepLink"/>
+<endpoint endpoint-name="Server_partnerRole" interface-name="ns2:portType_JMSOut" name="endpoint10" service-name="ns4:jmsOutLink"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="iep.jar" component-name="sun-iep-engine" defined="true" description="Represents this Service Unit" internal="true" name="jbi-iep" unit-name="iep" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint5"/>
+<consumes endpoint="endpoint6"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="jbi-bpel" unit-name="bpel" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint7"/>
+<provides endpoint="endpoint8"/>
+<consumes endpoint="endpoint9"/>
+<consumes endpoint="endpoint10"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="jbi-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0']/port[@name='OutputPort_StreamOutput0'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0']/port[@name='OutputPort_StreamOutput0'])" xlink:type="simple"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="jbi-sun-jms-binding" unit-name="sun-jms-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/bpel/JMSIn.wsdl#xpointer(/definitions/service[@name='service_JMSIn']/port[@name='port_JMSIn'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/bpel/JMSOut.wsdl#xpointer(/definitions/service[@name='service_JMSOut']/port[@name='port_JMSOut'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint10" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint8" state="unchanged"/>
+<connection consumer="endpoint1" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint9" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint2" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint6" provider="endpoint7" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/bpel/JMSIn.wsdl#xpointer(/definitions/portType[@name='portType_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/JMSOut.wsdl#xpointer(/definitions/portType[@name='portType_JMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/portType[@name='OutputPt_StreamOutput0'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/bpel/JMSIn.wsdl#xpointer(/definitions/binding[@name='binding_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/JMSOut.wsdl#xpointer(/definitions/binding[@name='binding_JMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/binding[@name='OutputBinding_StreamOutput0'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/binding[@name='OutputBinding_StreamOutput0'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/bpel/JMSIn.wsdl#xpointer(/definitions/service[@name='service_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/JMSOut.wsdl#xpointer(/definitions/service[@name='service_JMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpel/test.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/iep/test.wsdl#xpointer(/definitions/service[@name='OutputService_StreamOutput0'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

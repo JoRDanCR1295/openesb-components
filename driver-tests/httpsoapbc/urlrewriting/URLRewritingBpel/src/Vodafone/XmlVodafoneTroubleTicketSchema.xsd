@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns:vf="http://www.vodafone.com/oss/xml/TroubleTicket"
+        xmlns:tt="http://java.sun.com/products/oss/xml/TroubleTicket"
+        xmlns:co="http://java.sun.com/products/oss/xml/Common"
+        xmlns:fm="http://java.sun.com/products/oss/xml/QualityOfService/FM/Monitor"
+        xmlns:threshold="http://java.sun.com/products/oss/xml/QualityOfService/PM/Threshold"
+        xmlns:measurement="http://java.sun.com/products/oss/xml/QualityOfService/PM/Measurement"
+        xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.vodafone.com/oss/xml/TroubleTicket"
+        elementFormDefault="qualified">
+
+    <!-- Vodafone GTT Schema - Version 1.5 -->
+    <import namespace="http://java.sun.com/products/oss/xml/Common"
+            schemaLocation="XmlCommonSchema.xsd"/>
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/FM/Monitor"
+            schemaLocation="XmlQosFmMonitorSchema.xsd"/>
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/PM/Threshold"
+            schemaLocation="XmlQosPmThresholdSchema.xsd"/>
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/PM/Measurement"
+            schemaLocation="XmlQosPmMeasurementSchema.xsd"/>
+    <import namespace="http://java.sun.com/products/oss/xml/TroubleTicket"
+            schemaLocation="XmlTroubleTicketSchema.xsd"/>
+
+    <!-- Attachment -->
+    <complexType name="Attachment">
+        <annotation></annotation>
+        <sequence>
+            <element name="attachmentFileName" type="string"></element>
+            <element name="attachmentData" type="string"></element>
+        </sequence>
+    </complexType>
+
+    <!-- Status Narrative -->
+    <complexType name="StatusNarr" abstract="false">
+        <annotation></annotation>
+        <sequence>
+            <element name="snState" type="string"></element>
+            <element name="snStatus" type="string"></element>
+            <element name="snSubject" type="string" nillable="true" minOccurs="0"></element>
+            <element name="snDescription" type="string" nillable="true" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <complexType name="ArrayOfStatusNarr">
+        <annotation>
+            <documentation>This is a representation of a status narrative array.</documentation>
+        </annotation>
+        <sequence>
+            <element name="item" type="vf:StatusNarr" nillable="true" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <!-- AREA as a new role used by SPRoleAssignment -->
+    <element name="routeableRole" type="vf:RouteableRole"
+             substitutionGroup="tt:baseRole"/>
+    <simpleType name="RouteableRole">
+        <restriction base="string">
+            <enumeration value="AREA"/>
+            <enumeration value="PRIMARYCONTACTPERSON"/>
+            <enumeration value="ALTERNATECONTACTPERSON"/>
+            <enumeration value="MANAGERCONTACTPERSON"/>
+            <enumeration value="ALTERNATEMANAGERCONTACTPERSON"/>
+            <enumeration value="ACCOUNTCONTACTPERSON"/>
+            <enumeration value="TROUBLECLEARANCEPERSON"/>
+            <enumeration value="CONTACTPERSONMAINTENANCE"/>
+            <enumeration value="ACTIVITYPERSON"/>
+            <enumeration value="RESPONSIBLEPERSON"/>
+            <enumeration value="HANDOFFPERSON"/>
+            <enumeration value="AUTHORIZATIONPERSON"/>
+            <enumeration value="ESCALATIONPERSON"/>
+            <enumeration value="LOCATIONACCESSPERSON"/>
+            <enumeration value="ESCALATIONREQUESTPERSON"/>
+        </restriction>
+    </simpleType>
+
+    <!-- Vodafone Generic Trouble Ticket -->
+    <complexType name="GenericTroubleTicketValue" abstract="false">
+        <annotation>
+            <documentation>The following is an XML representation of a
+                Vodafone GenericTroubleTicket.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="tt:TroubleTicketValue">
+                <sequence>
+                    <element name="attachment" type="vf:Attachment" nillable="true" minOccurs="0"/>
+                    <element name="statusNarrList" type="vf:ArrayOfStatusNarr" nillable="true" minOccurs="0"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone Generic Information Ticket -->
+    <complexType name="GenericInformationTicketValue" abstract="false">
+        <annotation>
+            <documentation>The following is an XML representation of a
+                Vodafone GenericInformationTicket.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue"/>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone Generic Workorder Ticket -->
+    <complexType name="GenericWorkorderValue" abstract="false">
+        <annotation>
+            <documentation>The following is an XML representation of a
+                Vodafone GenericWorkorderValue.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue"/>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone Database Change Workorder Ticket -->
+    <complexType name="DatabaseChangeWorkorderTicketValue" abstract="false">
+        <annotation>
+            <documentation>The following is an XML representation of a
+                Vodafone DatabaseChangeWorkorderTicketValue.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericWorkorderValue">
+                <sequence>
+                    <element name="instructionSubject" type="string" nillable="true" minOccurs="0"/>
+                    <element name="faxDate" type="dateTime" nillable="true" minOccurs="0"/>
+                    <element name="faxNumber" type="string" nillable="true" minOccurs="0"/>
+                    <element name="groupId" type="string" nillable="true" minOccurs="0"/>
+                    <element name="groupIdList" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istDescription" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istNetworkElementId" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istSelection" type="integer" nillable="true" minOccurs="0"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone Modification Change Workorder Ticket -->
+    <complexType name="ModificationChangeWorkorderTicketValue" abstract="false">
+        <annotation>
+            <documentation>The following is an XML representation of a
+                Vodafone ModificationChangeWorkorderTicketValue.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericWorkorderValue">
+                <sequence>
+                    <element name="manufacturer" type="string" nillable="true" minOccurs="0"/>
+                    <element name="softwareName" type="string" nillable="true" minOccurs="0"/>
+                    <element name="softwareTransmittedBy" type="string" nillable="true" minOccurs="0"/>
+                    <element name="fileName" type="string" nillable="true" minOccurs="0"/>
+                    <element name="docuOn" type="string" nillable="true" minOccurs="0"/>
+                    <element name="durationOfImplementation" type="integer" nillable="true" minOccurs="0"/>
+                    <element name="restrictedKiasAccess" type="boolean" nillable="true" minOccurs="0"/>
+                    <element name="problemsSolved" type="string" nillable="true" minOccurs="0"/>
+                    <element name="restartsRequired" type="string" nillable="true" minOccurs="0"/>
+                    <element name="docuFilename" type="string" nillable="true" minOccurs="0"/>
+                    <element name="prerequisiteForImplementation" type="string" nillable="true" minOccurs="0"/>
+                    <element name="recommendedImplementationTime" type="string" nillable="true" minOccurs="0"/>
+                    <element name="testsToBeCarriedOut" type="string" nillable="true" minOccurs="0"/>
+                    <element name="serviceRestrictions" type="boolean" nillable="true" minOccurs="0"/>
+                    <element name="billingRestrictions" type="boolean" nillable="true" minOccurs="0"/>
+                    <element name="rolloutBlock" type="boolean" nillable="true" minOccurs="0"/>
+                    <element name="problemsInImplementation" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istDescription" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istNetworkElementId" type="string" nillable="true" minOccurs="0"/>
+                    <element name="istSelection" type="integer" nillable="true" minOccurs="0"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone DCC Trouble Ticket -->
+    <complexType name="DccTroubleTicketValue">
+        <annotation>
+            <documentation>DccTroubleTicketValue interface</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue">
+                <sequence>
+                    <element name="category" minOccurs="0" nillable="true" type="string"/>
+                    <element name="type" minOccurs="0" nillable="true" type="string"/>
+                    <element name="item" minOccurs="0" nillable="true" type="string"/>
+                    <element name="summary" minOccurs="0" nillable="true" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone GSP Trouble Ticket -->
+    <complexType name="GspTroubleTicketValue">
+        <annotation>
+            <documentation>GspTroubleTicketValue interface</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue">
+                <sequence>
+                    <element name="actionTakenByOpco" minOccurs="0" nillable="true" type="string"/>
+                    <element name="impact" minOccurs="0" nillable="true" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone Roaming Trouble Ticket  -->
+    <complexType name="RoamingTroubleTicketValue">
+        <annotation>
+            <documentation>RoamingTroubleTicketValue interface</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue">
+                <sequence>
+			<element name="subscriberIMSI" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberMSISDN" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberLocationOfProblem" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberBearer" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberMscVlrAddress" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberTypeOfClient" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberMscVlrType" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberHandset" type="string" nillable="true" minOccurs="0"/>
+			<element name="subscriberSwVendor" type="string" nillable="true" minOccurs="0"/>
+			<element name="voiceSmsCallingCalledNumber" type="string" nillable="true" minOccurs="0"/>
+			<element name="voiceShortCode" type="string" nillable="true" minOccurs="0"/>
+			<element name="voiceMSRN" type="string" nillable="true" minOccurs="0"/>
+			<element name="voiceCLI" type="string" nillable="true" minOccurs="0"/>
+			<element name="smsCAddress" type="string" nillable="true" minOccurs="0"/>
+			<element name="dataSgsnType" type="string" nillable="true" minOccurs="0"/>
+			<element name="dataSgsnAddress" type="string" nillable="true" minOccurs="0"/>
+			<element name="dataOperatorIdentifier" type="string" nillable="true" minOccurs="0"/>
+			<element name="dataAPN" type="string" nillable="true" minOccurs="0"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone NBL Trouble Ticket -->
+    <complexType name="NblTroubleTicketValue">
+        <annotation>
+            <documentation>NblTroubleTicketValue interface</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue">
+                <sequence>
+                    <element name="nblEskalation" minOccurs="0" nillable="true" type="string"/>
+                    <element name="logbuch" minOccurs="0" nillable="true" type="string"/>
+                    <element name="folddown" minOccurs="0" nillable="true" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Vodafone NFS Trouble Ticket -->
+    <complexType name="NfsTroubleTicketValue">
+        <annotation>
+            <documentation>NfsTroubleTicketValue interface</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="vf:GenericTroubleTicketValue">
+                <sequence>
+                    <element name="fsSlaSoll" minOccurs="0" nillable="true" type="string"/>
+                    <element name="infoTechniker" minOccurs="0" nillable="true" type="string"/>
+                    <element name="massnahmen" minOccurs="0" nillable="true" type="string"/>
+                    <element name="tmnAlarmPriority" minOccurs="0" nillable="true" type="string"/>
+                    <element name="kategorie" minOccurs="0" nillable="true" type="string"/>
+                    <element name="serviceausfall" minOccurs="0" nillable="true" type="string"/>
+                    <element name="redundanz" minOccurs="0" nillable="true" type="string"/>
+                    <element name="aktion" minOccurs="0" nillable="true" type="string"/>
+                    <element name="ursachengruppe" minOccurs="0" nillable="true" type="string"/>
+                    <element name="ebene2" minOccurs="0" nillable="true" type="string"/>
+                    <element name="ebene3" minOccurs="0" nillable="true" type="string"/>
+                    <element name="entstoeraufwand" minOccurs="0" nillable="true" type="string"/>
+                    <element name="fahrzeit" minOccurs="0" nillable="true" type="string"/>
+                    <element name="logbuch" minOccurs="0" nillable="true" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

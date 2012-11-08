@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FILE" targetNamespace="http://j2ee.netbeans.org/wsdl/FILE"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FILE" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types/>
+    <message name="FILEOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="FILEOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="FILEPortType">
+        <operation name="FILEOperation">
+            <input name="input1" message="tns:FILEOperationRequest"/>
+            <output name="output1" message="tns:FILEOperationReply"/>
+        </operation>
+    </portType>
+    <binding name="FILEBinding" type="tns:FILEPortType">
+        <file:binding/>
+        <operation name="FILEOperation">
+            <file:operation/>
+            <input name="input1">
+                <file:message use="literal" fileName="hello%d.txt" fileNameIsPattern="true"/>
+            </input>
+            <output name="output1">
+                <file:message use="literal" fileName="reply%d.out" fileNameIsPattern="true"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="FILEService">
+        <port name="FILEPort" binding="tns:FILEBinding">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/HelloDukeNonCorrelateCompApp/test/HelloDukeNonCorrelateTest/in_out"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="FILEPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="FILEPortTypeRole" portType="tns:FILEPortType"/>
+    </plink:partnerLinkType>
+</definitions>

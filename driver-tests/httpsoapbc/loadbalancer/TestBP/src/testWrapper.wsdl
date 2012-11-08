@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="testWrapper" targetNamespace="http://j2ee.netbeans.org/wsdl/TestBP/testWrapper"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestBP/testWrapper" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns0="http://j2ee.netbeans.org/wsdl/TestBP/test" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://xml.netbeans.org/schema/test">
+    <import location="test.wsdl" namespace="http://j2ee.netbeans.org/wsdl/TestBP/test"/>
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/TestBP/testWrapper">
+            <xsd:import schemaLocation="test.xsd" namespace="http://xml.netbeans.org/schema/test"/>
+            <xsd:include schemaLocation="test4.xsd"/>
+            <xsd:redefine schemaLocation="test5.xsd"/>
+         </xsd:schema>
+    </types>
+   
+    <binding name="testPortTypeBinding" type="ns0:testPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="testOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="testWrapperService">
+        <port name="testPortTypeBindingPort" binding="tns:testPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/testWrapperService"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="testWrapper">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="testWrapperPortTypeRole" portType="ns0:testPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

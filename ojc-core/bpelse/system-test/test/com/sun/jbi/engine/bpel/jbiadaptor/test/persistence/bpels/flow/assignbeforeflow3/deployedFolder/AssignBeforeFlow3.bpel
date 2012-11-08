@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AssignBeforeFlow3"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignBeforeFlow3"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AssignBeforeFlow3" xmlns:ns1="http://j2ee.netbeans.org/wsdl/AssignBeforeFlow3">
+   <import namespace="http://j2ee.netbeans.org/wsdl/AssignBeforeFlow3" location="AssignBeforeFlow3.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:AssignBeforeFlow31" partnerRole="AssignBeforeFlow31PortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:AssignBeforeFlow3" myRole="AssignBeforeFlow3PortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="GlobalVariable3" type="xsd:string"/>
+      <bpws:variable name="GlobalVariable2" type="xsd:string"/>
+      <bpws:variable name="GlobalVar" type="xsd:string"/>
+      <bpws:variable name="AssignBeforeFlow3OperationIn1" messageType="ns1:AssignBeforeFlow3OperationRequest"/>
+      <bpws:variable name="AssignBeforeFlow3OperationIn" messageType="ns1:AssignBeforeFlow3OperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AssignBeforeFlow3Operation" portType="ns1:AssignBeforeFlow3PortType" variable="AssignBeforeFlow3OperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="AssignBeforeFlow3OperationIn" part="part1"/>
+            <bpws:to variable="GlobalVar"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from variable="AssignBeforeFlow3OperationIn" part="part1"/>
+            <bpws:to variable="GlobalVariable2"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:flow name="Flow1">
+         <bpws:assign name="Assign2">
+            <bpws:copy>
+               <bpws:from>concat($GlobalVariable2, ' -updating the variable in flow branch- ')</bpws:from>
+               <bpws:to variable="GlobalVariable2"/>
+            </bpws:copy>
+         </bpws:assign>
+         <bpws:sequence name="Sequence1">
+            <bpws:flow name="Flow2">
+               <bpws:assign name="Assign3">
+                  <bpws:copy>
+                     <bpws:from>
+                        <bpws:literal> -Assign in the nested flow- </bpws:literal>
+                     </bpws:from>
+                     <bpws:to variable="GlobalVariable3"/>
+                  </bpws:copy>
+                  <bpws:copy>
+                     <bpws:from>concat($GlobalVar, ' -update in a nested flow branch- ')</bpws:from>
+                     <bpws:to variable="GlobalVar"/>
+                  </bpws:copy>
+               </bpws:assign>
+            </bpws:flow>
+         </bpws:sequence>
+      </bpws:flow>
+      <bpws:assign name="Assign4">
+         <bpws:copy>
+            <bpws:from>concat($AssignBeforeFlow3OperationIn.part1, $GlobalVar, $GlobalVariable2, $GlobalVariable3)</bpws:from>
+            <bpws:to part="part1" variable="AssignBeforeFlow3OperationIn1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="AssignBeforeFlow31Operation" portType="ns1:AssignBeforeFlow31PortType" inputVariable="AssignBeforeFlow3OperationIn1"/>
+   </sequence>
+</process>

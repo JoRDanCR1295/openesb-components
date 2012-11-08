@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilwithForeach" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilwithForeach"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilwithForeach" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepeatUntilwithForeach">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepeatUntilwithForeach" location="RepeatUntilwithForeach.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ForOperation1Out1" messageType="ns1:message1"/>
+        <variable name="ForOperation1In1" messageType="ns1:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ForOperation1" portType="ns1:ForPortType1" variable="ForOperation1In1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>0</from>
+                <to part="count" variable="ForOperation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                        <from>concat($ForOperation1In1.Name, ' Before for ..')</from>
+                        <to part="Name" variable="ForOperation1In1"/>
+                    </copy>
+                </assign>
+                <forEach name="ForEach1" parallel="no" counterName="ForVar">
+                    <startCounterValue>1</startCounterValue>
+                    <finalCounterValue>3</finalCounterValue>
+                    <scope name="Scope1">
+                        <assign name="Assign3">
+                            <copy>
+                                <from>concat($ForOperation1In1.Name, ' In For ..')</from>
+                                <to part="Name" variable="ForOperation1In1"/>
+                            </copy>
+                        </assign>
+                    </scope>
+                </forEach>
+                <assign name="Assign4">
+                    <copy>
+                        <from> ( $ForOperation1In1.count + 1 ) </from>
+                        <to part="count" variable="ForOperation1In1"/>
+                    </copy>
+                    <copy>
+                        <from>concat($ForOperation1In1.Name, ' After for ..')</from>
+                        <to part="Name" variable="ForOperation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $ForOperation1In1.count >= 2 ) </condition>
+        </repeatUntil>
+        <assign name="Assign5">
+            <copy>
+                <from variable="ForOperation1In1" part="Name"/>
+                <to variable="ForOperation1Out1" part="Name"/>
+            </copy>
+            <copy>
+                <from variable="ForOperation1In1" part="count"/>
+                <to variable="ForOperation1Out1" part="count"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="ForOperation1" portType="ns1:ForPortType1" variable="ForOperation1Out1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="org.netbeans.modules.jbi.sample.engine" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project org.netbeans.modules.jbi.sample.engine.</description>
+    <import file="nbproject/build-impl.xml"/>
+    
+        
+    <target name="-init-gen-template" depends="init" >
+        
+        <property name="plugin.zip.build.dir" location="build/pre-dist/plugin-zip" />
+        <property name="dist.dir" location="build" />
+        <property name="engine-plugin.zip" location="${dist.dir}/engine-plugin.zip" />
+        
+        <filterset id="package_filterset" 
+                   begintoken="org.netbeans.modules.jbi." 
+                   endtoken=".engine" 
+                   recurse="false" >
+            <filter token="sample" value="__BASE_PACKAGE__"/>
+        </filterset>
+                        
+        <filterset id="package_path_filterset" 
+                   begintoken="org/netbeans/modules/jbi/" 
+                   endtoken="/engine" 
+                   recurse="false" >
+            <filter token="sample" value="__BASE_PACKAGE_PATH__"/>
+        </filterset>
+
+        <filterset id="prj_type_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample." 
+                   endtoken=".project.type" 
+                   recurse="false" >
+            <filter token="engine" value="__PROJECT_TYPE__"/>
+        </filterset>
+        
+        <filterset id="prj_type_ns_filterset" 
+                   begintoken="http://www.netbeans.org/ns/" 
+                   endtoken="/ProviderSE/1" 
+                   recurse="false" >
+            <filter token="jbimodules" value="__PROJECT_TYPE_NS__"/>
+        </filterset>
+
+        <filterset id="prj_private_ns_filterset" 
+                   begintoken="http://www.netbeans.org/ns/" 
+                   endtoken="/ProviderSE/private/1" 
+                   recurse="false" >
+            <filter token="jbimodules" value="__PROJECT_PRIVATE_NS__"/>
+        </filterset>
+
+        <filterset id="cust_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".customizer" 
+                   recurse="false" >
+            <filter token="project" value="__CUSTOMIZER_PACKAGE__"/>
+        </filterset>
+
+        <filterset id="node_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".node" 
+                   recurse="false" >
+            <filter token="project" value="__NODE_PACKAGE__"/>
+        </filterset>
+
+        <filterset id="wizard_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".wizard" 
+                   recurse="false" >
+            <filter token="project" value="__WIZARD_PACKAGE__"/>
+        </filterset>   
+        
+        <filterset id="jbi_su_target_filterset" 
+                   begintoken="&quot;" 
+                   endtoken="&quot;" 
+                   recurse="false" >
+            <filter token="ProviderSE" value="&quot;__JBI_COMP_NAME__&quot;"/>
+        </filterset>        
+        
+        <filterset id="prj_props_class_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".SEPluginProjectProperties" 
+                   recurse="false" >
+            <filter token="project" value="__BASE_PACKAGE__.project.SEPluginProjectProperties"/>
+        </filterset>   
+
+        <filterset id="prj_generator_class_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".SEPluginProjectGenerator" 
+                   recurse="false" >
+            <filter token="project" value="__BASE_PACKAGE__.project.SEPluginProjectGenerator"/>
+        </filterset>   
+        
+        <filterset id="prj_generator_class_package_filterset" 
+                   begintoken="org.netbeans.modules.jbi.sample.engine." 
+                   endtoken=".SEPluginProjectGenerator" 
+                   recurse="false" >
+            <filter token="project" value="__BASE_PACKAGE__.project.SEPluginProjectGenerator"/>
+        </filterset>   
+        
+        <filterset id="su_sample_wsdl_filterset" 
+                   begintoken="{&quot;Sample" 
+                   endtoken=".wsdl&quot;};" 
+                   recurse="false" >
+            <filter token="WSDL" value="__SU_ARTIFACTS_LIST__"/>
+        </filterset>
+
+        <!-- for Greetings.wsdl -->
+        <filterset id="soap_location_filterset" 
+                   begintoken="http://localhost:12010/" 
+                   endtoken="/greetings" 
+                   recurse="false" >
+            <filter token="ProviderSE" value="http://localhost:12010//__JBI_COMP_NAME__/greetings"/>
+        </filterset>
+        <!-- for su jbi.xml -->
+        <filterset id="se_provider_port_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="JBIPort" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___JBIPort"/>
+        </filterset>
+                        
+    </target>
+    
+    <target name="gen-template" depends="init, -init-gen-template" >
+               
+        <mkdir dir="${plugin.zip.build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <!-- copy manifest -->
+        <copy file="manifest.mf" todir="${plugin.zip.build.dir}" >
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        <!-- copy nbproject -->
+        <copy todir="${plugin.zip.build.dir}/nbproject" >
+            <fileset dir="nbproject"  >
+                <exclude name="private" />
+                <exclude name="private/**/*" />
+                <exclude name="build-impl.xml" />
+                <exclude name="genfiles.properties" />                
+            </fileset>
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        
+        <!-- copy src -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+            </fileset>
+        </copy>
+        
+        <!-- copy metainf -->
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="META-INF/**/*" />
+            </fileset>
+            <filterset refid="package_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/test" >
+            <fileset dir="test"  >
+            </fileset>
+            <filterset refid="package_filterset"/>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/SEPluginProjectType.java" />
+            </fileset>
+            <filterset refid="prj_type_filterset"/>
+            <filterset refid="prj_type_ns_filterset"/>
+            <filterset refid="prj_private_ns_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/SEPluginProjectProperties.java" />
+            </fileset>
+            <filterset refid="package_path_filterset"/>
+            <filterset refid="jbi_su_target_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/SEPluginProject.java" />
+            </fileset>
+            <filterset refid="cust_package_filterset"/>
+        </copy>
+        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/SEPluginProjectLogicalViewProvider.java" />
+            </fileset>
+            <filterset refid="node_package_filterset"/>
+        </copy>
+        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/customizer/SEPluginProjectCustomizerModel.java" />
+            </fileset>
+            <filterset refid="prj_props_class_package_filterset"/>
+        </copy>        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/customizer/CustomizerGeneral.form" />
+            </fileset>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/customizer/CustomizerPackage.form" />
+            </fileset>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/node/SEPluginProjectNode.java" />
+            </fileset>
+            <filterset refid="prj_props_class_package_filterset"/>
+        </copy>
+        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/wizard/SEPluginProjectWizardIterator.java" />
+            </fileset>
+            <filterset refid="prj_generator_class_package_filterset"/>
+            <filterset refid="prj_props_class_package_filterset"/>
+            <filterset refid="su_sample_wsdl_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/wizard/SEPluginProjectWizardPanelVisual.form" />
+            </fileset>
+            <filterset refid="package_path_filterset"/>
+        </copy>
+        
+        
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/engine/project/resources/*.xsl" />
+            </fileset>
+            <filterset refid="prj_type_ns_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/providerse/project/wizard/resources/Greetings.wsdl" />
+            </fileset>
+            <filterset refid="soap_location_filterset"/>
+        </copy>
+
+        <copy overwrite="true" todir="${plugin.zip.build.dir}/src" >
+            <fileset dir="src"  >
+                <include name="org/netbeans/modules/jbi/sample/providerse/project/wizard/resources/jbi.xml" />
+            </fileset>
+            <filterset refid="se_provider_port_filterset"/>
+        </copy>
+        
+        <zip destfile="${engine-plugin.zip}" basedir="${plugin.zip.build.dir}" />                    
+        <!--
+        <unzip src=${engine-plugin.zip}  dest="../../../temp/my-engine-plugin" />
+        -->
+        
+    </target>
+    
+    <target name="copy-gen-template" depends="init, -init-gen-template, gen-template" >
+        <copy overwrite="true" file="${engine-plugin.zip}" todir="../jbicomponentsupport/src/org/netbeans/modules/jbi/apisupport/resources/templates/engine/plugin" />
+    </target>    
+    
+</project>

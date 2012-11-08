@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<process
+    name="xpathAsPredicate"
+    targetNamespace="http://enterprise.netbeans.org/bpel/predicates/xpathAsPredicate"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/predicates/xpathAsPredicate" xmlns:ns0="http://xml.netbeans.org/schema/xpathAsPredicate">
+    <import namespace="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" location="xpathAsPredicate.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" partnerLinkType="tns:xpathAsPredicate" myRole="xpathAsPredicatePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="XpathAsPredicateOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" messageType="tns:xpathAsPredicateOperationResponse"/>
+        <variable name="XpathAsPredicateOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" messageType="tns:xpathAsPredicateOperationRequest">
+            <sxed:editor>
+                <sxed:predicates>
+                    <sxed:predicate path="$XpathAsPredicateOperationIn.part1/ns0:Item[$XpathAsPredicateOperationIn.part1/ns0:importantItem]" source="from"/>
+                </sxed:predicates>
+            </sxed:editor>
+        </variable>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="xpathAsPredicateOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" portType="tns:xpathAsPredicatePortType" variable="XpathAsPredicateOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$XpathAsPredicateOperationIn.part1/ns0:importantItem - 1</from>
+                <to>$XpathAsPredicateOperationOut.part1/ns0:importantItem</to>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>$XpathAsPredicateOperationIn.part1/ns0:Item[$XpathAsPredicateOperationIn.part1/ns0:importantItem + 1]</from>
+                <to>$XpathAsPredicateOperationOut.part1/ns0:Item[$XpathAsPredicateOperationIn.part1/ns0:importantItem + 0]</to>
+            </copy>            
+        </assign>
+        <assign name="Assign3">
+            <copy>
+                <from>$XpathAsPredicateOperationIn.part1/ns0:Item[$XpathAsPredicateOperationOut.part1/ns0:importantItem + 0]</from>
+                <!-- 
+                <to>$XpathAsPredicateOperationOut.part1/ns0:Item[$XpathAsPredicateOperationIn.part1/ns0:importantItem]</to>
+                 BUG Above To and the below one should be one and the same. Above To doesn't really add the empty 
+                elements before the indexed one. Below syntax does that. 
+                -->
+                <to>$XpathAsPredicateOperationOut.part1/ns0:Item[$XpathAsPredicateOperationOut.part1/ns0:importantItem + 0]</to>
+            </copy>                        
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="xpathAsPredicateOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/xpathAsPredicate" portType="tns:xpathAsPredicatePortType" variable="XpathAsPredicateOperationOut"/>
+    </sequence>
+</process>

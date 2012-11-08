@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SimpleTransformationService" targetNamespace="http://j2ee.netbeans.org/wsdl/SimpleTransformationService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" xmlns:ns1="http://xml.netbeans.org/schema/SimpleTransformation" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" xmlns:ns1="http://xml.netbeans.org/schema/SimpleTransformation">
+            <xsd:import namespace="http://xml.netbeans.org/schema/SimpleTransformation" schemaLocation="SimpleTransformation.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="SimpleInputMessage">
+        <part name="part1" element="ns1:sports"/>
+    </message>
+    <message name="SimpleOutputMessage">
+        <part name="part1" element="ns1:outputString"/>
+    </message>
+    <portType name="SimpleTransformationRequestPortType">
+        <operation name="SimpleTransformationOperation">
+            <input name="input1" message="tns:SimpleInputMessage"/>
+            <output name="output1" message="tns:SimpleOutputMessage"/>
+        </operation>
+    </portType>
+    <binding name="SimpleTransformationRequestBinding" type="tns:SimpleTransformationRequestPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="SimpleTransformationOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="SimpleTransformationServiceService">
+        <port name="SimpleTransformationRequestPort" binding="tns:SimpleTransformationRequestBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SimpleTransformationServiceService/SimpleTransformationRequestPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="SimpleTransformationLT">
+        <plnk:role name="SimpleTransformationRequestRole" portType="tns:SimpleTransformationRequestPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

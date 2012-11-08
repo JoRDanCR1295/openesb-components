@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SimpleRPCLiteral" targetNamespace="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral" xmlns:tns="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral">
+            <xsd:element name="theFault">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="appMsg" type="xsd:string"></xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="SimpleRPCLiteralOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="SimpleRPCLiteralOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="SimpleRPCLiteralOperationFault">
+        <part name="part1" element="tns:theFault"/>
+    </message>
+    <portType name="SimpleRPCLiteralPortType">
+        <operation name="SimpleRPCLiteralOperation">
+            <input name="input1" message="tns:SimpleRPCLiteralOperationRequest"/>
+            <output name="output1" message="tns:SimpleRPCLiteralOperationResponse"/>
+            <fault name="fault1" message="tns:SimpleRPCLiteralOperationFault"/>
+        </operation>
+    </portType>
+    <binding name="SimpleRPCLiteralBinding" type="tns:SimpleRPCLiteralPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="SimpleRPCLiteralOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/caFaultTest/SimpleRPCLiteral"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault use="literal" name="fault1"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="SimpleRPCLiteralService">
+        <port name="SimpleRPCLiteralPort" binding="tns:SimpleRPCLiteralBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SimpleRPCLiteralService/SimpleRPCLiteralPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="SimpleRPCLiteral">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SimpleRPCLiteralPortTypeRole" portType="tns:SimpleRPCLiteralPortType"/>
+    </plnk:partnerLinkType>
+</definitions>
+
+
+

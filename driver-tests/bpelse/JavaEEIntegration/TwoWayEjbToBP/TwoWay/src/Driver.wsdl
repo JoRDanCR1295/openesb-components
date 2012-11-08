@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Driver" targetNamespace="http://j2ee.netbeans.org/wsdl/Driver"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Driver" xmlns:ns0="http://xml.netbeans.org/schema/DriverSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/DriverSchema" xmlns:tns1="http://xml.netbeans.org/schema/DriverSchema">
+            <xsd:element name="elem" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="driverMsg">
+        <wsdl:part name="driverMsgPart" element="ns0:elem"/>
+    </message>
+    <portType name="inputPT">
+        <wsdl:operation name="inputOper">
+            <wsdl:input name="input1" message="tns:driverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="outputPT">
+        <wsdl:operation name="outputOper">
+            <wsdl:input name="input1" message="tns:driverMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="InputBinding" type="tns:inputPT">
+        <jms:binding/>
+        <wsdl:operation name="inputOper">
+            <jms:operation destination="jmsin" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="driverMsgPart" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="OuputBinding" type="tns:outputPT">
+        <jms:binding/>
+        <wsdl:operation name="outputOper">
+            <jms:operation destination="jmsout" destinationType="Queue"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="driverMsgPart" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="InputSrv">
+        <wsdl:port name="InputSrvPort" binding="tns:InputBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <service name="OutputSrv">
+        <wsdl:port name="OutputSrvPort" binding="tns:OuputBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="InputPLT">
+        <plnk:role name="inputPTRole" portType="tns:inputPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="OutputPLT">
+        <plnk:role name="outputPTRole" portType="tns:outputPT"/>
+    </plnk:partnerLinkType>
+</definitions>

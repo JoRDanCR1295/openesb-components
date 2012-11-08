@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="testReplyTo" targetNamespace="http://j2ee.netbeans.org/wsdl/FromToPropertySpec/testReplyTo"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/FromToPropertySpec/testReplyTo" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl">
+    <types/>
+    <message name="testReplyToOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="testReplyToOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="testReplyToPortType">
+        <operation name="testReplyToOperation">
+            <input name="input1" message="tns:testReplyToOperationRequest"/>
+            <output name="output1" message="tns:testReplyToOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="testReplyToBinding" type="tns:testReplyToPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        
+        <wsaw:UsingAddressing wsdl:required="true" />
+        <operation name="testReplyToOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/FromToPropertySpec/testReplyTo"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/FromToPropertySpec/testReplyTo"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="testReplyToService">
+        <port name="testReplyToPort" binding="tns:testReplyToBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/testReplyToService/testReplyToPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="testReplyTo">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="testReplyToPortTypeRole" portType="tns:testReplyToPortType"/>
+    </plnk:partnerLinkType>
+    <!--
+    <vprop:property name="wsa_replyTo_Addr" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:wsa_replyTo_Addr" nmProperty="org.glassfish.openesb.headers.soap">
+        <vprop:query xmlns:ns0="http://www.w3.org/2005/08/addressing">/ns0:ReplyTo/ns0:Address</vprop:query>
+    </vprop:propertyAlias> 
+    -->
+</definitions>

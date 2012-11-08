@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="PickNonStartActivity" 
+    targetNamespace="http://www.mycomp.org/PickNonStartActivity"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/PickNonStartActivity">
+    <import location="PickNonStartActivity.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://www.mycomp.org/PickNonStartActivity"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:partnerlinktype1" myRole="partnerlinktyperole1"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:partnerlinktype2" myRole="partnerlinktyperole2"/>
+        <partnerLink name="invokePLink"  partnerLinkType="wsdlNS:invokePlinktype"  myRole="invokePlinkrole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input2" messageType="wsdlNS:requestMsg"/>
+        <variable name="output" messageType="wsdlNS:responseMsg"/>
+        <variable name="input" messageType="wsdlNS:requestMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="request" properties="wsdlNS:msgProp"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="operation1" portType="wsdlNS:portType1" variable="input" createInstance="yes">
+            <correlations>
+                <correlation set="request" initiate="yes"/>
+            </correlations>
+        </receive>
+        <pick name="Pick1">
+            <onMessage partnerLink="PartnerLink2" operation="PickOperation2" portType="wsdlNS:portType2" variable="input2">
+                    <correlations>
+                        <correlation set="request"
+                                     initiate="no"/>
+                    </correlations>
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                        <from>concat('OnMessage:', $input.req, $input2.req)</from><to part="res" variable="output"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+            <onAlarm>
+                <for>'P0Y0M0DT0H0M6S'</for>
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat('OnAlarm:', $input.req)</from><to part="res" variable="output"/>
+                    </copy>
+                </assign>
+            </onAlarm>
+        </pick>
+        <!--
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="wsdlNS:portType1" variable="output"/>
+        -->
+        <invoke name="Invoke1" partnerLink="invokePLink" 
+					   operation="oneWayInvokeOper" 
+					   portType="wsdlNS:invokePortType" 
+					   inputVariable="output"/>
+        
+    </sequence>
+   
+</process>

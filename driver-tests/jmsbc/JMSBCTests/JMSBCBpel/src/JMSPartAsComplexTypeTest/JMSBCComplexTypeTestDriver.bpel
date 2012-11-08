@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="JMSBCComplexTypeTestDriver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSBCComplexTypeTestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSBCComplexTypeTestDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSBCComplexTypeTest" location="JMSBCComplexTypeTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="SendPartnerLink" partnerLinkType="ns1:JMSBCComplexTypeTest1" partnerRole="JMSBCComplexTypeTestPortTypeRole"/>
+        <bpws:partnerLink name="SoapDriverPartnerLink" partnerLinkType="ns1:JMSBCComplexTypeTestDriverPLT" myRole="JMSBCComplexTypeTestDriverRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JMSBCComplexTypeTestDriverOperationOut" messageType="ns1:JMSBCComplexTypeTestOperationReply"/>
+        <bpws:variable name="JMSBCComplexTypeTestOperationOut" messageType="ns1:JMSBCComplexTypeTestOperationReply"/>
+        <bpws:variable name="JMSBCComplexTypeTestOperationIn" messageType="ns1:JMSBCComplexTypeTestOperationRequest"/>
+        <bpws:variable name="JMSBCComplexTypeTestDriverOperationIn" messageType="ns1:JMSBCComplexTypeTestOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapDriverPartnerLink" operation="JMSBCComplexTypeTestDriverOperation" portType="ns1:JMSBCComplexTypeTestDriverPortType" variable="JMSBCComplexTypeTestDriverOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JMSBCComplexTypeTestDriverOperationIn.MsgRequestPart/StringElem</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestOperationIn.MsgRequestPart/StringElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCComplexTypeTestDriverOperationIn.MsgRequestPart/IntElem</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestOperationIn.MsgRequestPart/IntElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SendPartnerLink" operation="JMSBCComplexTypeTestOperation" portType="ns1:JMSBCComplexTypeTestPortType" inputVariable="JMSBCComplexTypeTestOperationIn" outputVariable="JMSBCComplexTypeTestOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$JMSBCComplexTypeTestOperationOut.MsgReplyPart/StringElement</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestDriverOperationOut.MsgReplyPart/StringElement</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JMSBCComplexTypeTestOperationOut.MsgReplyPart/FloatElement</bpws:from>
+                <bpws:to>$JMSBCComplexTypeTestDriverOperationOut.MsgReplyPart/FloatElement</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapDriverPartnerLink" operation="JMSBCComplexTypeTestDriverOperation" portType="ns1:JMSBCComplexTypeTestDriverPortType" variable="JMSBCComplexTypeTestDriverOperationOut"/>
+    </sequence>
+</process>

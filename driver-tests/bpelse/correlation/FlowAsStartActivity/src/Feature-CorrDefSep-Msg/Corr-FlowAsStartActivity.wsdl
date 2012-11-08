@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Corr-FlowAsStartActivity" targetNamespace="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity" xmlns:ns="http://xml.netbeans.org/schema/Corr-Flow-inlineSchema" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity">
+            <xsd:import schemaLocation="newXmlSchema.xsd" namespace="http://xml.netbeans.org/schema/Corr-Flow-inlineSchema"/>
+        </xsd:schema>
+    </types>
+    <message name="FlowTestMsg1">
+        <part name="Msg1Part" type="ns:type1"/>
+    </message>
+    <message name="FlowTestMsg2">
+        <part name="Msg2Part" element="ns:elem"/>
+    </message>
+    <portType name="FlowTestPT1">
+        <operation name="FlowTestOper1">
+            <input name="input1" message="tns:FlowTestMsg1"/>
+            <output name="output1" message="tns:FlowTestMsg1"/>
+        </operation>
+    </portType>
+    <portType name="FlowTestPT2">
+        <operation name="FlowTestOper2">
+            <input name="input1" message="tns:FlowTestMsg2"/>
+        </operation>
+    </portType>
+    <binding name="binding1" type="tns:FlowTestPT1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="FlowTestOper1">
+            <soap:operation soapAction="FlowTestOper1" style="document"/>
+            <input name="input1">
+                <soap:body parts="Msg1Part" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="Msg1Part" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="binding2" type="tns:FlowTestPT2">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="FlowTestOper2">
+            <soap:operation soapAction="FlowTestOper2" style="document"/>
+            <input name="input1">
+                <soap:body parts="Msg2Part" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="service1">
+        <port name="port1" binding="tns:binding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Corr-FlowAsStartActivity/port1"/>
+        </port>
+        <port name="port2" binding="tns:binding2">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Corr-FlowAsStartActivity/port2"/>
+        </port>
+    </service>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:FlowTestMsg1" part="Msg1Part">
+        <vprop:query>corrVal1</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:FlowTestMsg2" part="Msg2Part">
+        <vprop:query>corrVal2</vprop:query>
+    </vprop:propertyAlias>
+    <plink:partnerLinkType name="FlowTestServiceLinkType1">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="FlowTestPT1ServerRole" portType="tns:FlowTestPT1"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="FlowTestServiceLinkType2">
+        <plink:role name="FlowTestPT2ServerRole" portType="tns:FlowTestPT2"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property2" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:FlowTestMsg1" part="Msg1Part">
+        <vprop:query>content1/id</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:FlowTestMsg2" part="Msg2Part">
+        <vprop:query>content2/id</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

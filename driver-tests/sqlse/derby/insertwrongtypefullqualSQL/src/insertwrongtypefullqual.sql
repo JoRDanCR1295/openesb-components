@@ -1,0 +1,1 @@
+insert into "COMPANY"."emp" values(?,?,?,?)

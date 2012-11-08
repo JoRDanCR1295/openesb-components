@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="GET_STOCK_QUOTE"
+    targetNamespace="http://enterprise.netbeans.org/bpel/GET_STOCK_QUOTE"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/GET_STOCK_QUOTE" xmlns:ns1="http://j2ee.netbeans.org/wsdl/STOCK_OVER_FTP" xmlns:ns2="http://j2ee.netbeans.org/wsdl/FILE_REQ_FEEDER">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/STOCK_OVER_FTP" location="STOCK_OVER_FTP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/FILE_REQ_FEEDER" location="FILE_REQ_FEEDER.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:FILE_REQ_FEEDERPartner" myRole="FILE_REQ_FEEDERPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:STOCK_OVER_FTPPartner" partnerRole="STOCK_OVER_FTPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="FILE_REQ_FEEDEROperationOut" messageType="ns2:FILE_REQ_FEEDEROperationReply"/>
+        <bpws:variable name="STOCK_OVER_FTPOperationOut" messageType="ns1:STOCK_OVER_FTPOperationReply"/>
+        <bpws:variable name="STOCK_OVER_FTPOperationIn" messageType="ns1:STOCK_OVER_FTPOperationRequest"/>
+        <bpws:variable name="FILE_REQ_FEEDEROperationIn" messageType="ns2:FILE_REQ_FEEDEROperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink2" operation="FILE_REQ_FEEDEROperation" portType="ns2:FILE_REQ_FEEDERPortType" variable="FILE_REQ_FEEDEROperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="FILE_REQ_FEEDEROperationIn" part="part1"/>
+                <bpws:to variable="STOCK_OVER_FTPOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink1" operation="STOCK_OVER_FTPOperation" portType="ns1:STOCK_OVER_FTPPortType" inputVariable="STOCK_OVER_FTPOperationIn" outputVariable="STOCK_OVER_FTPOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="STOCK_OVER_FTPOperationOut" part="part1"/>
+                <bpws:to variable="FILE_REQ_FEEDEROperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink2" operation="FILE_REQ_FEEDEROperation" portType="ns2:FILE_REQ_FEEDERPortType" variable="FILE_REQ_FEEDEROperationOut"/>
+    </sequence>
+</process>

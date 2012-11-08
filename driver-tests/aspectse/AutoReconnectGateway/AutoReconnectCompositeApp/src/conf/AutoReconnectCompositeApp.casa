@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/retry" xmlns:ns2="http://j2ee.netbeans.org/wsdl/helloPartner" xmlns:ns3="http://enterprise.netbeans.org/bpel/retryBpel" xmlns:ns4="http://j2ee.netbeans.org/wsdl/retryBpel" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="retryPortTypeRole" interface-name="ns1:retryPortType" name="endpoint1" service-name="ns1:retry1"/>
+        <endpoint endpoint-name="helloPartnerPortTypeRole" interface-name="ns2:helloPartnerPortType" name="endpoint2" service-name="ns2:helloPartnerPartner"/>
+        <endpoint endpoint-name="retryBpelPortTypeRole_myRole" interface-name="ns4:retryBpelPortType" name="endpoint3" service-name="ns3:BpelPartnerLink"/>
+        <endpoint endpoint-name="retryPortTypeRole_partnerRole" interface-name="ns1:retryPortType" name="endpoint4" service-name="ns3:AspectPartnerLink"/>
+        <endpoint endpoint-name="helloPartnerPort" interface-name="ns2:helloPartnerPortType" name="endpoint5" service-name="ns2:helloPartnerService"/>
+        <endpoint endpoint-name="retryBpelPort" interface-name="ns4:retryBpelPortType" name="endpoint6" service-name="ns4:retryBpelService"/>
+        <endpoint endpoint-name="retryPort" interface-name="ns1:retryPortType" name="endpoint7" service-name="ns1:retryService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="AutoReconnectAspectApp.jar" component-name="sun-aspect-engine" defined="true" description="Represents this Service Unit" internal="true" name="AutoReconnectCompositeApp-AutoReconnectAspectApp" unit-name="AutoReconnectAspectApp" unknown="false" x="101" y="99">
+            <provides endpoint="endpoint1"/>
+            <consumes endpoint="endpoint2"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="AutoReconnectBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="AutoReconnectCompositeApp-AutoReconnectBpel" unit-name="AutoReconnectBpel" unknown="false" x="127" y="230">
+            <provides endpoint="endpoint3"/>
+            <consumes endpoint="endpoint4"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="AutoReconnectCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="118" y="302">
+                    <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService']/port[@name='helloPartnerPort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+                <port x="118" y="59">
+                    <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/retry.wsdl#xpointer(/definitions/service[@name='retryService']/port[@name='retryPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint7"/>
+                </port>
+                <port x="118" y="383">
+                    <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService']/port[@name='helloPartnerPort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+                <port x="118" y="140">
+                    <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retry.wsdl#xpointer(/definitions/service[@name='retryService']/port[@name='retryPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint7"/>
+                </port>
+                <port x="118" y="221">
+                    <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retryBpel.wsdl#xpointer(/definitions/service[@name='retryBpelService']/port[@name='retryBpelPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint6" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint5" state="unchanged"/>
+        <connection consumer="endpoint7" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/helloPartner.wsdl#xpointer(/definitions/portType[@name='helloPartnerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/helloPartner.wsdl#xpointer(/definitions/binding[@name='helloPartnerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/retry.wsdl#xpointer(/definitions/portType[@name='retryPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/retry.wsdl#xpointer(/definitions/binding[@name='retryBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectAspectApp/retry.wsdl#xpointer(/definitions/service[@name='retryService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/helloPartner.wsdl#xpointer(/definitions/portType[@name='helloPartnerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/helloPartner.wsdl#xpointer(/definitions/binding[@name='helloPartnerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/helloPartner.wsdl#xpointer(/definitions/service[@name='helloPartnerService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retry.wsdl#xpointer(/definitions/portType[@name='retryPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retry.wsdl#xpointer(/definitions/binding[@name='retryBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retry.wsdl#xpointer(/definitions/service[@name='retryService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retryBpel.wsdl#xpointer(/definitions/portType[@name='retryBpelPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retryBpel.wsdl#xpointer(/definitions/binding[@name='retryBpelBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/AutoReconnectBpel/retryBpel.wsdl#xpointer(/definitions/service[@name='retryBpelService'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings/>
+    <services/>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

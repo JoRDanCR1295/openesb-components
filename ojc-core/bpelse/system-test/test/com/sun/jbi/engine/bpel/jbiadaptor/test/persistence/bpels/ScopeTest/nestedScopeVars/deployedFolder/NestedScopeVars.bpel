@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="NestedScopeVars" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/NestedScopeVars"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/NestedScopeVars">
+    <import namespace="http://enterprise.netbeans.org/wsdl/NestedScopeVars" 
+            location="NestedScopeVars.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ScopeInvokePLT" 
+                     partnerRole="ScopeInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ScopePartnerLinkType" 
+                     myRole="ScopePLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="inputMsg" messageType="wsdlNS:ScopeMessage"/>
+    </variables>
+    <sequence>
+      	<receive name="Receive1" partnerLink="PartnerLink1" 
+      	         operation="ScopeOperation" portType="wsdlNS:ScopePortType" 
+         	     variable="inputMsg" createInstance="yes"/>
+		<scope name="Scope1">
+			<variables>
+				<variable name="scopeMsg1" messageType="wsdlNS:ScopeMessage"/>
+				<variable name="scopeInt1" type="xsd:int" />
+				<variable name="scopeStr1" type="xsd:string" />
+			</variables>
+			<sequence>
+				<assign name="Assign1">
+					<copy>
+						<from>'DuckDuckGoose'</from>
+						<to part="data" variable="scopeMsg1"/>
+					</copy>
+					<copy>
+						<from>2</from><to variable="scopeInt1"/>
+					</copy>
+					<copy>
+						<from part="data" variable="inputMsg"/>
+						<to variable="scopeStr1"/>
+					</copy>
+				</assign>
+				<invoke name="Invoke1" partnerLink="InvokePLT"
+						operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+						inputVariable="scopeMsg1"/>
+				<scope name="Scope2">
+                    <variables>
+						<variable name="scopeMsg2" messageType="wsdlNS:ScopeMessage"/>
+						<variable name="scopeInt2" type="xsd:int" />
+						<variable name="scopeStr2" type="xsd:string" />
+                    </variables>
+					<sequence>
+						<assign name="Assign2">
+							<copy>
+								<from part="data" variable="scopeMsg1"/>
+								<to part="data" variable="scopeMsg2"/>
+							</copy>
+							<copy>
+								<from> ($scopeInt1 + 2) </from><to variable="scopeInt2"/>
+							</copy>
+						</assign>
+						<invoke name="Invoke2" partnerLink="InvokePLT"
+								operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+								inputVariable="scopeMsg2"/>
+						<if name="If1">
+							<condition> ( $scopeInt2 &gt; 3 ) </condition>
+							<assign name="Assign3">
+								<copy>
+									<from>concat($scopeStr1,'Duck')</from><to variable="scopeStr2"/>
+								</copy>
+							</assign>
+						</if>
+						<scope name="Scope3">
+                            <variables>
+								<variable name="scopeMsg3" messageType="wsdlNS:ScopeMessage"/>
+								<variable name="scopeInt3" type="xsd:int" />
+								<variable name="scopeStr3" type="xsd:string" />
+                            </variables>
+							<sequence>
+								<assign name="Assign4">
+									<copy>
+										<from> ( $scopeInt2 + 2 ) </from><to variable="scopeInt3"/>
+									</copy>
+								</assign>
+								<bpws:if name="If2">
+									<bpws:condition> ( $scopeInt3 &gt; 5 ) </bpws:condition>
+									<bpws:assign name="Assign5a">
+										<copy>
+											<from>concat($scopeStr2,'Goose')</from>
+											<to variable="scopeStr3"/>
+										</copy>
+									</bpws:assign>
+									<bpws:else>
+										<bpws:throw name="Throw1" faultName="bpws:myFault"/>
+									</bpws:else>
+								</bpws:if>
+								<invoke name="Invoke3" partnerLink="InvokePLT"
+										operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+										inputVariable="scopeMsg2"/>
+								<assign name="Assign5">
+									<copy>
+										<from variable="scopeStr3"/>
+										<to part="data" variable="scopeMsg3"/>
+									</copy>
+								</assign>
+								<invoke name="Invoke4" partnerLink="InvokePLT"
+										operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+										inputVariable="scopeMsg3"/>
+							</sequence>
+						</scope>
+					</sequence>
+				</scope>
+			</sequence>
+	  	</scope>
+   </sequence>
+</process>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Availability"
+         targetNamespace="http://www.seebeyond.com/eInsight/Availability"
+         sbynpxp:end_YLoc="184.0"
+         sbynpxp:start_YLoc="146.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="34.0"
+         sbynpxp:end_XLoc="629.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Availability"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="stc:ParkingLotAdvisor/wsdl"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="stc:ParkingLotAdvisor/wsdl"
+            location="ParkingLotAdvisor.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="AvailableLink"
+                     partnerLinkType="ns0:ParkingPartner"
+                     myRole="ParkingAvailabilityrole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="isParkingAvailable_Output"
+                  messageType="ns0:ParkingLotAdvisorSEI_isParkingAvailable"></variable>
+        <variable name="isParkingAvailable_Input"
+                  messageType="ns0:ParkingLotAdvisorSEI_isParkingAvailableResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="isParkingAvailable"
+                 partnerLink="AvailableLink"
+                 portType="ns0:ParkingLotAdvisorSEI"
+                 operation="isParkingAvailable"
+                 variable="isParkingAvailable_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="67.0"
+                 sbynpxp:YLoc="153.0"></receive>
+        <if name="Decision"
+                sbynpxp:XLoc="170.0"
+                sbynpxp:YLoc="152.0"
+                sbynpxp:YLoc_MergeNode="128.0"
+                sbynpxp:XLoc_MergeNode="414.0">
+             <condition>$isParkingAvailable_Output.parameters/Availability = &apos;Is parking available?&apos;</condition>
+                <sequence>
+                    <assign name="Assign"
+                            sbynpxp:XLoc="295.0"
+                            sbynpxp:YLoc="72.0">
+                        <copy>
+                            <from>&apos;Yes Available&apos;</from>
+                            <to>$isParkingAvailable_Input.result/result</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            <else sbynpx:lineLabel="Case 2">
+                <sequence>
+                    <empty name="Empty"
+                           sbynpxp:XLoc="302.0"
+                           sbynpxp:YLoc="198.0"></empty>
+                </sequence>
+            </else>
+        </if>
+        <reply name="isParkingAvailable.Reply"
+               partnerLink="AvailableLink"
+               portType="ns0:ParkingLotAdvisorSEI"
+               operation="isParkingAvailable"
+               variable="isParkingAvailable_Input"
+               sbynpxp:XLoc="509.0"
+               sbynpxp:YLoc="142.0"></reply>
+    </sequence>
+</process>

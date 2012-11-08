@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="newProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BPELMissionControl/newProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/BPELMissionControl/newProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ExternalWSDL" xmlns:ns2="http://enterprise.netbeans.org/bpel/NewWebServiceServiceWrapper" xmlns:ns3="http://webservice/" xmlns:ns0="http://xml.netbeans.org/schema/newXMLSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/ExternalWSDL" location="ExternalWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://enterprise.netbeans.org/bpel/NewWebServiceServiceWrapper" location="NewWebServiceServiceWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://webservice/" location="NewWebServiceService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="JavaServiceLink" partnerLinkType="ns2:NewWebServiceLinkType" partnerRole="NewWebServiceRole"/>
+      <partnerLink name="ExternalPartnerLink" partnerLinkType="ns1:ExternalWSDL1" myRole="ExternalWSDLPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="EchoOperationOut" messageType="ns3:echoOperationResponse"/>
+      <variable name="EchoOperationIn" messageType="ns3:echoOperation"/>
+      <variable name="TempString" type="xsd:string"/>
+      <variable name="ExternalWSDLOperationOut" messageType="ns1:ExternalWSDLOperationReply"/>
+      <variable name="ExternalWSDLOperationIn" messageType="ns1:ExternalWSDLOperationRequest"/>
+   </variables>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="ExternalPartnerLink" operation="ExternalWSDLOperation" portType="ns1:ExternalWSDLPortType" variable="ExternalWSDLOperationIn"/>
+      <assign name="Assign1">
+         <copy>
+            <from>
+               <literal>firststring</literal>
+            </from>
+            <to>$EchoOperationIn.parameters/firstparm/myString</to>
+         </copy>
+         <copy>
+            <from>
+               <literal>firstarray</literal>
+            </from>
+            <to>$EchoOperationIn.parameters/firstparm/myStringArray[1]</to>
+         </copy>
+         <copy>
+            <from>
+               <literal>secondstring</literal>
+            </from>
+            <to>$EchoOperationIn.parameters/secondparm/myString</to>
+         </copy>
+         <copy>
+            <from>
+               <literal>secondarray</literal>
+            </from>
+            <to>$EchoOperationIn.parameters/secondparm/myStringArray[1]</to>
+         </copy>
+      </assign>
+      <invoke name="Invoke1" partnerLink="JavaServiceLink" operation="echoOperation" portType="ns3:NewWebService" inputVariable="EchoOperationIn" outputVariable="EchoOperationOut"/>
+      <forEach name="ForEach1" parallel="no" counterName="counter">
+         <startCounterValue>1</startCounterValue>
+         <finalCounterValue>count($EchoOperationOut.parameters/return)</finalCounterValue>
+         <scope name="Scope1">
+            <assign name="Assign3">
+               <copy>
+                  <from>concat($TempString, ' ', $EchoOperationOut.parameters/return[$counter])</from>
+                  <to variable="TempString"/>
+               </copy>
+            </assign>
+         </scope>
+      </forEach>
+      <assign name="Assign2">
+         <copy>
+            <from variable="TempString"/>
+            <to>$ExternalWSDLOperationOut.part1/ns0:newElement</to>
+         </copy>
+         <copy>
+            <from variable="TempString"/>
+            <to>$ExternalWSDLOperationOut.part1/ns0:newElement</to>
+         </copy>
+      </assign>
+      <reply name="Reply1" partnerLink="ExternalPartnerLink" operation="ExternalWSDLOperation" portType="ns1:ExternalWSDLPortType" variable="ExternalWSDLOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="standardFault"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FromToPropertySpec/standardFault"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FromToPropertySpec/standardFault">
+    <import namespace="http://j2ee.netbeans.org/wsdl/standardFault" location="standardFault.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/standardFault" partnerLinkType="tns:standardFault" myRole="standardFaultPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="StandardFaultOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/standardFault" messageType="tns:standardFaultOperationResponse"/>
+        <variable name="StandardFaultOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/standardFault" messageType="tns:standardFaultOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="standardFaultOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/standardFault" portType="tns:standardFaultPortType" variable="StandardFaultOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="StandardFaultOperationIn" nmProperty="org.glassfish.openesb.bpelse.test.nonExistentVal"/>
+                <to variable="StandardFaultOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="standardFaultOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/standardFault" portType="tns:standardFaultPortType" variable="StandardFaultOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FlowInsideIf" 
+             targetNamespace="http://sun.com/wsdl/FlowInsideIf"
+             xmlns:tns="http://sun.com/wsdl/FlowInsideIf"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+    <message name="FlowMessage">
+        <part name="string" type="xsd:string"/>
+        <part name="number" type="xsd:int"/>
+    </message>
+    
+    <portType name="FlowPortType">
+        <operation name="FlowOperation">
+            <input name="input1" message="tns:FlowMessage"/>
+            <output name="output1" message="tns:FlowMessage"/>
+        </operation>
+    </portType>
+    <portType name="invokePortType">
+        <operation name="oneWayInvokeOper">
+            <input name="input" message="tns:FlowMessage"/>
+        </operation>
+    </portType>
+    
+    <binding name="FlowBinding" type="tns:FlowPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="FlowOperation">
+            <input name="input1"><soap:body/></input>
+            <output name="output1"><soap:body/></output>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="oneWayInvokeOper">
+            <input name="input"><soap:body/></input>
+        </operation>
+    </binding>
+    
+    <service name="FlowService">
+        <port name="FlowPort" binding="tns:FlowBinding">
+            <soap:address location="http://localhost:20000/FlowVarInsertCopy"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:20001/FlowVarInsertCopyInvoke"/>
+        </port>
+    </service>
+    
+    <plink:partnerLinkType name="FlowPartnerLinkType">
+        <plink:role name="FlowPartnerLinkTypeRole" portType="tns:FlowPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="FlowInvokePLT">
+        <plink:role name="FlowInvokeRole" portType="tns:invokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

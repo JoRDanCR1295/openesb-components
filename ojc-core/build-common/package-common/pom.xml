@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <!-- IMPORTANT:  all plugin and dependency versions are managed in ojc-common!  -->
+        <artifactId>ojc-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../ojc-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>package-common</artifactId>
+    <packaging>pom</packaging>
+    <name>package-common</name>
+    <version>1.1</version>
+    <description>package-common - parent for all ojc packaging poms.</description>
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/jbi.xml</include>
+                    <!-- used by some components: -->
+                    <include>**/componentConfiguration.xml</include>
+                    <include>**/componentConfiguration.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <archive>
+                            <!-- for jbi component packages, add the Component-Name
+                             !   attribute to the manifest.  Other standard attributes
+                             !   are inherited from parent pom (ojc-common).  Default
+                             !   value is inherited from global-common properties.
+                             -->
+                            <manifestEntries>
+                                <Component-Name>${ojc-component-name}</Component-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <properties>
+        <OSGI_MANIFEST_REMOVE_HEADERS>
+            JBI_SPEC_VERSION, 
+            SRCROOT, 
+            ASADMIN_USER, 
+            OPEN_ESB_VERSION, 
+            ALASKA_ROOT, 
+            ALASKA_SHAREDLIBRARY, 
+            ASADMIN_PASSWORD, 
+            TOOLROOT, 
+            JBICOMPS_HOME, 
+            OSGI_VERSION, 
+            I18NTASK_CLASS, 
+            I18N_XML_TASK_CLASS, 
+            I18NTASK_JAR, 
+            I18NTASK_VERSION, 
+            OSGI_MANIFEST_REMOVE_HEADERS
+        </OSGI_MANIFEST_REMOVE_HEADERS>
+        <osgiManifestDir>${project.build.directory}/osgi</osgiManifestDir>
+        <osgiManifestFile>${osgiManifestDir}/MANIFEST.MF</osgiManifestFile>
+    </properties>
+</project>

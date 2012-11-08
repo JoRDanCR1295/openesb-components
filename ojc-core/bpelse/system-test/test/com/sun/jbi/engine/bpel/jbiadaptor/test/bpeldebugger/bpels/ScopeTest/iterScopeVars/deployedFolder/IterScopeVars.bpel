@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="IterScopeVars" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/IterScopeVars"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/IterScopeVars">
+    <import namespace="http://enterprise.netbeans.org/wsdl/IterScopeVars" 
+            location="IterScopeVars.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:ScopeInvokePLT" 
+                     partnerRole="ScopeInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:ScopePartnerLinkType" 
+                     myRole="ScopePLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="inputMsg" messageType="wsdlNS:ScopeMessage"/>
+        <variable name="outputMsg" messageType="wsdlNS:ScopeMessage"/>
+    </variables>
+    <sequence>
+      	<receive name="Receive1" partnerLink="PartnerLink1" 
+      	         operation="ScopeOperation" portType="wsdlNS:ScopePortType" 
+         	     variable="inputMsg" createInstance="yes"/>
+        <assign name="AssignInit">
+        </assign>
+        <forEach name="ForEach1" parallel="no" counterName="index">
+			<startCounterValue>1</startCounterValue>
+			<finalCounterValue>3</finalCounterValue>
+			<scope name="Scope1">
+				<variables>
+					<variable name="scopeMsg" messageType="wsdlNS:ScopeMessage"/>					
+					<variable name="scopeStr" type="xsd:string" />
+				</variables>
+                <bpws:faultHandlers>
+                    <bpws:catchAll>
+                        <bpws:assign name="Assign2">
+                            <copy>
+                                <from>'Duck'</from>
+                                <to variable="scopeStr"/>
+                            </copy>
+                        </bpws:assign>
+                    </bpws:catchAll>
+                </bpws:faultHandlers>
+				<sequence>
+					<if name="If1">
+						<condition> ($index = 1) </condition>
+						<sequence>
+							<assign name="Assign1">
+								<copy>
+									<from>'Duck'</from>
+									<to variable="scopeStr"/>
+								</copy>
+								<copy>
+									<from>'DuckDuckGoose'</from>
+									<to part="data" variable="scopeMsg"/>
+								</copy>
+							</assign>
+							<invoke name="Invoke1" partnerLink="InvokePLT"
+									operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+									inputVariable="scopeMsg"/>
+						</sequence>
+						<elseif>
+							<condition> ($index = 2) </condition>
+							<assign name="AssignFailure">
+								<copy>
+									<from>concat($scopeStr,'Pigeon')</from>
+									<to variable="scopeStr"/>
+								</copy>
+							</assign>
+						</elseif>
+						<else>
+							<assign name="Assign3">
+								<copy>
+									<from>'Goose'</from>
+									<to variable="scopeStr"/>
+								</copy>
+							</assign>
+						</else>
+					</if>
+					<assign name="Assign4">
+						<copy>
+							<from>concat($outputMsg.data, $scopeStr)</from>
+							<to part="data" variable="outputMsg"/>
+						</copy>
+					</assign>
+				</sequence>
+			</scope>
+		</forEach>
+      	<invoke name="InvokeEnd" partnerLink="InvokePLT"
+              	operation="ScopeInvokeOp" portType="wsdlNS:InvokePortType"
+              	inputVariable="outputMsg"/>
+   </sequence>
+</process>

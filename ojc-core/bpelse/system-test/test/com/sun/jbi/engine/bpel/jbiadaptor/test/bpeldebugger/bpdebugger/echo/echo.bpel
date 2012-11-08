@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echo"
+         targetNamespace="http://www.seebeyond.com/eInsight/echo"
+         sbynpxp:end_YLoc="122.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="604.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echo"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/echo"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/echo"
+            location="echo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BPLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echo_Output"
+                  messageType="ns0:echo"></variable>
+        <variable name="echo_Input"
+                  messageType="ns0:echo"></variable>
+        <variable name="echo_temp"
+                  type="ns0:typeA"></variable>
+                  
+    </variables>
+    <sequence>
+        <receive name="echo"
+                 partnerLink="Client2BPLink"
+                 portType="ns0:echo"
+                 operation="echo"
+                 variable="echo_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="155.0"
+                 sbynpxp:YLoc="117.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="250.0"
+                sbynpxp:YLoc="83.0">
+            <copy>
+                <from>concat($echo_Output.part/value, &apos;_Echo&apos;)</from>
+                <to>$echo_Output.part/value</to>
+            </copy>
+        </assign>
+        
+        <assign name="Assign"
+                sbynpxp:XLoc="365.0"
+                sbynpxp:YLoc="83.0">
+            <copy>
+                <from variable="echo_Output" part="part"/>
+                <to variable="echo_temp"/>
+            </copy>
+        </assign>
+                
+        <assign name="Assign"
+                sbynpxp:XLoc="250.0"
+                sbynpxp:YLoc="83.0">
+            <copy>
+                <from>concat($echo_Output.part/value, &apos;_Echo&apos;)</from>
+                <to>$echo_Output.part/value</to>
+            </copy>
+        </assign>        
+
+        <reply name="echo.Reply"
+               partnerLink="Client2BPLink"
+               portType="ns0:echo"
+               operation="echo"
+               variable="echo_Output"
+               sbynpxp:XLoc="470.0"
+               sbynpxp:YLoc="85.0"></reply>
+    </sequence>
+</process>

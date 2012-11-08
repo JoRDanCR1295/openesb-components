@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="secondTest"
+         targetNamespace="http://www.seebeyond.com/eInsight/secondTest"
+         xmlns:tns="http://www.seebeyond.com/eInsight/secondTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BPELProject/JMSIn/secondTest"
+         xmlns:ns1="http://localhost/BPELProject/JMSOut/secondTest"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns2="http://j2ee.netbeans.org/wsdl/wsdlForPickTimer" xmlns:ns3="http://www.w3.org/2001/XMLSchema">
+    <import location="wsdlForPickTimer.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/wsdlForPickTimer"/>
+    <import namespace="http://localhost/BPELProject/JMSIn/secondTest"
+            location="JMSIn.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BPELProject/JMSOut/secondTest"
+            location="JMSOut.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="pickTimerDummyPLink" partnerLinkType="ns2:wsdlForPickTimerPartner" myRole="wsdlForPickTimerPortTypeRole"/>
+        <partnerLink name="jmsInLink"
+                     partnerLinkType="ns0:JMSInLinkType"
+                     myRole="Server"/>
+        <partnerLink name="jmsOutLink"
+                     partnerLinkType="ns1:JMSOutLinkType"
+                     partnerRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="repeatUntilCtr" type="ns3:int"/>
+        <variable name="whileLoopCtr" type="ns3:int"/>
+        <variable name="operation_JMSIn_Output"
+                  messageType="ns0:message_JMSIn"></variable>
+        <variable name="operation_JMSOut_Input"
+                  messageType="ns1:message_JMSOut"></variable>
+    </variables>
+    <sequence>
+        <pick name="operation_JMSIn" createInstance="yes">
+            <onMessage partnerLink="jmsInLink" operation="operation_JMSIn" portType="ns0:portType_JMSIn" variable="operation_JMSIn_Output">
+                <sequence name="Sequence1">
+                    <assign name="Assign5">
+                        <copy>
+                            <from>0</from>
+                            <to variable="repeatUntilCtr"/>
+                        </copy>
+                        <copy>
+                            <from>0</from>
+                            <to variable="whileLoopCtr"/>
+                        </copy>
+                    </assign>
+                    <while name="While1">
+                        <condition> ( $whileLoopCtr &lt; 2 ) </condition>
+                        <if name="If1">
+                            <condition> ( $whileLoopCtr = 0 ) </condition>
+                            <sequence name="Sequence5">
+                                <assign name="Assign1">
+                                    <copy>
+                                        <from> ( $whileLoopCtr + 1 ) </from>
+                                        <to variable="whileLoopCtr"/>
+                                    </copy>
+                                </assign>
+                                <wait name="Wait4">
+                                    <for>'P0Y0M0DT0H0M1S'</for>
+                                </wait>
+                            </sequence>
+                            <else>
+                                <sequence name="Sequence4">
+                                    <assign name="Assign2">
+                                        <copy>
+                                            <from> ( $whileLoopCtr + 1 ) </from>
+                                            <to variable="whileLoopCtr"/>
+                                        </copy>
+                                    </assign>
+                                    <pick name="Pick2">
+                                        <onMessage partnerLink="pickTimerDummyPLink" operation="wsdlForPickTimerOperation" portType="ns2:wsdlForPickTimerPortType">
+                                            <empty name="Empty1"/>
+                                        </onMessage>
+                                        <onAlarm>
+                                            <for>'P0Y0M0DT0H0M1S'</for>
+                                            <empty name="Empty2"/>
+                                        </onAlarm>
+                                    </pick>
+                                </sequence>
+                            </else>
+                        </if>
+                    </while>
+                    <repeatUntil name="RepeatUntil1">
+                        <if name="If2">
+                            <condition> ( $repeatUntilCtr &lt; 1 ) </condition>
+                            <sequence name="Sequence2">
+                                <assign name="Assign3">
+                                    <copy>
+                                        <from> ( $repeatUntilCtr + 1 ) </from>
+                                        <to variable="repeatUntilCtr"/>
+                                    </copy>
+                                </assign>
+                                <wait name="Wait1">
+                                    <for>'P0Y0M0DT0H0M1S'</for>
+                                </wait>
+                            </sequence>
+                            <else>
+                                <sequence name="Sequence3">
+                                    <assign name="Assign4">
+                                        <copy>
+                                            <from> ( $repeatUntilCtr + 1 ) </from>
+                                            <to variable="repeatUntilCtr"/>
+                                        </copy>
+                                    </assign>
+                                    <pick name="Pick3">
+                                        <onMessage partnerLink="pickTimerDummyPLink" operation="wsdlForPickTimerOperation" portType="ns2:wsdlForPickTimerPortType">
+                                            <empty name="Empty3"/>
+                                        </onMessage>
+                                        <onAlarm>
+                                            <for>'P0Y0M0DT0H0M1S'</for>
+                                            <empty name="Empty4"/>
+                                        </onAlarm>
+                                    </pick>
+                                </sequence>
+                            </else>
+                        </if>
+                        <condition> ( $repeatUntilCtr = 2 ) </condition>
+                    </repeatUntil>
+                </sequence>
+            </onMessage>
+        </pick>
+        <assign>
+            <copy>
+                <from variable="operation_JMSIn_Output"
+                      part="part_JMSIn"/>
+                <to variable="operation_JMSOut_Input"
+                    part="part_JMSOut"/>
+            </copy>
+            <copy>
+                <from variable="operation_JMSIn_Output"
+                      part="IdProperty"/>
+                <to variable="operation_JMSOut_Input"
+                    part="IdProperty"/>                    
+            </copy>
+        </assign>
+        <invoke name="operation_JMSOut"
+                partnerLink="jmsOutLink"
+                portType="ns1:portType_JMSOut"
+                operation="operation_JMSOut"
+                inputVariable="operation_JMSOut_Input"></invoke>
+    </sequence>
+</process>

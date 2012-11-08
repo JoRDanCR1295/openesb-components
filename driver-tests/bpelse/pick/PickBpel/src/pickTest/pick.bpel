@@ -1,0 +1,215 @@
+<process name="pick"
+         targetNamespace="http://www.seebeyond.com/eInsight/pickTest/pick"
+         sbynpxp:end_YLoc="154.0"
+         sbynpxp:start_YLoc="110.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="29.0"
+         sbynpxp:end_XLoc="676.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/pickTest/pick"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="urn:pickTestTargetNamespace"
+         xmlns:ns1="urn:pick1TestTargetNamespace"
+         xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns2="urn:pickTimerTestTargetNamespace"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:pickTestTargetNamespace"
+            location="pick.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:pick1TestTargetNamespace"
+            location="pick1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:pickTimerTestTargetNamespace"
+            location="pickTimer.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="path0PLink"
+                     partnerLinkType="ns0:pickServiceLinkType"
+                     myRole="pickServerRole"/>
+        <partnerLink name="path1PLink"
+                     partnerLinkType="ns1:pick1ServiceLinkType"
+                     myRole="pick1ServerRole"/>
+        <partnerLink name="pickTimerPLink"
+                     partnerLinkType="ns2:pickTimerServiceLinkType"
+                     myRole="pickTimerServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="pickOperation_Output"
+                  messageType="ns0:pickMessage"
+                  sbyncreation:type="auto"></variable>
+        <variable name="pickOperation_Input"
+                  messageType="ns0:pickMessage"
+                  sbyncreation:type="auto"></variable>
+        <variable name="pick1Operation_Output"
+                  messageType="ns1:pick1Message"
+                  sbyncreation:type="auto"></variable>
+        <variable name="pick1Operation_Input"
+                  messageType="ns1:pick1Message"
+                  sbyncreation:type="auto"></variable>
+        <variable name="pickTimerOperation_Output"
+                  messageType="ns2:pickTimerMessage"></variable>
+        <variable name="pickTimerOperation_Input"
+                  messageType="ns2:pickTimerMessage"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <sequence>
+        <pick name="Pick1"
+              createInstance="yes"
+              sbynpxp:XLoc="103.0"
+              sbynpxp:YLoc="153.0"
+              sbynpxp:YLoc_MergeNode="154.0"
+              sbynpxp:XLoc_MergeNode="578.0"
+              sbynpx:lineLabel="Pick1">
+            <onMessage partnerLink="path0PLink"
+                       portType="ns0:pickPortType"
+                       operation="pickOperation"
+                       variable="pickOperation_Output"
+                       sbynpx:lineLabel="pickOperation">
+                <sequence>
+                    <empty name="Empty1"
+                           sbynpxp:XLoc="189.0"
+                           sbynpxp:YLoc="225.0"></empty>
+                    <assign name="Assign1"
+                            sbynpxp:XLoc="321.0"
+                            sbynpxp:YLoc="226.0">
+                        <copy>
+                            <from>$pickOperation_Output.pickPart/string</from>
+                            <to>$pickOperation_Input.pickPart/string</to>
+                        </copy>
+                    </assign>
+                    <reply name="pickOperation.Reply"
+                           partnerLink="path0PLink"
+                           portType="ns0:pickPortType"
+                           operation="pickOperation"
+                           variable="pickOperation_Input"
+                           sbynpxp:XLoc="471.0"
+                           sbynpxp:YLoc="226.0"></reply>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="path1PLink"
+                       portType="ns1:pick1PortType"
+                       operation="pick1Operation"
+                       variable="pick1Operation_Output"
+                       sbynpx:lineLabel="pick1Operation">
+                <sequence>
+                    <empty name="Empty4"
+                           sbynpxp:XLoc="193.0"
+                           sbynpxp:YLoc="93.0"></empty>
+                    <assign name="Assign5"
+                            sbynpxp:XLoc="315.0"
+                            sbynpxp:YLoc="93.0">
+                        <copy>
+                            <from>$pick1Operation_Output.pick1Part/string</from>
+                            <to>$pick1Operation_Input.pick1Part/string</to>
+                        </copy>
+                    </assign>
+                    <reply name="pick1Operation.Reply"
+                           partnerLink="path1PLink"
+                           portType="ns1:pick1PortType"
+                           operation="pick1Operation"
+                           variable="pick1Operation_Input"
+                           sbynpxp:XLoc="454.0"
+                           sbynpxp:YLoc="93.0"></reply>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="pickTimerPLink"
+                       portType="ns2:pickTimerPortType"
+                       operation="pickTimerOperation"
+                       variable="pickTimerOperation_Output"
+                       sbynpx:lineLabel="Message Event">
+                <sequence>
+                    <empty name="eEmptya"
+                           sbynpxp:XLoc="183.0"
+                           sbynpxp:YLoc="365.0"></empty>
+                    <pick name="Pick2"
+                          createInstance="no"
+                          sbynpxp:XLoc="241.0"
+                          sbynpxp:YLoc="365.0"
+                          sbynpxp:YLoc_MergeNode="371.0"
+                          sbynpxp:XLoc_MergeNode="545.0">
+                        <onMessage partnerLink="path0PLink"
+                                   portType="ns0:pickPortType"
+                                   operation="pickOperation1"
+                                   variable="pickOperation_Input"
+                                   sbynpx:lineLabel="Message Event">
+                            <sequence>
+                                <empty name="e1Empty"
+                                       sbynpxp:XLoc="366.0"
+                                       sbynpxp:YLoc="316.0"></empty>
+                                <assign name="aeAssign"
+                                        sbynpxp:XLoc="459.0"
+                                        sbynpxp:YLoc="315.0">
+                                    <copy>
+                                        <from>&apos;This test case should never be in this path&apos;</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/string</to>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </onMessage>
+                        <onAlarm>
+                            <for>$pickTimerOperation_Output.pickTimerPart/duration</for>
+                            <sequence>
+                                <empty name="asdEmpty"
+                                       sbynpxp:XLoc="360.0"
+                                       sbynpxp:YLoc="420.0"></empty>
+                                <assign name="asAssign"
+                                        sbynpxp:XLoc="434.0"
+                                        sbynpxp:YLoc="420.0">
+
+                                    <copy>
+                                        <from>&apos;15 seconds-dynamic duration path&apos;</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/string</to>
+                                    </copy>
+                                    <copy>
+                                        <from>$pickTimerOperation_Output.pickTimerPart/long</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/long</to>
+                                    </copy>                                    <copy>
+                                        <from>$pickTimerOperation_Output.pickTimerPart/duration</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/duration</to>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </onAlarm>
+                        <onAlarm>
+                            <for>&apos;P0Y0DT30S&apos;</for>
+                            <sequence>
+                                <empty name="Empty"
+                                       sbynpxp:XLoc="314.0"
+                                       sbynpxp:YLoc="545.0"></empty>
+                                <assign name="Assign"
+                                        sbynpxp:XLoc="444.0"
+                                        sbynpxp:YLoc="546.0">
+                                    <copy>
+                                        <from>&apos;30 seconds static duration path&apos;</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/string</to>
+                                    </copy>
+                                    <copy>
+                                        <from>$pickTimerOperation_Output.pickTimerPart/long</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/long</to>
+                                    </copy>
+                                    <copy>
+                                        <from>$pickTimerOperation_Output.pickTimerPart/duration</from>
+                                        <to>$pickTimerOperation_Input.pickTimerPart/duration</to>
+                                    </copy>
+                                </assign>
+                            </sequence>
+                        </onAlarm>
+                    </pick>
+                    <reply name="pickTimerOperation.Reply"
+                           partnerLink="pickTimerPLink"
+                           portType="ns2:pickTimerPortType"
+                           operation="pickTimerOperation"
+                           variable="pickTimerOperation_Input"
+                           sbynpxp:XLoc="683.0"
+                           sbynpxp:YLoc="364.0"></reply>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

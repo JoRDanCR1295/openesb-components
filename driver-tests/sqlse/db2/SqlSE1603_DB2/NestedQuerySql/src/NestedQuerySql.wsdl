@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="NestedQuerySql" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="NestedQueryRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="NestedQueryRequest">
+    <part name="NestedQueryRequestPart" element="tns:NestedQueryRequest"/>
+  </message>
+  <message name="NestedQueryResponse">
+    <part name="NestedQueryResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <portType name="NestedQuerySql_sqlsePortType">
+    <operation name="NestedQuery">
+      <input name="NestedQueryRequest" message="tns:NestedQueryRequest"/>
+      <output name="NestedQueryResponse" message="tns:NestedQueryResponse"/>
+    </operation>
+  </portType>
+  <binding name="NestedQuerySqlBinding" type="tns:NestedQuerySql_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="NestedQuery">
+      <soap:operation/>
+      <input name="NestedQueryRequest">
+        <soap:body/>
+      </input>
+      <output name="NestedQueryResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="NestedQuerySql_sqlseService">
+    <port name="NestedQuerySql_sqlsePort" binding="tns:NestedQuerySqlBinding">
+      <soap:address location="http://localhost:18181/NestedQuerySql/NestedQuerySql/NestedQuerySql_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="NestedQuerySql_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="NestedQuerySql_myrole" portType="tns:NestedQuerySql_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

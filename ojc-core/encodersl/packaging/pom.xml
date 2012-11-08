@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>package-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common/package-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>encoderlib-installer</artifactId>
+    <name>sun-encoder-library</name>
+    <version>${encodersl.artifact.version}</version>
+    <description>encoderlib packaging description</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-config-jars</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- delete encoder-fw.jar which comes down with encoder-fw-encoderfwrt dependency: -->
+                                <delete  file="${project.build.outputDirectory}/encoder-fw.jar" />
+
+                                <!-- rename the encoder-fw-encoderfwrt.jar to encoderfwrt.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/encoder-fw-encoderfwrt.jar"
+                                    tofile="${project.build.outputDirectory}/encoderfwrt.jar" />
+                                <!-- rename encoder-custom.jar to custom.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/encoder-custom.jar"
+                                    tofile="${project.build.outputDirectory}/custom.jar" />
+
+                                <!-- disable following 2 move's for GFESB release -->
+                                <!-- rename encoder-hl7.jar to hl7.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/encoder-hl7.jar"
+                                    tofile="${project.build.outputDirectory}/hl7.jar" />
+                                <!-- rename encoder-coco.jar to coco.jar -->
+                                <move
+                                    file="${project.build.outputDirectory}/encoder-coco.jar"
+                                    tofile="${project.build.outputDirectory}/coco.jar" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>sun-encoder-library</Bundle-SymbolicName>
+                        <Bundle-Name>Encoder Library</Bundle-Name>
+                        <Bundle-Description>JBI shared library for encoders. Encoders supported: customencoder-1.0 hl7encoder-1.0 cocoencoder-1.0</Bundle-Description>
+                        <!-- replace above Bundle-Description with this for GFESB release
+                        <Bundle-Description>JBI shared library for encoders. Encoders supported: customencoder-1.0</Bundle-Description>
+                        -->
+                        <Bundle-Version>${OSGI_VERSION}</Bundle-Version>
+                        <_removeheaders>${OSGI_MANIFEST_REMOVE_HEADERS}</_removeheaders>
+                        <Export-Package>
+                            !org.w3c.dom,
+                            !javax.xml.namespace,
+                            !javax.xml.stream.*,
+                            *;-noimport:=true
+                        </Export-Package>
+                        <Bundle-ClassPath>
+                            encoderfwrt.jar,
+                            hl7.jar,
+                            xbean.jar,
+                            jsr173_api.jar,
+                            custom.jar,
+                            coco.jar,
+                            cocoencoder-xsdextension.jar,
+                            hl7encoder-xsdextension.jar,
+                            customencoder-xsdextension.jar,
+                            encoderfrmwk-xsdextension.jar
+                        </Bundle-ClassPath>
+                        <!-- replace above Bundle-ClassPath with this for GFESB release
+                        <Bundle-ClassPath>
+                                encoderfwrt.jar,
+                                xbean.jar,
+                                jsr173_api.jar,
+                                custom.jar,
+                                customencoder-xsdextension.jar,
+                                encoderfrmwk-xsdextension.jar
+                        </Bundle-ClassPath>
+                        -->
+                        <Import-Package>
+                            org.w3c.dom,
+                            javax.xml.namespace,
+                            !org.apache.xmlbeans.impl.xpath.*,
+                            !org.apache.xmlbeans.impl.xquery.*,
+                            !com.sun.tools.javadoc,
+                            !com.sun.javadoc,
+                            !xmlbean,
+                            !org.apache.xml.resolver.*,
+                            !org.apache.tools.ant.*,
+                            *;-nouses:=true
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-fw</artifactId>
+            <optional>true</optional>
+            <classifier>encoderfwrt</classifier>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>jsr173_api</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-custom</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>customencoder-xsdextension</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoderfrmwk-xsdextension</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- disable following 4 dependency's for GFESB release -->
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-hl7</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoder-coco</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>hl7encoder-xsdextension</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>cocoencoder-xsdextension</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

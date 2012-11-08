@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InLinedparentService"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FromToPropertySpec/InLinedparentService"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FromToPropertySpec/InLinedparentService"
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InLinedparentService" location="InLinedparentService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec" location="InLinedFromPropSpec.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec" partnerLinkType="tns:InLinedFromPropSpecPLT" partnerRole="InLinedFromPropSpecPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedparentService" partnerLinkType="tns:InLinedparentService" myRole="InLinedparentServicePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InLinedFromPropSpecOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec" messageType="tns:message"/>
+        <variable name="InLinedFromPropSpecOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec" messageType="tns:message"/>
+        <variable name="InLinedparentServiceOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedparentService" messageType="tns:InLinedparentServiceOperationResponse"/>
+        <variable name="InLinedparentServiceOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedparentService" messageType="tns:InLinedparentServiceOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InLinedparentServiceOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedparentService" portType="tns:InLinedparentServicePortType" variable="InLinedparentServiceOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="InLinedparentServiceOperationIn" part="part1"/>
+                <to>$InLinedFromPropSpecOperationIn.part1/strElem</to>
+            </copy>
+            <copy>
+                <from>$InLinedparentServiceOperationIn.part2</from>
+                <to variable="InLinedFromPropSpecOperationIn" nmProperty="com.sun.jms.transport.properties.corrID"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="InLinedFromPropSpecOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedFromPropSpec" portType="tns:InLinedFromPropSpecPortType" inputVariable="InLinedFromPropSpecOperationIn" outputVariable="InLinedFromPropSpecOperationOut"/>
+        <assign name="Assign2">
+            <copy>
+                <from variable="InLinedFromPropSpecOperationOut" nmProperty="com.sun.file.transport.properties.fileName"/>
+                <to variable="InLinedparentServiceOperationOut" part="part1"/>
+            </copy>
+            <copy>
+                <from>$InLinedFromPropSpecOperationOut.part1/intElem</from>
+                <to variable="InLinedparentServiceOperationOut" part="part2"/>
+            </copy>
+        </assign>            
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="InLinedparentServiceOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/InLinedparentService" portType="tns:InLinedparentServicePortType" variable="InLinedparentServiceOperationOut"/>
+    </sequence>
+</process>

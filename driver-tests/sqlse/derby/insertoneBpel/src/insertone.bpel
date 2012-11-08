@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="insertone"
+    targetNamespace="http://enterprise.netbeans.org/bpel/insertone"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/insertone" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SoapWSDL" location="SoapWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="insertonebpelSQL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:insertonebpelSQL_sqlsePartnerLinkType" partnerRole="insertonebpelSQL_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:SoapWSDLPartner" myRole="SoapWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="SoapWSDLOperationOut" messageType="ns1:SoapWSDLOperationReply"/>
+        <bpws:variable name="InsertonebpelOut" messageType="ns2:insertonebpelResponse"/>
+        <bpws:variable name="InsertonebpelIn" messageType="ns2:insertonebpelRequest"/>
+        <bpws:variable name="SoapWSDLOperationIn" messageType="ns1:SoapWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapWSDLOperationIn" part="part1"/>
+                <bpws:to variable="InsertonebpelIn" part="insertonebpelRequestPart"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="insertonebpel" portType="ns2:insertonebpelSQL_sqlsePortType" inputVariable="InsertonebpelIn" outputVariable="InsertonebpelOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="InsertonebpelOut" part="insertonebpelResponsePart"/>
+                <bpws:to variable="SoapWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationOut"/>
+    </sequence>
+</process>

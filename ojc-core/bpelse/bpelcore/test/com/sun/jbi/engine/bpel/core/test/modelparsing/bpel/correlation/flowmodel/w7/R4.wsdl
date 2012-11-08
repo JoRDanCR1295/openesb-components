@@ -1,0 +1,97 @@
+<definitions targetNamespace="urn:R4TargetNamespace"
+             name="R4Definition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:R4TargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="R4ServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="R4ServerRole"
+                   portType="tns:R4PortType"></plnk:role>
+        <plnk:role name="R4ServerRole1"
+                   portType="tns:R4PortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:property type="xsd:string"
+                   name="propertyName1"></vprop:property>
+    <vprop:propertyAlias part="R4Part"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:R4Message">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:R4TargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:R4TargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:R4TargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+                    <xsd:complexType name="R4Type">
+                        <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="R4Message">
+        <part name="R4Part"
+              type="tns:R4Type"></part>
+    </message>
+    <portType name="R4PortType">
+        <operation name="R4Operation">
+            <input message="tns:R4Message"></input>
+            <output message="tns:R4Message"></output>
+        </operation>
+    </portType>
+    <portType name="R4PortType1">
+        <operation name="R4Operation1">
+            <input message="tns:R4Message"></input>
+        </operation>
+    </portType>
+    <binding name="R4Binding"
+             type="tns:R4PortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="R4Operation">
+            <soap:operation soapAction="R4Operation"/>
+            <input>
+                <soap:body parts="R4Part"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="R4Part"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="R4Binding1"
+             type="tns:R4PortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="R4Operation1">
+            <soap:operation soapAction="R4Operation1"/>
+            <input>
+                <soap:body parts="R4Part"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="R4Service">
+        <port name="R4Port"
+              binding="tns:R4Binding">
+            <soap:address location="http://localhost:12100/service/R4Port"/>
+        </port>
+        <port name="R4Port1"
+              binding="tns:R4Binding1">
+            <soap:address location="http://localhost:12100/service/R4Port1"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,56 @@
+																			---
+																			Architecture
+																			---
+																			Raffaele Spazzoli
+																			---
+																			04/09/2006
+																			
+Introduction
+
+  To fully understand this Binding Component architecture is necessary to focus on two main time: 
+  {{{architecture.html#The Deploy time}The Deploy time}} and {{{architecture.html#The Runtime}The Runtime}} 																			
+  
+* {The Deploy time}
+
+  At deploy time the following sequence of events occurs:
+  
+  [[1]] The Copy Cobol is parsed(To verify which Cobol's data types are supported please visit the page
+        of the {{{supportedCobolDataTypes.html}supported Cobol data types}}).
+  
+  [[2]] A Data structure correspondig to the copy cobol is created.
+  
+  [[3]] A set of classes representing the service interfaces and parameters beans are dynamically created.
+  
+  [[4]] A JBI Web service based on the previous classes is created.
+  
+  [[5]] The JBI Web service is published as an internal JBI endpoint.
+  
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[images/deployTime.jpg] The deploy time process.  
+
+* {The Runtime}
+
+  At runtime the following sequence of events occurs:
+  
+  [[1]] The JBI internal endpot is called by another JBI endpoint.
+  
+  [[2]] The received payload is unmarshalled in a Java beans representing the service's input parameter.
+  
+  [[3]] The newly created bean in then serialized in a commarea compliant with the CICS service's copy cobol.
+  
+  [[4]] The commarea is sent to the CICS transaction using the JCA CICS ECI Connector.
+  
+  [[5]] A reply commarea is received and deserialized in Java bean representing the result.
+  
+  [[6]] The result java bean is marshalled into the reply payload.
+  
+  [[7]] The reply payload is posted into the JBI bus.
+  
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[images/runtime.jpg] The runtime process.

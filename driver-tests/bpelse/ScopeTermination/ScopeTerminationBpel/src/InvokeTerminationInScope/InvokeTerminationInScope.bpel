@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InvokeTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InvokeTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_Driver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope" xmlns:ns3="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_PTypes" xmlns:ns4="http://xml.netbeans.org/schema/DataTypes" xmlns:ns5="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="../MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeTerminationInScope_PTypes" location="InvokeTerminationInScope_PTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns3:InvokeTerminationInScope_PTypesPartner2" myRole="InvokeTerminationInScope_PTypesPortType2Role"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns3:InvokeTerminationInScope_PTypesPartner" myRole="InvokeTerminationInScope_PTypesPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InvokeTerminationInScope_PTypesOperationIn1" messageType="ns5:message1"/>
+        <variable name="Variable1" type="xsd:string"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationOut" messageType="ns5:message1"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationIn" messageType="ns5:message1"/>
+        <variable name="InvokeTerminationInScope_PTypesOperationOut1" messageType="ns5:message1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns5:property1"/>
+    </correlationSets>
+    <sequence name="Sequence2">
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InvokeTerminationInScope_PTypesOperation" portType="ns3:InvokeTerminationInScope_PTypesPortType" variable="InvokeTerminationInScope_PTypesOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="Receive2" partnerLink="PartnerLink2" operation="InvokeTerminationInScope_PTypesOperation" portType="ns3:InvokeTerminationInScope_PTypesPortType2" createInstance="no" variable="InvokeTerminationInScope_PTypesOperationIn1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence4">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>
+                                    <literal>ReplyFromCatchAll-ResponseForInvoke1InDriver</literal>
+                                </from>
+                                <to>$InvokeTerminationInScope_PTypesOperationOut.part1/Id1</to>
+                            </copy>
+                        </assign>
+                        <reply name="Reply1" partnerLink="PartnerLink1" operation="InvokeTerminationInScope_PTypesOperation" portType="ns3:InvokeTerminationInScope_PTypesPortType" variable="InvokeTerminationInScope_PTypesOperationOut"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence3">
+                <wait name="Wait1">
+                    <for>'P0Y0M0DT0H0M2S'</for>
+                </wait>
+                <assign name="Assign2">
+                    <copy>
+                        <from>
+                            <literal>ReplyFromScope1-ResponseForInvoke2InDriver</literal>
+                        </from>
+                        <to>$InvokeTerminationInScope_PTypesOperationOut1.part1/Id1</to>
+                    </copy>
+                </assign>
+                <reply name="Reply2" partnerLink="PartnerLink2" operation="InvokeTerminationInScope_PTypesOperation" portType="ns3:InvokeTerminationInScope_PTypesPortType2" variable="InvokeTerminationInScope_PTypesOperationOut1"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

@@ -1,0 +1,358 @@
+											---
+											Getting Started
+											---
+											Raffaele Spazzoli, Amedeo Cannone
+											---
+											02/03/2007
+
+Introduction
+
+  This getting started guide shows how to install Jbi4Cics and a sample service assembly in {{{http://servicemix.org}ServiceMix}}.
+  This component has been tested with servicemix-3.1-incubating.
+
+	{{{servicemixGettingStarted.html#Installing CICS JCA Resource Adapter}Installing CICS JCA Resource Adapter}}
+
+	{{{servicemixGettingStarted.html#Configuring JNDI resource}Configuring JNDI resource}}
+
+	{{{servicemixGettingStarted.html#Installing Jbi4Cics Binding Component}Installing Jbi4Cics Binding Component}}
+
+	{{{servicemixGettingStarted.html#Creating a service assembly}Creating a service assembly}}
+
+	{{{servicemixGettingStarted.html#Deploying a service assembly}Deploying a service assembly}}
+
+{Installing CICS JCA Resource Adapter}
+
+  Jbi4Cics calls CICS ECI services via IBM's CTG Transaction Gateway.
+  CTG Transaction Gateway may be called with JCA connector as shown in the following figure:
+
+[images/JCACTGArchitecture.jpg] JCA CTG Architecture.
+
+  First thing to do is to install the connector.
+  If you have a CICS Transaction Gateway you should also have a file named cicseci.rar.
+  This file is a deployable resource adapter see {{{http://www-306.ibm.com/software/htp/cics/ctg/} CICS Transaction Gateway Home Page}} and {{{http://java.sun.com/j2ee/connector/} J2EE Connector Architecture Home Page}} for more information on this topic.
+
+* Deploying in ServiceMix standalone
+
+    ServiceMix supports JCA resource adapter through spring, to deploy the cicseci.rar simply unzip it and copy all contained jar in <SERVICEMIX_HOME>/lib/optional directory.
+
+
+* Deploying in ServiceMix embedded in an application server
+
+    If you're using an application server deploy the cicseci.rar in it. Follow your application server documentation on how to do that, many servers have an administration console for this purpose.
+
+
+{Configuring JNDI resource}
+
+	Next step is to configure a connection to your CICS Transaction Gateway and make it visible to the Jbi4Cics Binding Component through JNDI.
+
+* Configuring in servicemix standalone
+
+	Add the following code snippet to \<SERVICEMIX_HOME\>/conf/jndi.xml:
+
++-------------------------------------------------------------+
+
+<bean id="eciManagedConnectionFactory"
+    class="com.ibm.connector2.cics.ECIManagedConnectionFactory">
+  <property name="serverName"><value><CICS_NAME></value></property>
+  <property name="connectionURL"><value><CTG_SERVER_NAME></value></property>
+  <property name="portNumber"><value><CTG_SERVER_PORT></value></property>
+</bean>
+
+<bean id="eciConnectionFactory" class="org.springframework.jca.support.LocalConnectionFactoryBean">
+  <property name="managedConnectionFactory">
+    <ref local="eciManagedConnectionFactory"/>
+  </property>
+</bean>
+
++-------------------------------------------------------------+
+
+	where:
+
+	* CICS_NAME is the name of the CICS server you want to connect to.
+
+	* CTG_SERVER_NAME is the name (or ip address) of the CICS Transaction Gateway server you want to connect to.
+
+	* CTG_SERVER_PORT is the ip port where the CICS Transaction Gateway server is listening on.
+
+	[]
+
+	then in the same file add a new entry in the JNDI entry map (bean id=jndi) as follow:
+
++-------------------------------------------------------------+
+
+<!-- CICS connection -->
+<entry key="<JNDI_CICS_NAME>" value-ref="eciManagedConnectionFactory" />
+
++-------------------------------------------------------------+
+
+	where:
+
+	* JNDI_CICS_NAME is the name you want to give to this connection, the J2EE standard for this type of connection advices to use a name such a eis/<connectionName>.
+
+	[]
+
+* Configuring in ServiceMix embedded in an application server
+
+ Follow the documentation on how to do that, many servers have an administration console for this purpose.
+
+===
+
+ Of course in both cases you may define as many connections as needed.
+
+
+{Installing Jbi4Cics Binding Component}
+
+  Download {{{http://sourceforge.net/projects/jbi4cics}Jbi4Cics}} and copy it into \<SERVICEMIX_HOME\>/install.
+
+{Creating a service assembly}
+
+  A service assembly is a deployable item that configure one or more endpoint inside a JBI ESB.
+  We are going set up a configuration that take a CICS ECI service and expose it a SOAP/HTTP Webservice.
+  The configuration is shown in the following figure:
+
+[images/sampleConfiguration.jpg] A CICS ECI service exposed as a SOAP/HTTP Webservice.
+
+  The Jbi4Cics component is used to create an internal (i.e. visible inside the ESB) endpoint.
+  This internal endpoint is then used to create an external endpoint with the servicemix-http Binding Component.
+  The http component will proxy the incoming externall calls to the internal endpoint exploiting the JBI routing mechanisms.
+
+  A service assembly is a zip file containing one or more service unit file, each service unit defines one or more endpoint.
+  We need two endpoints so we're going to configure two service units:
+
+  * <<JBI4CicsSU>> containing the definition for the Jbi4Cics endpoint.
+
+  * <<HttpSU>> containing the definition for the http endpoint.
+
+  []
+
+  Both service units are a zip file.
+
+* Jbi4Cics service unit
+
+  A Jbi4Cics service unit has the following layout:
+
++----------------------------------------------------------+
+
++- xbean.xml
++- <COPY_COBOL>
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+
+  * xbean.xml contains the informations for defining the endpoint.
+
+  * COPY_COBOL is the copy cobol used by the service to bo called.
+
+  * jbi.xml is a JBI mandatory file but at the moment doesn't contains useful information.
+
+  []
+
+  xbean.xml is a standard xbean file like those used by the {{{http://www.springframework.org}Spring framework}}.
+  It has the following content:
+
++-----------------------------------------------------------+
+
+<?xml version="1.0"?>
+<beans>
+  <bean class="it.imolinfo.jbi4cics.jbi.Jbi4cicsEndpoint">
+  	<property name="copyCobolFileName" value="<COPY_COBOL>"/>
+ 	<property name="codePage" value="<CODE_PAGE>"/>
+    <property name="serviceDescriptor">
+      <bean class="it.imolinfo.jbi4cics.webservices.descriptor.ServiceDescriptor">
+      	<property name="serviceName" value="<SERVICE_NAME>" />
+      	<property name="serviceInterfacePackageName" value="<SERVICE_PACKAGE_NAME>"/>
+     	  <property name="account">
+      		<bean class="it.imolinfo.jbi4cics.security.J2CAccount">
+      			<property name="username" value="<USERNAME>"/>
+      		  <property name="password" value="<PASSWORD>"/>
+      		</bean>
+      	</property>
+     	<property name="serviceLocation">
+      		<bean class="it.imolinfo.jbi4cics.locator.SimpleLocation">
+      			<property name="connectionTypeName" value="CICS"/>
+      		  <property name="locationName" value="<JNDI_CONNECTION_NAME>"/>
+      		</bean>
+      	</property>
+      	<property name="interactionDescription">
+      		<bean class="it.imolinfo.jbi4cics.connection.jca.cics.CICSInteractionDescription">
+      			<property name="programName" value="<PROGRAM_NAME>"/>
+      		  <property name="transactionName" value="<TRANSACTION_NAME>"/>
+      		  <property name="tpn" value="true"/>
+      		</bean>
+      	</property>
+      </bean>
+    </property>
+  </bean>
+</beans>
+
++-----------------------------------------------------------+
+
+  where:
+
+  * COPY_COBOL is name of the fine containing the copy cobol.
+
+  * SERVICE_NAME is the name of the service this endpoint represents. It must be a valid java class name.
+
+  * SERVICE_PACKAGE_NAME is the name of the package of the dynamically generated classes for this service.
+  It must be a valid java package name.
+  It will also be used (reversed) to generate the webservice namespace.
+  So if the package is aaa.bbb.ccc the webservice namespace will be http://ccc.bbb.aaa.
+
+  * USERNAME is the username used for the connection to the CICS Transaction Gateway.
+
+  * PASSWORD is the password used for the connection to the CICS Transaction Gateway.
+
+  * JNDI_CONNECTION_NAME is the previously defined JNDI name for the connection used by this service.
+
+  * PROGRAM_NAME is the cobol program name.
+
+  * TRANSACTION_NAME is the transaction associated to the cobol program in the CICS server.
+
+  []
+
+  jbi.xml has the following content:
+
++-----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+  <services/>
+</jbi>
+
++-----------------------------------------------------------+
+
+  There is no parameter to specify.
+
+  Zip all the files in the specified layout and name the archive JBI4CicsSU.zip.
+
+* Http service unit
+
+  A http service unit has the following layout:
+
++----------------------------------------------------------+
+
++- xbean.xml
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+
+  * xbean.xml contains the informations for defining the endpoint.
+
+  * jbi.xml is a JBI mandatory file but at the moment doesn't contains useful information.
+
+  []
+
+  the xbean.xml has the following format:
+
++----------------------------------------------------------+
+
+<?xml version="1.0"?>
+<beans xmlns:http="http://servicemix.apache.org/http/1.0"
+  xmlns:pkg="http://<REVERSED_PACKAGE_NAME>">
+
+  <http:endpoint
+    service="pkg:<SERVICE_NAME>"
+    endpoint="<SERVICE_NAME>JBIPort"
+    role="consumer"
+    locationURI="http://localhost:8192/Service/<SERVICE_NAME>"
+    defaultMep="http://www.w3.org/2004/08/wsdl/in-out"
+    soap="true" />
+</beans>
+
++----------------------------------------------------------+
+
+  where:
+
+  * REVERSED_PACKAGE_NAME is the service package name written is reverse order.
+  As noted before the package name is used to build the Webservice namespace.
+
+  * SERVICE_NAME is the same chosen for the Jbi4Cics service unit.
+
+  []
+
+  The jbi.xml is the same as the Jbi4Cics one.
+
+  Zip all the files in the specified layout and name the archive HttpSU.zip.
+
+* The service assembly
+
+	The service assembly is unit of deployable configuration in JBI, in our sample it has the following layout:
+
++----------------------------------------------------------+
+
++- JBI4CicsSU.zip
++- HttpSU.zip
++- META-INF/
+      +- jbi.xml
+
++----------------------------------------------------------+
+
+  where:
+
+  * JBI4CicsSU.zip and HttpSU.zip are the previously created service units.
+
+  *	jbi.xml is the service assembly deployment descriptor.
+
+  []
+
+  The jbi.xml has the following format as described in the {{{http://jcp.org/en/jsr/detail?id=208}JBI Specification}}:
+
++----------------------------------------------------------+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" version="1.0">
+  <service-assembly>
+    <identification>
+      <name><SA_NAME></name>
+      <description><SA_DESCRIPTION></description>
+    </identification>
+    <service-unit>
+      <identification>
+        <name>JBI4CicsSU</name>
+        <description><SU1_DESCRIPTION></description>
+      </identification>
+      <target>
+        <artifacts-zip>JBI4CicsSU.zip</artifacts-zip>
+        <component-name>jbi4cics</component-name>
+      </target>
+    </service-unit>
+    <service-unit>
+      <identification>
+        <name>HttpSU</name>
+        <description><SU2_DESCRIPTION></description>
+      </identification>
+      <target>
+        <artifacts-zip>HttpSU.zip</artifacts-zip>
+        <component-name>servicemix-http</component-name>
+      </target>
+    </service-unit>
+  </service-assembly>
+</jbi>
+
++----------------------------------------------------------+
+
+  where:
+
+  * SA_NAME is the name of the service assembly for documentation purposes.
+
+  * SA_DESCRIPTION is the service assembly desription for documentation purposes.
+
+  * SU1_DESCRIPTION and SU2_DESCRIPTION are the service units description for documentation purposes.
+
+  []
+
+  Notice that the BC filenames (JBI4CicsSU.zip and HttpSU.zip) are specified with the respective component (jbi4cics and servicemix-http).
+  Zip all the files in the specified layout and name the archive HttpToCicsSA.zip (the archive name is not important).
+
+  {{{http://servicemix.org}ServiceMix}} provides a {{{http://maven.apache.org/}maven2}} plugin to automate the process of creation and deploy of JBI artifacts.
+
+
+{Deploying a service assembly}
+
+  Copy the created service assembly in \<SERVICEMIX_HOME\>/deploy.

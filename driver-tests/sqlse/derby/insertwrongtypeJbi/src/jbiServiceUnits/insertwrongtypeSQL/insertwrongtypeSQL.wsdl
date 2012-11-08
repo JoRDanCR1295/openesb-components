@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="insertwrongtypeSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="insertwrongtypeRequest"><xsd:complexType><xsd:sequence><xsd:element name="param1" type="xsd:int"/><xsd:element name="param2" type="xsd:string"/><xsd:element name="param3" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="insertwrongtypeResponse">
+    <part name="insertwrongtypeResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="insertwrongtypeRequest">
+    <part name="insertwrongtypeRequestPart" element="tns:insertwrongtypeRequest"/>
+  </message>
+  <portType name="insertwrongtypeSQL_sqlsePortType">
+    <operation name="insertwrongtype">
+      <input name="insertwrongtypeRequest" message="tns:insertwrongtypeRequest"/>
+      <output name="insertwrongtypeResponse" message="tns:insertwrongtypeResponse"/>
+    </operation>
+  </portType>
+  <binding name="insertwrongtypeSQLBinding" type="tns:insertwrongtypeSQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="insertwrongtype">
+      <soap:operation style="document"/>
+      <input name="insertwrongtypeRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="insertwrongtypeResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="insertwrongtypeSQL_sqlseService">
+    <port name="insertwrongtypeSQL_sqlsePort" binding="tns:insertwrongtypeSQLBinding">
+      <soap:address location="http://localhost:18181/insertwrongtypeSQL/insertwrongtypeSQL/insertwrongtypeSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="insertwrongtypeSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="insertwrongtypeSQL_myrole" portType="tns:insertwrongtypeSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

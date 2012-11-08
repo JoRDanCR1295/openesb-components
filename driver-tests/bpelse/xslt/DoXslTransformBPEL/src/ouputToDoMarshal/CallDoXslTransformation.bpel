@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CallDoXslTransformation"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SimpleTransformation/CallDoXslTransformation"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/SimpleTransformation/CallDoXslTransformation" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns0="http://xml.netbeans.org/schema/SimpleTransformation" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sxxf="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/XPathFunctions">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" location="SimpleTransformationService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" partnerLinkType="tns:SimpleTransformationLT" myRole="SimpleTransformationRequestRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SimpleTransformationOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" messageType="tns:SimpleOutputMessage"/>
+        <variable name="SimpleTransformationOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" messageType="tns:SimpleInputMessage"/>
+    </variables>
+    <sequence>
+        <receive name="ReceiveSimpleTransformation" createInstance="yes" partnerLink="PartnerLink1" operation="SimpleTransformationOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" portType="tns:SimpleTransformationRequestPortType" variable="SimpleTransformationOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>sxxf:doMarshal(ns1:doXslTransform('urn:stylesheets:SportXSLT.xsl', $SimpleTransformationOperationIn.part1))</from>
+                <to variable="SimpleTransformationOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="ReplySimpleHello" partnerLink="PartnerLink1" operation="SimpleTransformationOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/SimpleTransformationService" portType="tns:SimpleTransformationRequestPortType" variable="SimpleTransformationOperationOut"/>
+    </sequence>
+</process>

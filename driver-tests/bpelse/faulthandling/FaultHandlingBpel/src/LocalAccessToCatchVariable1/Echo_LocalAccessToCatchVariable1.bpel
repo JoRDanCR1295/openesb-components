@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Echo_LocalAccessToCatchVariable1"
+    targetNamespace="http://www.seebeyond.com/eInsight/Echo_LocalAccessToCatchVariable1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/Echo_LocalAccessToCatchVariable1"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:EchoService/Echo_LocalAccessToCatchVariable1"
+    xmlns:ns1="urn:FaultService/FS_LocalAccessToCatchVariable1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:EchoService/Echo_LocalAccessToCatchVariable1"
+        location="Echo_LocalAccessToCatchVariable1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:FaultService/FS_LocalAccessToCatchVariable1"
+        location="FS_LocalAccessToCatchVariable1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="EchoServiceLink1"
+        partnerLinkType="ns0:EchoServiceLT"
+        myRole="EchoServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Echo_Output"
+        messageType="ns0:EchoServiceRequest"></variable>
+        <variable name="Echo_Input"
+        messageType="ns0:EchoServiceResponse"></variable>
+        <variable name="FaultOperation_Input"
+        messageType="ns1:FaultServiceRequest"></variable>
+        <variable name="FaultOperation_Output"
+        messageType="ns1:FaultServiceResponse"></variable>
+        <variable name="FaultOperation_Fault1"
+        messageType="ns1:FaultServiceFaultResponse1"></variable>
+        <variable name="FaultOperation_Fault2"
+        messageType="ns1:FaultServiceFaultResponse2"></variable>
+        <variable name="FaultOperation_Fault3"
+        messageType="ns1:FaultServiceFaultResponse3"></variable>                    
+    </variables>
+    
+    <sequence>
+        <receive name="Echo"
+        partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Output"
+        createInstance="yes"/>
+        
+        <if name="Decision">
+            <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element'</condition>
+            <sequence>
+                <scope>
+                    <faultHandlers>
+                        <catch faultName="ns1:Fault_Element"
+                            faultVariable="FaultOperation_Fault1"
+                            faultMessageType="ns1:FaultServiceFaultResponse1">
+                            <assign>
+                                <copy>
+                                    <from>'Changed Fault_Element data in catch'</from>
+                                    <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+                        </catch>
+                    </faultHandlers>	
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>$Echo_Output.parameters/Message</from>
+                                <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                            </copy>
+                        </assign>
+                        <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+                    </sequence>
+                </scope>
+                <assign>
+                    <copy>
+                        <from>$FaultOperation_Fault1.result/ChildElement1</from>
+                        <to>$Echo_Input.parameters/Message</to>
+                    </copy>
+                </assign>
+                <reply
+                partnerLink="EchoServiceLink1"
+                portType="ns0:EchoService"
+                operation="Echo"
+                variable="Echo_Input"/>		    
+            </sequence>
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_ComplexType'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_ComplexType"
+                                faultVariable="FaultOperation_Fault2" 
+                                faultMessageType="ns1:FaultServiceFaultResponse2">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_ComplexType data in catch'</from>
+                                            <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </catch>				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_ComplexType" faultVariable="FaultOperation_Fault2"/>				    
+                        </sequence>
+                        
+                        
+                    </scope>
+                    <assign>
+                        <copy>
+                            <from>$FaultOperation_Fault2.result/ChildElement1</from>
+                            <to>$Echo_Input.parameters/Message</to>
+                        </copy>
+                    </assign>
+                    <reply
+                    partnerLink="EchoServiceLink1"
+                    portType="ns0:EchoService"
+                    operation="Echo"
+                    variable="Echo_Input"/>		    				
+                </sequence>            
+            </elseif>     
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_SimpleType'</condition>
+                
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_SimpleType"
+                                faultVariable="FaultOperation_Fault3" 
+                                faultMessageType="ns1:FaultServiceFaultResponse3">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_SimpleType data inside catch'</from>
+                                            <to variable="FaultOperation_Fault3" part="result"></to>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </catch>        				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to variable="FaultOperation_Fault3" part="result"></to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_SimpleType" faultVariable="FaultOperation_Fault3"/>
+                        </sequence>                                     
+                    </scope>
+                    <assign>
+                        <copy>
+                            <from variable="FaultOperation_Fault3" part="result"></from>
+                            <to>$Echo_Input.parameters/Message</to>
+                        </copy>
+                    </assign>
+                    <reply
+                    partnerLink="EchoServiceLink1"
+                    portType="ns0:EchoService"
+                    operation="Echo"
+                    variable="Echo_Input"/>		    				
+                </sequence>            			
+            </elseif>
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element_Scope'</condition>
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>'Modified the process level variable'</from>
+                            <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                        </copy>
+                    </assign>		    
+                    <scope>
+                        <variables>
+                            <variable name="FaultOperation_Fault1"
+                            messageType="ns1:FaultServiceFaultResponse1"></variable>
+                        </variables>	    
+                        <sequence>
+                            <scope>
+                                <faultHandlers>
+                                    <catch faultName="ns1:Fault_Element"
+                                        faultVariable="FaultOperation_Fault1"
+                                        faultMessageType="ns1:FaultServiceFaultResponse1">
+                                        <assign>
+                                            <copy>
+                                                <from>'Modified the catch level variable'</from>
+                                                <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                            </copy>
+                                        </assign>
+                                    </catch>
+                                </faultHandlers>	
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Modified the scope level variable'</from>
+                                            <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                        </copy>
+                                    </assign>
+                                    <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+                                </sequence>
+                            </scope>
+                            <assign>
+                                <copy>
+                                    <from>$FaultOperation_Fault1.result/ChildElement1</from>
+                                    <to>$Echo_Input.parameters/Message</to>
+                                </copy>
+                            </assign>
+                            <reply
+                            partnerLink="EchoServiceLink1"
+                            portType="ns0:EchoService"
+                            operation="Echo"
+                            variable="Echo_Input"/>		    
+                        </sequence>
+                    </scope>
+                </sequence>		    
+            </elseif>                
+            
+            
+            <elseif>                 
+            <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element2'</condition>
+            <sequence>
+                <scope>
+                    <faultHandlers>
+                        <catch faultName="ns1:Fault_Element"
+                            faultVariable="FaultOperation_Fault1"
+                            faultMessageType="ns1:FaultServiceFaultResponse1">
+                            <sequence>
+                            <assign>
+                                <copy>
+                                    <from>'Changed Fault_Element data in catch'</from>
+                                    <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+				<assign>
+				    <copy>
+					<from>$FaultOperation_Fault1.result/ChildElement1</from>
+					<to>$Echo_Input.parameters/Message</to>
+				    </copy>
+				</assign>
+				<reply
+				partnerLink="EchoServiceLink1"
+				portType="ns0:EchoService"
+				operation="Echo"
+				variable="Echo_Input"/>
+				</sequence>
+                        </catch>
+                    </faultHandlers>	
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>$Echo_Output.parameters/Message</from>
+                                <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                            </copy>
+                        </assign>
+                        <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+                    </sequence>
+                </scope>
+            </sequence>
+            </elseif>
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_ComplexType2'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_ComplexType"
+                                faultVariable="FaultOperation_Fault2" 
+                                faultMessageType="ns1:FaultServiceFaultResponse2">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_ComplexType data in catch'</from>
+                                            <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                                        </copy>
+                                    </assign>
+				    <assign>
+					<copy>
+					    <from>$FaultOperation_Fault2.result/ChildElement1</from>
+					    <to>$Echo_Input.parameters/Message</to>
+					</copy>
+				    </assign>
+				    <reply
+				    partnerLink="EchoServiceLink1"
+				    portType="ns0:EchoService"
+				    operation="Echo"
+				    variable="Echo_Input"/>		    				
+                                </sequence>
+                            </catch>				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_ComplexType" faultVariable="FaultOperation_Fault2"/>				    
+                        </sequence>
+                    </scope>
+                </sequence>            
+            </elseif>     
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_SimpleType2'</condition>
+                
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_SimpleType"
+                                faultVariable="FaultOperation_Fault3" 
+                                faultMessageType="ns1:FaultServiceFaultResponse3">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_SimpleType data inside catch'</from>
+                                            <to variable="FaultOperation_Fault3" part="result"></to>
+                                        </copy>
+                                    </assign>
+				    <assign>
+					<copy>
+					    <from variable="FaultOperation_Fault3" part="result"></from>
+					    <to>$Echo_Input.parameters/Message</to>
+					</copy>
+				    </assign>
+				    <reply
+				    partnerLink="EchoServiceLink1"
+				    portType="ns0:EchoService"
+				    operation="Echo"
+				    variable="Echo_Input"/>		    				
+                                    
+                                </sequence>
+                            </catch>        				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to variable="FaultOperation_Fault3" part="result"></to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_SimpleType" faultVariable="FaultOperation_Fault3"/>
+                        </sequence>                                     
+                    </scope>
+                </sequence>            			
+            </elseif>
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element_Scope2'</condition>
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>'Modified the process level variable'</from>
+                            <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                        </copy>
+                    </assign>		    
+                    <scope>
+                        <variables>
+                            <variable name="FaultOperation_Fault1"
+                            messageType="ns1:FaultServiceFaultResponse1"></variable>
+                        </variables>	    
+                        <sequence>
+                            <scope>
+                                <faultHandlers>
+                                    <catch faultName="ns1:Fault_Element"
+                                        faultVariable="FaultOperation_Fault1"
+                                        faultMessageType="ns1:FaultServiceFaultResponse1">
+                                        <sequence>
+                                        <assign>
+                                            <copy>
+                                                <from>'Modified the catch level variable'</from>
+                                                <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                            </copy>
+                                        </assign>
+					    <assign>
+						<copy>
+						    <from>$FaultOperation_Fault1.result/ChildElement1</from>
+						    <to>$Echo_Input.parameters/Message</to>
+						</copy>
+					    </assign>
+					    <reply
+					    partnerLink="EchoServiceLink1"
+					    portType="ns0:EchoService"
+					    operation="Echo"
+					    variable="Echo_Input"/>		    
+                                        </sequence>
+                                    </catch>
+                                </faultHandlers>	
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Modified the scope level variable'</from>
+                                            <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                                        </copy>
+                                    </assign>
+                                    <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+                                </sequence>
+                            </scope>
+                        </sequence>
+                    </scope>
+                </sequence>		    
+            </elseif>                             
+            
+            
+            <elseif>                 
+            <condition>$Echo_Output.parameters/Message = 'Throw_Fault_Element3'</condition>
+            <sequence>
+                <scope>
+                    <faultHandlers>
+                        <catch faultName="ns1:Fault_Element"
+                            faultVariable="FaultOperation_Fault1_Local"
+                            faultMessageType="ns1:FaultServiceFaultResponse1">
+                            <sequence>
+                            <assign>
+                                <copy>
+                                    <from>'Changed Fault_Element data in catch'</from>
+                                    <to>$FaultOperation_Fault1_Local.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+				<assign>
+				    <copy>
+					<from>$FaultOperation_Fault1.result/ChildElement1</from>
+					<to>$Echo_Input.parameters/Message</to>
+				    </copy>
+				</assign>
+				<reply
+				partnerLink="EchoServiceLink1"
+				portType="ns0:EchoService"
+				operation="Echo"
+				variable="Echo_Input"/>
+				</sequence>
+                        </catch>
+                    </faultHandlers>	
+                    <sequence>
+                        <assign>
+                            <copy>
+                                <from>$Echo_Output.parameters/Message</from>
+                                <to>$FaultOperation_Fault1.result/ChildElement1</to>
+                            </copy>
+                        </assign>
+                        <throw faultName="ns1:Fault_Element" faultVariable="FaultOperation_Fault1"/>
+                    </sequence>
+                </scope>
+            </sequence>
+            </elseif>
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_ComplexType3'</condition>
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_ComplexType"
+                                faultVariable="FaultOperation_Fault2_Local" 
+                                faultMessageType="ns1:FaultServiceFaultResponse2">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_ComplexType data in catch'</from>
+                                            <to>$FaultOperation_Fault2_Local.result/ChildElement1</to>
+                                        </copy>
+                                    </assign>
+				    <assign>
+					<copy>
+					    <from>$FaultOperation_Fault2.result/ChildElement1</from>
+					    <to>$Echo_Input.parameters/Message</to>
+					</copy>
+				    </assign>
+				    <reply
+				    partnerLink="EchoServiceLink1"
+				    portType="ns0:EchoService"
+				    operation="Echo"
+				    variable="Echo_Input"/>		    				
+                                </sequence>
+                            </catch>				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to>$FaultOperation_Fault2.result/ChildElement1</to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_ComplexType" faultVariable="FaultOperation_Fault2"/>				    
+                        </sequence>
+                    </scope>
+                </sequence>            
+            </elseif>     
+            
+            <elseif>
+                <condition>$Echo_Output.parameters/Message = 'Throw_Fault_SimpleType3'</condition>
+                
+                <sequence>
+                    <scope>
+                        <faultHandlers>
+                            <catch faultName="ns1:Fault_SimpleType"
+                                faultVariable="FaultOperation_Fault3_Local" 
+                                faultMessageType="ns1:FaultServiceFaultResponse3">
+                                <sequence>
+                                    <assign>
+                                        <copy>
+                                            <from>'Changed Fault_SimpleType data inside catch'</from>
+                                            <to variable="FaultOperation_Fault3_Local" part="result"></to>
+                                        </copy>
+                                    </assign>
+				    <assign>
+					<copy>
+					    <from variable="FaultOperation_Fault3" part="result"></from>
+					    <to>$Echo_Input.parameters/Message</to>
+					</copy>
+				    </assign>
+				    <reply
+				    partnerLink="EchoServiceLink1"
+				    portType="ns0:EchoService"
+				    operation="Echo"
+				    variable="Echo_Input"/>		    				
+                                    
+                                </sequence>
+                            </catch>        				    
+                        </faultHandlers>
+                        <sequence>
+                            <assign>
+                                <copy>
+                                    <from>$Echo_Output.parameters/Message</from>
+                                    <to variable="FaultOperation_Fault3" part="result"></to>
+                                </copy>
+                            </assign>
+                            <throw faultName="ns1:Fault_SimpleType" faultVariable="FaultOperation_Fault3"/>
+                        </sequence>                                     
+                    </scope>
+                </sequence>            			
+            </elseif>            
+            
+            
+            
+            
+            
+            <else>
+                <empty/>
+            </else>
+        </if>
+        <assign>
+            <copy>
+                <from>'Passed through'</from>
+                <to>$Echo_Input.parameters/Message</to>
+            </copy>
+        </assign>
+        <reply name="Echo.Reply"
+        partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Input"/>
+    </sequence>
+</process>

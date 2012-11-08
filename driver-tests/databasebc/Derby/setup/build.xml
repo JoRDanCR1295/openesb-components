@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DerbyTables" default="setup" basedir=".">
+    <description>Setup tables for Derby</description>
+    <property name="database.baseURL" value="jdbc:derby://localhost:1527/" />
+    <property name="database.driver" value="org.apache.derby.jdbc.ClientDriver" />
+    <property name="database.driver.classpath" value="/glassfish/javadb/lib/derbyclient.jar" />
+    <property name="database.name" value="sample" />
+    <property name="database.user" value="app" />
+    <property name="database.password" value="app" />
+
+    <target name="setup">
+        <sql driver="${database.driver}" url="${database.baseURL}/${database.name};create=true" userid="${database.user}" password="${database.password}" src="setup.sql">
+            <classpath>
+                <pathelement location="${database.driver.classpath}"/>
+            </classpath>
+        </sql>
+    </target>
+
+    <target name="shutdown">
+        <sql driver="${database.driver}" url="${database.baseURL}/${database.name};create=true" userid="${database.user}" password="${database.password}" src="shutdown.sql">
+            <classpath>
+                <pathelement location="${database.driver.classpath}"/>
+            </classpath>
+        </sql>
+    </target>
+
+</project>

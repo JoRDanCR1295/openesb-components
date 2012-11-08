@@ -1,0 +1,46 @@
+<definitions name="FILE" targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeEncoderMsgType/FILE"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDukeEncoderMsgType/FILE" xmlns:ns="http://xml.netbeans.org/schema/Greeting" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/HelloDukeEncoderMsgType/FILE">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Greeting" schemaLocation="Greeting.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="PollInputMessage">
+        <part name="part1" element="ns:root"/>
+    </message> 
+    <message name="PollOutputMessage">
+        <part name="part1" element="ns:root"/>
+    </message>     
+    <portType name="FileInboundPortType">
+        <operation name="poll">
+            <input name="input1" message="tns:PollInputMessage"/>
+            <output name="output1" message="tns:PollOutputMessage"/>
+        </operation>
+    </portType>
+    <binding name="FileInboundBinding" type="tns:FileInboundPortType">
+        <file:binding/>
+        <operation name="poll">
+            <file:operation verb="poll"/>
+            <input name="input1">
+                <file:message fileName="hello%d.txt" pollingInterval="1000" encodingStyle="customencoder-1.0" use="encoded" fileNameIsPattern="true" part="part1" archive="true" archiveDirIsRelative="true"/>
+            </input>
+            <output name="output1">
+                <file:message fileName="reply%d.out" encodingStyle="customencoder-1.0" use="encoded" fileNameIsPattern="true" part="part1" />
+            </output>
+        </operation>
+    </binding>
+    <service name="FileInboundService">
+        <port name="FILE_InboundPort" binding="tns:FileInboundBinding">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/HelloDukeEncoderMsgTypeCompApp/test/HelloDukeEncoderMsgTypeTest/in_out"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FILE">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FileInboundPortTypeRole" portType="tns:FileInboundPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,117 @@
+<process name="JMSReceiver"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSReceiver"
+         sbynpxp:end_YLoc="156.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="507.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSReceiver"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/JMS/JMSInTestReceive"
+         xmlns:ns1="http://localhost/JMS/JMSInTestWriter"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/JMS/JMSInTestReceive"
+            location="JMSInTestReceive.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/JMS/JMSInTestWriter"
+            location="JMSInTestWriter.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <!-- partnerLinks definition -->
+    <partnerLinks>
+        <partnerLink name="JMSIn"
+                     partnerLinkType="ns0:JMSInSvcLinkType"
+                     myRole="JMSInServer"/>
+        <partnerLink name="FileOut"
+                     partnerLinkType="ns1:FileOutSvcLNK"
+                     partnerRole="FileOutClient"/>
+    </partnerLinks>
+    <variables>
+        <variable name="FileOutMsg"
+                  messageType="ns1:messageFileOut"></variable>
+        <variable name="operationJMSIn_Output"
+                  messageType="ns0:messageJMS"></variable>
+    </variables>
+    <!-- variables definition -->
+    <!-- activities definition -->
+    <sequence>
+        <receive name="operationJMSIn"
+                 partnerLink="JMSIn"
+                 portType="ns0:portTypeJMSIn"
+                 operation="operationJMSIn"
+                 variable="operationJMSIn_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="154.0"
+                 sbynpxp:YLoc="262.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="249.0"
+                sbynpxp:YLoc="152.0">
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/string</from>
+                <to>$FileOutMsg.partFileOut/string</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/nonNegativeInteger</from>
+                <to>$FileOutMsg.partFileOut/nonNegativeInteger</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/byte</from>
+                <to>$FileOutMsg.partFileOut/byte</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/short</from>
+                <to>$FileOutMsg.partFileOut/short</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/int</from>
+                <to>$FileOutMsg.partFileOut/int</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/long</from>
+                <to>$FileOutMsg.partFileOut/long</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/negativeInteger</from>
+                <to>$FileOutMsg.partFileOut/negativeInteger</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/dateTime</from>
+                <to>$FileOutMsg.partFileOut/dateTime</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/nonPositiveInteger</from>
+                <to>$FileOutMsg.partFileOut/nonPositiveInteger</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/duration</from>
+                <to>$FileOutMsg.partFileOut/duration</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/ENTITIES</from>
+                <to>$FileOutMsg.partFileOut/ENTITIES</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/double</from>
+                <to>$FileOutMsg.partFileOut/double</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/ENTITY</from>
+                <to>$FileOutMsg.partFileOut/ENTITY</to>
+            </copy>
+            <copy>
+                <from>$operationJMSIn_Output.partJMS/float</from>
+                <to>$FileOutMsg.partFileOut/float</to>
+            </copy>
+        </assign>
+        <invoke name="Activity"
+                partnerLink="FileOut"
+                portType="ns1:portTypeFileOut"
+                operation="operationWriteFile"
+                inputVariable="FileOutMsg"
+                sbynpxp:XLoc="382.0"
+                sbynpxp:YLoc="279.0"></invoke>
+    </sequence>
+</process>

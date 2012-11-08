@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="custom" targetNamespace="http://j2ee.netbeans.org/wsdl/FileBpelModule/custom" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy" xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileBpelModule/custom" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:sc="http://schemas.sun.com/2006/03/wss/server" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaws="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <types>
+  </types>
+  <message name="customOperationResponse">
+    <part name="part1" type="xsd:string">
+    </part>
+  </message>
+  <message name="customOperationRequest">
+    <part name="part1" type="xsd:string">
+    </part>
+  </message>
+  <portType name="customPortType">
+    <operation name="customOperation">
+      <input name="input1" message="tns:customOperationRequest">
+    </input>
+      <output name="output1" message="tns:customOperationResponse">
+    </output>
+    </operation>
+  </portType>
+  <binding name="customBinding" type="tns:customPortType">
+    <wsp:PolicyReference URI="#customBindingPolicy"/>
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="customOperation">
+      <soap:operation/>
+      <input name="input1">
+        <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/FileBpelModule/custom"/>
+    <wsp:PolicyReference URI="#customBinding_input1_Policy"/>
+      </input>
+      <output name="output1">
+        <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/FileBpelModule/custom"/>
+    <wsp:PolicyReference URI="#customBinding_output1_Policy"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="customService">
+    <port name="customPort" binding="tns:customBinding">
+      <soap:address location="http://sbiswas-tecra.stc.com:9080/customService/customPort"/>
+    </port>
+  </service>
+    <plnk:partnerLinkType name="custom">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="customPortTypeRole" portType="tns:customPortType"/>
+    </plnk:partnerLinkType>
+    <wsp:Policy wsu:Id="customBindingPolicy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <wsaws:UsingAddressing xmlns:wsaws="http://www.w3.org/2006/05/addressing/wsdl"/>
+                <sp:AsymmetricBinding>
+                    <wsp:Policy>
+                        <sp:InitiatorToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:InitiatorToken>
+                        <sp:RecipientToken>
+                            <wsp:Policy>
+                                <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+                                    <wsp:Policy>
+                                        <sp:WssX509V3Token10/>
+                                    </wsp:Policy>
+                                </sp:X509Token>
+                            </wsp:Policy>
+                        </sp:RecipientToken>
+                        <sp:Layout>
+                            <wsp:Policy>
+                                <sp:Strict/>
+                            </wsp:Policy>
+                        </sp:Layout>
+                        <sp:IncludeTimestamp/>
+                        <sp:OnlySignEntireHeadersAndBody/>
+                        <sp:AlgorithmSuite>
+                            <wsp:Policy>
+                                <sp:Basic128/>
+                            </wsp:Policy>
+                        </sp:AlgorithmSuite>
+                    </wsp:Policy>
+                </sp:AsymmetricBinding>
+                <sp:Wss10>
+                    <wsp:Policy>
+                        <sp:MustSupportRefKeyIdentifier/>
+                        <sp:MustSupportRefIssuerSerial/>
+                    </wsp:Policy>
+                </sp:Wss10>
+                <sp:SignedSupportingTokens>
+                    <wsp:Policy>
+                        <sp:SamlToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssSamlV11Token10/>
+                            </wsp:Policy>
+                        </sp:SamlToken>
+                    </wsp:Policy>
+                </sp:SignedSupportingTokens>
+                <sc:KeyStore alias="xws-security-server" location="C:\openesb\glassfish-v2\domains\domain1\config\keystore.jks" storepass="changeit" type="JKS" wspp:visibility="private"/>
+                <sc:TrustStore location="C:\openesb\glassfish-v2\domains\domain1\config\cacerts.jks" storepass="changeit" type="JKS" wspp:visibility="private"/>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="customBinding_input1_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    <wsp:Policy wsu:Id="customBinding_output1_Policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:EncryptedParts>
+                    <sp:Body/>
+                </sp:EncryptedParts>
+                <sp:SignedParts>
+                    <sp:Body/>
+                </sp:SignedParts>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+</definitions>

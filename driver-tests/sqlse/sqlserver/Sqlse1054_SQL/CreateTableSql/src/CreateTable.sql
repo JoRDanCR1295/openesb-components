@@ -1,0 +1,1 @@
+create table testcreate(testid int not null, testname varchar(30) not null)

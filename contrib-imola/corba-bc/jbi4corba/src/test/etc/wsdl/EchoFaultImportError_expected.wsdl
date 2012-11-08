@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="ENDPOINT_NAME" targetNamespace="NAME_SPACE" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="NAME_SPACE" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://testproviderfault.test.jbi4corba.imolinfo.it/" xmlns="http://testproviderfault.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:complexType name="echoStruct">
+<xs:sequence>
+<xs:element name="fieldBoolean" type="xs:boolean"/>
+<xs:element name="fieldChar" type="xs:unsignedShort"/>
+<xs:element name="fieldString" type="xs:string"/>
+<xs:element name="fieldLong" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="NAME_SPACE" xmlns="NAME_SPACE" xmlns:ns0="http://testproviderfault.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:import namespace="http://testproviderfault.test.jbi4corba.imolinfo.it/"/>
+<xs:element name="echo">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="msg" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="echoResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="EchoSimpleException" type="EchoSimpleException"/>
+<xs:complexType name="EchoSimpleException">
+<xs:sequence>
+<xs:element name="reason" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="EchoComplexException" type="EchoComplexException"/>
+<xs:complexType name="EchoComplexException">
+<xs:sequence>
+<xs:element name="reason" nillable="true" type="ns0:echoStruct"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoComplexException">
+    <wsdl:part name="EchoComplexException" element="tns:EchoComplexException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoSimpleException">
+    <wsdl:part name="EchoSimpleException" element="tns:EchoSimpleException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ENDPOINT_NAME">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+      <wsdl:fault name="EchoComplexException" message="tns:EchoComplexException">
+    </wsdl:fault>
+      <wsdl:fault name="EchoSimpleException" message="tns:EchoSimpleException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ENDPOINT_NAMECorbaBinding" type="tns:ENDPOINT_NAME">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoFaultImportError.idl" relativepath=".">
+//IDL
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testproviderfault{
+		
+                                    struct EchoStruct {
+                                        boolean            fieldBoolean;
+                                        char               fieldChar;
+                                        string             fieldString;
+                                        long               fieldLong;
+                                    };								            				
+		            				
+                                    exception EchoComplexException {
+            				EchoStruct reason;
+                                    };       		       
+            				
+                                    exception EchoSimpleException {
+            				string reason;
+                                    };       				
+
+                                    interface EchoFault {
+					string echo(in string msg) raises (EchoSimpleException, EchoComplexException);
+                                    };
+				};
+			};
+		};
+	};
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+      <wsdl:fault name="EchoComplexException">
+      </wsdl:fault>
+      <wsdl:fault name="EchoSimpleException">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ENDPOINT_NAME">
+    <wsdl:port name="ENDPOINT_NAMECorbaPort" binding="tns:ENDPOINT_NAMECorbaBinding">
+<imolacorba:address name="CORBA_SERVICE_NAME" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="quo" value="2"/>
+<imolacorba:property name="qua" value=""/>
+<imolacorba:property name="qui" value="1"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

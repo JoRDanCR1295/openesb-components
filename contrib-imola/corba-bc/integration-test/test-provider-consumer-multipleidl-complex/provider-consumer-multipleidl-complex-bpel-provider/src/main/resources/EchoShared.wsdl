@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoShared" targetNamespace="http://it.imolinfo.jbi4corba.test.testsharedprovidercomplex.EchoShared" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://it.imolinfo.jbi4corba.test.testsharedprovidercomplex.EchoShared" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://it.imolinfo.jbi4corba.test.testsharedprovidercomplex.EchoShared" xmlns="http://it.imolinfo.jbi4corba.test.testsharedprovidercomplex.EchoShared" xmlns:ns1="http://testsharedprovidercomplex.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://testsharedprovidercomplex.test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_testsharedprovidercomplex.test.jbi4corba.imolinfo.it.xsd"/>
+    <xs:element name="echo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="sname" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="echoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="return" type="ns1:sharedStruct"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoShared">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo">
+    </wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoSharedCorbaBinding" type="tns:EchoShared">
+<imolacorba:binding>
+<imolacorba:idl root="true" filename="EchoComplex.idl" relativepath=".">
+//IDL
+#include &quot;SharedIdl.idl&quot;
+#include &quot;ComplexStruct.idl&quot;
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testprovidercomplex{
+                                    
+
+        					// value type
+        					valuetype EchoVT {
+        						public  short publicShort;
+        						private long  privateLong;
+        				    };
+
+                                            // value type (boxed) - primitive
+        					valuetype MyLong {
+            					public long data;
+        				    };
+    
+                                            // value type (boxed) - complex
+        					valuetype MySequence {
+            					public sequence&lt;long&gt; data;
+        				    };
+
+            				// abstract value type
+            				// UNSUPPORTED : abstract valuetype AFoo {};
+    
+
+                                        
+    
+               				// sequence + typedef
+               				typedef sequence&lt;long&gt; SeqLong;
+
+               				// sequence + typedef
+               				typedef sequence&lt;MySequence&gt; SeqMySequence;
+
+               				// sequence + typedef
+               				typedef sequence&lt;EchoStruct&gt; SeqEchoStruct;
+
+    
+               				// exception
+        					exception EchoComplexException {
+            					SeqEchoStruct reason;
+            				};           				
+
+            				
+
+                            // StructOfStruct
+           					struct StructOfStruct {
+               					EchoStruct internalStruct;
+               				};
+
+        					// value type
+        					valuetype VTPrimi {
+                                public boolean            fieldBoolean;
+                                public char               fieldChar;
+                                public wchar              fieldWChar;
+
+                                // http://jira.codehaus.org/browse/XFIRE-462
+                                public octet              fieldOctet;
+
+                                public string             fieldString;
+                                public wstring            fieldWString;
+                                public short              fieldShort;
+                                public unsigned short     fieldUnsignedShort;
+                                public long               fieldLong;
+                                public unsigned long      fieldUnsignedLong;
+                                public long long          fieldLongLong;
+                                public unsigned long long fieldUnsignedLongLong;
+                                public float              fieldFloat;
+                                public double             fieldDouble;
+        				    };
+
+        					valuetype VTPrimiSeq {
+            					public sequence&lt;VTPrimi&gt; data;
+        				    };
+
+        					valuetype ValueTypeOfValueType {
+            					public VTPrimi data;
+        				    };
+
+        					valuetype ValueTypeOfStruct {
+            					public EchoStruct data;
+        				    };
+
+                            // StructOfStruct
+           					struct StructOfValuetype {
+               					VTPrimi data;
+               				};
+
+
+        					//==================================================
+        					//                                         INTERFACE
+        					//==================================================
+    						interface EchoComplex {
+
+    							string echo(in string msg);
+    
+    							EchoVT echoValueType(in EchoVT e);
+    
+    							MyLong echoValueBoxedTypePrimitive(in MyLong e);
+
+    							MySequence echoValueBoxedTypeComplex(in MySequence e);
+    
+    							EchoStruct echoStruct(in EchoStruct es);
+    
+    							SeqLong echoSequence(in SeqLong es);
+
+    							MySequence echoSequenceValueType(in MySequence es);
+
+    							SeqEchoStruct echoSequenceSeqEchoStruct(in SeqEchoStruct es);
+
+    							SeqMySequence echoSequenceSeqMySequence(in SeqMySequence es);
+    
+    							EchoStruct echoExceptionThrown(in EchoStruct es)
+    							    raises (EchoComplexException);
+
+    							EchoStruct echoExceptionNotThrown(in EchoStruct es)
+    							    raises (EchoComplexException);
+
+    							// FIXME: enum is unsupported
+    							//string echoEnum(in EchoComplexEnum e);
+    
+    							// FIME: array is unsupported
+    							// string echoArray(in ArrayLong e);
+    
+    							// UNSUPPORTED : string echoAbstractValueType(in AFoo n);
+
+
+    							StructOfStruct echoStructOfStruct(in StructOfStruct v);
+
+    							VTPrimi echoVTPrimi(in VTPrimi v);
+
+    							VTPrimiSeq echoVTPrimiSeq(in VTPrimiSeq v);
+
+    							ValueTypeOfValueType echoValueTypeOfValueType(in ValueTypeOfValueType v);
+
+    							ValueTypeOfStruct echoValueTypeOfStruct(in ValueTypeOfStruct v);
+
+    							StructOfValuetype echoStructOfValuetype(in StructOfValuetype v);
+					};
+
+                                                      
+                                        
+				};
+			};
+		};
+	};
+};
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="SharedIdl.idl" relativepath="">
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testsharedprovidercomplex{
+
+                                struct  SharedStruct {
+                                string            fieldName;
+                                string            fieldSName;
+                                };
+
+                                 interface EchoShared {
+
+    							SharedStruct echo(in string name,in string sname);
+                                   
+                                                        };
+                         };
+                    };
+               };
+        };
+};
+</imolacorba:idl>
+<imolacorba:idl root="false" filename="ComplexStruct.idl" relativepath="">
+module it{
+	module imolinfo{
+		module jbi4corba{
+			module test{
+				module testprovidercomplex{
+// =============================================================================
+// IDL Type            | Java type                  | Exceptions
+// =============================================================================
+// boolean             | boolean                    |
+// char                | char                       | CORBA::DATA_CONVERSION
+// wchar               | char                       | CORBA::DATA_CONVERSION
+// octet               | byte                       |
+// -----------------------------------------------------------------------------
+// string              | String                     | CORBA::MARSHAL
+//                     |                            | CORBA::DATA_CONVERSION
+// -----------------------------------------------------------------------------
+// wstring             | String                     | CORBA::MARSHAL
+//                     |                            | CORBA::DATA_CONVERSION
+// -----------------------------------------------------------------------------
+// short               | short                      |
+// unsigned short      | short                      |
+// long                | int                        |
+// unsigned long       | int                        |
+// long long           | long                       |
+// unsigned long  long | long                       |
+// float               | float                      |
+// double              | double                     |
+// fixed               | java.math.BigDecimal       |CORBA::DATA_CONVERSION
+// =============================================================================
+// long double         | not available at this time |
+// =============================================================================
+
+                                // struct
+           					struct EchoStruct {
+                                boolean            fieldBoolean;
+                                char               fieldChar;
+                                wchar              fieldWChar;
+
+                               
+                                string             fieldString;
+                                wstring            fieldWString;
+                                short              fieldShort;
+                                unsigned short     fieldUnsignedShort;
+                                long               fieldLong;
+                                unsigned long      fieldUnsignedLong;
+                                long long          fieldLongLong;
+                                unsigned long long fieldUnsignedLongLong;
+                                float              fieldFloat;
+                                double             fieldDouble;
+                                                                   };
+                                };
+            };                    
+        };             				
+    };
+};
+</imolacorba:idl>
+</imolacorba:binding>
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo">
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoShared">
+    <wsdl:port name="EchoSharedCorbaPort" binding="tns:EchoSharedCorbaBinding">
+<imolacorba:address name="EchoShared" localizationType="NameService">
+<imolacorba:orb>
+<imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+<imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+<imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+</imolacorba:orb>
+</imolacorba:address>
+    </wsdl:port>
+  </wsdl:service>
+<plnk:partnerLinkType name="EchoShared">
+<plnk:role name="EchoSharedPortTypeRole" portType="tns:EchoShared"/>
+</plnk:partnerLinkType>
+</wsdl:definitions>

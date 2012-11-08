@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="WhileScope" 
+             targetNamespace="http://enterprise.netbeans.org/wsdl/WhileScope"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://enterprise.netbeans.org/wsdl/WhileScope" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    
+    <message name="ScopeMessage">
+        <part name="data" type="xsd:string"/>
+    </message>
+    <portType name="ScopePortType">
+        <operation name="ScopeOperation">
+            <input name="input1" message="tns:ScopeMessage"/>
+        </operation>
+    </portType>
+    <portType name="InvokePortType">
+        <operation name="ScopeInvokeOp">
+            <input name="input1" message="tns:ScopeMessage"/>
+        </operation>
+    </portType>
+    <binding name="ScopeBinding" type="tns:ScopePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ScopeOperation">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ScopeInvokeOp">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <service name="ScopeService">
+        <port name="ScopePort" binding="tns:ScopeBinding">
+            <soap:address location="http://localhost:20000/Scope"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:20002/ScopeInvoke"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="ScopePartnerLinkType">
+        <plink:role name="ScopePLinkTypeRole" portType="tns:ScopePortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="ScopeInvokePLT">
+        <plink:role name="ScopeInvokeRole" portType="tns:InvokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

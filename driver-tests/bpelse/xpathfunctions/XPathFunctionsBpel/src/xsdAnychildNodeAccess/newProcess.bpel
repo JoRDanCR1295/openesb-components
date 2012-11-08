@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="newProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ValidatorTest/newProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ValidatorTest/newProcess" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns0="http://xml.netbeans.org/schema/validatorSchema" xmlns:ns1="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/validatorWSDL" location="validatorWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/validatorWSDL" partnerLinkType="tns:validatorWSDL" myRole="validatorWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="tempVar" type="xsd:string"/>
+        <variable name="ValidateOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/validatorWSDL" messageType="tns:validateResponse"/>
+        <variable name="ValidateIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/validatorWSDL" messageType="tns:validateRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="validate" xmlns:tns="http://j2ee.netbeans.org/wsdl/validatorWSDL" portType="tns:validatorWSDLPortType" variable="ValidateIn"/>
+            <assign name="Assign3">
+                <copy>
+                    <from>local-name($ValidateIn.anyInput/ns0:AnyXML/child::*[position()=1])</from>
+                    <to variable="tempVar"></to>
+                </copy>
+            </assign>
+        <if name="If1">
+        <condition>contains(local-name($ValidateIn.anyInput/ns0:AnyXML/*[position()=1]),'AdhocQueryRequest')</condition>            
+            <assign name="Assign1">
+                <copy>
+                    <from>'is adhocqry'</from>
+                    <to>$ValidateOut.validatorOutput/ns0:errorList/ns0:errorCode</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>'is docretrieve'</from>
+                        <to>$ValidateOut.validatorOutput/ns0:errorList/ns0:errorCode</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+ 
+ <!--       <assign name="Assign4">
+            <copy>
+                <from variable="tempVar"/>
+                <to>$ValidateOut.validatorOutput/ns0:errorList/ns0:errorCode</to>
+            </copy>
+        </assign>-->
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="validate" xmlns:tns="http://j2ee.netbeans.org/wsdl/validatorWSDL" portType="tns:validatorWSDLPortType" variable="ValidateOut"/>
+    </sequence>
+</process>

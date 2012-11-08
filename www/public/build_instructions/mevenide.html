@@ -1,0 +1,131 @@
+<html>
+  <head>
+    <title>Netbeans for ojc</title>
+  </head>
+  <body>
+    <h3>How to use Meven-Ide to build open-jbi-components (ojc)</h3>
+    <h4>This tutorial shows:</h4>
+    <ul type="circle">
+        <li><a href="#launch_netbeans">How to launch NetBeans for ojc</a></li>
+        <li><a href="#install_meven">How to install the Meven-Ide plugin</a></li>
+        <li><a href="#first_build">How to run your first build using Meven-Ide</a></li>
+        <li><a href="#openbc">How to open a component sub-project</a></li>
+        <li><a href="#runjunit">How to run unit tests</a></li>
+        <li><a href="#runsite">How to generate the unit test report, with cross-referenced source</a></li>
+        <li><a href="#viewsource">How to navigate to the source code for a failing test</a></li>
+        <li><a href="#whats_next">What's Next?</a></li>
+    </ul>
+    <h3 id="launch_netbeans">How to launch NetBeans for ojc</h3>
+    <p>
+    <i>On windows</i>, create runide.bat:
+    <pre>
+    @echo off
+    set NETBEANS_HOME="<i>somedir/netbeans</i>"
+    set JV_SRCROOT=<i>somedrive</i>:\<i>some path</i>\open-jbi-components
+    set JV_GFBASE=<i>somedrive</i>:\<i>some path where you installed glassfish</i>
+    %NETBEANS_HOME%\bin\netbeans -J-Dmaven.repo.local=%MAVEN_REPOSITORY% %*
+    </pre>
+    <p>
+    <i>On unix bash/ksh</i>, create alias:
+    <pre>
+    export NETBEANS_HOME="<i>somedir/netbeans</i>"
+    export JV_SRCROOT="<i>somedir</i>/open-jbi-components</i>"
+    export JV_GFBASE="<i>some path where you installed glassfish</i>"
+    alias runide='"$NETBEANS_HOME"/bin/netbeans -J-Dmaven.repo.local="$MAVEN_REPOSITORY"'
+    </pre>
+    <p>
+    <i>On unix csh/tcsh</i>, create alias:
+    <pre>
+    setenv NETBEANS_HOME "<i>somedir/netbeans</i>"
+    setenv JV_SRCROOT    "<i>somedir/open-jbi-components</i>"
+    setenv JV_GFBASE     "<i>some path where you installed glassfish</i>"
+    alias runide '"$NETBEANS_HOME"/bin/netbeans -J-Dmaven.repo.local="$MAVEN_REPOSITORY"'
+    </pre>
+    <p>
+        <i>Note:</i>  you may need to make the unix start-up scripts executable if you installed from a zip or jar:
+    <pre>
+        chmod +x "$NETBEANS_HOME"/bin/*
+    </pre>
+
+
+    <h3 id="install_meven">How to install the Meven-Ide plugin</h3>
+    <p>
+    The features in this tutorial are only available for the <a href="http://www.netbeans.org/community/releases/60/index.html"><u>Netbeans 6.0 Release</u></a>.
+    These instructions were tested with the <a href="http://netbeans.org/download/6_0/m8/200703280911/netbeans-6_0-m8-bin-200703280911-28_Mar_2007_0911.zip"><u>Milestone 8 build of 3/28/07</u></a>. You can read more about
+    NetBeans 6.0 on the <a href="http://www.netbeans.org/community/releases/60/index.html"><u>Netbeans 6.0 Wiki</u></a>.
+    <p>
+    <i>Warning:</i> If you have installed JDK 6.0 as your default JDK, you need to edit the property <i>netbeans_jdkhome</i> in the
+    file <i>netbeans/etc/netbeans.conf</i>.  Set this to the value of your JDK 5.0 home.  Otherwise, Netbeans will
+    compile with JDK 6.0, which is not supported at the time of this writing.
+    <p>
+    You must install the Meven-Ide plugin from within NetBeans
+    using the
+    <A HREF="images/update-center.gif"><u>Update Center Wizard</u></A>.
+    <i>Do not</i> install the version 2.3 Meven-Ide plugin from the
+    <A HREF="http://mevenide.codehaus.org/m2-site/"><u>Meven-Ide</u></A> web site.
+    <p>
+    From the <i>tools->Update Center</i> menu item,
+    select the
+    <A HREF="images/update-center.gif"><u>Maven Folder</u></A>,
+    hit the <i>Add</i> button (<i>not</i> Add All!), and then the <i>Next</i> button
+    to continue the wizard.
+    <p>
+    Observe that you are installing the correct <A HREF="images/update-centerB.gif"><u>Meven-Ide version</u></A>.
+    <p>
+    Click on the <i>Finish</i> button to complete the install.
+
+    <h3 id="first_build">How to run your first build using Meven-Ide</h3>
+    <p>
+    First, open the open-jbi-components <A HREF="images/open-top-project.gif"><u>top project</u></A>.
+    At this time, <i>do not</i> open dependent projects (un-check <i>Open Required Projects</i>).
+    <p>
+    Next, press the <A HREF="images/top-clean.gif"><u>top clean button</u></A> (the broom icon)
+    to clean the project and import the glassfish dependencies.  <i>If this step fails, do
+    not proceed until you have fixed the problem.</i>
+    <p>
+    After running the top-level clean, hit the
+    <A HREF="images/top-clean.gif"><u>build button</u></A> (the wrench icon)
+    to compile the project.
+    <p>
+    If both the clean and build complete successfully, then you are in business.
+    If not, check <code>~/.m2/settings</code> on unix, or <code>%USERPROFILE%\.m2\settings.xml</code> on windows,
+    to ensure that you have set up the correct proxies, mirrors,
+    and private maven repositories.  See the
+    <A HREF="ojcsetup.html"><u>build instructions</u></A> to determine the correct settings.
+    <p>
+
+    <h3 id="openbc">How to open a component sub-project</h3>
+    <p>
+    For illustrative purposes, we will open the <A HREF="images/filebcimpl-open.gif"><u>filebcimpl</u></A> project.
+    This project contains the implementation source code for the ojc
+    <A HREF="http://www.glassfishwiki.org/jbiwiki/Wiki.jsp?page=FileBC"><u>File Binding Component</u></A>.
+
+    <h3 id="runjunit">How to run unit tests</h3>
+    <p>
+    Since we already built the filebc <a href="#first_build">above</a>, we can now
+    run the <A HREF="images/filebcimpl-test.gif"><u>filebcimpl junit</u></A> tests.
+
+    <h3 id="runsite">How to generate the unit test report, with cross-referenced source</h3>
+    <p>
+    After running the unit tests, we can now create the filebcimpl
+    <A HREF="images/filebcimpl-allreports.gif"><u>maven site report</u></A>,
+    by running the custom <i>allreports</i> goal.  This also creates
+    the javadoc with cross-referenced source code along with
+    the <A HREF="images/filebcimpl-junit-summary.gif"><u>filebcimpl junit results</u></A> summary.
+    <p>
+
+    <h3 id="viewsource">How to navigate to the source code for a failing test</h3>
+    <p>
+    We have a couple of
+    <A HREF="images/filebcimpl-failure-detail.gif"><u>filebc junit failures</u></A>.
+    From the failure summary, we can navigate directly to the
+    <A HREF="images/filebcimpl-test-source.gif"><u>filebcimpl test source</u></A> code.
+
+    <h3 id="whats_next">What's Next?</h3>
+    <p>
+    Hopefully, you now have an idea of how to navigate the project from within
+    NetBeans, using the Meven-Ide.  For more information on NetBeans,
+    see <A HREF="http://www.netbeans.org"><u>netbeans.org</u></A>.  For more
+    information on Meven-Ide, see <A HREF="http://mevenide.codehaus.org/index.html"><u>Meven-Ide home</u></A>.
+  </body>
+</html>

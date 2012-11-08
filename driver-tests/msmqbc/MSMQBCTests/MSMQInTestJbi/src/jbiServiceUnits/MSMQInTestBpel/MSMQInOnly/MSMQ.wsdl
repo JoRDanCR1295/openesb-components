@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MSMQ" targetNamespace="urn:MSMQ"
+    xmlns:tns="urn:MSMQ"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:msmq="http://schemas.sun.com/jbi/wsdl-extensions/msmq/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <message name="message1">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="MSMQSendPortType">
+        <operation name="MSMQSendOperation">
+            <input name="input1" message="tns:message1"/>
+        </operation>
+    </portType>
+    <portType name="MSMQReceivePortType">
+        <operation name="MSMQReceiveOperation">
+            <input name="input1" message="tns:message1"/>
+        </operation>
+    </portType>
+    <portType name="SoapPortType">
+        <operation name="SoapOperation">
+            <input name="input1" message="tns:message1"/>
+            <output name="output1" message="tns:message1"/>
+        </operation>
+    </portType>
+    <binding name="MSMQSendbinding" type="tns:MSMQSendPortType">
+        <msmq:binding/>
+        <operation name="MSMQSendOperation">
+            <msmq:operation/>
+            <input name="input1">
+                <msmq:send connectionMode="QueueName" destination="private$\private" shareMode="DENY_NONE" messagePriority="3" acknowledgement="false" parts="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="MSMQReceivebinding" type="tns:MSMQReceivePortType">
+        <msmq:binding/>
+        <operation name="MSMQReceiveOperation">
+            <msmq:operation/>
+            <input name="input1">
+                <msmq:receive connectionMode="QueueName" destination="private$\private" shareMode="DENY_NONE" accessMode="RECEIVE_ACCESS" receiveInterval="10000" parts="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="Soapbinding" type="tns:SoapPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="SoapOperation">
+            <soap:operation style="document"/>
+            <input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MSMQSendService">
+        <port name="MSMQSendPort" binding="tns:MSMQSendbinding">
+            <msmq:address hostName="idevltop1-d600"/>
+        </port>
+    </service>
+    <service name="MSMQReceiveService">
+        <port name="MSMQReceivePort" binding="tns:MSMQReceivebinding">
+            <msmq:address hostName="idevltop1-d600"/>
+        </port>
+    </service>
+    <service name="SoapService">
+        <port name="SoapPort" binding="tns:Soapbinding">
+            <soap:address location="http://localhost:18181/BpelModule2/MSMQ/SoapPort"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="MSMQSendPartner">
+        <plink:role name="MSMQSendPortTypeRole" portType="tns:MSMQSendPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="MSMQReceivePartner">
+        <plink:role name="MSMQReceivePortTypeRole" portType="tns:MSMQReceivePortType"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:message1" part="part1">
+        <vprop:query/>
+    </vprop:propertyAlias>
+    <plink:partnerLinkType name="MSMQSoapPartner">
+        <plink:role name="SoapPortTypeRole" portType="tns:SoapPortType"/>
+    </plink:partnerLinkType>
+</definitions>

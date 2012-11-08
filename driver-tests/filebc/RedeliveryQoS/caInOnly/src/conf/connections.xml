@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://j2ee.netbeans.org/wsdl/fileInOnly" xmlns:ns2="http://enterprise.netbeans.org/bpel/oneWayFileInOut/bpIO" xmlns:ns3="http://j2ee.netbeans.org/wsdl/fileOutOnly" version="1.0">
+<service-assembly>
+<identification>
+<name>caInOnly</name>
+<description>Represents the Service Assembly of caInOnly</description>
+</identification>
+<connections>
+<connection>
+<consumer endpoint-name="fileInOnlyPort" service-name="ns1:fileInOnlyService"/>
+<provider endpoint-name="fileInOnlyPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+</connection>
+<connection>
+<consumer endpoint-name="fileOutOnlyPortTypeRole_partnerRole" service-name="ns2:PartnerLink2"/>
+<provider endpoint-name="fileOutOnlyPort" service-name="ns3:fileOutOnlyService"/>
+</connection>
+</connections>
+<connections xmlns="http://www.sun.com/jbi/qos">
+<connection>
+<consumer endpoint-name="fileInOnlyPort" service-name="ns1:fileInOnlyService"/>
+<provider endpoint-name="fileInOnlyPortTypeRole_myRole" service-name="ns2:PartnerLink1"/>
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="2" waitTime="3000">
+        <on-failure>
+          <suspend/>
+        </on-failure>
+    </redelivery>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

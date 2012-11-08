@@ -1,0 +1,87 @@
+<definitions targetNamespace="urn:Invoke1childTargetNamespace"
+             name="Invoke1childDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:Invoke1childTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:parentWSDL="Invoke1parent">
+    <plnk:partnerLinkType name="Invoke1childServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="Invoke1childServerRole"
+                   portType="tns:Invoke1childPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:property type="xsd:string"
+                   name="Invoke1childProp"></vprop:property>
+    <vprop:propertyAlias part="Invoke1childPart"
+                        propertyName="tns:Invoke1childProp"
+                        messageType="tns:Invoke1childMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias part="Invoke1childPart"
+                        propertyName="parentWSDL:property"
+                        messageType="tns:Invoke1childMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>    
+    <vprop:propertyAlias propertyName="parentWSDL:property"
+                        messageType="parentWSDL:Invoke1parentMessage1"
+                        part="Invoke1parentPart">
+            <vprop:query>/Invoke1parentElement/string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:Invoke1childProp"
+                        messageType="parentWSDL:Invoke1parentMessage1"
+                        part="Invoke1parentPart">
+            <vprop:query>/Invoke1parentElement/string</vprop:query>
+    </vprop:propertyAlias>    
+    <import location="Invoke1parent.wsdl" namespace="Invoke1parent"/>
+    <types>
+        <xsd:schema targetNamespace="urn:Invoke1childTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:Invoke1childTargetNamespace"
+                    xmlns:ns1="urn:Invoke1childTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+            
+                    <xsd:complexType name="Invoke1childType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="Invoke1childMessage">
+        <part name="Invoke1childPart"
+              type="tns:Invoke1childType"></part>
+    </message>
+    <portType name="Invoke1childPortType">
+        <operation name="Invoke1childOperation">
+            <input message="tns:Invoke1childMessage"></input>
+            <output message="tns:Invoke1childMessage"></output>
+        </operation>
+    </portType>
+    <binding name="Invoke1childBinding"
+             type="tns:Invoke1childPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Invoke1childOperation">
+            <soap:operation soapAction="Invoke1childOperation"/>
+            <input>
+                <soap:body parts="Invoke1childPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="Invoke1childPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="Invoke1childService">
+        <port name="Invoke1childPort"
+              binding="tns:Invoke1childBinding">
+            <soap:address location="http://localhost:12100/service/Invoke1child"/>
+        </port>
+    </service>
+</definitions>

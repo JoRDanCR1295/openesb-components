@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PLTLocalNamespace"
+    targetNamespace="http://enterprise.netbeans.org/bpel/PLTLocalNamespace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/PLTLocalNamespace" xmlns:ns1="http://j2ee.netbeans.org/wsdl/PLTLocalNamespace">
+    <import namespace="http://j2ee.netbeans.org/wsdl/PLTLocalNamespace" location="PLTLocalNamespace.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="InoutPartner" partnerLinkType="ns1:LocalNamespacePLT" myRole="InOutPTRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="InOutOperOut" messageType="ns1:StrMsg"/>
+        <bpws:variable name="InOutOperIn" messageType="ns1:StrMsg"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="HttpReceive" createInstance="yes" partnerLink="InoutPartner" operation="InOutOper" portType="ns1:InOutPT" variable="InOutOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($InOutOperIn.strPart, ' was deployed and run successfully:')</bpws:from>
+                <bpws:to part="strPart" variable="InOutOperOut"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="httpReply" partnerLink="InoutPartner" operation="InOutOper" portType="ns1:InOutPT" variable="InOutOperOut"/>
+    </sequence>
+</process>

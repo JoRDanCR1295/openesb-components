@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://ManagedGenericIRPConstDefs/" xmlns:ns2="http://TimeBase/" xmlns:tns="http://AlarmIRPConstDefs/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://AlarmIRPConstDefs/">
+    <xs:import namespace="http://ManagedGenericIRPConstDefs/" schemaLocation="TypeDef_ManagedGenericIRPConstDefs.xsd"/>
+    <xs:import namespace="http://TimeBase/" schemaLocation="TypeDef_TimeBase.xsd"/>
+    <xs:complexType name="alarmInformationIdAndSev">
+        <xs:sequence>
+            <xs:element name="alarm_information_reference" type="xs:string"/>
+            <xs:element name="perceived_severity" type="ns1:ShortTypeOpt"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="badAcknowledgeAlarmInfo">
+        <xs:sequence>
+            <xs:element name="alarm_information_reference" type="xs:string"/>
+            <xs:element name="failure_category" type="tns:acknowledgeFailureCategories"/>
+            <xs:element name="reason" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DNTypeOpt">
+        <xs:choice>
+            <xs:element name="value" type="xs:string"/>
+            <xs:element name="value1" type="xs:string"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="badAlarmInformationId">
+        <xs:sequence>
+            <xs:element name="alarm_information_reference" type="xs:string"/>
+            <xs:element name="reason" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="thresholdLevelIndType">
+        <xs:sequence>
+            <xs:element name="indication" type="tns:thresholdIndicationType"/>
+            <xs:element name="low" type="tns:FloatTypeOpt"/>
+            <xs:element name="high" type="xs:float"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FloatTypeOpt">
+        <xs:choice>
+            <xs:element name="value" type="xs:float"/>
+            <xs:element name="value1" type="xs:float"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="thresholdInfoType">
+        <xs:sequence>
+            <xs:element name="attributeID" type="xs:string"/>
+            <xs:element name="observedValue" type="xs:float"/>
+            <xs:element name="thresholdLevel" type="tns:ThresholdLevelIndTypeOpt"/>
+            <xs:element name="armTime" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ThresholdLevelIndTypeOpt">
+        <xs:choice>
+            <xs:element name="value" type="tns:thresholdLevelIndType"/>
+            <xs:element name="value1" type="xs:string"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="corelatedNotification">
+        <xs:sequence>
+            <xs:element name="source" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" name="notif_id_set" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="attributeValueType">
+        <xs:sequence>
+            <xs:element name="attribute_name" type="xs:string"/>
+            <xs:element name="value" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="comment">
+        <xs:sequence>
+            <xs:element name="comment_time" type="ns2:utcT"/>
+            <xs:element name="comment_text" type="xs:string"/>
+            <xs:element name="user_id" type="xs:string"/>
+            <xs:element name="system_id" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="attributeValueChangeType">
+        <xs:sequence>
+            <xs:element name="attribute_name" type="xs:string"/>
+            <xs:element name="old_value" type="xs:anyType"/>
+            <xs:element name="new_value" type="xs:anyType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="acknowledgeFailureCategories">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UnknownAlarmId"/>
+            <xs:enumeration value="WrongPerceivedSeverity"/>
+            <xs:enumeration value="AcknowledgmentFailed"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="thresholdIndicationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UP"/>
+            <xs:enumeration value="DOWN"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="trendIndicationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LessSevere"/>
+            <xs:enumeration value="NoChange"/>
+            <xs:enumeration value="MoreSevere"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="alarmListAlignmentRequirementType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="REQUIRED"/>
+            <xs:enumeration value="NOTREQUIRED"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

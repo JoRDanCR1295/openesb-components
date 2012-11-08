@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="WithinWhileProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Rethrow/WithinWhileProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Rethrow/WithinWhileProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/WithinWhile" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WithinWhile" location="WithinWhile.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:WithinWhile1" myRole="WithinWhilePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WhileCntr2" type="xsd:int"/>
+        <variable name="WhileCntr1" type="xsd:int"/>
+        <variable name="WithinWhileOperationOut" messageType="ns1:WithinWhileOperationReply"/>
+        <variable name="WithinWhileOperationIn" messageType="ns1:WithinWhileOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultMessageType="ns1:WithinWhileOperationReply" faultVariable="WithinWhileOperationOut">
+            <reply name="Reply2" partnerLink="PartnerLink1" operation="WithinWhileOperation" portType="ns1:WithinWhilePortType" variable="WithinWhileOperationOut"/>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="WithinWhileOperation" portType="ns1:WithinWhilePortType" variable="WithinWhileOperationIn"/>
+        <assign name="Assign0">
+            <copy>
+                <from>0.0</from>
+                <to variable="WhileCntr1"/>
+            </copy>
+            <copy>
+                <from>0.0</from>
+                <to variable="WhileCntr2"/>
+            </copy>            
+        </assign>
+        <scope name="Scope1">
+            <faultHandlers>
+                    <catch faultName="tns:catchFault" faultMessageType="ns1:WithinWhileOperationReply" faultVariable="WithinWhileOperationOut">
+                        <while name="While2">
+                            <condition>$WhileCntr2 &lt; 2.0</condition>
+                            <sequence name="Sequence4">
+                                <assign name="IncrementCntr2">
+                                    <copy>
+                                        <from>$WhileCntr2 + 1.0</from>
+                                        <to variable="WhileCntr2"/>
+                                    </copy>
+                                </assign>
+                                <rethrow name="Rethrow2"/>
+                            </sequence>
+                        </while>
+                    </catch>
+                        <catchAll>
+                            <while name="While1">
+                                <condition>$WhileCntr1 &lt; 2.0</condition>
+                                <sequence name="Sequence3">
+                                    <assign name="IncrementCntr1">
+                                        <copy>
+                                            <from>$WhileCntr1 + 1.0</from>
+                                            <to variable="WhileCntr1"/>
+                                        </copy>
+                                    </assign>
+                                    <rethrow name="Rethrow1">
+                                    </rethrow>
+                                </sequence>
+                            </while>
+                        </catchAll>
+                </faultHandlers>
+                <if name="If2">
+                    <condition> ( $WithinWhileOperationIn.part2 = 'catchAll' ) </condition>
+                        <sequence name="Sequence1">
+                        <assign name="Assign1">
+                            <copy>
+                                <from>concat($WithinWhileOperationIn.part1, '-catchAll-')</from>
+                                <to part="part1" variable="WithinWhileOperationOut"/>
+                            </copy>
+                        </assign>
+                        <throw name="Throw1" faultName="tns:catchAllFault" faultVariable="WithinWhileOperationOut"/>
+                    </sequence>
+                        <else>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($WithinWhileOperationIn.part1, '-catch-')</from>
+                                    <to part="part1" variable="WithinWhileOperationOut"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw2" faultName="tns:catchFault" faultVariable="WithinWhileOperationOut"/>
+                        </sequence>
+                    </else>
+                </if>
+        </scope>
+    </sequence>
+</process>

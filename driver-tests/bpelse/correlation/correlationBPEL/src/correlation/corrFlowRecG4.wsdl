@@ -1,0 +1,97 @@
+<definitions targetNamespace="urn:corrFlowRecTargetNamespace"
+             name="corrFlowRecDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:corrFlowRecTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="corrFlowRecServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="corrFlowRecServerRole"
+                   portType="tns:corrFlowRecPortType"></plnk:role>
+        <plnk:role name="corrFlowRecServerRole1"
+                   portType="tns:corrFlowRecPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:property type="xsd:string"
+                   name="propertyName1"></vprop:property>
+    <vprop:propertyAlias part="corrFlowRecPart"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:corrFlowRecMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:corrFlowRecTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:corrFlowRecTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:corrFlowRecTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+                    <xsd:complexType name="corrFlowRecType">
+                        <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="corrFlowRecMessage">
+        <part name="corrFlowRecPart"
+              type="tns:corrFlowRecType"></part>
+    </message>
+    <portType name="corrFlowRecPortType">
+        <operation name="corrFlowRecOperation">
+            <input message="tns:corrFlowRecMessage"></input>
+            <output message="tns:corrFlowRecMessage"></output>
+        </operation>
+    </portType>
+    <portType name="corrFlowRecPortType1">
+        <operation name="corrFlowRecOperation1">
+            <input message="tns:corrFlowRecMessage"></input>
+        </operation>
+    </portType>
+    <binding name="corrFlowRecBinding"
+             type="tns:corrFlowRecPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrFlowRecOperation">
+            <soap:operation soapAction="corrFlowRecOperation"/>
+            <input>
+                <soap:body parts="corrFlowRecPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="corrFlowRecPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="corrFlowRecBinding1"
+             type="tns:corrFlowRecPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrFlowRecOperation1">
+            <soap:operation soapAction="corrFlowRecOperation1"/>
+            <input>
+                <soap:body parts="corrFlowRecPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="corrFlowRecService">
+        <port name="corrFlowRecPort"
+              binding="tns:corrFlowRecBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrFlowRecPort"/>
+        </port>
+        <port name="corrFlowRecPort1"
+              binding="tns:corrFlowRecBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrFlowRecPort1"/>
+        </port>
+    </service>
+</definitions>

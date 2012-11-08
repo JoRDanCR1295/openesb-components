@@ -1,0 +1,46 @@
+;:- STC MsgStruct Version 3.1
+
+;:- MsgStructure Header
+;:- MsgStructure "root"
+;:- UserComment "  "
+;:- Version "e*Gate 4.1.1"
+;:- FormatOption DELIMITED
+;:- RepSeparator "Repetition Delimiter  " " "
+;:- Escape "Escape Character Delimiter " "\\"
+;:- DefaultDelimiters "HL7"
+;:- End MsgStructure Header
+
+;:- Delimiter Structure
+(define root-delm '(
+ ("\r" (EscD "\\") endofrec)
+ ("|")
+ ("~" array)
+ ("^")
+ ("&")
+ ))
+
+;:- Global Template Reference
+;:- End Global Template Reference
+
+;:- Local Template Definition
+;:- End Local Template Definition
+
+;:- MsgStructure Definition
+(define root-struct ($resolve-event-definition (quote
+  ((Ex) root ON 1 1 und und und -1
+    (((NofN (2 2))) seg_1 ON 1 1 und und und -1
+      (field_1 ON 0 1 "seg1" und und -1)	;:= {0.0.0:N}
+      (((NofN (2 INF))) field_2 ON 0 1 und und und -1
+        (comp_1 ON 0 1 "comp1" und und -1)	;:= {0.0.1.0:N}
+        (comp_2 ON 0 1 "comp2" und und -1)	;:= {0.0.1.1:N}
+        (comp_3 ON 0 1 und und und -1
+          (sub_1 ON 1 1 "sub1" und und -1)	;:= {0.0.1.2.0:N}
+          (sub_2 ON 1 1 "sub2" und und -1)	;:= {0.0.1.2.1:N}
+        )	;:= {0.0.1.2:N}
+      )	;:= {0.0.1:N}
+      (field_3 ON 0 1 "field3" und und -1)	;:= {0.0.2:N}
+    )	;:= {0.0:N}
+    (seg_2 ON 1 1 und und und -1)	;:= {0.1:N}
+  )	;:= {0:N}
+)))
+;:- End MsgStructure Definition

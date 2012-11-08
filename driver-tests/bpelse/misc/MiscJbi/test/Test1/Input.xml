@@ -1,0 +1,92 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	        xmlns:xsd1="http://www.opentravel.org/OTA/2002/11"
+        	xmlns="http://www.opentravel.org/OTA"
+	        xmlns:OTA="http://www.opentravel.org/OTA"
+		xmlns:eb="http://www.ebxml.org/namespaces/messageHeader"
+		xmlns:tp="http://www.ebxml.org/namespaces/tradePartner"
+		xmlns:xlink="http://www.w3c.org/1999/xlink"
+		xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext">
+    <SOAP-ENV:Header>
+		<eb:MessageHeader SOAP-ENV:mustUnderstand="1" eb:version="1.0">
+			<eb:From>
+				<eb:PartyId type="urn:x12.org:I05:01">123456789</eb:PartyId>
+			</eb:From>
+			<eb:To>
+				<eb:PartyId type=" urn:x12.org:I05:01">912345678</eb:PartyId>
+			</eb:To>
+			<eb:CPAId>NULL</eb:CPAId>
+			<eb:ConversationId></eb:ConversationId>
+			<eb:Service eb:type="OTA">Session</eb:Service>
+			<eb:Action>OTA_CreateSessionRQ</eb:Action>
+			<eb:MessageData>
+				<eb:MessageId>mid:20001209-133003-28572@b2b.company.com</eb:MessageId>
+				<eb:Timestamp>2005-01-01T11:12:12Z </eb:Timestamp>
+				<eb:TimeToLive>2005-03-01T11:12:17Z </eb:TimeToLive>
+			</eb:MessageData>
+			<eb:QualityOfServiceInfo eb:deliverySemantics="BestEffort"/>
+		</eb:MessageHeader>
+		<!--
+		<eb:Via SOAP-ENV:mustUnderstand="1" 
+			SOAP-ENV:actor="http://schemas.xmlsoap.org/soap/actor/next" 
+			eb:version="1.0" eb:syncReply="true" />
+		-->
+		<wsse:Security>
+			<wsse:UsernameToken>
+				<wsse:Username>testuser</wsse:Username>
+				<wsse:Password Type="wsse:PasswordText">testpwdtxt</wsse:Password>
+			</wsse:UsernameToken>
+		</wsse:Security>
+    </SOAP-ENV:Header>
+    <SOAP-ENV:Body>
+        <wrapper> 
+			<header>
+				<eb:MessageHeader SOAP-ENV:mustUnderstand="1" eb:version="1.0">
+					<eb:From>
+						<eb:PartyId type="urn:x12.org:I05:01">123456789</eb:PartyId>
+					</eb:From>
+					<eb:To>
+						<eb:PartyId type=" urn:x12.org:I05:01">912345678</eb:PartyId>
+					</eb:To>
+					<eb:CPAId>NULL</eb:CPAId>
+					<eb:ConversationId></eb:ConversationId>
+					<eb:Service eb:type="OTA">Session</eb:Service>
+					<eb:Action>OTA_CreateSessionRQ</eb:Action>
+					<eb:MessageData>
+						<eb:MessageId>mid:20001209-133003-28572@b2b.company.com</eb:MessageId>
+						<eb:Timestamp>2005-01-01T11:12:12Z </eb:Timestamp>
+						<eb:TimeToLive>2005-03-01T11:12:17Z </eb:TimeToLive>
+					</eb:MessageData>
+					<eb:QualityOfServiceInfo eb:deliverySemantics="BestEffort"/>
+				</eb:MessageHeader>
+			</header>
+			<header2>
+				<wsse:Security>
+					<wsse:UsernameToken>
+						<wsse:Username>testuser</wsse:Username>
+						<wsse:Password Type="wsse:PasswordText">testpwdtxt</wsse:Password>
+					</wsse:UsernameToken>
+				</wsse:Security>			
+			</header2>
+			<body>
+				<xsd1:SessionCreateRQ>
+					<POS>
+						<Source AgentSine="BSIA1234PM" PseudoCityCode="2U8" ISOCountry="US" ISOCurrency="USD">
+							<UniqueId URL=" http://provider1.org/OTAEngine/" Type=" SessionCreateRQ" Id="ID0507G4325" Instance="2001-06-03T13:09:21"/>
+						</Source>
+					</POS>
+				</xsd1:SessionCreateRQ>    
+			</body>
+        </wrapper>		
+		
+<!--    Is this not relevant anymore in the 2002B spec? this is from the 2001C spec
+        <SessionControlRequest mode="Test" TimeStamp="2005-01-01T13:50:15" EchoToken="7656" version="1">
+		<OTA_Version preference="1">2001C</OTA_Version> 
+		<OTA_Version preference="2">2001A</OTA_Version> 
+		<LeaseRequestTime cadence="seconds">60</LeaseRequestTime> 
+		<MaxIdleTime cadence="minutes">15</MaxIdleTime> 
+	</SessionControlRequest> 
+-->
+    </SOAP-ENV:Body> 
+</SOAP-ENV:Envelope> 

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="LodeStarClient"
+         targetNamespace="http://www.seebeyond.com/eInsight/LodeStarClient"
+         sbynpxp:end_YLoc="332.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="768.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/LodeStarClient"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/LodeStarClient/ClientProcess"
+         xmlns:ns1="http://lab201/heraldws/services/LodeStar"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/LodeStarClient/ClientProcess"
+            location="LodeStarClient.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://lab201/heraldws/services/LodeStar"
+            location="LodeStar.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="LodeStarClientLink"
+                     partnerLinkType="ns0:LodeStarClientProcess"
+                     myRole="LodeStarClientRole"/>
+        <partnerLink name="LodeStarServerLink"
+                     partnerLinkType="ns1:LodeStarPartnerLinkType"
+                     partnerRole="LodeStarPartnerLink"/>
+    </partnerLinks>
+    <variables>
+        <variable name="AssignOperation_Output"
+                  messageType="ns0:simpleinput"></variable>
+        <variable name="AssignOperation_Input"
+                  messageType="ns0:simpleresponse"></variable>
+        <variable name="validate_Input"
+                  messageType="ns1:validateRequest"></variable>
+        <variable name="validate_Output"
+                  messageType="ns1:validateResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="AssignOperation"
+                 partnerLink="LodeStarClientLink"
+                 portType="ns0:LodeStarClient"
+                 operation="AssignOperation"
+                 variable="AssignOperation_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="84.0"
+                 sbynpxp:YLoc="242.0"></receive>
+        <assign name="Assign1"
+                sbynpxp:XLoc="228.0"
+                sbynpxp:YLoc="170.0">
+            <copy>
+                <from>$AssignOperation_Output.body/string</from>
+                <to variable="validate_Input"
+                    part="message"/>
+            </copy>
+        </assign>
+        <invoke name="validate"
+                partnerLink="LodeStarServerLink"
+                portType="ns1:LodeStar"
+                operation="validate"
+                inputVariable="validate_Input"
+                outputVariable="validate_Output"
+                sbynpxp:XLoc="354.0"
+                sbynpxp:YLoc="153.0"></invoke>
+        <assign name="Assign"
+                sbynpxp:XLoc="487.0"
+                sbynpxp:YLoc="193.0">
+            <copy>
+                <from variable="validate_Output"
+                      part="validateReturn"/>
+                <to>$AssignOperation_Input.body/stringoutput</to>
+            </copy>
+        </assign>
+        <reply name="AssignOperation.Reply"
+               partnerLink="LodeStarClientLink"
+               portType="ns0:LodeStarClient"
+               operation="AssignOperation"
+               variable="AssignOperation_Input"
+               sbynpxp:XLoc="612.0"
+               sbynpxp:YLoc="230.0"></reply>
+    </sequence>
+</process>

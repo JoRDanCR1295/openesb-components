@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SUBBP" 
+    targetNamespace="http://www.mycomp.org/virtualAssignTest2/SUBBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl">
+    <import namespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+	    location="virtualAssignTest_1.wsdl"
+	    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+	    <partnerLink name="PartnerLink_for_invoke_out_to_subbp" 
+		         partnerLinkType="wsdlNS:virtualAssignLinkType1_outbound" 
+		         myRole="server"/>
+    </partnerLinks>
+     <variables>
+        <variable name="var1"
+                  type="wsdlNS:simpleStringType"></variable>
+        <variable name="var2"
+		  type="wsdlNS:simpleStringType"></variable>
+    </variables>
+    <sequence>
+	    <receive name="receive_call_in_subbp"
+		     partnerLink="PartnerLink_for_invoke_out_to_subbp" 
+		     operation="virtualAssignOperation1" 
+		     portType="wsdlNS:virtualAssignPortType11"
+                     createInstance="yes"
+                     variable="var1"> <!-- remove variable -->
+                     <!-- fromPart part="simpleStringPart" toVariable="var1"/> -->
+	    </receive>
+	    <reply name="reply_back_to_parent_from_subbp"
+		   partnerLink="PartnerLink_for_invoke_out_to_subbp" 
+		   operation="virtualAssignOperation1"
+		   portType="wsdlNS:virtualAssignPortType11"
+                   variable="var1"> <!-- remove variable -->
+                   <!-- toPart part="simpleStringPart" fromVariable="var2"/ --> 
+	    </reply>
+    </sequence>
+</process>

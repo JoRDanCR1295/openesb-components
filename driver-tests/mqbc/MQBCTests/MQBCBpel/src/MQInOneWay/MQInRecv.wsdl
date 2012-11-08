@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/MQInRecv"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/MQInRecv" name="MQInRecv" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:mq="http://schemas.sun.com/jbi/wsdl-extensions/mq/">
+    <wsdl:types/>
+    <wsdl:message name="MQInRecvOperationRequest">
+        <wsdl:part name="partTxMsg" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="MQInRecvPortType">
+        <wsdl:operation name="MQInRecvOperation">
+            <wsdl:input name="input1" message="tns:MQInRecvOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MQInRecvBinding" type="tns:MQInRecvPortType">
+        <mq:binding/>
+        <wsdl:operation name="MQInRecvOperation">
+            <mq:operation queueName="queue1" queueOpenOptions="17" transaction="NoTransaction" pollingInterval="5000"/>
+            <wsdl:input name="input1">
+                <mq:body use="literal" MessageBody="partTxMsg" MessageType="TextMessage" SyncPoint="false"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MQInRecvService">
+        <wsdl:port name="MQInRecvPort" binding="tns:MQInRecvBinding">
+            <mq:address queueManagerName="rchen2kmq6qmgr" hostName="rchen-2k" portNumber="1414" channelName="svrconnchnl"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="MQInRecvPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="MQInRecvPortTypeRole" portType="tns:MQInRecvPortType"/>
+    </plink:partnerLinkType>
+</definitions>

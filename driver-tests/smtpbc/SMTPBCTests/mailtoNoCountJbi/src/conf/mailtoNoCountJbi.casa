@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://enterprise.netbeans.org/bpel/smtpOut" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Trigger" xmlns:ns3="http://j2ee.netbeans.org/wsdl/smtpInterface" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="TriggerPortTypeRole_myRole" interface-name="ns2:TriggerPortType" name="endpoint1" service-name="ns1:PartnerLink1"/>
+        <endpoint endpoint-name="smtpInterfacePortTypeRole_partnerRole" interface-name="ns3:smtpInterfacePortType" name="endpoint2" service-name="ns1:PartnerLink2"/>
+        <endpoint endpoint-name="smtpInterfacePort" interface-name="ns3:smtpInterfacePortType" name="endpoint3" service-name="ns3:smtpInterfaceService"/>
+        <endpoint endpoint-name="TriggerPort" interface-name="ns2:TriggerPortType" name="endpoint4" service-name="ns2:TriggerService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="mailtoNoCountBpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="mailtoNoCountJbi-mailtoNoCountBpel" unit-name="mailtoNoCountBpel" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint1"/>
+            <consumes endpoint="endpoint2"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-smtp-binding.jar" component-name="sun-smtp-binding" description="Represents this Service Unit" name="mailtoNoCountJbi-sun-smtp-binding" unit-name="sun-smtp-binding">
+            <ports>
+                <port x="0" y="150">
+                    <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/smtpInterface.wsdl#xpointer(/definitions/service[@name='smtpInterfaceService']/port[@name='smtpInterfacePort'])" xlink:type="simple"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="mailtoNoCountJbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="60">
+                    <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/Trigger.wsdl#xpointer(/definitions/service[@name='TriggerService']/port[@name='TriggerPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/smtpInterface.wsdl#xpointer(/definitions/portType[@name='smtpInterfacePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/smtpInterface.wsdl#xpointer(/definitions/binding[@name='smtpInterfaceBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/smtpInterface.wsdl#xpointer(/definitions/service[@name='smtpInterfaceService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/Trigger.wsdl#xpointer(/definitions/portType[@name='TriggerPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/Trigger.wsdl#xpointer(/definitions/binding[@name='TriggerBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/mailtoNoCountBpel/Trigger.wsdl#xpointer(/definitions/service[@name='TriggerService'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings/>
+    <services/>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

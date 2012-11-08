@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="soap"
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSQos/soap"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/JMSQos/soap"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSQos/soap" location="soap.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSQos/soap" partnerLinkType="tns:soap" myRole="soapPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SoapOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSQos/soap" messageType="tns:soapOperationResponse"/>
+        <variable name="SoapOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSQos/soap" messageType="tns:soapOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="soapOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSQos/soap" portType="tns:soapPortType" variable="SoapOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="SoapOperationIn" part="part1"/>
+                <to variable="SoapOperationOut" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="soapOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSQos/soap" portType="tns:soapPortType" variable="SoapOperationOut"/>
+    </sequence>
+</process>
+

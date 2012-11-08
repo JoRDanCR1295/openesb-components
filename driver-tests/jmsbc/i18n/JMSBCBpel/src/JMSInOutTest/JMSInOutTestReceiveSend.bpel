@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSInOutTestReceiveSend"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSInOutTestReceiveSend"
+         sbynpxp:end_YLoc="243.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="676.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSInOutTestReceiveSend"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/bpel/JMSInOutTest"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/bpel/JMSInOutTest"
+            location="JMSInOutTest.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMSReceiveSendPartner"
+                     partnerLinkType="ns0:JMSInOutTestRecvSendLnkType"
+                     myRole="roleJMSInOutTestRecvSend"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationInOut_Output"
+                  messageType="ns0:messageRequestTextMessage"></variable>
+        <variable name="operationInOut_Input"
+                  messageType="ns0:messageReplyMapMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="operationInOut"
+                 partnerLink="JMSReceiveSendPartner"
+                 portType="ns0:portTypeInOut2"
+                 operation="operationInOut"
+                 variable="operationInOut_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="211.0"
+                 sbynpxp:YLoc="238.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="360.0"
+                sbynpxp:YLoc="117.0">
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partCorrelationID"/>
+                <to variable="operationInOut_Input"
+                    part="partCorrelationID"/>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partProp1"/>
+                <to variable="operationInOut_Input"
+                    part="partProp1"/>
+            </copy>
+            <copy>
+                <from>false()</from>
+                <to variable="operationInOut_Input"
+                    part="partBoolean"/>
+            </copy>
+            <copy>
+                <from>&apos;J&apos;</from>
+                <to variable="operationInOut_Input"
+                    part="partChar"/>
+            </copy>
+            <copy>
+                <from variable="operationInOut_Output"
+                      part="partTextPayload"/>
+                <to variable="operationInOut_Input"
+                    part="partString"/>
+            </copy>
+            <copy>
+                <from>number(33.33)</from>
+                <to variable="operationInOut_Input"
+                    part="partFloat"/>
+            </copy>
+            <copy>
+                <from>number(444.4444)</from>
+                <to variable="operationInOut_Input"
+                    part="partDouble"/>
+            </copy>
+            <copy>
+                <from>&apos;8&apos;</from>
+                <to variable="operationInOut_Input"
+                    part="partInt"/>
+            </copy>
+            <copy>
+                <from>&apos;88888888&apos;</from>
+                <to variable="operationInOut_Input"
+                    part="partLong"/>
+            </copy>
+            <copy>
+                <from>&apos;88&apos;</from>
+                <to variable="operationInOut_Input"
+                    part="partShort"/>
+            </copy>
+        </assign>
+        <reply name="operationInOut.Reply"
+               partnerLink="JMSReceiveSendPartner"
+               portType="ns0:portTypeInOut2"
+               operation="operationInOut"
+               variable="operationInOut_Input"
+               sbynpxp:XLoc="467.0"
+               sbynpxp:YLoc="236.0"></reply>
+    </sequence>
+</process>

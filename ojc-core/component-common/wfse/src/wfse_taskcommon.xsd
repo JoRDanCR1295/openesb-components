@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!-- 
+ # @(#)wfse_taskcommon.xsd 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+<xsd:schema targetNamespace="http://jbi.com.sun/wfse/wsdl/TaskCommon" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://jbi.com.sun/wfse/wsdl/TaskCommon"  elementFormDefault="qualified">
+    <xsd:complexType name="TaskListType">
+        <xsd:sequence>
+            <xsd:element name="totalRecords" type="xsd:int" />
+            <xsd:element name="returnedRecords" type="xsd:int" />
+            <xsd:element name="task" type="ns1:TaskType" minOccurs="0" maxOccurs="unbounded">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="taskList" type="ns1:TaskListType">
+    </xsd:element>
+    <xsd:simpleType name="ResultCodeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="SUCCESS"/>
+            <xsd:enumeration value="FAILED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="TaskStatus">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="UNASSIGNED"/>
+            <xsd:enumeration value="ASSIGNED"/>
+            <xsd:enumeration value="CLAIMED"/>
+            <xsd:enumeration value="COMPLETED"/>
+            <xsd:enumeration value="EXPIRED"/>
+            <xsd:enumeration value="ESCALATED"/>
+            <xsd:enumeration value="ABORTED"/>
+            <xsd:enumeration value="FAILED"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="SortField">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="id"/>
+            <xsd:enumeration value="title"/>
+            <xsd:enumeration value="createDate"/>
+	    <xsd:enumeration value="deadline"/>
+            <xsd:enumeration value="priority"/>
+            <xsd:enumeration value="status"/>
+            <xsd:enumeration value="assignedTo"/>
+            <xsd:enumeration value="owner"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="Direction">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ASC"/>
+            <xsd:enumeration value="DESC"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="resultCode" type="ns1:ResultCodeType">
+    </xsd:element>
+    <xsd:complexType name="FaultType">
+        <xsd:sequence>
+            <xsd:element name="FaultCode" type="xsd:string">
+            </xsd:element>
+            <xsd:element name="FaultReason" type="xsd:string">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="fault" type="ns1:FaultType">
+    </xsd:element>
+    <xsd:complexType name="TaskType">
+        <xsd:sequence>
+            <xsd:element name="taskId" type="xsd:long">
+            </xsd:element>
+            <xsd:element name="title" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="client" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="priority" type="xsd:int" minOccurs="0"/>
+            <xsd:element name="claimedBy" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="assignedTo" type="xsd:string" minOccurs="0"/>
+            <xsd:element name="submittedDate" type="xsd:dateTime"
+            minOccurs="0"/>
+            <xsd:element name="status" type="ns1:TaskStatus"
+            minOccurs="0" />
+	    <xsd:element name="keywords" type="xsd:string"
+	    minOccurs="0" />
+	    <xsd:element name="taskDefId" type="xsd:string"
+	    minOccurs="0" />
+	    <xsd:element name="deadline" type="xsd:dateTime"
+	    minOccurs="0" />
+	    <xsd:element name="completedBy" type="xsd:string" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="task" type="ns1:TaskType">
+    </xsd:element>
+    <xsd:element name="content" type="xsd:anyType">
+    </xsd:element>
+    <xsd:complexType name="AnyType">
+        <xsd:sequence>
+            <xsd:element name="content" type="xsd:anyType">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ConnectInfoType">
+        <xsd:sequence>
+            <xsd:element name="userId" type="xsd:string">
+            </xsd:element>
+            <xsd:element name="password" type="xsd:string">
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="connectInfo" type="ns1:ConnectInfoType">
+    </xsd:element>
+    <xsd:complexType name="UsersType">
+      <xsd:sequence>
+          <xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>      
+    </xsd:complexType>
+    <xsd:complexType name="GroupsType">
+      <xsd:sequence>
+          <xsd:element name="group" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>      
+    </xsd:complexType>
+	 
+   <xsd:complexType name="DeadlineQueryType">
+     <xsd:sequence>
+        <xsd:element name="periodType"  default="DAY">
+	 <xsd:simpleType>
+	   <xsd:restriction base="xsd:string">
+	     <xsd:enumeration value="HOUR"/>
+	     <xsd:enumeration value="DAY"/>
+	     <xsd:enumeration value="WEEK"/>
+	     <xsd:enumeration value="MONTH"/>
+	   </xsd:restriction>
+	 </xsd:simpleType>
+	</xsd:element>
+       <xsd:element name="period"  type="xsd:int" />
+     </xsd:sequence>
+   </xsd:complexType>
+
+    <xsd:complexType name="QueryType">
+        <xsd:sequence>
+            <xsd:element name="type"  default="DEFAULT">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="DEFAULT"/>
+                        <xsd:enumeration value="FILTERED"/>
+			<xsd:enumeration value="TEXTSEARCH"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="users" type="ns1:UsersType"  minOccurs="0"/>
+
+            <xsd:element name="groups" type="ns1:GroupsType" minOccurs="0"/>
+
+	    <xsd:element name="excluded"  minOccurs="0">
+	      <xsd:complexType>
+		<xsd:sequence>
+		   <xsd:element name="users" type="ns1:UsersType" minOccurs="0"/>
+		   <xsd:element name="groups" type="ns1:GroupsType" minOccurs="0"/>
+		</xsd:sequence>  
+	      </xsd:complexType>
+	    </xsd:element>
+            <xsd:element name="taskStatus"
+                    type="ns1:TaskStatus" minOccurs="0"
+                    maxOccurs="unbounded" /> 
+            <xsd:element name="sort"
+                    type="ns1:SortField"  minOccurs="0" />
+            <xsd:element name="dir"
+                    type="ns1:Direction"  minOccurs="0" />
+	    <xsd:element name="deadlineQuery" type="ns1:DeadlineQueryType"  minOccurs="0" />
+            <xsd:element name="searchString" type="xsd:string"  minOccurs="0">
+            </xsd:element>	    
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element  name="query" type="ns1:QueryType" />
+    <xsd:element name="taskIdentifer"
+            type="xsd:int">
+    </xsd:element>
+    <xsd:element name="AssigneeRole" type="xsd:string">
+    </xsd:element>
+    <xsd:element name="AssigneeUser" type="xsd:string">
+    </xsd:element>
+</xsd:schema>

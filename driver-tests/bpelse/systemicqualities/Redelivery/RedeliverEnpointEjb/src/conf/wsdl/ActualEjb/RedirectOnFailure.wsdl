@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="RedirectOnFailure" targetNamespace="http://j2ee.netbeans.org/wsdl/RedirectOnFailure"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" xmlns:tns="http://j2ee.netbeans.org/wsdl/RedirectOnFailure">
+            <xsd:complexType name="compMsg">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"></xsd:element>
+                    <xsd:element name="val" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="msgElem" type="tns:compMsg"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="TestMsg">
+        <part name="TestPart" element="tns:msgElem"/>
+    </message>
+    <portType name="RedirectOnFailurePortType">
+        <operation name="RedirectOnFailureOperation">
+            <input name="input1" message="tns:TestMsg"/>
+        </operation>
+    </portType>
+    <portType name="TestMsgPT">
+        <operation name="TestMsgOper">
+            <input name="input1" message="tns:TestMsg"/>
+            <output name="output1" message="tns:TestMsg"/>
+        </operation>
+    </portType>
+    <portType name="ActualPartnerPT">
+        <operation name="ActualPartnerOper">
+            <input name="input1" message="tns:TestMsg"/>
+        </operation>
+    </portType>
+    <portType name="ConfirmRedirectPT">
+        <operation name="ConfirmRedirectOper">
+            <input name="input1" message="tns:TestMsg"/>
+        </operation>
+    </portType>
+    <binding name="RedirectOnFailurePortTypeBinding" type="tns:RedirectOnFailurePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="RedirectOnFailureOperation">
+            <soap:operation style="document"/>
+            <input name="input1">
+                <soap:body use="literal" parts="TestPart"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="TestMsgPTBinding" type="tns:TestMsgPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="TestMsgOper">
+            <soap:operation style="document"/>
+            <input name="input1">
+                <soap:body use="literal" parts="TestPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="TestPart"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="ActualPartnerPTBinding" type="tns:ActualPartnerPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ActualPartnerOper">
+            <soap:operation style="document"/>
+            <input name="input1">
+                <soap:body use="literal" parts="TestPart"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="ConfirmRedirectPTBinding" type="tns:ConfirmRedirectPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ConfirmRedirectOper">
+            <soap:operation style="document"/>
+            <input name="input1">
+                <soap:body use="literal" parts="TestPart"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="RedirectOnFailureService">
+        <port name="RedirectOnFailurePortTypeBindingPort" binding="tns:RedirectOnFailurePortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/RedirectOnFailureService/RedirectOnFailurePortTypeBindingPort"/>
+        </port>
+    </service>
+    <service name="TestMsgService">
+        <port name="TestMsgServiceBindingPort" binding="tns:TestMsgPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/TestMsgService/TestMsgServiceBindingPort"/>
+        </port>
+    </service>
+    <service name="ActualPartnerService">
+        <port name="ActualPartnerServiceBindingPort" binding="tns:ActualPartnerPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ActualPartnerService/ActualPartnerServiceBindingPort"/>
+        </port>
+    </service>
+    <service name="ConfirmRedirectService">
+        <port name="ConfirmRedirectServiceBindingPort" binding="tns:ConfirmRedirectPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/ConfirmRedirectService/ConfirmRedirectServiceBindingPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="RedirectOnFailurePLT">
+        <plnk:role name="RedirectOnFailurePortTypeRole" portType="tns:RedirectOnFailurePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="TestMsgPLT">
+        <plnk:role name="TestMsgPTRole" portType="tns:TestMsgPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="ActualPLT">
+        <plnk:role name="ActualPartnerPTRole" portType="tns:ActualPartnerPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="ConfirmRedirectPLT">
+        <plnk:role name="ConfirmRedirectPTRole" portType="tns:ConfirmRedirectPT"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="redirectId" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:redirectId" messageType="tns:TestMsg" part="TestPart">
+        <vprop:query>id</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

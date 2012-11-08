@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://sample.sun.com/" xmlns:ns2="http://j2ee.netbeans.org/wsdl/proxy" xmlns:ns3="http://enterprise.netbeans.org/bpel/HttpSoap12Bpel/proxy" xmlns:ns4="http://enterprise.netbeans.org/bpel/HttpSoap12Bpel/test1" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="HelloPort" interface-name="ns1:Hello" name="endpoint1" service-name="ns1:HelloService"/>
+        <endpoint endpoint-name="proxyPort" interface-name="ns2:proxyPortType" name="endpoint2" service-name="ns2:proxyService"/>
+        <endpoint endpoint-name="HelloProxyPort" interface-name="ns1:HelloProxy" name="endpoint3" service-name="ns1:HelloProxyService"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="proxyPortTypeRole_myRole" file-path="proxy.bpel" interface-name="ns2:proxyPortType" name="endpoint4" process-name="proxy" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="HelloProxyRole_myRole" file-path="test1.bpel" interface-name="ns1:HelloProxy" name="endpoint5" process-name="test1" service-name="ns4:PartnerLink1"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="HelloRole_partnerRole" file-path="proxy.bpel" interface-name="ns1:Hello" name="endpoint6" process-name="proxy" service-name="ns3:PartnerLink2"/>
+        <endpoint display-name="PartnerLink2" endpoint-name="HelloRole_partnerRole" file-path="test1.bpel" interface-name="ns1:Hello" name="endpoint7" process-name="test1" service-name="ns4:PartnerLink2"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="HttpSoap12Bpel.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="HttpSoap12Jbi-HttpSoap12Bpel" unit-name="HttpSoap12Bpel" unknown="false" x="143" y="99">
+            <provides endpoint="endpoint4"/>
+            <provides endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="HttpSoap12Jbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/HelloProxy.wsdl#xpointer(/definitions/service[@name='HelloProxyService']/port[@name='HelloProxyPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="67" y="225">
+                    <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/localhost_8080/HelloWS/HelloService.wsdl#xpointer(/definitions/service[@name='HelloService']/port[@name='HelloPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="67" y="132">
+                    <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/proxy.wsdl#xpointer(/definitions/service[@name='proxyService']/port[@name='proxyPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint6" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint7" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint5" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/HttpSoap12Jbi.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/HelloProxy.wsdl#xpointer(/definitions/portType[@name='HelloProxy'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/localhost_8080/HelloWS/HelloService.wsdl#xpointer(/definitions/portType[@name='Hello'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/proxy.wsdl#xpointer(/definitions/portType[@name='proxyPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/HelloProxy.wsdl#xpointer(/definitions/binding[@name='HelloProxyPortBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/localhost_8080/HelloWS/HelloService.wsdl#xpointer(/definitions/binding[@name='HelloPortBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/proxy.wsdl#xpointer(/definitions/binding[@name='proxyBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/HelloProxy.wsdl#xpointer(/definitions/service[@name='HelloProxyService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/localhost_8080/HelloWS/HelloService.wsdl#xpointer(/definitions/service[@name='HelloService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/HttpSoap12Bpel/proxy.wsdl#xpointer(/definitions/service[@name='proxyService'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

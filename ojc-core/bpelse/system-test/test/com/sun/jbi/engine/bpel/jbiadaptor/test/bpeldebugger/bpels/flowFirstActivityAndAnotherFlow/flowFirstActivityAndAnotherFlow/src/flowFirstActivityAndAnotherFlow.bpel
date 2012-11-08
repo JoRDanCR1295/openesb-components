@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="flowFirstActivityAndAnotherFlow" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/flowFirstActivityAndAnotherFlow"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/flowFirstActivityAndAnotherFlow" xmlns:ns1="http://j2ee.netbeans.org/wsdl/flowFirstActivityAndAnotherFlow" xmlns:ns0="http://xml.netbeans.org/schema/purchaseOrder">
+    <import namespace="http://j2ee.netbeans.org/wsdl/flowFirstActivityAndAnotherFlow" location="flowFirstActivityAndAnotherFlow.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:flowFirstActivityAndAnotherFlowResponsePartner" partnerRole="flowFirstActivityAndAnotherFlowPortTypeReponseRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:flowFirstActivityAndAnotherFlowPartner" myRole="flowFirstActivityAndAnotherFlowPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var2" messageType="ns1:flowFirstActivityAndAnotherFlowOperationRequest"/>
+        <variable name="Variable1" type="xsd:integer"/>
+    </variables>
+    <sequence>
+        <flow name="Flow1">
+            <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="flowFirstActivityAndAnotherFlowOperation" portType="ns1:flowFirstActivityAndAnotherFlowPortType" variable="var2"/>
+            <sequence name="Sequence3">
+                <empty name="Empty1"/>
+            </sequence>
+        </flow>
+        <assign name="Assign1">
+            <copy>
+                <from>1</from>
+                <to variable="Variable1"/>
+            </copy>
+        </assign>
+        <assign name="Assign3">
+            <copy>
+                <from>2</from>
+                <to>$var2.part1/ns0:lineItems/ns0:item/ns0:quantity</to>
+            </copy>
+        </assign>
+        <flow name="Flow2">
+            <assign name="Assign2">
+                    <copy>
+                        <from>  ( $Variable1 + 1 )  </from>
+                        <to variable="Variable1"/>
+                    </copy>
+            </assign>
+            <sequence name="Sequence2">
+                <invoke name="Invoke1" partnerLink="PartnerLink2" operation="flowFirstActivityAndAnotherFlowOperation" portType="ns1:flowFirstActivityAndAnotherFlowPortTypeReponse" inputVariable="var2"/>
+            </sequence>
+            <wait name="Wait2">
+                <for>'P0Y0M0DT0H0M3S'</for>
+            </wait>
+        </flow>
+        <assign name="Assign4">
+            <copy>
+                <from variable="Variable1"/>
+                <to>$var2.part1/ns0:lineItems/ns0:item/ns0:quantity</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke2" partnerLink="PartnerLink2" operation="flowFirstActivityAndAnotherFlowOperation" portType="ns1:flowFirstActivityAndAnotherFlowPortTypeReponse" inputVariable="var2"/>
+    </sequence>
+   
+</process>

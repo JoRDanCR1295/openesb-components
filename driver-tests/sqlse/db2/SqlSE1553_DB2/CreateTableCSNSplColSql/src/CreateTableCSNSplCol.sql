@@ -1,0 +1,1 @@
+CREATE TABLE drivertest_mixedcolumn (Aa1$ INTEGER NOT NULL PRIMARY KEY)

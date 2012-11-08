@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="siebelAcctInserBpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/siebelAcctInserBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelAcctInserBpel" xmlns:ns1="http://siebel.com/asi/" xmlns:ns2="http://stc.com/echo" xmlns:ns0="http://www.siebel.com/xml/Account%20Interface">
+    <import namespace="http://siebel.com/asi/" location="SiebelAccount.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="echoPartnerLink" partnerLinkType="ns2:SLT" myRole="server"/>
+        <partnerLink name="siebelPartnerLink" partnerLinkType="ns1:SiebelAcccountpartnerlinktyperole1" partnerRole="SiebelAccountpartnerlink"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOut1" messageType="ns2:echo"/>
+        <variable name="SiebelAccountInsertOut1" messageType="ns1:Siebel_spcAccount_SiebelAccountInsert_Output"/>
+        <variable name="SiebelAccountInsertIn1" messageType="ns1:Siebel_spcAccount_SiebelAccountInsert_Input"/>
+        <variable name="EchoIn1" messageType="ns2:echo"/>
+    </variables>
+    <sequence>
+        <receive name="echoReceive" createInstance="yes" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoIn1"/>
+        <assign name="initAcctRecord">
+            <copy>
+                <from>'Active'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountStatus</to>
+            </copy>
+            <copy>
+                <from>'N'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:CompetitorFlag</to>
+            </copy>
+            <copy>
+                <from>'USD'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:CurrencyCode</to>
+            </copy>
+            <copy>
+                <from>'6264716001'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:MainPhoneNumber</to>
+            </copy>
+            <copy>
+                <from>'SunSeebeyondWebServiceSiebelAcctInsert'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:Name</to>
+            </copy>
+            <copy>
+                <from>'USD'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:POAutoApprovalCurrencyCode</to>
+            </copy>
+            <copy>
+                <from>'N'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:PartnerFlag</to>
+            </copy>
+            <copy>
+                <from>'N'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:SkipCreditCheck</to>
+            </copy>
+            <copy>
+                <from>'Siebel Administrator'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedSalesRep/ns0:RelatedSalesRep[1]/ns0:Position</to>
+            </copy>
+            <copy>
+                <from>'0-5220'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedSalesRep/ns0:RelatedSalesRep[1]/ns0:PositionId</to>
+            </copy>
+            <copy>
+                <from>'SADMIN'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedSalesRep/ns0:RelatedSalesRep[1]/ns0:Login</to>
+            </copy>
+            <copy>
+                <from>'Siebel Administration'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedSalesRep/ns0:RelatedSalesRep[1]/ns0:Division</to>
+            </copy>
+            <copy>
+                <from>'Default Organization'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedOrganization/ns0:RelatedOrganization[1]/ns0:Organization</to>
+            </copy>
+            <copy>
+                <from>'0-R9NH'</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:ListOfRelatedOrganization/ns0:RelatedOrganization[1]/ns0:OrganizationId</to>
+            </copy>
+            <copy>
+                <from>' '</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:Location</to>
+            </copy>
+            <copy>
+                <from>' '</from>
+                <to>$SiebelAccountInsertIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:PrimaryOrganization</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeAcctInsert" partnerLink="siebelPartnerLink" operation="SiebelAccountInsert" portType="ns1:Default" inputVariable="SiebelAccountInsertIn1" outputVariable="SiebelAccountInsertOut1"/>
+        <assign name="processResp">
+            <copy>
+                <from>$SiebelAccountInsertOut1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountId</from>
+                <to>$EchoOut1.part/ns2:value</to>
+            </copy>
+        </assign>
+        <reply name="echoReply" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoOut1"/>
+   </sequence>
+   
+</process>

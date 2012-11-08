@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/greetService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/greetService" name="greetService" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://xml.netbeans.org/schema/GreetBPLSchema">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/GreetBPLSchema" xmlns:tns1="http://xml.netbeans.org/schema/GreetBPLSchema">
+            <xsd:element name="inMsg" type="xsd:string"></xsd:element>
+            <xsd:element name="outMsg" type="xsd:string"></xsd:element>
+            <xsd:element name="faultMsg" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="greetServiceOperationRequest">
+        <part name="part1" element="ns:inMsg"/>
+    </message>
+    <message name="greetServiceOperationReply">
+        <part name="part1" element="ns:outMsg"/>
+    </message>
+    <message name="faultMsg">
+        <wsdl:part name="part1" element="ns:faultMsg"/>
+    </message>
+    <portType name="greetServicePortType">
+        <wsdl:operation name="greetServiceOperation">
+            <wsdl:input name="input1" message="tns:greetServiceOperationRequest"/>
+            <wsdl:output name="output1" message="tns:greetServiceOperationReply"/>
+            <wsdl:fault name="fault1" message="tns:faultMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="greetBinding" type="tns:greetServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="greetServiceOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </binding>
+    <service name="svcGreet">
+        <wsdl:port name="svcPort" binding="tns:greetBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/bplGreetService/greetService/svcPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="greetServicePartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="greetServicePortTypeRole" portType="tns:greetServicePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

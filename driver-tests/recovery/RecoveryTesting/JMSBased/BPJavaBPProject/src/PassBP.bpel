@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PassBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/PassBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/PassBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP" xmlns:ns0="http://xml.netbeans.org/schema/CorrelationSample">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/CorrelatedJavaBP" location="CorrelatedJavaBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="CallBackFeederPartnerLink" partnerLinkType="ns1:CallBackBPPartner" partnerRole="CallBackPortTypeRole"/>
+        <bpws:partnerLink name="JavaToPassBPPartner" partnerLinkType="ns1:JavaToPassBPPartner" myRole="JavaToPassBPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="CallBackFeederMsg" messageType="ns1:CallBackOperationRequest"/>
+        <bpws:variable name="JavaMessageIn" messageType="ns1:CallInOperationRequest"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:correlationId"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="MsgFromJavaReceive" createInstance="yes" partnerLink="JavaToPassBPPartner" 
+                      operation="JavaToPassBPPortTypeOper" portType="ns1:JavaToPassBPPortType" variable="JavaMessageIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$JavaMessageIn.InMessage/ns0:InMessage</bpws:from>
+                <bpws:to>$CallBackFeederMsg.OutMessage/ns0:OutMessage</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JavaMessageIn.InMessage/ns0:Counter</bpws:from>
+                <bpws:to>$CallBackFeederMsg.OutMessage/ns0:Counter</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$JavaMessageIn.InMessage/ns0:Id</bpws:from>
+                <bpws:to>$CallBackFeederMsg.OutMessage/ns0:Id</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="CallBackFeederInvoke" partnerLink="CallBackFeederPartnerLink" operation="CallBackOperation" portType="ns1:CallBackPortType" inputVariable="CallBackFeederMsg">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:invoke>
+    </sequence>
+</process>

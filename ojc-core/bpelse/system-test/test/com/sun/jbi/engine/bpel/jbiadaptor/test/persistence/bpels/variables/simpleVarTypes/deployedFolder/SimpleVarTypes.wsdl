@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SimpleVarTypes" 
+             targetNamespace="http://sun.com/wsdl/SimpleVarTypes"
+             xmlns:tns="http://sun.com/wsdl/SimpleVarTypes"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+    <message name="VarMessage">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    
+    <portType name="VarPortType">
+        <operation name="VarOperation">
+            <input name="input1" message="tns:VarMessage"/>
+            <output name="output1" message="tns:VarMessage"/>
+        </operation>
+    </portType>
+    <portType name="invokePortType">
+        <operation name="oneWayInvokeOper">
+            <input name="input" message="tns:VarMessage"/>
+        </operation>
+    </portType>
+    
+    <binding name="VarBinding" type="tns:VarPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="VarOperation">
+            <input name="input1"><soap:body/></input>
+            <output name="output1"><soap:body/></output>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="oneWayInvokeOper">
+            <input name="input"><soap:body/></input>
+        </operation>
+    </binding>
+    
+    <service name="VarService">
+        <port name="VarPort" binding="tns:VarBinding">
+            <soap:address location="http://localhost:20000/SimpleVarTypes"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:20001/SimpleVarTypesInvoke"/>
+        </port>
+    </service>
+    
+    <plink:partnerLinkType name="VarPartnerLinkType">
+        <plink:role name="VarPartnerLinkTypeRole" portType="tns:VarPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="VarInvokePLT">
+        <plink:role name="VarInvokeRole" portType="tns:invokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- jbi.xml descriptor for the binding component (BC) -->
+<jbi
+    version="1.0"
+    xmlns="http://java.sun.com/xml/ns/jbi"
+    xmlns:config="http://www.sun.com/jbi/descriptor/configuration"
+    xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+
+<!-- identification information about this binding -->
+    <component type="binding-component">
+        <identification>
+            <name>${project.name}</name>
+            <description>Binding component used to periodically execute a command and get the result</description>
+            <identification:VersionInfo component-version="${execbc.release.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="The boot strap class" >com.sun.jbi.execbc.ExecBindingLifeCycle</component-class-name>
+        <component-class-path>
+            <path-element>lib/execbcimpl.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>            
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/ganymed-ssh2.jar</path-element>
+         </component-class-path>
+        <bootstrap-class-name>com.sun.jbi.execbc.bootstrap.ExecBindingBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+           <path-element>lib/execbcimpl.jar</path-element>
+           <path-element>lib/componentsl.jar</path-element>                       
+        </bootstrap-class-path>
+        <shared-library>sun-wsdl-ext-library</shared-library>
+        <shared-library>sun-encoder-library</shared-library>
+        <config:Configuration version="1.0">
+            <config:MaximumSessions>10</config:MaximumSessions>
+        </config:Configuration>             
+    </component>
+</jbi>

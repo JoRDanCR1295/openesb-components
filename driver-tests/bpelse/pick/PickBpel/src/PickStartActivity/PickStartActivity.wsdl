@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="PickStartActivity"
+             targetNamespace="http://www.mycomp.org/PickStartActivity"
+             xmlns:tns="http://www.mycomp.org/PickStartActivity"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns3="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns4="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:message name="requestMsg">
+        <wsdl:part name="req" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="responseMsg">
+        <wsdl:part name="res" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="MyPortType">
+        <wsdl:operation name="PickOperation">
+            <wsdl:input name="inputText" message="tns:requestMsg"/>
+            <wsdl:output name="outputText" message="tns:responseMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="portType1">
+        <wsdl:operation name="operation1">
+            <wsdl:input name="input1" message="tns:requestMsg"/>
+            <wsdl:output name="output1" message="tns:responseMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="SoapBinding" type="tns:MyPortType">
+            <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+                <operation name="PickOperation">
+                        <soap:operation style="document"/>
+                        <input name="inputText">
+                                <soap:body use="literal"/>
+                        </input><output name="outputText">
+    <soap:body use="literal"/>
+</output>
+                </operation>
+        </binding>
+    <wsdl:binding name="binding1" type="tns:portType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="operation1">
+        <wsdl:input name="input1">
+          <soap:body/>
+        </wsdl:input><wsdl:output name="output1">
+    <soap:body/>
+</wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PickNotStartActivityService">
+		<wsdl:port name="PickNotStartActivityPortName" binding="tns:SoapBinding">                    
+                     <soap:address location="http://localhost:${HttpDefaultPort}/PickStartActivity"/>
+		</wsdl:port>
+        <wsdl:port name="port1" binding="tns:binding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/PickStartActivity2"/>
+        </wsdl:port>
+    </wsdl:service>
+
+	<plnk:partnerLinkType name="PickNotStartActivityPartnerLinkType">
+		<plnk:role name="PickNotStartActivityProvider" portType="tns:MyPortType"/>
+	</plnk:partnerLinkType>
+    <plnk:partnerLinkType name="partnerlinktype1">
+        <plnk:role name="partnerlinktyperole1" portType="tns:portType1"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="InOutBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOutBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InOutBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/XSLTBP">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/XSLTBP" location="Partners/XSLTBP/XSLTBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="BPXSLTPartnerLink" partnerLinkType="ns1:XSLTBPPartnerLinkType" partnerRole="InOutXSLTBPPortTypeRole"/>
+        <bpws:partnerLink name="HttpBPPartnerLink" partnerLinkType="ns1:HttpBPPartnerLinkType" myRole="HttpBPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="InOutXSLTBPOperationOut" messageType="ns1:InOutMsg"/>
+        <bpws:variable name="InOutXSLTBPOperationIn" messageType="ns1:InOutMsg"/>
+        <bpws:variable name="HttpBPOperIn" messageType="ns1:InOutMsg"/>
+        <bpws:variable name="HttpBPOperOut" messageType="ns1:InOutMsg"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="HttpReceive" createInstance="yes" partnerLink="HttpBPPartnerLink" operation="HttpBPOper" portType="ns1:HttpBPPortType" variable="HttpBPOperIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$HttpBPOperIn.InOutPart/intElem</bpws:from>
+                <bpws:to>$InOutXSLTBPOperationIn.InOutPart/intElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($HttpBPOperIn.InOutPart/strElem, ' Added in BP:')</bpws:from>
+                <bpws:to>$InOutXSLTBPOperationIn.InOutPart/strElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InOutXSLInv" partnerLink="BPXSLTPartnerLink" operation="InOutXSLTBPOperation" portType="ns1:InOutXSLTBPPortType" inputVariable="InOutXSLTBPOperationIn" outputVariable="InOutXSLTBPOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($InOutXSLTBPOperationOut.InOutPart/strElem, ' Returning to Http:')</bpws:from>
+                <bpws:to>$HttpBPOperOut.InOutPart/strElem</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InOutXSLTBPOperationOut.InOutPart/intElem</bpws:from>
+                <bpws:to>$HttpBPOperOut.InOutPart/intElem</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="ReplyToHttp" partnerLink="HttpBPPartnerLink" operation="HttpBPOper" portType="ns1:HttpBPPortType" variable="HttpBPOperOut"/>
+    </sequence>
+</process>

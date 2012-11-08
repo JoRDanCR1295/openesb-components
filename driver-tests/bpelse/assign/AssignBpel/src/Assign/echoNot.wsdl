@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoNot" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoNot" targetNamespace="http://stc.com/echoNot">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoNot">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoNot">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoNot">
+        <operation name="echoNot">
+            <input message="tns:echoNot"/>
+            <output message="tns:echoNot"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoNot">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoNot">
+            <soap:operation soapAction="echoNot"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoNotService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoNot"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoNot"/>
+    </plnk:partnerLinkType>
+</definitions>

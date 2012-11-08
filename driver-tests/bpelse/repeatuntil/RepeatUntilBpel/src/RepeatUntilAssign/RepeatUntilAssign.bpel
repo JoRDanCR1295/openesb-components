@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilAssign" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilAssign"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilAssign" xmlns:ns1="http://localhost/RepeatUntilBPEL/RepeatUntilAssign">
+    <import namespace="http://localhost/RepeatUntilBPEL/RepeatUntilAssign" location="RepeatUntilAssign.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns1:AssignMsg1"/>
+        <variable name="Operation1In1" messageType="ns1:AssignMsg1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:AssignPortType1" variable="Operation1In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>1</from><to part="int" variable="Operation1In1"/>
+            </copy>
+            <copy>
+            <from>'RepeatUntil Assign Test'</from><to part="string" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <assign name="Assign2">
+                <copy>
+                <from> ( $Operation1In1.int + 1 ) </from><to part="int" variable="Operation1In1"/>
+                </copy>
+                <copy>
+                <from>contains($Operation1In1.string, 'Test')</from><to part="bool" variable="Operation1In1"/>
+                </copy>
+                <copy>
+                <from>string-length($Operation1In1.string)</from><to part="double" variable="Operation1In1"/>
+                </copy>
+                <copy>
+                <from>-$Operation1In1.int</from><to part="negInt" variable="Operation1In1"/>
+                </copy>
+                <copy>
+                <from>'P1Y1M1DT1H1M1S'</from><to part="duration" variable="Operation1In1"/>
+                </copy>
+            </assign>
+            <condition> ( $Operation1In1.int >= 1 ) </condition>
+        </repeatUntil>
+        <assign name="Assign3">
+            <copy>
+            <from variable="Operation1In1" part="string"/><to variable="Operation1Out1" part="string"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="int"/><to variable="Operation1Out1" part="int"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="bool"/><to variable="Operation1Out1" part="bool"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="duration"/><to variable="Operation1Out1" part="duration"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="negInt"/><to variable="Operation1Out1" part="negInt"/>
+            </copy>
+            <copy>
+            <from variable="Operation1In1" part="double"/><to variable="Operation1Out1" part="double"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:AssignPortType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

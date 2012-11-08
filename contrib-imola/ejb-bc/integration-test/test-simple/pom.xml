@@ -1,0 +1,258 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    =========================================================
+    COORDINATES
+    =========================================================
+  -->
+  <parent>
+    <groupId>it.imolinfo.jbi4ejb</groupId>
+    <artifactId>integration-test</artifactId>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <artifactId>test-simple</artifactId>
+
+  <!--
+    =========================================================
+    DESCRIPTION
+    =========================================================
+  -->
+  <name>${pom.groupId}.${pom.artifactId}-${pom.version} # ${pom.packaging}</name>
+
+  <!--
+    =========================================================
+    PACKAGING
+    =========================================================
+  -->
+  <packaging>pom</packaging>
+
+
+
+  <dependencies>
+    <dependency>
+      <groupId>it.imolinfo.jbi4ejb</groupId>
+      <artifactId>simple-ear</artifactId>
+      <version>0.5-SNAPSHOT</version>
+      <type>ear</type>
+    </dependency>
+  </dependencies>
+
+  <modules>
+    <module>ejb-provider-simple</module>
+    <module>http-consumer-simple</module>
+    <module>sa-simple</module>
+    <module>simple-ejb21</module>
+    <module>simple-ear</module>
+  </modules>
+
+  <properties>
+    <soapui.projectFile>test-simple-soapui-project.xml</soapui.projectFile>
+    <j2ee.deplyable.artifactId>simple-ear</j2ee.deplyable.artifactId>
+    <jbi.deployable.artifactId>sa-simple</jbi.deployable.artifactId>
+  </properties>
+  
+<profiles>
+    <!-- Profile which executes integration test with soap-ui -->
+    <profile>
+      <id>IntegrationTest</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>eviware</groupId>
+            <artifactId>maven-soapui-plugin</artifactId>
+            <version>1.7.5</version>
+            <configuration>
+              <projectFile>${basedir}/src/test/etc/soapui/${soapui.projectFile}</projectFile>
+              <printeReport>yes</printeReport>
+              <junitReport>yes</junitReport>
+              <exportAll>no</exportAll>
+              <outputFolder>${basedir}/target/soapui</outputFolder>
+            </configuration>
+            <executions>
+              <execution>
+                <id>soap-ui-test</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Profile which executes test in jboss -->
+    <profile>
+      <id>Jboss</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <container>
+                <containerId>jboss4x</containerId>
+                <output>${basedir}/target/jboss4xlog/jboss4x.log</output>
+                <log>${basedir}/target/jboss4xlog/cargo.log</log>
+                <!-- home>/home/raffaele/download/ejbContainers/jboss/jboss-4.2.0.GA</home-->
+                <home>${jboss.home}</home>
+              </container>
+              <wait>false</wait>
+              <home>${basedir}/target/jboss4x</home>
+              <configuration>
+                <properties>
+                  <cargo.logging>high</cargo.logging>
+                  <cargo.jboss.configuration>all</cargo.jboss.configuration>
+                  <!-- configure SERVER_HOME/deploy/jboss-web.deployer/server.xml 
+                    to use port 9080 to avoid conflict with Glassfish -->
+                  <cargo.servlet.port>9080</cargo.servlet.port>
+                </properties>
+              </configuration>
+              <deployer>
+                <type>installed</type>
+                <deployables>
+                  <deployable>
+                    <groupId>it.imolinfo.jbi4ejb</groupId>
+                    <artifactId>${j2ee.deplyable.artifactId}</artifactId>
+                    <type>ear</type>
+                    <!-- <pingURL>optional url to ping to know if deployable is done or not</pingURL>
+                      <pingTimeout>optional timeout to ping (default 20000 milliseconds)</pingTimeout>-->
+                  </deployable>
+                </deployables>
+              </deployer>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-container</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-container</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Profile which executes test in websphere -->
+    <!-- <profile>
+      <id>Websphere</id>
+      <build>
+      <plugins>
+      <plugin>
+      <groupId>no.bekk.maven.plugins</groupId>
+      <artifactId>maven-was-plugin</artifactId>
+      <configuration>
+      <was5Home>${was6.home}</was5Home>
+      <ibmJdkHome>${was6.home}/java</ibmJdkHome>
+      <scriptName>/bin/ws_ant.sh</scriptName>
+      <project>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>simple-ear</artifactId>
+      <version>${pom.version}</version>
+      <type>ear</type>
+      </project>
+      <appname>simple-ear</appname>
+      <application>simple-ear</application>
+      </configuration>
+      <executions>
+      <execution>
+      <id>start-container</id>
+      <phase>pre-integration-test</phase>
+      <goals>
+      <goal>stopApp</goal>
+      <goal>uninstallApp</goal>
+      <goal>installApp</goal>
+      <goal>startApp</goal>
+      </goals>
+      </execution>
+      <execution>
+      <id>stop-container</id>
+      <phase>post-integration-test</phase>
+      <goals>
+      <goal>stopApp</goal>
+      <goal>uninstallApp</goal>
+      </goals>
+      </execution>
+      </executions>
+      </plugin>
+      </plugins>
+      </build>
+      </profile> -->
+
+    <!-- Profile which executes integration test in Open ESB -->
+    <profile>
+      <id>OpenESB</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>it.imolinfo.jbi4cics</groupId>
+            <artifactId>integration-test-mojo</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>it.imolinfo.jbi4ejb</groupId>
+                <artifactId>jbi4ejb</artifactId>
+                <version>${version}</version>
+              </dependency>
+              <dependency>
+                <groupId>it.imolinfo.jbi4ejb</groupId>
+                <artifactId>${jbi.deployable.artifactId}</artifactId>
+                <version>${version}</version>
+                <type>zip</type>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <openesb.home>${openesb.home}</openesb.home>
+              <soapui.home>${soapui.home}</soapui.home>
+              <maven.repository.home>${maven.repository.home}</maven.repository.home>
+              <project.home>${basedir}/../..</project.home>
+              <sa.list>${jbi.deployable.artifactId}</sa.list>
+              <version>${project.version}</version>
+              <jbi.component.name>jbi4ejb</jbi.component.name>
+              <jbi.component.path>
+                ${maven.repository.home}/it/imolinfo/jbi4ejb/jbi4ejb/${version}/jbi4ejb-${version}-installer.zip
+              </jbi.component.path>
+              <soapui.project.path>
+                /home/raffaele/java/workspacejbi/jbi4ejb/src/test/etc/soapui/jbi4ejb-soapui-project-soapui-project.xml
+              </soapui.project.path>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start-container</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>startOpenESB</goal>
+                  <goal>installBCOpenESB</goal>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop-container</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>undeploy</goal>
+                  <goal>uninstallBCOpenESB</goal>
+                  <goal>stopOpenESB</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>    
+
+</project>

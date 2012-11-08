@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://xml.netbeans.org/schema/candidate"
+            xmlns:tns="http://xml.netbeans.org/schema/candidate"
+            elementFormDefault="qualified">
+    <xsd:simpleType name="level">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="beginner"/>
+            <xsd:enumeration value="intermediate"/>
+            <xsd:enumeration value="expert"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="firm">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="name" type="xsd:string"></xsd:element>
+                <xsd:element name="fromdate" type="xsd:date"></xsd:element>
+                <xsd:element name="todate" type="xsd:date"></xsd:element>
+                <xsd:element name="technology" maxOccurs="unbounded">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element name="name" type="xsd:string"></xsd:element>
+                            <xsd:element name="expertise" type="tns:level"></xsd:element>
+                            <xsd:element name="numofyears" type="xsd:float"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="candidate">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="firstname" type="xsd:string"></xsd:element>
+                <xsd:element name="lastname" type="xsd:string"></xsd:element>
+                <xsd:element name="ssn" type="xsd:int"></xsd:element>
+                <xsd:element name="dob" type="xsd:date"></xsd:element>
+                <xsd:element name="gender">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="male|female"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="phone" type="xsd:int"></xsd:element>
+                <xsd:element name="email" type="xsd:string"></xsd:element>
+                <xsd:element name="address">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element name="street" type="xsd:string"></xsd:element>
+                            <xsd:element name="apt" type="xsd:string" minOccurs="0"></xsd:element>
+                            <xsd:element name="state" type="xsd:string"></xsd:element>
+                            <xsd:element name="zip" type="xsd:int"></xsd:element>
+                            <xsd:element name="country" type="xsd:string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="degree">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="masters|bachelors"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="experience">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element ref="tns:firm" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="applydate" type="xsd:date"></xsd:element>
+                <xsd:element name="selected" default="no">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="no|yes"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/LodeStarClient/ClientProcess"
+             name="ClientProcess"
+             xmlns:tns="http://localhost/LodeStarClient/ClientProcess"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <xsd:schema targetNamespace="http://localhost/LodeStarClient/ClientProcess"
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        xmlns:tns="http://localhost/LodeStarClient/ClientProcess"
+        xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns:slnk1="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+             <xsd:element type="tns:simplestringtype"
+             name="simplestring"></xsd:element>
+             <xsd:element type="tns:stringresponsetype"
+            name="stringresponse"/>
+             <xsd:complexType name="simplestringtype">
+                 <xsd:sequence>
+                     <xsd:element type="xsd:string"
+                     name="string"/>
+                 </xsd:sequence>
+             </xsd:complexType>
+             <xsd:complexType name="stringresponsetype">
+                 <xsd:sequence>
+                     <xsd:element type="xsd:string"
+                      name="stringoutput"/>
+                 </xsd:sequence>
+             </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="simpleinput">
+        <part name="body"
+        element="tns:simplestring"></part>
+    </message>
+        <message name="simpleresponse">
+            <part name="body"
+            element="tns:stringresponse"></part>
+        </message>
+            <portType name="LodeStarClient">
+              <operation name="AssignOperation">
+                  <input message="tns:simpleinput"></input>
+                  <output message="tns:simpleresponse"></output>
+              </operation>
+            </portType>
+        <binding name="stringObjectBinding"
+        type="tns:LodeStarClient">
+            <soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http"/>
+            <operation name="AssignOperation">
+                <soap:operation soapAction="getStringInput"/>
+                <input>
+                    <soap:body parts="body"
+                    use="literal"/>
+                </input>
+                <output>
+                    <soap:body parts="body"
+                    use="literal"/>
+                </output>
+            </operation>
+        </binding>
+    <service name="LodeStarClientService">
+        <documentation>
+            Returns the String Input
+        </documentation>
+        <port name="LodeStarClient"
+        binding="tns:stringObjectBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/LodeStarClient"/>
+        </port>
+    </service>
+             <plnk:partnerLinkType name="LodeStarClientProcess"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+             <plnk:role name="LodeStarClientRole"
+             portType="tns:LodeStarClient"></plnk:role>             
+             </plnk:partnerLinkType>                                                              
+                  </definitions>

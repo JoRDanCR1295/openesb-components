@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" xmlns:ns2="JMSQosCA" xmlns:ns3="http://j2ee.netbeans.org/wsdl/JMSQos/soap" xmlns:ns4="http://enterprise.netbeans.org/bpel/FileQos/fileQos" xmlns:ns5="http://enterprise.netbeans.org/bpel/JMSQos/soap" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="fileQos_InboundPort" interface-name="ns1:FileInboundPortType" name="endpoint1" service-name="ns1:FileInboundService"/>
+        <endpoint endpoint-name="casaPort1" interface-name="ns1:FileInboundPortType" name="endpoint2" service-name="ns2:JMSQosCAService1"/>
+        <endpoint endpoint-name="casaPort2" interface-name="ns1:FileInboundPortType" name="endpoint3" service-name="ns2:JMSQosCAService2"/>
+        <endpoint endpoint-name="soapPort" interface-name="ns3:soapPortType" name="endpoint4" service-name="ns3:soapService"/>
+        <endpoint endpoint-name="casaPort3" interface-name="ns3:soapPortType" name="endpoint5" service-name="ns2:JMSQosCAService3"/>
+        <endpoint endpoint-name="casaPort4" interface-name="ns3:soapPortType" name="endpoint6" service-name="ns2:JMSQosCAService4"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="FileInboundPortTypeRole_myRole" file-path="fileQos.bpel" interface-name="ns1:FileInboundPortType" name="endpoint7" process-name="fileQos" service-name="ns4:PartnerLink1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="soapPortTypeRole_myRole" file-path="soap.bpel" interface-name="ns3:soapPortType" name="endpoint8" process-name="soap" service-name="ns5:PartnerLink1"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="JMSQos.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="JMSQosCA-JMSQos" unit-name="JMSQos" unknown="false" x="167" y="99">
+            <provides endpoint="endpoint7"/>
+            <provides endpoint="endpoint8"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="JMSQosCA-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="67" y="127">
+                    <link xlink:href="../jbiServiceUnits/JMSQos/fileQos.wsdl#xpointer(/definitions/service[@name='FileInboundService']/port[@name='fileQos_InboundPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="JMSQosCA-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port bindingType="soap" x="67" y="214">
+                    <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService1']/port[@name='casaPort1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port bindingType="soap" x="67" y="396">
+                    <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService4']/port[@name='casaPort4'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                    <provides endpoint="endpoint6"/>
+                </port>
+                <port x="67" y="39">
+                    <link xlink:href="../jbiServiceUnits/JMSQos/soap.wsdl#xpointer(/definitions/service[@name='soapService']/port[@name='soapPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="JMSQosCA-sun-jms-binding" unit-name="sun-jms-binding">
+            <ports>
+                <port bindingType="jms" x="67" y="296">
+                    <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService2']/port[@name='casaPort2'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port bindingType="jms" x="67" y="475">
+                    <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService3']/port[@name='casaPort3'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint8" state="unchanged"/>
+        <connection consumer="endpoint1" provider="endpoint7" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint2" state="new">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="3" waitTime="10000">
+                <on-failure>
+                    <redirect endpoint-name="FileInboundPortTypeRole_myRole" operation="poll" service-name="ns4:PartnerLink1"/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint5" provider="endpoint6" state="new">
+            <redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="1" waitTime="1000">
+                <on-failure>
+                    <error/>
+                </on-failure>
+            </redelivery>
+        </connection>
+        <connection consumer="endpoint2" provider="endpoint7" state="deleted"/>
+        <connection consumer="endpoint6" provider="endpoint8" state="deleted"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/fileQos.wsdl#xpointer(/definitions/portType[@name='FileInboundPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/soap.wsdl#xpointer(/definitions/portType[@name='soapPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/portType[@name='dummyCasaPortType'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/fileQos.wsdl#xpointer(/definitions/binding[@name='FileInboundBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/soap.wsdl#xpointer(/definitions/binding[@name='soapBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/binding[@name='casaBinding4'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiasa/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService4'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/fileQos.wsdl#xpointer(/definitions/service[@name='FileInboundService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQos/soap.wsdl#xpointer(/definitions/service[@name='soapService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService1'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService2'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService3'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSQosCA.wsdl#xpointer(/definitions/service[@name='JMSQosCAService4'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

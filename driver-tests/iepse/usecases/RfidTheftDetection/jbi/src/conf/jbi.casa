@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="RfidTheftDetection_iep" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="InputPort" interface-name="ns1:InputPt" name="endpoint1" service-name="ns1:InputService"/>
+        <endpoint endpoint-name="OutputPort_ExitAlarm" interface-name="ns1:OutputPt_ExitAlarm" name="endpoint2" service-name="ns1:OutputService_ExitAlarm"/>
+        <endpoint endpoint-name="OutputPort_AlertSecutiry" interface-name="ns1:OutputPt_AlertSecutiry" name="endpoint3" service-name="ns1:OutputService_AlertSecutiry"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="RfidTheftDetection.iep" interface-name="ns1:InputPt" name="endpoint4" process-name="RfidTheftDetection" service-name="ns1:InputPl"/>
+        <endpoint display-name="OutputRn_AlertSecutiry" endpoint-name="OutputRn_AlertSecutiry" file-path="RfidTheftDetection.iep" interface-name="ns1:OutputPt_AlertSecutiry" name="endpoint5" process-name="RfidTheftDetection" service-name="ns1:OutputPl_AlertSecutiry"/>
+        <endpoint display-name="OutputRn_ExitAlarm" endpoint-name="OutputRn_ExitAlarm" file-path="RfidTheftDetection.iep" interface-name="ns1:OutputPt_ExitAlarm" name="endpoint6" process-name="RfidTheftDetection" service-name="ns1:OutputPl_ExitAlarm"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="iep.jar" component-name="sun-iep-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="jbi-iep" unit-name="iep" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="jbi-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="-1" y="-1">
+                    <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='OutputService_AlertSecutiry']/port[@name='OutputPort_AlertSecutiry'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="-1" y="-1">
+                    <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='OutputService_ExitAlarm']/port[@name='OutputPort_ExitAlarm'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="jbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="-1" y="-1">
+                    <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint5" provider="endpoint3" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint1" provider="endpoint4" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+        <connection consumer="endpoint6" provider="endpoint2" state="unchanged">
+            <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+        </connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/portType[@name='OutputPt_AlertSecutiry'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/portType[@name='OutputPt_ExitAlarm'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/binding[@name='OutputBinding_AlertSecutiry'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/binding[@name='OutputBinding_ExitAlarm'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='OutputService_AlertSecutiry'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/iep/RfidTheftDetection.wsdl#xpointer(/definitions/service[@name='OutputService_ExitAlarm'])" xlink:type="simple"/>
+    </services>
+    <regions>
+<region name="WSDL Endpoints" width="200"/>
+<region name="JBI Modules" width="500"/>
+<region name="External Modules" width="200"/>
+</regions>
+</casa>

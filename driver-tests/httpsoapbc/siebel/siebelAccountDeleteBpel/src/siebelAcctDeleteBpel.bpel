@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="siebelAcctDeleteBpel" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/siebelAcctDeleteBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelAcctDeleteBpel" xmlns:ns1="http://siebel.com/asi/" xmlns:ns2="http://stc.com/echo" xmlns:ns0="http://www.siebel.com/xml/AccountInterface">
+    <import namespace="http://siebel.com/asi/" location="SiebelAccount.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="echoPartnerLink" partnerLinkType="ns2:SLT" myRole="server"/>
+        <partnerLink name="siebelPartnerLink" partnerLinkType="ns1:SiebelAcccountpartnerlinktyperole1" partnerRole="SiebelAccountpartnerlink"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOut1" messageType="ns2:echo"/>
+        <variable name="SiebelAccountDeleteOut1" messageType="ns1:Siebel_spcAccount_SiebelAccountDelete_Output"/>
+        <variable name="SiebelAccountDeleteIn1" messageType="ns1:Siebel_spcAccount_SiebelAccountDelete_Input"/>
+        <variable name="EchoIn1" messageType="ns2:echo"/>
+    </variables>
+    <sequence>
+        <receive name="echoReceive" createInstance="yes" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoIn1"/>
+        <assign name="AssignAcctId">
+            <copy>
+                <from>$EchoIn1.part/ns2:value</from>
+                <to>$SiebelAccountDeleteIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountId</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeAcctDelete" partnerLink="siebelPartnerLink" operation="SiebelAccountDelete" portType="ns1:Default" inputVariable="SiebelAccountDeleteIn1" outputVariable="SiebelAccountDeleteOut1"/>
+        <assign name="HarvestIdResponse">
+            <copy>
+                <from>$SiebelAccountDeleteOut1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountId</from>
+                <to>$EchoOut1.part/ns2:value</to>
+            </copy>
+        </assign>
+        <reply name="echoReply" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoOut1"/>
+   </sequence>
+   
+</process>

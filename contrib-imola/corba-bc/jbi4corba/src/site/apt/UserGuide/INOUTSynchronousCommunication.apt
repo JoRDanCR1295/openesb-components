@@ -1,0 +1,111 @@
+											---
+											inout IDL parameters
+											---
+											Giancarlo Valeri
+											---
+											20/03/2008
+
+Introduction
+
+  The inout IDL parameters are supported in the <<provider>> and <<consumer idl-first>> cases.
+  Currently, the out parameters are managed as inout parameters.
+
+
+Synchronous Communication with <<InOut>> parameters
+
+  In CORBA the Synchronous communications with inout parameters is implemented 
+  using the parameter passing mode <<inout>>.
+
+  An example of IDL operation generated.
+
++------------------------------------------+
+  interface EchoInOut{
+
+    string echo(inout string msg);
+
+  };
++------------------------------------------+
+
+  From the perspective of a CORBA system this kind of communication is totally
+	delegated to the stub (client) implementation.
+	In fact the skeleton of a CORBA servant generated is the same for both
+	communication types (asynchronous and synchronous).
+
+	The WSDL of the endpoint that exposes a inout operation is similar to the others, 
+	then the operation has the input message and the output message 
+  (Conforming to the WSDL specifications)	and the BUS recognises the <<InOut>> 
+  MEP thanks this characteristic.
+
++------------------------------------------+
+  <xsd:element name="echo">
+    <xsd:complexType>
+      <xsd:sequence>        
+        <xsd:element name="msg" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  [...]    
+  <xsd:element name="echoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="return" type="xsd:string"/>
+        <xsd:element name="msg" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  [...]
+  <wsdl:operation name="echo">
+    <wsdl:input name="echo"/>    
+    <wsdl:output name="echoResponse"/>    
+  </wsdl:operation>
++------------------------------------------+
+
+
+	This scenario is completely managed by the component (with the exception of
+	the consumer wsdl-first) and can be configured using the standard IDL syntax.
+
+Synchronous Communication with <<Out>> parameters
+
+	If in a CORBA interface, a parameter is specified as an <<out>>, this must be used
+	only as a return parameter. Jbi4Corba does not make differences between the <<out>>
+	and the <<inout>> parameters. This means that if we have this operation:
+	
++------------------------------------------+
+  interface EchoInOut{
+
+    string echo(out string msg);
+
+  };
++------------------------------------------+
+	
+	This is mapped in <<exactly>> the same way that <<inout>> parameters are mapped. That is
+	, with the <msg> parameter present in both the request and the response:
+	
++------------------------------------------+
+  <xsd:element name="echo">
+    <xsd:complexType>
+      <xsd:sequence>        
+        <xsd:element name="msg" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  [...]  
+  <xsd:element name="echoResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="return" type="xsd:string"/>
+        <xsd:element name="msg" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  [...]
+  <wsdl:operation name="echo">
+    <wsdl:input name="echo"/>    
+    <wsdl:output name="echoResponse"/>    
+  </wsdl:operation>
++------------------------------------------+	
+	
+	Of course, the CORBA object that serves this operation, will not get the <<out>> parameter for
+	the execution, so every value put in the request in the place of a <<out>> parameter, 
+	will be ignored. 	
+

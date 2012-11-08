@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="WaitSample" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/WaitSample"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/WaitSample" 
+    xmlns:msgns="http://j2ee.netbeans.org/wsdl/WaitSample"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/WaitSample">
+    <import namespace="http://j2ee.netbeans.org/wsdl/WaitSample" location="WaitSample.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="WaitSamplePartner" partnerLinkType="ns1:partnerlinktype2" partnerRole="partner1"/>
+        <partnerLink name="WaitSample" partnerLinkType="ns1:partnerlinktype1" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="WaitServicePartherOperationIn1" messageType="ns1:responseMessage"/>
+        <variable name="WaitOperationIn1" messageType="ns1:requestMessage1"/>
+        <variable name="temp" type="xsd:string"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="WaitSample" operation="waitOperation" portType="ns1:waitServicePT" variable="WaitOperationIn1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from variable="WaitOperationIn1" part="part1"/><to variable="temp"/>
+            </copy>
+        </assign>
+        <wait name="Wait1">
+            <for>'P0Y0M0DT0H0M6S'</for>
+        </wait>
+        <assign name="Assign2">
+            <copy>
+            <from variable="temp"/><to variable="WaitServicePartherOperationIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="WaitSamplePartner" operation="waitServicePartherOperation" portType="ns1:waitServicePartnerPT" inputVariable="WaitServicePartherOperationIn1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Header: /cvs/open-jbi-components/driver-tests/bpelse/blueprints/bp1/BluePrint1/src/InventoryService.bpel,v 1.10 2010/02/04 06:06:25 fkieviet Exp $ -->
+<process name="InventoryService"
+    targetNamespace="http://manufacturing.org/wsdl/inventory/bp1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/newuntitled"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:invs="http://manufacturing.org/wsdl/inventory/bp1">
+    <import namespace="http://manufacturing.org/wsdl/inventory/bp1"
+    location="InventoryService.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="inventorySevicePLink"
+        partnerLinkType="invs:inventoryRequestingLT"
+        myRole="inventoryService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="purchaseOrder"
+        messageType="invs:POMessage"></variable>
+        <variable name="inventoryStatus"
+        messageType="invs:InventoryMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="inventoryService"
+        partnerLink="inventorySevicePLink"
+        portType="invs:inventoryPortType"
+        operation="inventoryService"
+        variable="purchaseOrder"
+        createInstance="yes"/>
+        <if name="checkAvailability">
+            <condition>starts-with($purchaseOrder.purchaseOrder/orderDescription, 'OrderVal')</condition>
+               <assign name="Case1">
+                    <copy>
+                        <from>true()</from><to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                    </copy>
+                    <copy>
+                        <from>'available'</from><to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                    </copy>
+                </assign>
+            <else>
+                <assign name="Case2">
+                    <copy>
+                        <from>false()</from><to>$inventoryStatus.inventoryPart/inventoryStatus</to>
+                    </copy>
+                    <copy>
+                        <from>'currently out of stock'</from><to>$inventoryStatus.inventoryPart/inventoryStatusMessage</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="inventoryService.Reply"
+        partnerLink="inventorySevicePLink"
+        portType="invs:inventoryPortType"
+        operation="inventoryService"
+        variable="inventoryStatus"/>
+    </sequence>
+</process>

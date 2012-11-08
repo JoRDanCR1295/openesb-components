@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Multiply"
+         targetNamespace="http://www.seebeyond.com/eInsight/Multiply"
+         sbynpxp:end_YLoc="218.0"
+         sbynpxp:start_YLoc="232.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="53.0"
+         sbynpxp:end_XLoc="510.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/Multiply"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://services.opensoap.jp/samples/SimpleCalc/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://services.opensoap.jp/samples/SimpleCalc/"
+            location="zenquote.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="l1"
+                     partnerLinkType="ns0:operatorsLinkType"
+                     myRole="TestOperatorsRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Multiply_Output"
+                  messageType="ns0:Multiply"></variable>
+        <variable name="Multiply_Input"
+                  messageType="ns0:MultiplyResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="Multiply"
+                 partnerLink="l1"
+                 portType="ns0:SimpleCalcPortType"
+                 operation="Multiply"
+                 variable="Multiply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="113.0"
+                 sbynpxp:YLoc="231.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="230.0"
+                sbynpxp:YLoc="210.0">
+            <copy>
+                <from>$Multiply_Output.A * $Multiply_Output.B</from>
+                <to variable="Multiply_Input"
+                    part="return"/>
+            </copy>
+        </assign>
+        <reply name="Multiply.Reply"
+               partnerLink="l1"
+               portType="ns0:SimpleCalcPortType"
+               operation="Multiply"
+               variable="Multiply_Input"
+               sbynpxp:XLoc="345.0"
+               sbynpxp:YLoc="222.0"></reply>
+    </sequence>
+</process>

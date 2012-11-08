@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="deletefaslecond"
+    targetNamespace="http://enterprise.netbeans.org/bpel/deletefaslecond"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/deletefaslecond" xmlns:ns1="http://j2ee.netbeans.org/wsdl/soapwsdl" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine">
+    <import namespace="http://j2ee.netbeans.org/wsdl/soapwsdl" location="soapwsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="deletefalsecondbpelSQL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:deletefalsecondbpelSQL_sqlsePartnerLinkType" partnerRole="deletefalsecondbpelSQL_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:soapwsdl1" myRole="soapwsdlPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="DeletefalsecondbpelOut" messageType="ns2:deletefalsecondbpelResponse"/>
+        <bpws:variable name="DeletefalsecondbpelIn" messageType="ns2:deletefalsecondbpelRequest"/>
+        <bpws:variable name="SoapwsdlOperationOut" messageType="ns1:soapwsdlOperationReply"/>
+        <bpws:variable name="SoapwsdlOperationIn" messageType="ns1:soapwsdlOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="soapwsdlOperation" portType="ns1:soapwsdlPortType" variable="SoapwsdlOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapwsdlOperationIn" part="part1"/>
+                <bpws:to>$DeletefalsecondbpelIn.deletefalsecondbpelRequestPart/ns2:param1</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="deletefalsecondbpel" portType="ns2:deletefalsecondbpelSQL_sqlsePortType" inputVariable="DeletefalsecondbpelIn" outputVariable="DeletefalsecondbpelOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="DeletefalsecondbpelOut" part="deletefalsecondbpelResponsePart"/>
+                <bpws:to variable="SoapwsdlOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="soapwsdlOperation" portType="ns1:soapwsdlPortType" variable="SoapwsdlOperationOut"/>
+    </sequence>
+</process>

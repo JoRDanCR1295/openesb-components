@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ServiceProvider"
+    targetNamespace="http://enterprise.netbeans.org/bpel/FaultHandlingBpel/ServiceProvider"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/FaultHandlingBpel/ServiceProvider" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ServiceProvider">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ServiceProvider" location="ServiceProvider.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:ServiceProvider12" myRole="ServiceProviderPortTypeInOnlyRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:ServiceProvider1" myRole="ServiceProviderPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ServiceProviderOperationOut" messageType="ns1:ServiceProviderOperationReply"/>
+        <variable name="ServiceProviderOperationIn1" messageType="ns1:ServiceProviderOperationRequest"/>
+        <variable name="ServiceProviderOperationIn" messageType="ns1:ServiceProviderOperationRequest1"/>
+    </variables>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink2" operation="ServiceProviderOperation" portType="ns1:ServiceProviderPortTypeInOnly" variable="ServiceProviderOperationIn">
+                <empty name="Empty1"/>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="ServiceProviderOperation" portType="ns1:ServiceProviderPortType" variable="ServiceProviderOperationIn1">
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from variable="ServiceProviderOperationIn1" part="part1"/>
+                            <to variable="ServiceProviderOperationOut" part="part1"/>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="PartnerLink1" operation="ServiceProviderOperation" portType="ns1:ServiceProviderPortType" variable="ServiceProviderOperationOut"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

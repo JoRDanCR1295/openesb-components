@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 rel. 3 sp2 (http://www.altova.com) by Nathan J. Lauffer (TrueBaseline Corporation) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tbem="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" targetNamespace="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified" id="EventMessage">
+	<xs:element name="WorkflowInformation">
+		<xs:annotation>
+			<xs:documentation>Workflow Information Root</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="tbem:EventMessage"/>
+				<xs:element ref="tbem:Configuration" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="tGuid">
+		<xs:annotation>
+			<xs:documentation>Globally Unique Identifier</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="EventMessage">
+		<xs:annotation>
+			<xs:documentation>Cannonical Event Message</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Id" type="xs:string"/>
+				<xs:element name="EventName" type="xs:string"/>
+				<xs:element name="EventType" type="xs:string"/>
+				<xs:element name="SourceUri" type="xs:string"/>
+				<xs:element name="TargetUri" type="xs:string"/>
+				<xs:element name="IsSynchronous" type="xs:boolean"/>
+				<xs:element name="CorrelationId" type="xs:string" minOccurs="0"/>
+				<xs:element name="Created" type="xs:dateTime"/>
+				<xs:element name="Body">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="Request" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence minOccurs="0">
+										<xs:element name="Parameters" type="tbem:ParameterCollection" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Response" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence minOccurs="0">
+										<xs:element name="Parameters" type="tbem:ParameterCollection" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Credentials" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Base64" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Configuration">
+		<xs:annotation>
+			<xs:documentation>Configuration Information for Workflow</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="IsProcessInterceptEnabled" type="xs:boolean"/>
+				<xs:element name="IsCustomLoggingEnabled" type="xs:boolean"/>
+				<xs:element name="IsWaitAtBreakpointsEnabled" type="xs:boolean"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+    <xs:complexType name="ParameterCollection">
+		<xs:annotation>
+			<xs:documentation>Collection of Parameters</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="Parameter" minOccurs="0">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Value" type="xs:string"/>
+					</xs:all>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute name="isIn" type="xs:boolean" use="required"/>
+					<xs:attribute name="isOut" type="xs:boolean" use="required"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

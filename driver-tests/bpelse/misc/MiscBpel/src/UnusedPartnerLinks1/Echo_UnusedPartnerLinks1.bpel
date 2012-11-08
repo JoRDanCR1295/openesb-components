@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Echo_UnusedPartnerLinks1"
+    targetNamespace="http://www.seebeyond.com/eInsight/Echo_UnusedPartnerLinks1"
+    xmlns:tns="http://www.seebeyond.com/eInsight/Echo_UnusedPartnerLinks1"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns0="urn:EchoService/Echo_UnusedPartnerLinks1"
+    xmlns:ns1="urn:FaultService/FS_UnusedPartnerLinks1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:EchoService/Echo_UnusedPartnerLinks1"
+    location="Echo_UnusedPartnerLinks1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:FaultService/FS_UnusedPartnerLinks1"
+    location="FS_UnusedPartnerLinks1.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="EchoServiceLink1"
+        partnerLinkType="ns0:EchoServiceLT"
+        myRole="EchoServiceProvider"/>
+        <partnerLink name="UnusedFaultServiceLink1"
+        partnerLinkType="ns1:FaultServiceLT"
+        myRole="FaultServiceProvider"/>
+        <partnerLink name="UnusedFaultServiceLink2"
+        partnerLinkType="ns1:FaultServiceLT"
+        partnerRole="FaultServiceProvider"/>        
+    </partnerLinks>
+    <variables>
+        <variable name="Echo_Output"
+        messageType="ns0:EchoServiceRequest"></variable>
+        <variable name="Echo_Input"
+        messageType="ns0:EchoServiceResponse"></variable>
+    </variables>
+    <sequence>
+        <receive name="Echo"
+        partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Output"
+        createInstance="yes"/>
+        <assign>
+            <copy>
+                <from>'Passed through'</from>
+                <to>$Echo_Input.parameters/Message</to>
+            </copy>
+        </assign>
+        <reply partnerLink="EchoServiceLink1"
+        portType="ns0:EchoService"
+        operation="Echo"
+        variable="Echo_Input"/>
+    </sequence>
+</process>

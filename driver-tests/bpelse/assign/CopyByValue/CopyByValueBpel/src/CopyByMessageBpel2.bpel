@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CopyByMessageBpel2"
+    targetNamespace="http://enterprise.netbeans.org/bpel/CopyByValueBpel/CopyByMessageBpel2"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/CopyByValueBpel/CopyByMessageBpel2" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CopyTestWsdl">
+    <import namespace="http://j2ee.netbeans.org/wsdl/CopyTestWsdl" location="CopyTestWsdl.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:CopyByMessageWsdlPLT2" myRole="CopyByMessagelPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TempVariable2" messageType="ns1:CopyTestWsdlOperationMessage"/>
+        <variable name="TempVariable1" messageType="ns1:CopyTestWsdlOperationMessage"/>
+        <variable name="CopyByMessageWsdlOperation2In" messageType="ns1:CopyTestWsdlOperationMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="CopyByMessageWsdlOperation2" portType="ns1:CopyByMessageWsdlPortType2" variable="CopyByMessageWsdlOperation2In"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$CopyByMessageWsdlOperation2In.part1/TestElement</from>
+                <to>$TempVariable1.part1/TestElement</to>
+            </copy>
+            <copy>
+                <from>$CopyByMessageWsdlOperation2In.part1/TestElement2</from>
+                <to>$TempVariable1.part1/TestElement2</to>
+            </copy>
+        </assign>
+        <assign name="Assign4">
+            <copy>
+                <from variable="TempVariable1"/>
+                <to variable="TempVariable2"/>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>
+                    <literal>Element 2 Value Changed</literal>
+                </from>
+                <to>$TempVariable1.part1/TestElement2</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="CopyByMessageWsdlOperation2" portType="ns1:CopyByMessageWsdlPortType2" variable="TempVariable2"/>
+    </sequence>
+</process>

@@ -1,0 +1,59 @@
+<bpel_20:process name="BindingsCombinationTest_CType2SType"
+                 targetNamespace="http://www.seebeyond.com/eInsight/BindingsCombinationTest_CType2SType"
+                 sbynpxp:end_YLoc="341.0"
+                 sbynpxp:start_YLoc="120.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="50.0"
+                 sbynpxp:end_XLoc="840.0"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/BindingsCombinationTest_CType2SType"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns0="urn:BindingsCombinationTest"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <bpel_20:import namespace="urn:BindingsCombinationTest"
+                    location="BindingsCombinationTest.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="partner"
+                             partnerLinkType="ns0:HelloCType2STypeIFLink"
+                             myRole="HelloCType2STypeIFRole"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="MyRole_sayHello_Output"
+                          messageType="ns0:HelloCTypeIF_sayHello"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="MyRole_sayHello_Input"
+                          messageType="ns0:HelloSTypeIF_sayHelloResponse"
+                          sbyncreation:type="auto"></bpel_20:variable>
+    </bpel_20:variables>
+    <sequence>
+        <bpel_20:receive name="MyRole.sayHello.Receive"
+                         partnerLink="partner"
+                         portType="ns0:HelloCType2STypeIF"
+                         operation="sayHello"
+                         variable="MyRole_sayHello_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="116.0"
+                         sbynpxp:YLoc="108.0"></bpel_20:receive>
+        <bpel_20:assign name="assign"
+                        sbynpxp:XLoc="406.0"
+                        sbynpxp:YLoc="149.0">
+            <bpel_20:copy>
+                <bpel_20:from>$MyRole_sayHello_Output.body/string</bpel_20:from>
+                <bpel_20:to>$MyRole_sayHello_Input.string</bpel_20:to>
+            </bpel_20:copy>
+        </bpel_20:assign>
+        <bpel_20:reply name="MyRole.sayHello.Reply"
+                       partnerLink="partner"
+                       portType="ns0:HelloCType2STypeIF"
+                       operation="sayHello"
+                       variable="MyRole_sayHello_Input"
+                       sbynpxp:XLoc="580.0"
+                       sbynpxp:YLoc="142.0"></bpel_20:reply>
+    </sequence>
+</bpel_20:process>

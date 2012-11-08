@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/trigger" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="trigger" targetNamespace="http://stc.com/trigger">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/trigger">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="request" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="itemResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="trigger">
+        <part element="tns:item" name="part"/>
+    </message>
+    <message name="triggerResponse">
+        <part element="tns:itemResponse" name="part"/>
+    </message>
+    <portType name="trigger">
+        <operation name="trigger">
+            <input message="tns:trigger"/>
+            <output message="tns:triggerResponse"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:trigger">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="trigger">
+            <soap:operation soapAction="trigger"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="triggerService">
+        <port binding="tns:Binding" name="port">
+            <!-- <soap:address location="http://localhost:12010/trigger"/> -->
+            <!--
+            <soap:address location="http://localhost:12010/triggerCicsStcProgb"/> -->
+            <soap:address location="http://localhost:12010/trigger"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:trigger"/>
+    </plnk:partnerLinkType>
+</definitions>

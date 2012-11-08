@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="EchoCrb106Single" targetNamespace="urn:jbi4corba/test-provider-crb106" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:imolacorba="uri://schemas.imola.it/jbi/wsdl-extensions/corba/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-provider-crb106" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-provider-crb106" xmlns="urn:jbi4corba/test-provider-crb106" xmlns:ns1="http://testprovidercrb106.test.jbi4corba.imolinfo.it/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://testprovidercrb106.test.jbi4corba.imolinfo.it/" schemaLocation="TypeDef_testprovidercrb106.test.jbi4corba.imolinfo.it.xsd"/>
+    <xs:element name="methodA">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="a" type="ns1:valueTypeA"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="methodAResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" type="ns1:structAB"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="methodB">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="a" type="ns1:valueTypeA"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="methodBResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="return" type="ns1:structAB"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="methodB">
+    <wsdl:part name="parameters" element="tns:methodB">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="methodAResponse">
+    <wsdl:part name="parameters" element="tns:methodAResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="methodBResponse">
+    <wsdl:part name="parameters" element="tns:methodBResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="methodA">
+    <wsdl:part name="parameters" element="tns:methodA">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoCrb106Single">
+    <wsdl:operation name="methodB">
+      <wsdl:input name="methodB" message="tns:methodB">
+    </wsdl:input>
+      <wsdl:output name="methodBResponse" message="tns:methodBResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="methodA">
+      <wsdl:input name="methodA" message="tns:methodA">
+    </wsdl:input>
+      <wsdl:output name="methodAResponse" message="tns:methodAResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+    <wsdl:binding name="EchoCrb106SingleCorbaBinding" type="tns:EchoCrb106Single">
+        <imolacorba:binding>
+            <imolacorba:idl>
+//IDL
+// CRB-106 : add test with complex situations (type recusion, methods omonimia)
+//
+// add the following test (unit and integration) in both consumer mode and provider mode
+//
+// type recursion test: complex type A (all simple type as usual) refernce complex type B (like A), 
+//                      complex type B reference complex type A.
+//
+// method omonimia: interface with the following method signature
+// methodA (complexA)
+// methodA(complexA,complexB)
+// methodB(complexA)
+// methodB(complexA,complexB)
+//
+
+
+#ifndef __it_imolinfo_jbi4corba_test_testprovidercrb106_ValueTypeA__
+
+module it {
+module imolinfo {
+module jbi4corba {
+module test{
+module testprovidercrb106{
+
+    // forward declaration
+    valuetype ValueTypeB;
+
+	// value type
+	valuetype ValueTypeA {
+        public boolean            fieldBoolean;
+        public char               fieldChar;
+        public wchar              fieldWChar;
+
+        // http://jira.codehaus.org/browse/XFIRE-462
+        public octet              fieldOctet;
+
+        public string             fieldString;
+        public wstring            fieldWString;
+        public short              fieldShort;
+        public unsigned short     fieldUnsignedShort;
+        public long               fieldLong;
+        public unsigned long      fieldUnsignedLong;
+        public long long          fieldLongLong;
+        public unsigned long long fieldUnsignedLongLong;
+        public float              fieldFloat;
+        public double             fieldDouble;
+
+        public ValueTypeB         typeB; // type recursion
+    };
+
+
+};
+};
+};
+};
+};
+
+#endif
+
+#ifndef __it_imolinfo_jbi4corba_test_testprovidercrb106_ValueTypeB__
+
+module it {
+module imolinfo {
+module jbi4corba {
+module test{
+module testprovidercrb106{
+
+	// value type
+	valuetype ValueTypeB {
+        public boolean            fieldBoolean;
+        public char               fieldChar;
+        public wchar              fieldWChar;
+
+        // http://jira.codehaus.org/browse/XFIRE-462
+        public octet              fieldOctet;
+
+        public string             fieldString;
+        public wstring            fieldWString;
+        public short              fieldShort;
+        public unsigned short     fieldUnsignedShort;
+        public long               fieldLong;
+        public unsigned long      fieldUnsignedLong;
+        public long long          fieldLongLong;
+        public unsigned long long fieldUnsignedLongLong;
+        public float              fieldFloat;
+        public double             fieldDouble;
+
+        public ValueTypeA         typeA; // type recursion
+    };
+
+
+};
+};
+};
+};
+};
+
+#endif
+
+
+
+// TYPES
+module it{
+	module imolinfo{
+            module jbi4corba{
+                module test{
+                    module testprovidercrb106{
+
+                        // struct
+				struct StructAB {
+    				ValueTypeA a;
+    				ValueTypeB b;
+   				};
+
+   				module singleparam{
+    			    //==================================================
+    			    //                                         INTERFACE
+    			    //==================================================
+    			    interface InterfaceSingleParam {
+
+    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodA(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a);
+    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodB(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a);
+
+    			    }; // end interface
+   			    };
+
+//   				module doubleparam{
+//
+//    			    //==================================================
+//    			    //                                         INTERFACE
+//    			    //==================================================
+//    			    interface InterfaceDoubleParam {
+//
+//    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodA(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a,
+//    				                                                            in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeB b);
+//
+//    				    ::it::imolinfo::jbi4corba::test::testprovidercrb106::StructAB methodB(in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeA a,
+//    				                                                            in ::it::imolinfo::jbi4corba::test::testprovidercrb106::ValueTypeB b);
+//    
+//    			    }; // end interface
+//   			    };
+
+                };
+            };
+	};
+    };
+};
+            </imolacorba:idl>
+        </imolacorba:binding>
+        <wsdl:operation name="methodB">
+            <wsdl:input name="methodB">
+            </wsdl:input>
+            <wsdl:output name="methodBResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="methodA">
+            <wsdl:input name="methodA">
+            </wsdl:input>
+            <wsdl:output name="methodAResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="EchoCrb106Single">
+        <wsdl:port name="EchoCrb106SingleCorbaPort" binding="tns:EchoCrb106SingleCorbaBinding">
+            <imolacorba:address name="EchoCrb106Single" localizationType="NameService">
+                <imolacorba:orb>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+                    <imolacorba:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+                </imolacorba:orb>
+            </imolacorba:address>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="EchoCrb106Single">
+        <plnk:role name="EchoCrb106SinglePortTypeRole" portType="tns:EchoCrb106Single"/>
+    </plnk:partnerLinkType>
+</wsdl:definitions>

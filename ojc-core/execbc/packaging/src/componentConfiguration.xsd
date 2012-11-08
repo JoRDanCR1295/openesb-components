@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://com.sun.jbi.component/schema/configuration"
+            xmlns:tns="http://com.sun.jbi.component/schema/configuration"
+            attributeFormDefault="unqualified"
+            elementFormDefault="qualified">
+    
+    <xsd:element name="Configuration" 
+                 type="tns:ConfigurationType"/>
+    
+    <xsd:complexType name="ConfigurationType">
+        <xsd:sequence>
+            <xsd:element type="tns:MaximumSessionsType" name="MaximumSessions">
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute type="xsd:string" name="name"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="MaximumSessionsType">
+        <xsd:simpleContent>
+            <xsd:extension base="tns:RestrictedMaximumSessionsType">
+                <xsd:attribute type="xsd:string" name="displayName"/>
+                <xsd:attribute type="xsd:string" name="displayDescription"/>
+                <xsd:attribute type="xsd:boolean" name="isPasswordField"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+     <xsd:simpleType name="RestrictedMaximumSessionsType">
+        <xsd:restriction base="xsd:int">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="500"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
+

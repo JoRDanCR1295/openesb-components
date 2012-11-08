@@ -1,0 +1,32 @@
+<tasks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jbi.com.sun/wfse" targetNamespace="http://localhost/ComplaintsWorklistApp/ComplaintTaskDef" xmlns:ns0="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL" 
+xmlns:cp="http:/sample.wlmse/schema/Complaints">
+    <import location="ComplaintTaskWSDL.wsdl" namespace="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL"/>
+    <task name="ComplaintTask" partnerLink="ComplaintTaskPartnerLink" operation="ns0:ComplaintTaskOperation" partnerLinkType="ns0:ComplaintTaskWSDLRIT301" role="ComplaintTaskWSDLPortTypeRole">
+	<init>
+		<variables/>
+		<variable-init>
+			<copy>
+				<from>$TaskInput/cp:priority</from>
+				<to>$TaskInstance.Priority</to>
+			</copy>
+			<copy>
+				<from>concat('Complaint :', $TaskInput/cp:complaintInput/cp:incidentShortDesc)</from>
+				<to>$TaskInstance.Title</to>
+			</copy>			
+			</variable-init>		
+	
+		<variable-init>
+			<copy>
+				<from>current-date()</from>
+				<to>$TaskOutput/cp:resolvedDate</to>
+			</copy>		
+		</variable-init>		
+	</init>
+	<assignment>
+            <user>$TaskInput/cp:assignee-user</user>
+            <group>$TaskInput/cp:assignee-group</group>
+     </assignment>
+        
+    </task>
+</tasks>
+ 

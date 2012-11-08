@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="urn:OutPutFile" xmlns:ns2="urn:FileOut" xmlns:ns3="urn:FooBar3" xmlns:ns4="urn:oneway_persist" xmlns:ns5="http://www.seebeyond.com/eInsight/recvwrite" xmlns:ns6="http://www.seebeyond.com/eInsight/FileOutTest" xmlns:ns7="http://www.seebeyond.com/eInsight/FileInTest" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="FileOut" interface-name="ns1:FileOut" name="endpoint1" service-name="ns1:MyFileService"/>
+<endpoint endpoint-name="HelloIFPort" interface-name="ns2:HelloIF" name="endpoint2" service-name="ns2:MyHelloService"/>
+<endpoint endpoint-name="HelloDocElem2DocElemIFPort" interface-name="ns3:FileHelloIF" name="endpoint3" service-name="ns3:FileHelloService1"/>
+<endpoint endpoint-name="HelloDocElem2DocElemIFPort" interface-name="ns3:HelloIF" name="endpoint4" service-name="ns3:BindingsTestService"/>
+<endpoint endpoint-name="oneway_persistInputPort" interface-name="ns4:oneway_persistInput" name="endpoint5" service-name="ns4:oneway_InputService"/>
+<endpoint display-name="r1" endpoint-name="InputOnlyRole_myRole" file-path="FileOneWayOut\recvwrite.bpel" interface-name="ns4:oneway_persistInput" name="endpoint6" process-name="recvwrite" service-name="ns5:r1"/>
+<endpoint display-name="partner" endpoint-name="HelloIFRole_myRole" file-path="MultipleBindingInOut\FileOutTest.bpel" interface-name="ns3:HelloIF" name="endpoint7" process-name="FileOutTest" service-name="ns6:partner"/>
+<endpoint display-name="FileInLink" endpoint-name="FileHelloIFRole_myRole" file-path="SingleBindingInOut\FileInTest.bpel" interface-name="ns3:FileHelloIF" name="endpoint8" process-name="FileInTest" service-name="ns7:FileInLink"/>
+<endpoint display-name="r2" endpoint-name="FileOutRole_partnerRole" file-path="FileOneWayOut\recvwrite.bpel" interface-name="ns1:FileOut" name="endpoint9" process-name="recvwrite" service-name="ns5:r2"/>
+<endpoint display-name="filepartner" endpoint-name="HelloIFRole_partnerRole" file-path="MultipleBindingInOut\FileOutTest.bpel" interface-name="ns2:HelloIF" name="endpoint10" process-name="FileOutTest" service-name="ns6:filepartner"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="FileBCBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="FileBCJbi-FileBCBpel" unit-name="FileBCBpel" unknown="false" x="158" y="99">
+<provides endpoint="endpoint6"/>
+<provides endpoint="endpoint7"/>
+<provides endpoint="endpoint8"/>
+<consumes endpoint="endpoint9"/>
+<consumes endpoint="endpoint10"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="FileBCJbi-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="355">
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OutputFileService.wsdl#xpointer(/definitions/service[@name='MyFileService']/port[@name='FileOut'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+<port x="67" y="276">
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTest.wsdl#xpointer(/definitions/service[@name='MyHelloService']/port[@name='HelloIFPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="67" y="197">
+<link xlink:href="../jbiServiceUnits/FileBCBpel/SingleBindingInOut/FileInTest.wsdl#xpointer(/definitions/service[@name='FileHelloService1']/port[@name='HelloDocElem2DocElemIFPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint3"/>
+<provides endpoint="endpoint3"/>
+</port>
+</ports>
+</binding-component-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="FileBCJbi-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="67" y="118">
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/service[@name='oneway_InputService']/port[@name='oneway_persistInputPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+<provides endpoint="endpoint5"/>
+</port>
+<port x="67" y="39">
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTestTrigger.wsdl#xpointer(/definitions/service[@name='BindingsTestService']/port[@name='HelloDocElem2DocElemIFPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+<provides endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint5" provider="endpoint6" state="unchanged"/>
+<connection consumer="endpoint10" provider="endpoint2" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint9" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint3" provider="endpoint8" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/portType[@name='OneWayInput'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/portType[@name='oneway_persistInput'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OutputFileService.wsdl#xpointer(/definitions/portType[@name='FileOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTest.wsdl#xpointer(/definitions/portType[@name='HelloIF'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTestTrigger.wsdl#xpointer(/definitions/portType[@name='HelloIF'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/SingleBindingInOut/FileInTest.wsdl#xpointer(/definitions/portType[@name='FileHelloIF'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/binding[@name='HelloDocElem2DocElemIFBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/binding[@name='oneway_persistInputBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OutputFileService.wsdl#xpointer(/definitions/binding[@name='FileOutBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTest.wsdl#xpointer(/definitions/binding[@name='HelloIFBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTestTrigger.wsdl#xpointer(/definitions/binding[@name='HelloDocElem2DocElemIFBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/SingleBindingInOut/FileInTest.wsdl#xpointer(/definitions/binding[@name='HelloDocElem2DocElemIFBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OneWayService.wsdl#xpointer(/definitions/service[@name='oneway_InputService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/FileOneWayOut/OutputFileService.wsdl#xpointer(/definitions/service[@name='MyFileService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTest.wsdl#xpointer(/definitions/service[@name='MyHelloService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/MultipleBindingInOut/FileOutTestTrigger.wsdl#xpointer(/definitions/service[@name='BindingsTestService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/FileBCBpel/SingleBindingInOut/FileInTest.wsdl#xpointer(/definitions/service[@name='FileHelloService1'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

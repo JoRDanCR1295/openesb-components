@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="subquerySQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="subqueryRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="subqueryResponse"><xsd:complexType><xsd:sequence><xsd:element name="CUSTOMER_NUM" type="xsd:int"/><xsd:element name="DISCOUNT_CODE" type="xsd:string"/><xsd:element name="ZIP" type="xsd:string"/><xsd:element name="NAME" type="xsd:string"/><xsd:element name="ADDR_LN1" type="xsd:string"/><xsd:element name="ADDR_LN2" type="xsd:string"/><xsd:element name="CITY" type="xsd:string"/><xsd:element name="STATE" type="xsd:string"/><xsd:element name="PHONE" type="xsd:string"/><xsd:element name="FAX" type="xsd:string"/><xsd:element name="EMAIL" type="xsd:string"/><xsd:element name="CREDIT_LIMIT" type="xsd:int"/><xsd:element name="LAST_SALE_DATE" type="xsd:string"/><xsd:element name="LAST_SALE_TIME" type="xsd:string"/></xsd:sequence></xsd:complexType></xsd:element></xsd:schema>
+  </types>
+  <message name="subqueryResponse">
+    <part name="subqueryResponsePart" element="tns:subqueryResponse"/>
+  </message>
+  <message name="subqueryRequest">
+    <part name="subqueryRequestPart" element="tns:subqueryRequest"/>
+  </message>
+  <portType name="subquerySQL_sqlsePortType">
+    <operation name="subquery">
+      <input name="subqueryRequest" message="tns:subqueryRequest"/>
+      <output name="subqueryResponse" message="tns:subqueryResponse"/>
+    </operation>
+  </portType>
+  <binding name="subquerySQLBinding" type="tns:subquerySQL_sqlsePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="subquery">
+      <soap:operation style="document"/>
+      <input name="subqueryRequest">
+        <soap:body use="literal"/>
+      </input>
+      <output name="subqueryResponse">
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="subquerySQL_sqlseService">
+    <port name="subquerySQL_sqlsePort" binding="tns:subquerySQLBinding">
+      <soap:address location="http://localhost:18181/subquerySQL/subquerySQL/subquerySQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="subquerySQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="subquerySQL_myrole" portType="tns:subquerySQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

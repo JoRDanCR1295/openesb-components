@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="client"
+    targetNamespace="http://enterprise.netbeans.org/bpel/client"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/client" xmlns:ns1="http://j2ee.netbeans.org/wsdl/smtpInteface" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Trigger">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/smtpInteface" location="smtpInteface.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Trigger" location="Trigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="HttpsoapTrigger" partnerLinkType="ns2:TriggerPartner" myRole="TriggerPortTypeRole"/>
+      <bpws:partnerLink name="SMTPclient" partnerLinkType="ns1:smtpIntefacePartner" partnerRole="smtpIntefacePortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="TriggerOperationOut" messageType="ns2:TriggerOperationReply"/>
+      <bpws:variable name="SmtpIntefaceOperationIn" messageType="ns1:smtpIntefaceOperationRequest"/>
+      <bpws:variable name="TriggerOperationIn" messageType="ns2:TriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="HttpsoapTrigger" operation="TriggerOperation" portType="ns2:TriggerPortType" variable="TriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="TriggerOperationIn" part="part1"/>
+            <bpws:to variable="SmtpIntefaceOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="SMTPclient" operation="smtpIntefaceOperation" portType="ns1:smtpIntefacePortType" inputVariable="SmtpIntefaceOperationIn"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="TriggerOperationIn" part="part1"/>
+            <bpws:to variable="TriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="HttpsoapTrigger" operation="TriggerOperation" portType="ns2:TriggerPortType" variable="TriggerOperationOut"/>
+   </sequence>
+</process>

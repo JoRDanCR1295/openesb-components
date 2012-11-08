@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="FaultFromEH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/FaultFromEH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/FaultFromEH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL5" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL5" location="IOWSDL5.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:OneWayPLT1" partnerRole="OneWayPT1Role"/>
+        <partnerLink name="MainBPIO" partnerLinkType="ns1:IOWSDL5Plink" myRole="IOWSDL5PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IOWSDL5OperationIn" messageType="ns1:IOWSDL5OperationRequest"/>
+        <variable name="IOWSDL5OperationOut" messageType="ns1:IOWSDL5OperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="MainBPIO" operation="IOWSDL5Operation" portType="ns1:IOWSDL5PortType" variable="IOWSDL5OperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>
+                    <literal>InitialAssign</literal>
+                </from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <forEach name="ForEach1" parallel="no" counterName="foreachCounter">
+            <startCounterValue>1</startCounterValue>
+            <finalCounterValue>2</finalCounterValue>
+            <scope name="Scope1">
+                <faultHandlers>
+                    <catchAll>
+                        <assign>
+                            <copy>
+                                <from>concat($outputString, '-AssignInFHOfForEachScope', $foreachCounter)</from>
+                                <to variable="outputString"/>
+                            </copy>
+                        </assign>
+                    </catchAll>
+                </faultHandlers>
+                <eventHandlers>
+                    <onAlarm>
+                        <until>'2000-01-01T00:00:00'</until>
+                        <scope name="Scope2">
+                            <sequence name="Sequence5">
+                                <if name="If1">
+                                    <condition>$foreachCounter = 1</condition>
+                                    <invoke name="Invoke1" partnerLink="PartnerLink1" operation="OneWayOper" portType="ns1:OneWayPT1" inputVariable="IOWSDL5OperationIn"/>                                    
+                                </if>
+                                <throw name="Throw1" faultName="tns:Fault1"/>
+                            </sequence>
+                        </scope>
+                    </onAlarm>
+                </eventHandlers>
+                <sequence name="Sequence4">
+                    <assign>
+                        <copy>
+                            <from>concat($outputString, '-AssignInForEachScope', $foreachCounter)</from>
+                            <to variable="outputString"/>
+                        </copy>
+                    </assign>                    
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H10M0S'</for>
+                    </wait>
+                    <assign>
+                        <copy>
+                            <from variable="outputString"/>
+                            <to variable="IOWSDL5OperationOut" part="OutputPart"/>
+                        </copy>
+                    </assign>                    
+                    <reply name="Reply1" partnerLink="MainBPIO" operation="IOWSDL5Operation" portType="ns1:IOWSDL5PortType" variable="IOWSDL5OperationOut"/>
+                </sequence>
+            </scope>
+        </forEach>
+        <assign name="Assign5">
+            <copy>
+                <from variable="outputString"/>
+                <to variable="IOWSDL5OperationOut" part="OutputPart"/>
+            </copy>
+        </assign>        
+        <reply name="Reply2" partnerLink="MainBPIO" operation="IOWSDL5Operation" portType="ns1:IOWSDL5PortType"  variable="IOWSDL5OperationOut"/>
+    </sequence>
+</process>

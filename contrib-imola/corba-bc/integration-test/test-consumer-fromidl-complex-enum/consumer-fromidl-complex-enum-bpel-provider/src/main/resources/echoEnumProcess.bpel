@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="echoEnumProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/echoEnumProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/scProcess" 
+    xmlns:ns1="urn:jbi4corba/test-consumer-fromidl-complex-enum" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns2="http://testconsumerfromidlenum.test.jbi4corba.imolinfo.it/">
+    <import namespace="urn:jbi4corba/test-consumer-fromidl-complex-enum" location="EchoEnum.wsdl"  importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="echoEnumProcess" partnerLinkType="ns1:echoEnumProcess" myRole="echoEnumProcess"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoEnumOut" messageType="ns1:echoEnumResponse"/>
+        <variable name="EchoEnumIn" messageType="ns1:echoEnum"/>
+    </variables>
+    <sequence name="Sequence1">
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="echoEnumProcess" operation="echoEnum" portType="ns1:EchoEnumPortType" variable="EchoEnumIn">
+                <sequence name="Sequence2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>$EchoEnumIn.parameters/ns1:e</from>
+                            <to>$EchoEnumOut.parameters/ns1:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="echoEnumProcess" operation="echoEnum" portType="ns1:EchoEnumPortType" variable="EchoEnumOut"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>
+
+

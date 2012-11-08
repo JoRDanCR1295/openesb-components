@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInEHProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/BpelModule1/ExitInEHProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/BpelModule1/ExitInEHProcess" xmlns:ns0="http://j2ee.netbeans.org/wsdl/ExitInEH">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ExitInEH" location="ExitInEH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkIO" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInEH" partnerLinkType="tns:ExitInEHPlink" myRole="ExitInEHPortTypeRole"/>
+        <partnerLink name="PartnerLinkCorrel" xmlns:tns="http://j2ee.netbeans.org/wsdl/ExitInEH" partnerLinkType="tns:CorrelationPlink" myRole="CorrelationPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ExitInEHOperationOut" messageType="ns0:ExitInEHOperationReply"/>
+        <variable name="ExitInEHOperationIn" messageType="ns0:ExitInEHOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns0:CorrelationVar"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkIO" operation="ExitInEHOperation" portType="ns0:ExitInEHPortType" variable="ExitInEHOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from variable="ExitInEHOperationIn" part="InputPart"/>
+                <to variable="ExitInEHOperationOut" part="OutputPart"/>
+            </copy>
+        </assign>
+        <scope name="Scope1">
+            <eventHandlers>
+                <onEvent partnerLink="PartnerLinkCorrel" operation="CorrelationOperation" portType="ns0:CorrelationPortType" variable="CorrelationOperationIn" messageType="ns0:ExitInEHOperationRequest">
+                    <correlations>
+                        <correlation set="CorrelationSet1" initiate="no"/>
+                    </correlations>
+                    <scope name="Scope2">
+                        <exit name="Exit1"/>
+                    </scope>
+                </onEvent>
+            </eventHandlers>
+            <wait name="Wait_45Secs">
+                <for>'P0Y0M0DT0H0M45S'</for>
+            </wait>
+        </scope>
+        <reply name="Reply1" partnerLink="PartnerLinkIO" operation="ExitInEHOperation" portType="ns0:ExitInEHPortType" variable="ExitInEHOperationOut"/>
+    </sequence>
+</process>

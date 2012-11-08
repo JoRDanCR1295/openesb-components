@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://com.sun.jbi/etl/etlengine" xmlns:ns2="http://com.sun.jbi/aspect/throttling" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="ThrottlingETL_engine_myrole" interface-name="ns1:ThrottlingETL_engine_etlPortType" name="endpoint1" service-name="ns1:ThrottlingETL_engine_etlPartnerLink"/>
+<endpoint endpoint-name="throttlingPortTypeRole" interface-name="ns2:throttlingPortType" name="endpoint2" service-name="ns2:throttlingPartner"/>
+<endpoint endpoint-name="ThrottlingETL_engine_etlPort" interface-name="ns1:ThrottlingETL_engine_etlPortType" name="endpoint3" service-name="ns1:ThrottlingETL_engine_etlService"/>
+<endpoint endpoint-name="ThrottlingETL_engine_etlPort" interface-name="ns1:ThrottlingETL_engine_etlPortType" name="endpoint4" service-name="ns1:ThrottlingETL_engine_etlService"/>
+<endpoint endpoint-name="throttlingPort" interface-name="ns2:throttlingPortType" name="endpoint5" service-name="ns2:throttlingService"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="ThrottlingETLApp.jar" component-name="sun-etel-engine" defined="true" description="Represents this Service Unit" internal="true" name="ThrottlingCompositeApp-ThrottlingETLApp" unit-name="ThrottlingETLApp" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint1"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="ThrottlingAspectApp.jar" component-name="sun-aspect-engine" defined="true" description="Represents this Service Unit" internal="true" name="ThrottlingCompositeApp-ThrottlingAspectApp" unit-name="ThrottlingAspectApp" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint2"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="ThrottlingCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/throttling.wsdl#xpointer(/definitions/service[@name='throttlingService']/port[@name='throttlingPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint5"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/service[@name='ThrottlingETL_engine_etlService']/port[@name='ThrottlingETL_engine_etlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ThrottlingETLApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/service[@name='ThrottlingETL_engine_etlService']/port[@name='ThrottlingETL_engine_etlPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint4"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint2" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/throttling.wsdl#xpointer(/definitions/portType[@name='throttlingPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/portType[@name='ThrottlingETL_engine_etlPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingETLApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/portType[@name='ThrottlingETL_engine_etlPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/throttling.wsdl#xpointer(/definitions/binding[@name='throttlingBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/binding[@name='Binding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingETLApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/binding[@name='Binding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/throttling.wsdl#xpointer(/definitions/service[@name='throttlingService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingAspectApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/service[@name='ThrottlingETL_engine_etlService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ThrottlingETLApp/ThrottlingETL_engine.wsdl#xpointer(/definitions/service[@name='ThrottlingETL_engine_etlService'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

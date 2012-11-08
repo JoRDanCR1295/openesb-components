@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UnhandledFaultInTH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/UnhandledFaultInTH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/UnhandledFaultInTH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL4" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL4" location="IOWSDL4.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="MainBPIO" partnerLinkType="ns1:MainBPIOPLink" myRole="IOWSDL4PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IOWSDL4OperationIn" messageType="ns1:IOWSDL4OperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVariable"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="MainBPIO" operation="IOWSDL4Operation" portType="ns1:IOWSDL4PortType" variable="IOWSDL4OperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL4OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="GlobalScope">
+            <variables>
+                <variable name="IOWSDL4OperationOut" messageType="ns1:IOWSDL4OperationReply"/>
+            </variables>
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence6">
+                        <assign name="Assign6">
+                            <copy>
+                                <from>
+                                    <literal>Incorrect execution. This fault handler should not have executed.</literal>
+                                </from>
+                                <to part="OutputPart" variable="IOWSDL4OperationOut"/>
+                            </copy>
+                        </assign>
+                        <reply name="Reply3" partnerLink="MainBPIO" operation="IOWSDL4Operation" portType="ns1:IOWSDL4PortType" variable="IOWSDL4OperationOut"/>
+                    </sequence>                    
+                </catchAll>
+            </faultHandlers>
+            <scope name="ParentScope">
+                <variables>
+                    <variable name="IOWSDL4OperationOut" messageType="ns1:IOWSDL4OperationReply"/>
+                </variables>
+                <faultHandlers>
+                    <catch faultName="ns2:someFault">
+                        <sequence name="Sequence5">
+                            <assign name="Assign4">
+                                <copy>
+                                    <from>concat($outputString, ' \n 5. Caught someFault. Sending Output from FH')</from>
+                                    <to part="OutputPart" variable="IOWSDL4OperationOut"/>
+                                </copy>
+                            </assign>
+                            <reply name="Reply2" partnerLink="MainBPIO" operation="IOWSDL4Operation" portType="ns1:IOWSDL4PortType" variable="IOWSDL4OperationOut"/>
+                        </sequence>
+                    </catch>
+                </faultHandlers>
+                <sequence name="Sequence1">
+                    <flow name="FaultingFlow">
+                        <sequence name="Sequence3">
+                            <wait name="Wait1">
+                                <for>'P0Y0M0DT0H0M2S'</for>
+                            </wait>
+                            <assign name="Assign3">
+                                <copy>
+                                    <from>concat($outputString, ' \n 3. In Branch1: Fault occurs here ')</from>
+                                    <to variable="outputString"/>
+                                </copy>
+                            </assign>
+                            <throw name="Throw1" faultName="ns2:someFault"/>
+                        </sequence>
+                        <scope name="RunningScope">
+                            <variables>
+                                <variable name="UninitializedVar" type="xsd:int"/>
+                            </variables>
+                            <terminationHandler>
+                                <sequence name="Sequence4">
+                                    <assign name="TH_Assign1">
+                                        <copy>
+                                            <from>concat($outputString, ' \n 4. In TH: Another fault occurs here ')</from>
+                                            <to variable="outputString"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="FaultingAssign">
+                                        <copy>
+                                            <from>                 ( $UninitializedVar + 1 )                 </from>
+                                            <to variable="UninitializedVar"/>
+                                        </copy>
+                                    </assign>
+                                    <assign name="TH_Assign2">
+                                        <copy>
+                                            <from>concat($outputString, ' \n After fault in TH:', ' Should not execute')</from>
+                                            <to variable="outputString"/>
+                                        </copy>
+                                    </assign>
+                                </sequence>
+                            </terminationHandler>                            
+                            <sequence name="Sequence2">
+                                <scope name="CompletedScope">
+                                    <assign name="Assign2">
+                                        <copy>
+                                            <from>concat($outputString, ' \n 2. In Branch2 ')</from>
+                                            <to variable="outputString"/>
+                                        </copy>
+                                    </assign>
+                                </scope>
+                                <wait name="Wait2">
+                                    <for>'P0Y0M0DT0H0M5S'</for>
+                                </wait>
+                            </sequence>
+                        </scope>
+                    </flow>
+                    <assign name="Assign5">
+                        <copy>
+                            <from variable="outputString"/>
+                            <to variable="IOWSDL4OperationOut" part="OutputPart"/>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="MainBPIO" operation="IOWSDL4Operation" portType="ns1:IOWSDL4PortType" variable="IOWSDL4OperationOut"/>
+                </sequence>
+            </scope>
+        </scope>
+    </sequence>
+</process>

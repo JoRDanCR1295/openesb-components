@@ -1,0 +1,65 @@
+                     			---
+								WSDL Command-line tool
+								---
+								Marco Piraccini
+								---
+								29/07/2007
+
+{WSDL Generation command-line tool}
+
+	The command line tool can be downloaded {{{http://sourceforge.net/projects/Jbi4Ejb}here}}. With that tool you can create and {{{wsdlExtensions.html}extended WSDL}} 
+	from a J2EE ejb-jar archive.
+	
+	If you launch it without arguments, for example:
+
++-----------------------------------------------------------+
+java -jar wsdl-generator-0.1-executable.jar 
++-----------------------------------------------------------+
+
+	You can see the available options:
+
++-----------------------------------------------------------+
+Extended WSDL Generator for the Jbi4Ejb Binding component
+ -j,--jar-path <ejb-jar-path>     the ejb jar path
+ -a,--appserver <appserver>       the app server name
+                                  (websphere6/glassfish2/jboss4)
+ -c,--corbaname <corbaname>       the ejb corbaname (optional)
+ -h,--help                        print this message
+ -i,--interface <ejb-interface>   the ejb remote interface
+ -w,--wsdl <wsdl-file-name>       the wsdl file name (optional)
++-----------------------------------------------------------+
+
+
+	The mandatory parameters are:
+		
+		* The jar path (-j or --jar-path) that must specify the ejb-jar archive path of the deployed EJB
+		
+		* the interface name (-i or --interface) that must specify the interface name to use to generate the WSDL
+		
+	The optional parameters are:
+		
+		* The corbaname (if no specified, the String "corbaname" is used and must be configured manually).
+		
+		* The WSDL name (if no name is specified, the remote interface name is used for the WSDL file name).
+		
+		* The application server: this string is used to pre-configure the ORB. The orb pre-configured for the		 
+		server are:
+		
+			** the default Glassfish Orb for glassfish2 (default choiche)
+			
+			** the default IBM Orb for websphere6
+			
+			** the Jacorb Orb for Jboss4
+			
+	An example of the execution is:
+	
++-----------------------------------------------------------+			
+java -jar wsdl-generator-0.1-executable.jar -j /home/marco/EJBModule14.jar -i it.imolinfo.test14.TestSessionRemote -c corbaname:iiop:127.0.0.1:3700#ejb/TestSessionBean
++-----------------------------------------------------------+
+
+	This execution produces the TestSessionRemote.wsdl file in the local directory, defaulting to the Glassfish Orb and 
+	with corbaname <<corbaname:iiop:127.0.0.1:3700#ejb/TestSessionBean>>.
+
+	Notice that the WSDL obtained can be edited manually or using a WSDL editor to change the connection parameters, 
+	see the {{{applicationServerConfiguration.html} configuration guide for the supported Application Servers}} for details.	
+	

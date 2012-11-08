@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitInForEachProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInForEachProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ExitBpel/ExitInForEachProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ExitInForEach" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/ExitInForEach1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ExitInForEach" location="ExitInForEach.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:ExitInForEachPlink" myRole="ExitInForEachPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="ExitInForEachOperationIn" messageType="ns1:ExitInForEachOperationRequest"/>
+        <variable name="ExitInForEachOperationOut" messageType="ns1:ExitInForEachOperationReply"/>        
+    </variables>    
+    <faultHandlers>
+        <catchAll>
+            <sequence name="Sequence10">
+                <assign name="Assign10">
+                        <copy>
+                                <from>concat($outputString, ' \n Caught someFault. Sending Output from FH')</from>
+                                    <to part="OutputPart" variable="ExitInForEachOperationOut"/>
+                            </copy>
+                    </assign>
+                    <reply name="Reply10" partnerLink="PartnerLinkInOut" operation="ExitInForEachOperation" portType="ns1:ExitInForEachPortType" variable="ExitInForEachOperationOut"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="ExitInForEachOperation" portType="ns1:ExitInForEachPortType" variable="ExitInForEachOperationIn"/>
+        <assign name="Assign">
+            <copy>
+                <from>concat('1. Input is -  ', $ExitInForEachOperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="ExitInForEach_Scope">
+            <sequence name="MainSequence">
+                <flow name="MainFlow">
+                    <sequence name="Sequence1_Branch1">
+                            <wait name="VeryShortWait1">
+                                    <for>'P0Y0M0DT0H0M10S'</for>
+                                </wait>
+                                <assign name="Assign1_3">
+                                    <copy>
+                                            <from>concat($outputString, ' \n 8. In Flow Branch1: Fault occurs here ')</from>
+                                                <to variable="outputString"/>
+                                        </copy>
+                                </assign>
+                                <throw name="Throws_SomeFault1" faultName="ns2:someFault"/>
+                    </sequence>
+                    <forEach name="ForEach1" parallel="no" counterName="ForCntr">
+                        <startCounterValue>0</startCounterValue>
+                            <finalCounterValue>2</finalCounterValue>
+                            <scope name="OuterScope3">
+                                <scope name="CompletedScope3">
+                                        <terminationHandler>
+                                            <sequence name="Sequence13">
+                                                <assign name="Assign3_4">
+                                                    <copy>
+                                                        <from>concat($outputString, ' \n 11.', $ForCntr, ' In TH of CompletedScope3 in ForEach Loop')</from>
+                                                        <to variable="outputString"/>
+                                                    </copy>
+                                                </assign>
+                                                <compensate name="Compensate4"/>
+                                            </sequence>
+                                        </terminationHandler>
+                                            <sequence name="CompletedScope3_Sequence">
+                                            <assign name="Assign3_1">
+                                                            <copy>
+                                                                    <from>concat($outputString, '  \n 6.', $ForCntr, ' In Flow Branch4 Assign : In Completed Scope3 of ForEach Loop ')</from>
+                                                                        <to variable="outputString"/>
+                                                                </copy>
+                                                        </assign>
+                                                        <scope name="InnerScope3">
+                                                            <compensationHandler>
+                                                                    <assign name="Assign3_5">
+                                                                            <copy>
+                                                                                    <from>concat($outputString, ' \n ForEach:', $ForCntr, ' In CH of InnerScope3 in ForEach Loop ')</from>
+                                                                                        <to variable="outputString"/>
+                                                                                </copy>
+                                                                        </assign>
+                                                                </compensationHandler>
+                                                                <assign name="Assign3_2">
+                                                                    <copy>
+                                                                            <from>concat($outputString, '  \n 7.', $ForCntr, ' In Flow Branch4 Assign : In InnerScope3 of ForEach Loop')</from>
+                                                                                <to variable="outputString"/>
+                                                                        </copy>
+                                                                </assign>
+                                                        </scope>
+                                                <exit name="Exit1"/>
+                                        </sequence>
+                                    </scope>
+                            </scope>
+                    </forEach>
+                </flow>
+                <assign name="Assign_ShouldNotExecute">
+                    <copy>
+                            <from>
+                                    <literal>This assign should not have executed. </literal>
+                                </from>
+                                <to part="OutputPart" variable="ExitInForEachOperationOut"/>
+                        </copy>
+                </assign>
+                <reply name="Reply_ShouldNotExecute" partnerLink="PartnerLinkInOut" operation="ExitInForEachOperation" portType="ns1:ExitInForEachPortType" variable="ExitInForEachOperationOut"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

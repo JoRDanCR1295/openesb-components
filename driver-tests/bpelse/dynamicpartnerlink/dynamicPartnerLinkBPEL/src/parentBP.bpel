@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="parentBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/dynamicPartnerLinkBPEL/parentBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/dynamicPartnerLinkBPEL/parentBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/dynamicPartnerLink" xmlns:ns2="http://j2ee.netbeans.org/wsdl/provider" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+    <import namespace="http://j2ee.netbeans.org/wsdl/dynamicPartnerLink" location="dynamicPartnerLink.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/provider" location="provider.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:provider2" partnerRole="providerPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:provider1" partnerRole="providerPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:dynamicPartnerLink1" myRole="dynamicPartnerLinkPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ProviderOperationOut" messageType="ns2:providerOperationRequest"/>
+        <bpws:variable name="ProviderOperationIn" messageType="ns2:providerOperationRequest"/>
+        <bpws:variable name="Variable1" type="xsd:int"/>
+        <bpws:variable name="DynamicPartnerLinkOperationOut" messageType="ns1:dynamicPartnerLinkOperationReply"/>
+        <bpws:variable name="DynamicPartnerLinkOperationIn" messageType="ns1:dynamicPartnerLinkOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="dynamicPartnerLinkOperation" portType="ns1:dynamicPartnerLinkPortType" variable="DynamicPartnerLinkOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>2</bpws:from>
+                <bpws:to variable="Variable1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="DynamicPartnerLinkOperationIn" part="part1"/>
+                <bpws:to variable="DynamicPartnerLinkOperationOut" part="part1"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>concat($DynamicPartnerLinkOperationIn.part1/ns0:string, ' first time ')</bpws:from>
+                <bpws:to part="part1" variable="ProviderOperationIn"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:while name="While1">
+            <bpws:condition>  $Variable1 != 0  </bpws:condition>
+            <bpws:sequence name="Sequence1">
+                <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="providerOperation" portType="ns2:providerPortType" inputVariable="ProviderOperationIn" outputVariable="ProviderOperationOut"/>
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from>$Variable1 - 1</bpws:from>
+                        <bpws:to variable="Variable1"/>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from>concat($DynamicPartnerLinkOperationIn.part1/ns0:string, ' second time ')</bpws:from>
+                        <bpws:to part="part1" variable="ProviderOperationIn"/>
+                    </bpws:copy>
+                    <bpws:copy>
+                        <bpws:from>concat($ProviderOperationOut.part1, $DynamicPartnerLinkOperationOut.part1/ns0:string)</bpws:from>
+                        <bpws:to>$DynamicPartnerLinkOperationOut.part1/ns0:string</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:assign name="Assign3">
+                    <bpws:copy>
+                        <bpws:from partnerLink="PartnerLink3" endpointReference="partnerRole"/>
+                        <bpws:to partnerLink="PartnerLink2"/>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:sequence>
+        </bpws:while>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="dynamicPartnerLinkOperation" portType="ns1:dynamicPartnerLinkPortType" variable="DynamicPartnerLinkOperationOut"/>
+    </sequence>
+</process>

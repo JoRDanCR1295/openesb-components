@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:FaultService/FHW_FaultsFromInvoke" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:FaultService/FHW_FaultsFromInvoke" name="FHW_FaultsFromInvoke">
+	<types>
+		<xsd:schema xmlns:ns1="urn:FaultService/FHW_FaultsFromInvoke" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:FaultService/FHW_FaultsFromInvoke">
+       			<xsd:complexType name="FaultType1">
+       				<xsd:sequence>
+     					<xsd:element minOccurs="1" maxOccurs="1" name="ChildElement1" type="xsd:string" />
+      					<xsd:element minOccurs="1" maxOccurs="1" name="ChildElement2" type="xsd:double" />
+       				</xsd:sequence>
+       			</xsd:complexType>
+      			<xsd:element name="FSElement" type="tns:FaultType1"/>       			
+      			<xsd:element name="FSInput" type="xsd:string"/>
+			<xsd:element name="FSOutput" type="xsd:string"/>
+ 		</xsd:schema>
+	</types>
+	<message name="FaultServiceRequest">
+		<part name="parameters" element="tns:FSInput"/>
+	</message>
+	<message name="FaultServiceResponse">
+		<part name="result" element="tns:FSOutput"/>
+	</message>
+	<message name="FaultServiceFaultResponse1">
+		<part name="result" element="tns:FSElement"/>
+	</message>
+	<message name="FaultServiceFaultResponse2">
+		<part name="result" type="tns:FaultType1"/>
+	</message>	
+	<message name="FaultServiceFaultResponse3">
+		<part name="result" type="xsd:string"/>
+	</message>
+	<portType name="FaultPortType">
+		<operation name="FHW_FaultOperation">
+			<input message="tns:FaultServiceRequest"/>
+			<output message="tns:FaultServiceResponse"/>
+			<fault name="Fault_Element" message="tns:FaultServiceFaultResponse1"/>
+			<fault name="Fault_ComplexType" message="tns:FaultServiceFaultResponse2"/>
+			<fault name="Fault_SimpleType" message="tns:FaultServiceFaultResponse3"/>			
+		</operation>
+	</portType>
+	<binding name="FaultBinding" type="tns:FaultPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<operation name="FHW_FaultOperation">
+			<soap:operation soapAction="FHW_FaultOperation" style="document"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="Fault_Element">
+				<soap:fault name="Fault_Element" use="literal"/>
+			</fault>
+			<fault name="Fault_ComplexType">
+				<soap:fault name="Fault_ComplexType" use="literal"/>
+			</fault>
+			<fault name="Fault_SimpleType">
+				<soap:fault name="Fault_SimpleType" use="literal"/>
+			</fault>			
+		</operation>
+	</binding>
+	<service name="FHW_FaultsFromInvoke">
+		<port name="FaultPort" binding="tns:FaultBinding">
+			<soap:address location="http://localhost:${HttpDefaultPort}/myservice/FHW_FaultsFromInvoke"/>
+		</port>
+	</service>
+	<plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="FHW_FaultServiceLT">
+		<plnk:role name="FHW_FaultServiceProvider" portType="tns:FaultPortType"/>
+	</plnk:partnerLinkType>
+</definitions>

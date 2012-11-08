@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="jbisupport" basedir=".">
+    <description>Builds the module suite jbisupport.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+    <import file="../../nbbuild/entpack/templates/suite-impl.xml"/>
+    -->            
+    <!-- these targets are for building the nbm, installer.zip and source.zip files outside 
+    the netbeans harness  -->
+    <target name="-init-installer">
+        
+        <property name="jbisupport.prj" location="." />
+        <property name="jbicomp.prj" location="./jbicomponent" />
+        <property name="jbilib.prj" location="./jbilib" />
+        <property name="wsdl4jlib.prj" location="./wsdl4j" />
+        <property name="jbi.cdk.ant.tasks.prj" location="./jbi-cdk-ant-tasks" />
+        <property name="jbicomp.support.prj" location="./jbicomponentsupport" />
+        
+        <property name="jbisupport.dist.dir" location="./dist" />
+        <property name="jbisupport.build.dir" location="./build" />
+        <property name="jbisupport.updates.dir" location="./build/updates" />
+
+        <property name="jbicomp.tools.nbm.zip" value="jbi-comp-dev-tools-nbm.zip" />
+        <property name="jbicomp.tools.nb.jars.zip" value="jbi-comp-dev-tools-nb-jars.zip" />
+        
+        <property name="jbilib.nbm" location="${jbisupport.updates.dir}/org-netbeans-modules-jbi-apisupport-jbilib.nbm" />
+        <property name="wsdl4jlib.nbm" location="${jbisupport.updates.dir}/org-netbeans-modules-jbi-apisupport-wsdl4jlib.nbm" />
+        <property name="jbicomp.support.nbm" location="${jbisupport.updates.dir}/org-netbeans-modules-jbi-apisupport.nbm" />
+        
+    </target>
+    
+    <target name="-clean-dist" >
+        <delete dir="${jbisupport.dist.dir}" verbose="true" />
+    </target>
+    
+    <target name="create-source-zip" depends="-init-installer, -clean-dist" >
+        <mkdir dir="${jbisupport.dist.dir}" />        
+        <property name="jbicomp.tools.source.zip" value="jbi-comp-dev-tools-source.zip" />
+        
+        <zip destfile="${jbisupport.dist.dir}/${jbicomp.tools.source.zip}" >
+            <zipfileset dir="${jbisupport.prj}" excludes="**/dist/**, **/build/**, **/nbproject/private/** " prefix="jbisupport" />
+            <!--
+            <zipfileset dir="${jbicomp.prj}" excludes="dist/**, build/**, nbproject/private/** " prefix="jbicomponent" />
+            <zipfileset dir="${jbilib.prj}" excludes="dist/**, build/**, nbproject/private/** " prefix="jbilib" />
+            <zipfileset dir="${jbicomp.support.prj}" excludes="dist/**, build/**, nbproject/private/** " prefix="jbicomponentsupport" />
+            -->
+        </zip>        
+    </target>
+    
+    <target name="create-installer" depends="-init-installer, -clean-dist, clean, nbms, create-source-zip" >
+        
+        <mkdir dir="${jbisupport.dist.dir}" />        
+                                
+        <zip destfile="${jbisupport.dist.dir}/${jbicomp.tools.nbm.zip}" >
+            <zipfileset file="${jbilib.nbm}" />
+            <zipfileset file="${wsdl4jlib.nbm}" />
+            <zipfileset file="${jbicomp.support.nbm}" />
+        </zip>
+        
+        <property name="temp.unpack.dir" location="${jbisupport.build.dir}/temp" />
+        <delete dir="${temp.unpack.dir}" verbose="true"/>
+        <mkdir dir="${temp.unpack.dir}" />
+        <unzip src="${jbilib.nbm}" dest="${temp.unpack.dir}" />
+        <unzip src="${wsdl4jlib.nbm}" dest="${temp.unpack.dir}" />
+        <unzip src="${jbicomp.support.nbm}" dest="${temp.unpack.dir}" />
+                
+        <zip destfile="${jbisupport.dist.dir}/${jbicomp.tools.nb.jars.zip}" >
+            <zipfileset dir="${temp.unpack.dir}/netbeans" />
+        </zip>
+        
+    </target>
+    
+    <target name="copy-installer-to-demo-dir" depends="-init-installer" >
+        <property name="demo.nbm.dir" location="C:/demo/nbms" />
+        
+        <copy overwrite="true" todir="${demo.nbm.dir}" >
+            <fileset dir="${jbisupport.dist.dir}">
+                <include name="*.zip" />
+            </fileset>
+        </copy>
+        <unzip overwrite="true" src="${demo.nbm.dir}/${jbicomp.tools.nbm.zip}" dest="${demo.nbm.dir}" />
+    </target>
+    
+    <target name="update-demo-soa1" depends="-init-installer" >
+        <property name="demo.cluster.soa1" location="C:/demo/ide/netbeans/soa1" />
+        <unzip overwrite="true" src="${jbisupport.dist.dir}/${jbicomp.tools.nb.jars.zip}" dest="${demo.cluster.soa1}" />
+    </target>
+
+    <target name="clean-demo-soa1" depends="-init-installer" >
+        <property name="demo.cluster.soa1" location="C:/demo/ide/netbeans/soa1" />
+        <delete file="${demo.cluster.soa1}/config/Modules/org-netbeans-modules-jbi-apisupport-wsdl4jlib.xml" />
+        <delete file="${demo.cluster.soa1}/config/Modules/org-netbeans-modules-jbi-apisupport-jbilib.xml" />
+        <delete file="${demo.cluster.soa1}/config/Modules/org-netbeans-modules-jbi-apisupport.xml" />
+        
+        <delete file="${demo.cluster.soa1}/modules/org-netbeans-modules-jbi-apisupport-wsdl4jlib.jar" />
+        <delete file="${demo.cluster.soa1}/modules/org-netbeans-modules-jbi-apisupport-jbilib.jar" />
+        <delete file="${demo.cluster.soa1}/modules/org-netbeans-modules-jbi-apisupport.jar" />        
+        
+        <delete file="${demo.cluster.soa1}/modules/ext/jbi.jar" />
+    </target>
+
+    <target name="update-demo-user" depends="-init-installer" >
+        <property name="demo.netbeans.userdir" location="C:/demo/userdir" />
+        <unzip overwrite="true" src="${jbisupport.dist.dir}/${jbicomp.tools.nb.jars.zip}" dest="${demo.netbeans.userdir}" />
+    </target>
+
+    <target name="clean-demo-user" depends="-init-installer" >
+        <property name="demo.netbeans.userdir" location="C:/demo/userdir" />
+        <delete file="${demo.netbeans.userdir}/config/Modules/org-netbeans-modules-jbi-apisupport-wsdl4jlib.xml" />
+        <delete file="${demo.netbeans.userdir}/config/Modules/org-netbeans-modules-jbi-apisupport-jbilib.xml" />
+        <delete file="${demo.netbeans.userdir}/config/Modules/org-netbeans-modules-jbi-apisupport.xml" />
+        
+        <delete file="${demo.netbeans.userdir}/modules/org-netbeans-modules-jbi-apisupport-wsdl4jlib.jar" />
+        <delete file="${demo.netbeans.userdir}/modules/org-netbeans-modules-jbi-apisupport-jbilib.jar" />
+        <delete file="${demo.netbeans.userdir}/modules/org-netbeans-modules-jbi-apisupport.jar" />
+        
+        <delete file="${demo.netbeans.userdir}/modules/ext/jbi.jar" />  
+        <delete file="${demo.netbeans.userdir}/modules/wsdl4j-1.6.2.jar" />  
+    </target>
+    
+</project>

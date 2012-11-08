@@ -1,0 +1,1 @@
+insert into dgdb.employee values(?,?,?,?,?)

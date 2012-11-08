@@ -1,0 +1,854 @@
+## fields as follows: 
+## 1 test case type ("E"-Encode, "D"-Decode, "P"-Passthru)
+## 2 test case name
+## 3 expected result ("T" for succeed or positive test, "F" for fail or negative test)
+## 4 schema file
+## 5 root element name
+## 6 input file
+## 7 output file (optional)
+## 8 expected output file (optional)
+
+# c000.xsd: Test "Encoder Tester" UI to fail since there is no top element specified in this XSD
+
+######### Basic ########
+# c001 - basic, 3 levels in structure, has group, delimited and fixed length nodes. 2 levels of delimiters. No repeating/optional nodes
+D, decode-c001 (basic), T, test/data/c001.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c001.dat, test/data/c001.dec.xml, test/data/c001.xml
+E, eecode-c001 (basic), T, test/data/c001.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c001.xml, test/data/c001.enc.dat, test/data/c001.dat
+
+######### Repeating delimited field ########
+# c002 - 3 levels in structure, has group, delimited and fixed length nodes. 2 levels of delimiters. delimField2 is repeatable. No array.
+D, decode-c002 (repeating delimited field), T, test/data/c002.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c002.dat, test/data/c002.dec.xml, test/data/c002.xml
+E, encode-c002 (repeating delimited field), T, test/data/c002.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c002.xml, test/data/c002.enc.dat, test/data/c002.dat
+
+######### multiple delimiters ########
+# c003 - 3 levels in structure, has group, delimited and fixed length nodes. 2 levels of delimiters but has multiple delimiters
+D, decode-c003 (multiple delimiters), T, test/data/c003.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c003.dat, test/data/c003.dec.xml, test/data/c003.xml
+E, decode-c003 (multiple delimiters), T, test/data/c003.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c003.xml, test/data/c003.enc.dat, test/data/c003.out
+
+######### array/repeat delim ########
+# c004 - 3 levels in structure, has group, delimited and fixed length nodes. Has array (i.e. repeat) delimiter
+D, decode-c004 (array/repeat delim), T, test/data/c004.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c004.dat, test/data/c004.dec.xml, test/data/c004.xml
+E, encode-c004 (array/repeat delim), T, test/data/c004.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c004.xml, test/data/c004.enc.dat, test/data/c004.dat
+
+######### repeating group ########
+# c005 - 3 levels in structure, has group, delimited and fixed length nodes. The groupNode is repetitive
+D, decode-c005 (repeating group), T, test/data/c005.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c005.dat, test/data/c005.dec.xml, test/data/c005.xml
+E, encode-c005 (repeating group), T, test/data/c005.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c005.xml, test/data/c005.enc.dat, test/data/c005.dat
+
+######### optional delimited field (absent) ########
+# c006 - 3 levels in structure, has group, delimited and fixed length nodes. delimField2 is optional and absent.
+D, decode-c006 (optional delim field absent), T, test/data/c006.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c006.dat, test/data/c006.dec.xml, test/data/c006.xml
+E, encode-c006 (optional delim field absent), T, test/data/c006.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c006.xml, test/data/c006.enc.dat, test/data/c006.dat
+
+######### optional delimited field (present) ########
+# c006a - 3 levels in structure, has group, delimited and fixed length nodes. delimField2 is optional but present
+D, decode-c006a (optional delim field present), T, test/data/c006.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c006a.dat, test/data/c006a.dec.xml, test/data/c006a.xml
+E, encode-c006a (optional delim field present), T, test/data/c006.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c006a.xml, test/data/c006a.enc.dat, test/data/c006a.dat
+
+######### optional fixed length field (absent) ########
+# c007 - 3 levels in structure, has group, delimited and fixed length nodes. fixedField2 is optional and absent.
+D, decode-c007 (optional fixed length field absent), T, test/data/c007.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c007.dat, test/data/c007.dec.xml, test/data/c007.xml
+E, encode-c007 (optional fixed length field absent), T, test/data/c007.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c007.xml, test/data/c007.enc.dat, test/data/c007.dat
+
+######### optional fixed length field (present) ########
+# c007a - 3 levels in structure, has group, delimited and fixed length nodes. one of the fixed length fields is optional
+D, decode-c007a (optional fixed length field present), T, test/data/c007.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c007a.dat, test/data/c007a.dec.xml, test/data/c007a.xml
+E, encode-c007a (optional fixed length field present), T, test/data/c007.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c007a.xml, test/data/c007a.enc.dat, test/data/c007a.dat
+
+######### delimiter optionalMode=never ########
+# c008 - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional, some have data, others don't.
+D, decode-c008 (delimiter optionalMode=never), T, test/data/c008.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c008.dat, test/data/c008.dec.xml, test/data/c008.xml
+E, encode-c008 (delimiter optionalMode=never), T, test/data/c008.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c008.xml, test/data/c008.enc.dat, test/data/c008.dat
+
+######### delimiter optionalMode=never but with empty value fields ########
+# c008a - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional, some have data, some have empty data, others don't.
+D, decode-c008a (delimiter optionalMode=never but with empty fields), T, test/data/c008.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c008a.dat, test/data/c008a.dec.xml, test/data/c008a%i%.xml
+E, encode-c008a (delimiter optionalMode=never but with empty fields), T, test/data/c008.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c008a.xml, test/data/c008a.enc.dat, test/data/c008a.dat
+
+######### delimiter optionalMode=allow ########
+# c009 - 3 levels in structure, has group, delimited and fixed length nodes. several delimited fields are optional. Input data contains delimiters for absent fields.
+D, decode-c009 (delimiter optionalMode=allow), T, test/data/c009.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c009.dat, test/data/c009.dec.xml, test/data/c009.xml
+E, encode-c009 (delimiter optionalMode=allow), T, test/data/c009.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c009.xml, test/data/c009.enc.dat, test/data/c009.out
+
+######### delimiter optionalMode=favor/cheer ########
+# c010 - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional.
+D, decode-c010 (delimiter optionalMode=favor/cheer), T, test/data/c010.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c010.dat, test/data/c010.dec.xml, test/data/c010.xml
+E, encode-c010 (delimiter optionalMode=favor/cheer), T, test/data/c010.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c010.xml, test/data/c010.enc.dat, test/data/c010.out
+
+######### delimiter optionalMode=force ########
+# c011 - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional
+D, decode-c011 (delimiter optionalMode=force), T, test/data/c011.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c011.dat, test/data/c011.dec.xml, test/data/c011.xml
+E, encode-c011 (delimiter optionalMode=force), T, test/data/c011.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c011.xml, test/data/c011.enc.dat, test/data/c011.dat
+
+######### delimiter optionalMode=force with wrong input ########
+# c011a - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional
+D, decode-c011a (delimiter optionalMode=force with wrong input-negative), F, test/data/c011.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c011a.dat, test/data/c011a.dec.xml, test/data/c011a.dec.err
+
+######### delimiter terminatorMode=never with wrong input) ########
+# c011b - 3 levels in structure, has group, delimited and fixed length nodes. several delim fields are optional
+D, decode-c011b (delimiter terminatorMode=never with wrong input-negative), F, test/data/c011.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c011b.dat, test/data/c011b.dec.xml, test/data/c011b.dec.err
+
+######### delimiter terminatorMode=allow ########
+# c012 - 3 levels in structure, has group, delimited and fixed length nodes. delimField2~5 are optional
+D, decode-c012 (delimiter terminatorMode=allow), T, test/data/c012.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c012.dat, test/data/c012.dec.xml, test/data/c012.xml
+E, encode-c012 (delimiter terminatorMode=allow), T, test/data/c012.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c012.xml, test/data/c012.enc.dat, test/data/c012.out
+
+######### delimiter terminatorMode=favor ########
+# c013 - 3 levels in structure, has group, delimited and fixed length nodes. delimField2~5 are optional
+D, decode-c013 (delimiter terminatorMode=favor), T, test/data/c013.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c013.dat, test/data/c013.dec.xml, test/data/c013.xml
+E, encode-c013 (delimiter terminatorMode=favor), T, test/data/c013.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c013.xml, test/data/c013.enc.dat, test/data/c013.dat
+
+######### optionalMode=force & terminatorMode=favor/cheer ########
+# c013a - 3 levels in structure, has group, delimited and fixed length nodes. delimField2~5 are optional
+D, decode-c013a (optionalMode=force & terminatorMode=favor/cheer), T, test/data/c013.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c013a.dat, test/data/c013a.dec.xml, test/data/c013a.xml
+E, encode-c013a (optionalMode=force & terminatorMode=favor/cheer), T, test/data/c013.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c013a.xml, test/data/c013a.enc.dat, test/data/c013a.dat
+
+######### delimiter terminatorMode=force ########
+# c014 - 3 levels in structure, has group, delimited and fixed length nodes. delimField2~5 are optional
+D, decode-c014 (terminatorMode=force), T, test/data/c014.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c014.dat, test/data/c014.dec.xml, test/data/c014.xml
+E, encode-c014 (terminatorMode=force), T, test/data/c014.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c014.xml, test/data/c014.enc.dat, test/data/c014.dat
+
+######### delimiter terminatorMode=force with wrong input ########
+# c014a - 3 levels in structure, has group, delimited and fixed length nodes. delimField2~5 are optional
+D, decode-c014a (terminatorMode=force with wrong input-negative), F, test/data/c014.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c014a.dat, test/data/c014a.dec.xml, test/data/c014a.dec.err
+
+######### match ########
+# c015 - 3 levels in structure, has group, delimited and fixed length nodes. Both delimField1's have matches.
+D, decode-c015 (match), T, test/data/c015.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c015.dat, test/data/c015.dec.xml, test/data/c015.xml
+E, encode-c015 (match), T, test/data/c015.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c015.xml, test/data/c015.enc.dat, test/data/c015.dat
+
+######### match with wrong input ########
+# c015a - 3 levels in structure, has group, delimited and fixed length nodes. Both delimField1's have matches.
+D, decode-c015a (match with wrong input-negative), F, test/data/c015.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c015a.dat, test/data/c015a.dec.xml, test/data/c015a.dec.err
+
+######### match in repeating ########
+# c016 - 3 levels in structure, has group, delimited and fixed length nodes. multiple delimField1 have matches. one of them is inside repeating parent.
+D, decode-c016 (match in a repeating group), T, test/data/c016.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c016.dat, test/data/c016.dec.xml, test/data/c016.xml
+E, encode-c016 (match in a repeating group), T, test/data/c016.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c016.xml, test/data/c016.enc.dat, test/data/c016.dat
+
+######### order="any" ########
+# c017 - 3 levels in structure, has group, delimited and fixed length nodes. groupNode's order="any"
+D, decode-c017 (group node with order="any"), T, test/data/c017.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c017.dat, test/data/c017.dec.xml, test/data/c017.xml
+E, encode-c017 (group node with order="any"), T, test/data/c017.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c017.xml, test/data/c017.enc.dat, test/data/c017.out
+
+######### order=mixed ########
+# c018 - 3 levels in structure, has group, delimited and fixed length nodes. groupNode's order="mixed"
+D, decode-c018 (group node with order="mixed"), T, test/data/c018.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c018.dat, test/data/c018.dec.xml, test/data/c018.xml
+E, encode-c018 (group node with order="mixed"), T, test/data/c018.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c018.xml, test/data/c018.enc.dat, test/data/c018.out
+
+######### choice nodes ########
+# c019 - 3 levels in structure, has group, delimited nodes. groupNode's order="mixed" and its children are choice nodes.
+D, decode-c019 (group node with choice children), T, test/data/c019.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c019.dat, test/data/c019.dec.xml, test/data/c019.xml
+E, encode-c019 (group node with choice children), T, test/data/c019.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c019.xml, test/data/c019.enc.dat, test/data/c019.dat
+
+######### choice with wrong input ########
+# c019a - 3 levels in structure, has group, delimited nodes. groupNode's order="mixed" and its children are choice nodes.
+D, decode-c019 (group node with choice children but wrong input-negative), F, test/data/c019.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c019a.dat, test/data/c019.dec.xml, test/data/c019.dec.err
+
+######### choice node with repeating ########
+# c019b - 3 levels in structure, has group, delimited nodes. groupNode's order="mixed" and its children are choice nodes.
+D, decode-c019b (choice node repeating), T, test/data/c019.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c019b.dat, test/data/c019b.dec.xml, test/data/c019b.xml
+E, encode-c019b (choice node repeating), T, test/data/c019.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c019b.xml, test/data/c019b.enc.dat, test/data/c019b.dat
+
+######### embedded delim ########
+# c020 - 3 levels in structure, has group, delimited and fixed length nodes. 2 levels of delimiters, both delimiters are embedded.
+D, decode-c020 (embedded delim), T, test/data/c020.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c020.dat, test/data/c020.dec.xml, test/data/c020.xml
+E, encode-c020 (embedded delim), T, test/data/c020.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c020.xml, test/data/c020.enc.dat, test/data/c020.dat
+
+######### external reference (import/include) ########
+# c021 - 3 levels in structure, has group, delimited and fixed length nodes. Has imported and included schemas (c021&c021_imported mutually import, c021 includes c021_included)
+D, decode-c021 (external reference-import/include), T, test/data/c021.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c021.dat, test/data/c021.dec.xml, test/data/c021.xml
+E, encode-c021 (external reference-import/include), T, test/data/c021.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c021.xml, test/data/c021.enc.dat, test/data/c021.dat
+
+######### CR & LF as delimiter ########
+# c022 - 3 levels in structure, has group, delimited and fixed length nodes. 3 levels of delimiters, first level (record) has CR,LF as delimiters
+D, decode-c022 (CR & LF as delimiter), T, test/data/c022.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c022.dat, test/data/c022.dec.xml, test/data/c022.xml
+E, encode-c022 (CR & LF as delimiter), T, test/data/c022.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c022.xml, test/data/c022.enc.dat, test/data/c022.dat
+
+######### Tabular Data - simple ########
+# c023 - 2 levels in structure, has group, delimited nodes. skipLeading and collapse flags set to true on the space delimiter.
+D, decode-c023 (Simple Tabular), T, test/data/c023.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c023.dat, test/data/c023.dec.xml, test/data/c023.xml
+E, encode-c023 (Simple Tabular), T, test/data/c023.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c023.xml, test/data/c023.enc.dat, test/data/c023.out
+
+######### Tabular Data - Repetitive ########
+# c024 - 2 levels in structure, has group, delimited nodes. skipLeading and collapse flags set to true on the space delimiter. fields repeatable.
+D, decode-c024 (Tabular Repeatable fields), T, test/data/c024.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c024.dat, test/data/c024.dec.xml, test/data/c024%i%.xml
+E, encode-c024 (Tabular Repeatable fields), T, test/data/c024.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c024.xml, test/data/c024.enc.dat, test/data/c024.out
+
+######### Begin Delimiter ########
+# c025 - begin delimiter, simple case. 2 levels of delimiters. Both delimiters have begin delimiters. Their optionalMode&terminatorMode are "never".
+D, decode-c025 (simple begin delimiter), T, test/data/c025.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c025.dat, test/data/c025.dec.xml, test/data/c025.xml
+E, encode-c025 (simple begin delimiter), T, test/data/c025.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c025.xml, test/data/c025.enc.dat, test/data/c025.dat
+
+# c026 - begin delimiters with optionalMode=favor/cheer and terminatorMode=favor/cheer.
+D, decode-c026 (begin delimiter with optionalMode=favor/cheer), T, test/data/c026.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c026.dat, test/data/c026.dec.xml, test/data/c026.xml
+E, encode-c026 (begin delimiter with optionalMode=favor/cheer), T, test/data/c026.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c026.xml, test/data/c026.enc.dat, test/data/c026.out
+
+######### Begin Delimiter Anchored ########
+# c026abc - begin delimiters anchored, with optionalMode=favor/cheer and terminatorMode=favor/cheer.
+D, decode-c026a (begin delimiter anchored-negative), F, test/data/c026.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c026a.dat, test/data/c026a.dec.xml, test/data/c026a.dec.err
+D, decode-c026b (begin delimiter anchored-negative), F, test/data/c026.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c026b.dat, test/data/c026b.dec.xml, test/data/c026b.dec.err
+D, decode-c026c (begin delimiter anchored-negative), F, test/data/c026.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c026c.dat, test/data/c026c.dec.xml, test/data/c026c.dec.err
+
+######### Delimiter detached/non-anchored ########
+# c027 - Both begin and end delimiters are detached/non-anchored in both levels.
+D, decode-c027 (delimiters detached/non-anchored), T, test/data/c027.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c027.dat, test/data/c027.dec.xml, test/data/c027.xml
+E, encode-c027 (delimiters detached/non-anchored), T, test/data/c027.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c027.xml, test/data/c027.enc.dat, test/data/c027.out
+
+######### Fine-Grained Inheritance ########
+# c028 - gloable fineInherit=true. Root has begin and end delimiters defined and detached, groupNode overrides end delimiter but not begin delimiter.
+D, decode-c028 (fine grained inheritance), T, test/data/c028.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c028.dat, test/data/c028.dec.xml, test/data/c028.xml
+E, encode-c028 (fine grained inheritance), T, test/data/c028.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c028.xml, test/data/c028.enc.dat, test/data/c028.out
+
+# c028a - gloable fineInherit=true. Root has begin and end delimiters defined and detached, groupNode overrides end delimiter but not begin delimiter.
+D, decode-c028a (fine grained inheritance-negative), F, test/data/c028.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c028a.dat, test/data/c028a.dec.xml, test/data/c028a.dec.err
+
+######### Scavenger Characters ########
+# c029 - both intermediary nodes and both delimFields define Scavenger chars as "\x20" (space), also output 1st char.
+D, decode-c029 (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029.dat, test/data/c029.dec.xml, test/data/c029.xml
+E, encode-c029 (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029.xml, test/data/c029.enc.dat, test/data/c029.out
+
+# c029abcd - both intermediary nodes and both delimFields define Scavenger chars as "\x20" (space), also output 1st char.
+D, decode-c029a (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029a.dat, test/data/c029a.dec.xml, test/data/c029.xml
+D, decode-c029b (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029b.dat, test/data/c029b.dec.xml, test/data/c029.xml
+D, decode-c029c (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029c.dat, test/data/c029b.dec.xml, test/data/c029.xml
+D, decode-c029d (scavenger characters), T, test/data/c029.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c029d.dat, test/data/c029b.dec.xml, test/data/c029.xml
+
+######### Regex Match ########
+# c030 - delimField1 and fixedField1 have regex match (their alignment="regex").
+D, decode-c030 (regex match), T, test/data/c030.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c030.dat, test/data/c030.dec.xml, test/data/c030.xml
+E, encode-c030 (regex match), T, test/data/c030.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c030.xml, test/data/c030.enc.dat, test/data/c030.dat
+
+# c030ab - delimField1 and fixedField1 have regex match (their alignment="regex").
+D, decode-c030a (regex match-negative), F, test/data/c030.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c030a.dat, test/data/c030a.dec.xml, test/data/c030a.dec.err
+D, decode-c030b (regex match-negative), F, test/data/c030.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c030b.dat, test/data/c030b.dec.xml, test/data/c030b.dec.err
+
+######### Fixed-Length: determined by regexp match ########
+# c031 - fixedField1 length=0 and has regex match. Its length is determined by regex match.
+D, decode-c031 (Fixed-Length determined by regexp match), T, test/data/c031.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c031.dat, test/data/c031.dec.xml, test/data/c031.xml
+E, encode-c031 (Fixed-Length determined by regexp match), T, test/data/c031.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c031.xml, test/data/c031.enc.dat, test/data/c031.dat
+
+# c031a - fixedField1 length=0 and has regex match. Its length is determined by regex match. 1st level delimiter's terminatorMode="allow"
+D, decode-c031a (Fixed-Length determined by regexp match), T, test/data/c031a.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c031a.dat, test/data/c031a.dec.xml, test/data/c031.xml
+E, encode-c031a (Fixed-Length determined by regexp match), T, test/data/c031a.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c031.xml, test/data/c031a.enc.dat, test/data/c031a.out
+
+######### Fixed-Length: deducted from end (i.e. negative length) ########
+# c032 - fixedField1 has a negative length.
+D, decode-c032 (Negative fixed length i.e. length deducted from end), T, test/data/c032.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c032.dat, test/data/c032.dec.xml, test/data/c032.xml
+E, encode-c032 (Negative fixed length i.e. length deducted from end), T, test/data/c032.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c032.xml, test/data/c032.enc.dat, test/data/c032.dat
+
+######### MinOccurs, MaxOccurs, MinOcc, MaxOcc ########
+# c033 - delimField2 with minOccurs="3" and maxOccurs="9"
+D, decode-c033 (Minimum occurrence), T, test/data/c033.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c033.dat, test/data/c033.dec.xml, test/data/c033.xml
+E, encode-c033 (Minimum occurrence), T, test/data/c033.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c033.xml, test/data/c033.dec.xml, test/data/c033.dat
+
+# c033a - delimField2 with minOccurs="3" and maxOccurs="9"
+D, decode-c033a (Minimum occurrence-negative), F, test/data/c033.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c033a.dat, test/data/c033a.dec.xml, test/data/c033a.dec.err
+
+# c033b - delimField2 with minOcc="3" and maxOcc="9"
+D, decode-c033b (minOcc and maxOcc), T, test/data/c033b.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c033.dat, test/data/c033b.dec.xml, test/data/c033.xml
+# c033c - delimField2 with minOcc="3" and maxOcc="9"
+D, decode-c033c (minOcc and maxOcc-negative), F, test/data/c033b.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c033a.dat, test/data/c033c.dec.xml, test/data/c033c.dec.err
+
+######### N Of N Support ########
+# c034 - groupNode1 and element1 with minN="1" and maxN="1"
+D, decode-c034 (N Of N), T, test/data/c034.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c034.dat, test/data/c034.dec.xml, test/data/c034.xml
+E, encode-c034 (N Of N), T, test/data/c034.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c034.xml, test/data/c034.enc.dat, test/data/c034.dat
+
+# c034ab - groupNode1 and element1 with minN="1" and maxN="1"
+D, decode-c034a (N Of N-negative), F, test/data/c034.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c034a.dat, test/data/c034a.dec.xml, test/data/c034a.dec.err
+D, decode-c034b (N Of N-negative), F, test/data/c034.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c034b.dat, test/data/c034b.dec.xml, test/data/c034b.dec.err
+
+# c035 - groupNode1 and element1 with minN="2" and maxN="2"
+D, decode-c035 (N Of N), T, test/data/c035.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c035.dat, test/data/c035.dec.xml, test/data/c035.xml
+E, encode-c035 (N Of N), T, test/data/c035.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c035.xml, test/data/c035.enc.dat, test/data/c035.dat
+
+# c035ab - groupNode1 and element1 with minN="2" and maxN="2"
+D, decode-c035a (N Of N-negative), F, test/data/c035.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c035a.dat, test/data/c035a.dec.xml, test/data/c035a.dec.err
+D, decode-c035b (N Of N-negative), F, test/data/c035.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c035b.dat, test/data/c035b.dec.xml, test/data/c035b.dec.err
+
+# c035c - ssc2custom converted schema. seg_1 and field_2 both have minN and maxN
+D, decode-c035c (N Of N from ssc converted), T, test/data/c035c.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c035c.dat, test/data/c035c.dec.xml, test/data/c035c.xml
+
+######### Fixed-Length: encoded length ########
+# c036 - fixed1's fixedField2 length=2, offset=12 position=0
+D, decode-c036 (encoded fixed length), T, test/data/c036.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c036.dat, test/data/c036.dec.xml, test/data/c036.xml
+E, encode-c036 (encoded fixed length), T, test/data/c036.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c036.xml, test/data/c036.enc.dat, test/data/c036.dat
+
+# c036a - fixedField2 length=2, position=0
+P, passthru-c036 (encoded fixed length), T, test/data/c036a.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c036a.dat, test/data/c036a.dec.xml, test/data/c036a.dat
+
+######### Default value (for output) ########
+# c037 - delimField1 and fixedField1 both have default values.
+E, encode-c037 (Default value), T, test/data/c037.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c037.xml, test/data/c037.enc.dat, test/data/c037.out
+
+# c037a - delimField2 and fixedField2 both have default values.
+E, encode-c037a (Default value), T, test/data/c037a.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c037a.xml, test/data/c037a.enc.dat, test/data/c037a.out
+
+# c037b - delimField2, delimField3 and fixedField2 all have default values.
+E, encode-c037b (Default value), T, test/data/c037b.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c037a.xml, test/data/c037b.enc.dat, test/data/c037b.out
+
+######### No Match ########
+# c038 - delimField2 with match="bcd" and no match flag set to true
+D, decode-c038 (No Match), T, test/data/c038.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c038.dat, test/data/c038.dec.xml, test/data/c038.xml
+E, encode-c038 (No Match), T, test/data/c038.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c038.xml, test/data/c038.dec.xml, test/data/c038.dat
+
+# c038a - delimField2 with match="bcd" and no match flag set to true
+D, decode-c038a (No Match-negative), F, test/data/c038.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c038a.dat, test/data/c038a.dec.xml, test/data/c038a.dec.err
+
+######### Begin delimiter for Fixed-Length field ########
+# c039 - both fixedField1 and fixedField2 have begin delimiters defined with the former detached, and latter anchored.
+D, decode-c039 (Begin delimiter for fixed length field), T, test/data/c039.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c039.dat, test/data/c039.dec.xml, test/data/c039.xml
+
+# c039ab - both fixedField1 and fixedField2 have begin delimiters defined with the former detached, and latter anchored.
+D, decode-c039a (Begin delimiter for fixed length field-negative), F, test/data/c039.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c039a.dat, test/data/c039a.dec.xml, test/data/c039a.dec.err
+D, decode-c039b (Begin delimiter for fixed length field-negative), F, test/data/c039.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c039b.dat, test/data/c039b.dec.xml, test/data/c039b.dec.err
+
+######### Escape Sequence ########
+# c040 - defines global escape sequence="\" (in root)
+D, decode-c040 (Global escape sequence), T, test/data/c040.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c040.dat, test/data/c040.dec.xml, test/data/c040.xml
+E, encode-c040 (Global escape sequence), T, test/data/c040.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c040.xml, test/data/c040.enc.dat, test/data/c040.dat
+
+######### Undefined Data Policy ########
+# c041 - undefDataPolicy defaults to "prohibit" if not shown at the root level. Test against a good normal data.
+D, decode-c041 (Undefined data policy=prohibited), T, test/data/c041.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.dat, test/data/c041.dec.xml, test/data/c041.xml
+E, encode-c041 (Undefined data policy=prohibited), T, test/data/c041.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.xml, test/data/c041.enc.dat, test/data/c041.dat
+
+# c041a - undefDataPolicy defaults to "prohibit" if not shown at the root level. Test against extra data in delimited fields.
+D, decode-c041a (Undefined data policy=prohibited-negative), F, test/data/c041.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041a.dat, test/data/c041a.dec.xml, test/data/c041a.dec.err
+# c041b - undefDataPolicy defaults to "prohibit" if not shown at the root level. Test against extra data in fixed length fields.
+D, decode-c041b (Undefined data policy=prohibited-negative), F, test/data/c041.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041b.dat, test/data/c041b.dec.xml, test/data/c041b.dec.err
+# c041c - undefDataPolicy defaults to "prohibit" if not shown at the root level. Test against extra data in fixed length fields.
+D, decode-c041c (Undefined data policy=prohibited-negative), F, test/data/c041.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041c.dat, test/data/c041c.dec.xml, test/data/c041c.dec.err
+
+# c041d - undefDataPolicy="skip". Test against a good normal data.
+D, decode-c041d (Undefined data policy=skip), T, test/data/c041d.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.dat, test/data/c041d.dec.xml, test/data/c041.xml
+E, encode-c041d (Undefined data policy=skip), T, test/data/c041d.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.xml, test/data/c041d.enc.dat, test/data/c041.dat
+
+# c041e - undefDataPolicy="skip". Test against extra data in delimited fields.
+D, decode-c041e (Undefined data policy=skip), T, test/data/c041d.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041a.dat, test/data/c041e.dec.xml, test/data/c041.xml
+# c041f - undefDataPolicy="skip". Test against extra data in fixed length fields.
+D, decode-c041f (Undefined data policy=skip), T, test/data/c041d.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041b.dat, test/data/c041f.dec.xml, test/data/c041.xml
+# c041g - undefDataPolicy="skip". Test against extra data in fixed length fields.
+D, decode-c041g (Undefined data policy=skip), T, test/data/c041d.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041c.dat, test/data/c041g.dec.xml, test/data/c041.xml
+
+# c041h - undefDataPolicy="map". Test against a good normal data.
+D, decode-c041h (Undefined data policy=map), T, test/data/c041h.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.dat, test/data/c041h.dec.xml, test/data/c041.xml
+E, encode-c041h (Undefined data policy=map), T, test/data/c041h.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041.xml, test/data/c041h.enc.dat, test/data/c041.dat
+
+# c041i - undefDataPolicy="map". Test against extra data in delimited fields. ## NOTE THAT MAPPED _undefined_ NODES CAN NOT BE MARSHALLED, WILL CAUSE EXCEPTION
+D, decode-c041i (Undefined data policy=map), T, test/data/c041h.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041a.dat, test/data/c041i.dec.xml, test/data/c041i.xml
+# c041j - undefDataPolicy="map". Test against extra data in fixed length fields.
+D, decode-c041j (Undefined data policy=map), T, test/data/c041h.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041b.dat, test/data/c041j.dec.xml, test/data/c041j.xml
+# c041k - undefDataPolicy="map". Test against extra data in fixed length fields.
+D, decode-c041k (Undefined data policy=map), T, test/data/c041h.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c041c.dat, test/data/c041k.dec.xml, test/data/c041k.xml
+
+######### Quotation style escape (quot-esc) ########
+
+# c042 - a delimiter's kind="quot-escape" with bytes='"'
+D, decode-c042 (Quotation style escape), T, test/data/c042.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c042.dat, test/data/c042.dec.xml, test/data/c042.xml
+E, encode-c042 (Quotation style escape), T, test/data/c042.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c042.xml, test/data/c042.dec.xml, test/data/c042.out
+
+######### benchmark ########
+# c050 - has 9 segments, each segment has 5 or 10 elements or fields with some contains 2 more nested levels.
+D, decode-c050 (benchmark), T, test/data/c050.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c050.dat, test/data/c050.dec.xml, test/data/c050.xml
+E, encode-c050 (benchmark), T, test/data/c050.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c050.xml, test/data/c050.enc.dat, test/data/c050.out
+P, passthru-c050 (benchmark), T, test/data/c050.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c050.dat, test/data/c050.pass.dat, test/data/c050.out
+
+######### email ########
+# c051 - JavaMail email format
+D, decode-c051 (JavaMail email format), T, test/data/c051.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c051.dat, test/data/c051.dec.xml, test/data/c051%i%.xml
+
+######### KBCScenario 1 ########
+# c052 - 2 levels of delimiters, 2 levels of structures.
+D, decode-c052 (KBCScenario 1), T, test/data/c052.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c052.dat, test/data/c052.dec.xml, test/data/c052%i%.xml
+
+######### CSV ########
+# c053 - begin and end delimiters as double quote, and 2 double quotes as escape delimiter with higher precedence. this is an incomplete solution
+D, decode-c053 (CSV using begin and end delimiters), T, test/data/c053.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c053.dat, test/data/c053.dec.xml, test/data/c053%i%.xml
+
+######### CSV - quotation style escape ########
+# c054 - defines a double quote as quotation style delimiter instead of begin&end delimiters, and 2 double quotes as escape delimiter with higher precedence. this is a better solution
+D, decode-c054 (CSV using quotation style delimiter), T, test/data/c054.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c054.dat, test/data/c054.dec.xml, test/data/c054%i%.xml
+
+######### CSV - termination mode ########
+# c055 - This has nothing to do with CSV.  It is actually testing terminatorMode.  But the problem was reported when parsing CSV data.
+D, decode-c055 (CSV Terminator), T, test/data/c055.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c055.dat, test/data/c055.dec.xml, test/data/c055%i%.xml
+
+######### UNIX Command vmstat ########
+# c056 - UNIX Command vmstat: tabular data
+D, decode-c056 (UNIX Command vmstat), T, test/data/c056.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c056.dat, test/data/c056.dec.xml, test/data/c056.xml
+E, encode-c056 (UNIX Command vmstat), T, test/data/c056.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c056.xml, test/data/c056.enc.dat, test/data/c056.out
+
+######### Repeating nodes ########
+# c057 - 2 levels of begin&end delimiters. delimGroup1 has child nodes all with regex matches, and 2 of them are repeating. delimGroup1 in "mixed" mode and minN and maxN
+D, decode-c057 (repeating node), T, test/data/c057.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c057.dat, test/data/c057.dec.xml, test/data/c057.xml
+E, encode-c057 (repeating node), T, test/data/c057.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c057.xml, test/data/c057.enc.dat, test/data/c057.dat
+
+######### multibyte GBK encodings ########
+# c060 - 3 levels in structure, has group, delimited and fixed length nodes. 2 levels of delimiters. 2 delimited nodes and 1 fixed nodes contain Chinese characters. root level input/output and parsing/serializing charsets are "GBK"
+D, decode-c060 (multibyte GBK encodings), T, test/data/c060.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c060.dat, test/data/c060.dec.xml, test/data/c060.xml.bin
+E, encode-c060 (multibyte GBK encodings), T, test/data/c060.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c060.xml.bin, test/data/c060.enc.dat, test/data/c060.dat
+
+######### Escapes in strings, and matching non-ASCII data (from QE) ########
+# c061 - 1 level in structure, has 5 fixed-length fields, each matches to either normal string, or non-ASCII data.
+D, decode-c061 (Escapes in strings and matching non-ASCII data), T, test/data/c061.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c061.dat, test/data/c061.dec.xml, test/data/c061.xml%i%.bin
+E, encode-c061 (Escapes in strings and matching non-ASCII data), T, test/data/c061.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c061.xml.bin, test/data/c061.enc.dat, test/data/c061.dat
+
+######### Fixed-length Batch Records (from michael.reynolds@regence.com) ########
+# c062 - Delimited on header x1, detail xmultiple, and trailer x1 records, each record line has many fixed-length fields.
+D, decode-c062 (Fixed-length Batch Records), T, test/data/c062.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c062.dat, test/data/c062.dec.xml, test/data/c062.xml
+E, encode-c062 (Fixed-length Batch Records), T, test/data/c062.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c062.xml, test/data/c062.enc.dat, test/data/c062.dat
+
+######### First few characters for match only (from Dao.Tran@Sun.COM) ########
+# c063 - 3 delimited fields with each field has first 2 chars for match, and should not be part of the field value.
+D, decode-c063 (First few characters for match only), T, test/data/c063.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c063.dat, test/data/c063.dec.xml, test/data/c063.xml
+E, encode-c063 (First few characters for match only), T, test/data/c063.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c063.xml, test/data/c063.enc.dat, test/data/c063.dat
+
+######### order="any", test data from user ########
+# c064 - 2 levels in structure, 4 leaf nodes all having begin delimiters and end delimiters, their order="any"
+D, decode-c064 (group order="any" with begin delimited fields), T, test/data/c064.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c064.dat, test/data/c064.dec.xml, test/data/c064.xml
+E, encode-c064 (group order="any" with begin delimited fields), T, test/data/c064.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c064.xml, test/data/c064.enc.dat, test/data/c064.out
+
+######### order="any" ########
+# c065 - modified from c017 (same test data), 3 levels in structure, 1 node repeatable, groupNode's order="any". Delimited fields not included in the groupNode.
+D, decode-c065 (group order="any" with begin delimited fields), T, test/data/c065.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c065.dat, test/data/c065.dec.xml, test/data/c065.xml
+E, encode-c065 (group order="any" with begin delimited fields), T, test/data/c065.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c065.xml, test/data/c065.enc.dat, test/data/c065.out
+
+######### order="any", fewer levels ########
+# c066 - modified from c065 and c017 (same test data), 2 levels in structure, 1 field repeatable, groupNode's order="any". Delimited fields not included in the groupNode.
+D, decode-c066 (group order="any" with begin delimited fields), T, test/data/c066.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c066.dat, test/data/c066.dec.xml, test/data/c066.xml
+E, encode-c066 (group order="any" with begin delimited fields), T, test/data/c066.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c066.xml, test/data/c066.enc.dat, test/data/c066.out
+
+######### 20090309 from koseumit@gmail.com ########
+# c067 - two different data blocks: one with 7 tokens and other with 2 tokens, 2-3 levels, with match
+D, decode-c067 (two different data blocks), T, test/data/c067.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c067.dat, test/data/c067.dec.xml, test/data/c067.xml
+E, encode-c067 (two different data blocks), T, test/data/c067.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c067.xml, test/data/c067.enc.dat, test/data/c067.dat
+
+######### mutual recursion with include (same tns) ########
+# c068 - mutual recursion with include, has delimited fields and fixed length fields
+D, decode-c068 (mutual recursion with include), T, test/data/c068.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c068.dat, test/data/c068.dec.xml, test/data/c068.xml
+E, encode-c068 (mutual recursion with include), T, test/data/c068.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c068.xml, test/data/c068.enc.dat, test/data/c068.dat
+
+######### mutual recursion with import (different tns) ########
+# c069 - mutual recursion with import, has delimited fields and fixed length fields
+D, decode-c069 (mutual recursion with import), T, test/data/c069.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c069.dat, test/data/c069.dec.xml, test/data/c069.xml
+E, encode-c069 (mutual recursion with import), T, test/data/c069.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c069.xml, test/data/c069.enc.dat, test/data/c069.dat
+
+######### general linear recursion ########
+# c070 - general linear recursion with delimited fields
+D, decode-c070 (general linear recursion), T, test/data/c070.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c070.dat, test/data/c070.dec.xml, test/data/c070.xml
+E, encode-c070 (general linear recursion), T, test/data/c070.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c070.xml, test/data/c070.enc.dat, test/data/c070.dat
+
+######### recursion in a typical document ########
+# c071 - recursion of section in a typical document, delimited with begin match
+D, decode-c071 (recursion in a typical document), T, test/data/c071.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c071.dat, test/data/c071.dec.xml, test/data/c071.xml
+E, encode-c071 (recursion in a typical document), T, test/data/c071.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c071.xml, test/data/c071.enc.dat, test/data/c071.dat
+
+######### encoded length (leonline [qt4711@freenet.de]) ########
+# c072 - encodedField2 position=13, length=2 offset=39
+D, decode-c072 (encoded fixed length), T, test/data/c072.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c072.dat, test/data/c072.dec.xml, test/data/c072.xml
+
+######### Fixed-Length: deducted from end (i.e. negative length) from 'leonline <qt4711@freenet.de>' ########
+# c073 - only 1 level, f2 is negative length since it is varying length, f3 is 1-byte checksum
+D, decode-c073 (deducted from end fixed length), T, test/data/c073.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c073.dat, test/data/c073.dec.xml, test/data/c073.xml
+E, encode-c073 (deducted from end fixed length), T, test/data/c073.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c073.xml, test/data/c073.enc.dat, test/data/c073.dat
+
+######### delimiter mode never but got extra delimiter (https://open-esb.dev.java.net/issues/show_bug.cgi?id=1522) ########
+# c074 - 
+D, decode-c074, F, test/data/c074.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c074.dat, test/data/c074.dec.xml, test/data/c074.dec.err
+# c075 - 
+D, decode-c075, F, test/data/c075.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c075.dat, test/data/c075.dec.xml, test/data/c075.dec.err
+
+######### Remove quoted delimiters for last element when no top-level delimiter ########
+######### (https://open-esb.dev.java.net/issues/show_bug.cgi?id=1670) ########
+# c076 - 1 level multiple elements with quot-escape, complex type used.
+D, decode-c076 (Remove quoted delimiters), T, test/data/c076.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c076.dat, test/data/c076.dec.xml, test/data/c076.xml
+E, encode-c076 (Remove quoted delimiters), T, test/data/c076.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c076.xml, test/data/c076.enc.dat, test/data/c076.out
+
+# c077 - 2 levels (derived from c076), multiple elements with quot-escape, complex type used, end of data has parent delimiter. data from sebsto@dev.java.net
+D, decode-c077 (Remove quoted delimiters), T, test/data/c077.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c077.dat, test/data/c077.dec.xml, test/data/c077.xml
+E, encode-c077 (Remove quoted delimiters), T, test/data/c077.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c077.xml, test/data/c077.enc.dat, test/data/c077.out
+# c077a - same schema as c077, data similar to c077, except that end of data does not have parent delimiter.
+D, decode-c077a (Remove quoted delimiters), T, test/data/c077.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c077a.dat, test/data/c077a.dec.xml, test/data/c077.xml
+# c077a - same schema as c077, data similar to c077a, except that some of fields have quotes removed.
+D, decode-c077a (Remove quoted delimiters), T, test/data/c077.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c077b.dat, test/data/c077b.dec.xml, test/data/c077.xml
+
+######### Invalid Input data with extra fields expected to fail with detailed error message ########
+# c080 - 3 levels: root, element1&element2 groups, and delim1,2,3,4 fields. 
+D, decode-c080 (Invalid Input data with extra fields expected to fail with detailed error message), F, test/data/c080.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c080.dat, test/data/c080.dec.xml, test/data/c080.dec.err
+
+######### multilines, 1st level items uses delimiter same as 2nd level in a group (from filika.openesb@gmail.com) ########
+# c081 - multilines, 1st level items uses delimiter same as 2nd level in a group
+D, decode-c081 (multilines), T, test/data/c081.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c081.dat, test/data/c081.dec.xml, test/data/c081.xml
+E, encode-c081 (multilines), T, test/data/c081.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c081.xml, test/data/c081.enc.dat, test/data/c081.dat
+# c082 - multilines, 1st level items uses delimiter same as 2nd level in a group
+D, decode-c082 (multilines), T, test/data/c082.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c081.dat, test/data/c082.dec.xml, test/data/c082.xml
+E, encode-c082 (multilines), T, test/data/c082.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c082.xml, test/data/c082.enc.dat, test/data/c082.out
+
+######### header line, multiple detail lines, and footer line; with input match (from aaronowdotcom@yahoo.com) ########
+# c083 - header line, multiple detail lines, and footer line; with input match
+D, decode-c083 (multiple details with match), T, test/data/c083.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c083.dat, test/data/c083.dec.xml, test/data/c083.xml
+E, encode-c083 (multiple details with match), T, test/data/c083.xsd, {http://xml.netbeans.org/schema/test}root, test/data/c083.xml, test/data/c083.enc.dat, test/data/c083.dat
+
+######### nested grouping element without ending delimiters, use of begin delimiters (from cordes.christian@afb.de) ########
+# c084 - nested grouping element without ending delimiters, use of begin delimiters
+D, decode-c084 (nested grouping element), T, test/data/c084.xsd, {http://xml.netbeans.org/schema/test}elementA, test/data/c084.dat, test/data/c084.dec.xml, test/data/c084%i%.xml
+E, encode-c084 (nested grouping element), T, test/data/c084.xsd, {http://xml.netbeans.org/schema/test}elementA, test/data/c084.xml, test/data/c084.enc.dat, test/data/c084.out
+
+######################################################################################
+####################                                              #################### 
+#################### FOLLOWING MIGRATED FROM UD-OTD/CUD/BUD TESTS #################### 
+####################                                              #################### 
+######################################################################################
+
+# m000 : Basic delimited fields.
+D, decode-m000 Basic delimited fields, T, test/data/m000.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m000.dat, test/data/m000d.xml.tmp, test/data/m000.xml
+E, encode-m000 Basic delimited fields, T, test/data/m000.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m000.xml, test/data/m000e.dat.tmp, test/data/m000.dat
+
+# m001 - Basic delimited fields with repeating tail field
+D, decode-m001 Basic delimited fields with repeating tail field, T, test/data/m001.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m001.dat, test/data/m001d.xml.tmp, test/data/m001.xml
+E, encode-m001 Basic delimited fields with repeating tail field, T, test/data/m001.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m001.xml, test/data/m001e.dat.tmp, test/data/m001.dat
+
+# m002 - Basic delimited fields with absent optional tail field
+D, decode-m002 Basic delimited fields with absent optional tail field, T, test/data/m002.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m002.dat, test/data/m002d.xml.tmp, test/data/m002.xml
+E, encode-m002 Basic delimited fields with absent optional tail field, T, test/data/m002.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m002.xml, test/data/m002e.dat.tmp, test/data/m002.dat
+
+# m003 - Basic delimited fields with present optional tail field
+D, decode-m003 Basic delimited fields with present optional tail field, T, test/data/m003.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m003.dat, test/data/m003d.xml.tmp, test/data/m003.xml
+E, encode-m003 Basic delimited fields with present optional tail field, T, test/data/m003.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m003.xml, test/data/m003e.dat.tmp, test/data/m003.dat
+
+# m004 - Java keyword as field name
+D, decode-m004 Java keyword as field name, T, test/data/m004.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m004.dat, test/data/m004d.xml.tmp, test/data/m004.xml
+E, encode-m004 Java keyword as field name, T, test/data/m004.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m004.xml, test/data/m004e.dat.tmp, test/data/m004.dat
+
+# m005 - Java keyword as internal template name
+D, decode-m005 Java keyword as internal template name, T, test/data/m005.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m005.dat, test/data/m005d.xml.tmp, test/data/m005.xml
+E, encode-m005 Java keyword as internal template name, T, test/data/m005.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m005.xml, test/data/m005e.dat.tmp, test/data/m005.dat
+
+# m006 - Non-ASCII field names
+D, decode-m006 on-ASCII field names, T, test/data/m006.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m006.dat, test/data/m006d.xml.tmp, test/data/m006.xml.bin
+E, encode-m006 Non-ASCII field names, T, test/data/m006.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m006.xml.bin, test/data/m006e.dat.tmp, test/data/m006.dat
+
+# m007 - Transient fields
+D, decode-m007 Transient fields, T, test/data/m007.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m007.dat, test/data/m007d.xml.tmp, test/data/m007.xml
+E, encode-m007 Transient fields, T, test/data/m007.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m007.xml, test/data/m007e.dat.tmp, test/data/m007.dat
+
+# m009 - Choice of choice
+D, decode-m009 Choice of choice, T, test/data/m009.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m009.dat, test/data/m009d.xml.tmp, test/data/m009.xml
+E, encode-m009 Choice of choice, T, test/data/m009.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m009.xml, test/data/m009e.dat.tmp, test/data/m009.dat
+
+# m010 - Multi-character delimiter
+D, decode-m010 Multi-character delimiter, T, test/data/m010.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m010.dat, test/data/m010d.xml.tmp, test/data/m010.xml
+E, encode-m010 Multi-character delimiter, T, test/data/m010.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m010.xml, test/data/m010e.dat.tmp, test/data/m010.dat
+
+# m011 - Non-ASCII delimiter
+D, decode-m011 Multi-character delimiter, T, test/data/m011.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m011.dat, test/data/m011d.xml.tmp, test/data/m011.xml
+E, encode-m011 Multi-character delimiter, T, test/data/m011.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m011.xml, test/data/m011e.dat.tmp, test/data/m011.dat
+
+# m012 - Multiple delimiters on same level
+D, decode-m012 Multiple delimiters on same level, T, test/data/m012.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m012.dat, test/data/m012d.xml.tmp, test/data/m012.xml
+E, encode-m012 Multiple delimiters on same level, T, test/data/m012.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m012.xml, test/data/m012e.dat.tmp, test/data/m012.out
+
+# m013 - Embedded single-char delim
+D, decode-m013 Embedded single-char delim, T, test/data/m013.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m013.dat, test/data/m013d.xml.tmp, test/data/m013.xml
+E, encode-m013 Embedded single-char delim, T, test/data/m013.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m013.xml, test/data/m013e.dat.tmp, test/data/m013.dat
+
+# m018 - Line continuation in string and binary literals
+## ILLEGAL TO HAVE LF/CR in Element name or Type name. These names must be a valid value for 'NCName'.
+
+# m020 - Delimiter precedence with shortest first
+D, decode-m020 Delimiter precedence with shortest first, T, test/data/m020.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m020.dat, test/data/m020d.xml.tmp, test/data/m020.xml
+E, encode-m020 Delimiter precedence with shortest first, T, test/data/m020.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m020.xml, test/data/m020e.dat.tmp, test/data/m020.out
+
+# m021 - Delimiter precedence with longest first
+## If there are multiple delimiters at same level with same precedence, then the last delimiter would be tried first and first
+## delimiter tried last (stack effect) for decoding. For encoding, the first delimiter is used for output.
+D, decode-m021 Delimiter precedence with longest first, T, test/data/m021.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m021.dat, test/data/m021d.xml.tmp, test/data/m021%i%.xml
+E, encode-m021 Delimiter precedence with longest first, T, test/data/m021.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m021.xml, test/data/m021e.dat.tmp, test/data/m021.out
+
+# m022 - Explicit delimiter precedence(Shortest delimiter first)
+D, decode-m022 Explicit delimiter precedence(Shortest delimiter first), T, test/data/m022.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m022.dat, test/data/m022d.xml.tmp, test/data/m022.xml
+E, encode-m022 Explicit delimiter precedence(Shortest delimiter first), T, test/data/m022.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m022.xml, test/data/m022e.dat.tmp, test/data/m022.out
+
+# m023 - Explicit delimiter precedence(Longest delimiter first)
+D, decode-m023 Explicit delimiter precedence(Longest delimiter first), T, test/data/m023.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m023.dat, test/data/m023d.xml.tmp, test/data/m023.xml
+E, encode-m023 Explicit delimiter precedence(Longest delimiter first), T, test/data/m023.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m023.xml, test/data/m023e.dat.tmp, test/data/m023.out
+
+# m030 Clashing field names - legal in UDOTD, but not legal in XSD defining the structure.
+## ILLEGAL TO HAVE MULTIPLE ELEMENTS WITH SAME NAME IN THE MODEL GROUP
+
+# m031 - Legal case-clashing parent names
+D, decode-m031 Legal case-clashing parent names, T, test/data/m031.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m031.dat, test/data/m031d.xml.tmp, test/data/m031.xml
+E, encode-m031 Legal case-clashing parent names, T, test/data/m031.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m031.xml, test/data/m031e.dat.tmp, test/data/m031.dat
+
+# m032 - Legal case-clashing parent struct names
+D, decode-m032 Legal case-clashing parent struct names, T, test/data/m032.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m032.dat, test/data/m032d.xml.tmp, test/data/m032.xml
+E, encode-m032 Legal case-clashing parent struct names, T, test/data/m032.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m032.xml, test/data/m032e.dat.tmp, test/data/m032.dat
+
+# m033 - Long child names
+D, decode-m033 Long child names, T, test/data/m033.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m033.dat, test/data/m033d.xml.tmp, test/data/m033.xml
+E, encode-m033 Long child names, T, test/data/m033.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m033.xml, test/data/m033e.dat.tmp, test/data/m033.dat
+
+# m034 Quotes in names (from quote.bud)
+## ILLEGAL to have quotes in element name or type name. These names must be a valid value for 'NCName'.
+
+# m036 - EBCDIC-J encoding.
+D, decode-EBCDIC-J encoding, T, test/data/m036.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m036.dat, test/data/m036d.xml.tmp, test/data/m036.xml.bin
+## NOT WORKING E, encode-EBCDIC-J encoding, T, test/data/m036.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m036.xml.bin, test/data/m036e.dat.tmp, test/data/m036.dat
+
+# m091 - Ignoring standard precedence delimiter in fixed child (from trail.bud)
+D, decode-m091 Ignoring standard precedence delimiter in fixed child (from trail.bud), T, test/data/m091.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m091.dat, test/data/m091d.xml.tmp, test/data/m091.xml
+E, encode-m091 Ignoring standard precedence delimiter in fixed child (from trail.bud), T, test/data/m091.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m091.xml, test/data/m091e.dat.tmp, test/data/m091.out
+
+# m092 - Local delim lists on fields, and separator in group of groups. (from tran.bud)
+D, decode-m092 Local delim lists on fields and separator in group of groups (from tran.bud), T, test/data/m092.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m092.dat, test/data/m092d.xml.tmp, test/data/m092.xml
+E, encode-m092 Local delim lists on fields and separator in group of groups (from tran.bud), T, test/data/m092.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m092.xml, test/data/m092e.dat.tmp, test/data/m092.dat
+
+# m094 - Trailing fixed field, end coincides with EOD. (from trail.bud)
+D, decode-m094 Trailing fixed field with end coincides with EOD (from trail.bud), T, test/data/m094.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m094.dat, test/data/m094d.xml.tmp, test/data/m094.xml
+E, encode-m094 Trailing fixed field with end coincides with EOD (from trail.bud), T, test/data/m094.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m094.xml, test/data/m094e.dat.tmp, test/data/m094.out
+
+# m095 - Random binary data, non-ASCII/UTF-8. (from bin.bud)
+D, decode-m095 Random binary data of non-ASCII/UTF-8 (from bin.bud), T, test/data/m095.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m095.dat, test/data/m095d.xml.tmp, test/data/m095.xml
+E, encode-m095 Random binary data of non-ASCII/UTF-8 (from bin.bud), T, test/data/m095.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m095.xml, test/data/m095e.dat.tmp, test/data/m095.dat
+
+# m096 - Explicit length on fixed parent. (from bug5391a.bud)
+D, decode-m096 Explicit length on fixed parent (from bug5391a.bud), T, test/data/m096.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m096.dat, test/data/m096d.xml.tmp, test/data/m096.xml
+E, encode-m096 Explicit length on fixed parent (from bug5391a.bud), T, test/data/m096.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m096.xml, test/data/m096e.dat.tmp, test/data/m096.dat
+
+# m102 - Siblings with different delimiters. (from 6049.bud)
+D, decode-m102 Siblings with different delimiters (from 6049.bud), T, test/data/m102.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m102.dat, test/data/m102d.xml.tmp, test/data/m102.xml
+E, encode-m102 Siblings with different delimiters (from 6049.bud), T, test/data/m102.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m102.xml, test/data/m102e.dat.tmp, test/data/m102.dat
+
+# m104 - Delim with prec=11 should be visible in fixed child. (from 68244.bud)
+D, decode-m104 Delim with prec=11 should be visible in fixed child (from 68244.bud), T, test/data/m104.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m104.dat, test/data/m104d.xml.tmp, test/data/m104.xml
+E, encode-m104 Delim with prec=11 should be visible in fixed child (from 68244.bud), T, test/data/m104.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m104.xml, test/data/m104e.dat.tmp, test/data/m104.dat
+
+# m105 - Siblings with different delimiters. (from 6879.bud)
+D, decode-m105 Siblings with different delimiters (from 6879.bud), T, test/data/m105.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m105.dat, test/data/m105d.xml.tmp, test/data/m105.xml
+E, encode-m105 Siblings with different delimiters (from 6879.bud), T, test/data/m105.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m105.xml, test/data/m105e.dat.tmp, test/data/m105.dat
+
+# m107 - Multi-char delims, and prec=11 delims visible in fixed children. (from 7460.bud)
+D, decode-m107 Multi-char delims and prec=11 delims visible in fixed children (from 7460.bud), T, test/data/m107.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m107.dat, test/data/m107d.xml.tmp, test/data/m107.xml
+E, encode-m107 Multi-char delims and prec=11 delims visible in fixed children (from 7460.bud), T, test/data/m107.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m107.xml, test/data/m107e.dat.tmp, test/data/m107.out
+
+# m108 - DOS linebreak "\r\n" as terminator. (from 81677.bud)
+D, decode-m108 DOS linebreak "\r\n" as terminator (from 81677.bud), T, test/data/m108.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m108.dat, test/data/m108d.xml.tmp, test/data/m108.xml
+E, encode-m108 DOS linebreak "\r\n" as terminator (from 81677.bud), T, test/data/m108.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m108.xml, test/data/m108e.dat.tmp, test/data/m108.dat
+
+# m109 - All optional, with empty input. (from 8171.bud)
+D, decode-m109 All optional with empty input (from 8171.bud), T, test/data/m109.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m109.dat, test/data/m109d.xml.tmp, test/data/m109%i%.xml
+E, encode-m109 All optional with empty input (from 8171.bud), T, test/data/m109.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m109.xml, test/data/m109e.dat.tmp, test/data/m109.dat
+
+# m111 - Root is "delim", fixed limited-length field trailing. (from 84126.bud)
+D, decode-m111 Root is "delim" fixed limited-length field trailing (from 84126.bud), T, test/data/m111.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m111.dat, test/data/m111d.xml.tmp, test/data/m111.xml
+E, encode-m111 Root is "delim" fixed limited-length field trailing (from 84126.bud), T, test/data/m111.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m111.xml, test/data/m111e.dat.tmp, test/data/m111.dat
+
+# m115 - Repeated choice of parent nodes, with match in fields. (from alt.bud)
+D, decode-m115 Repeated choice of parent nodes with match in fields (from alt.bud), T, test/data/m115.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m115.dat, test/data/m115d.xml.tmp, test/data/m115.xml
+E, encode-m115 Repeated choice of parent nodes with match in fields (from alt.bud), T, test/data/m115.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m115.xml, test/data/m115e.dat.tmp, test/data/m115.dat
+
+# m116 - 2 levels multiple delims with match. (from ar2.bud)
+D, decode-m116 2 levels multiple delims with match (from ar2.bud), T, test/data/m116.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m116.dat, test/data/m116d.xml.tmp, test/data/m116.xml
+E, encode-m116 2 levels multiple delims with match (from ar2.bud), T, test/data/m116.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m116.xml, test/data/m116e.dat.tmp, test/data/m116.out
+
+# m119 - Deep node nesting
+D, decode-m119 Deep node nesting, T, test/data/m119.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m119.dat, test/data/m119d.xml.tmp, test/data/m119.xml
+E, encode-m119 Deep node nesting, T, test/data/m119.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m119.xml, test/data/m119e.dat.tmp, test/data/m119.dat
+
+# m120 - Scaling: 10 children of fixed length. (from big1.bud)
+D, decode-m120 Scaling: 10 children (from big1.bud), T, test/data/m120.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m120.dat, test/data/m120d.xml.tmp, test/data/m120.xml
+E, encode-m120 Scaling: 10 children (from big1.bud), T, test/data/m120.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m120.xml, test/data/m120e.dat.tmp, test/data/m120.dat
+
+# m121 - Scaling: 100 children of fixed length. (from big2.bud)
+D, decode-m121 Scaling: 100 children (from big2.bud), T, test/data/m121.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m121.dat, test/data/m121d.xml.tmp, test/data/m121.xml
+E, encode-m121 Scaling: 100 children (from big2.bud), T, test/data/m121.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m121.xml, test/data/m121e.dat.tmp, test/data/m121.dat
+
+# m122 - Scaling: 1000 children of fixed length. (from big3.bud)
+D, decode-m122 Scaling: 1000 children (from big3.bud), T, test/data/m122.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m122.dat, test/data/m122d.xml.tmp, test/data/m122.xml
+E, encode-m122 Scaling: 1000 children (from big3.bud), T, test/data/m122.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m122.xml, test/data/m122e.dat.tmp, test/data/m122.dat
+
+# m123 - Scaling: 5000 children of fixed length. (from big3-5.bud)
+D, decode-m123 Scaling: 5000 children (from big3-5.bud), T, test/data/m123.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m123.dat, test/data/m123d.xml.tmp, test/data/m123.xml
+E, encode-m123 Scaling: 5000 children (from big3-5.bud), T, test/data/m123.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m123.xml, test/data/m123e.dat.tmp, test/data/m123.dat
+
+# m128 - Match on every possible byte value. (from chr.bud)
+D, decode-m128 Match on every possible byte value (from chr.bud), T, test/data/m128.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m128.dat, test/data/m128d.xml.tmp, test/data/m128%i%.xml
+E, encode-m128 Match on every possible byte value (from chr.bud), T, test/data/m128.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m128.xml, test/data/m128e.dat.tmp, test/data/m128.dat
+
+# m129 - Escapes in strings, and matching non-ASCII data. (from chr2.bud)
+D, decode-m129 Escapes in strings and matching non-ASCII data (from chr2.bud), T, test/data/m129.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m129.dat, test/data/m129d.xml.tmp, test/data/m129%i%.xml
+E, encode-m129 Escapes in strings and matching non-ASCII data (from chr2.bud), T, test/data/m129.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m129.xml, test/data/m129e.dat.tmp, test/data/m129.dat
+
+# m130 - All four encoding points differ, all 8-bit. (from code.bud)
+D, decode-m130 All four encoding points differ with all 8-bit (from code.bud), T, test/data/m130.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m130.dat, test/data/m130d.xml.tmp, test/data/m130.xml
+E, encode-m130 All four encoding points differ with all 8-bit (from code.bud), T, test/data/m130.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m130.xml, test/data/m130e.dat.tmp, test/data/m130.dat
+
+# m131 - Different encodings, mix of 8-bit and variable length. (from code2.bud)
+D, decode-m131 Different encodings with mix of 8-bit and variable length (from code2.bud), T, test/data/m131.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m131.dat, test/data/m131d.xml.tmp, test/data/m131.xml
+E, encode-m131 Different encodings with mix of 8-bit and variable length (from code2.bud), T, test/data/m131.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m131.xml, test/data/m131e.dat.tmp, test/data/m131.dat
+
+# m132 - Using "comment" (in xsd, annotation/documentation) attribute should not influence runtime. (from comm.bud)
+D, decode-m132 Using "comment" (in xsd annotation/documentation) attribute should not influence runtime (from comm.bud), T, test/data/m132.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m132.dat, test/data/m132d.xml.tmp, test/data/m132.xml
+E, encode-m132 Using "comment" (in xsd annotation/documentation) attribute should not influence runtime (from comm.bud), T, test/data/m132.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m132.xml, test/data/m132e.dat.tmp, test/data/m132.dat
+
+# m133 - Two structurally identical children (user to test copyNode() utility). (from copy.bud)
+D, decode-m133 Two structurally identical children (user to test copyNode() utility) (from copy.bud), T, test/data/m133.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m133.dat, test/data/m133d.xml.tmp, test/data/m133.xml
+E, encode-m133 Two structurally identical children (user to test copyNode() utility) (from copy.bud), T, test/data/m133.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m133.xml, test/data/m133e.dat.tmp, test/data/m133.dat
+
+# m134 - Comma-separated values, each record separated by LF&CR. (from csv.bud)
+D, decode-m134 Comma-separated values with each record separated by LF&CR (from csv.bud), T, test/data/m134.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m134.dat, test/data/m134d.xml.tmp, test/data/m134.xml
+E, encode-m134 Comma-separated values with each record separated by LF&CR (from csv.bud), T, test/data/m134.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m134.xml, test/data/m134e.dat.tmp, test/data/m134.dat
+
+# m135 - Same delim, but locally defined. (from del.bud)
+D, decode-m135 Same delim but locally defined (from del.bud), T, test/data/m135.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m135.dat, test/data/m135d.xml.tmp, test/data/m135.xml
+E, encode-m135 Same delim but locally defined (from del.bud), T, test/data/m135.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m135.xml, test/data/m135e.dat.tmp, test/data/m135.dat
+
+# m136 - Same delim, but locally defined. (from del0.bud)
+D, decode-m136 Same delim but locally defined (from del0.bud), T, test/data/m136.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m136.dat, test/data/m136d.xml.tmp, test/data/m136%i%.xml
+E, encode-m136 Same delim but locally defined (from del0.bud), T, test/data/m136.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m136.xml, test/data/m136e.dat.tmp, test/data/m136.dat
+
+# m138 - Locally defined delims. (from del2.bud)
+D, decode-m138 Locally defined delims (from del2.bud), T, test/data/m138.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m138.dat, test/data/m138d.xml.tmp, test/data/m138.xml
+E, encode-m138 Locally defined delims (from del2.bud), T, test/data/m138.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m138.xml, test/data/m138e.dat.tmp, test/data/m138.dat
+
+# m139 - Delim list on multiple levels and transient field. (from del3.bud)
+D, decode-m139 Delim list on multiple levels and transient field (from del3.bud), T, test/data/m139.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m139.dat, test/data/m139d.xml.tmp, test/data/m139.xml
+E, encode-m139 Delim list on multiple levels and transient field (from del3.bud), T, test/data/m139.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m139.xml, test/data/m139e.dat.tmp, test/data/m139.dat
+
+# m140 - Delim list on 2 levels with match field. (from del4.bud)
+D, decode-m140 Delim list on 2 levels with match field (from del4.bud), T, test/data/m140.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m140.dat, test/data/m140d.xml.tmp, test/data/m140.xml
+E, encode-m140 Delim list on 2 levels with match field (from del4.bud), T, test/data/m140.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m140.xml, test/data/m140e.dat.tmp, test/data/m140.dat
+
+# m143 - Delim defs stay locally scoped. (from don.bud)
+D, decode-m143 Delim defs stay locally scoped (from don.bud), T, test/data/m143.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m143.dat, test/data/m143d.xml.tmp, test/data/m143.xml
+E, encode-m143 Delim defs stay locally scoped (from don.bud), T, test/data/m143.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m143.xml, test/data/m143e.dat.tmp, test/data/m143.dat
+
+# m144 - Donnie P's test-mixed delimited and fixed with local delim. (from don2.bud)
+D, decode-m144 Donnie P's test-mixed delimited and fixed with local delim (from don2.bud), T, test/data/m144.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m144.dat, test/data/m144d.xml.tmp, test/data/m144.xml%i%.bin
+E, encode-m144 Donnie P's test-mixed delimited and fixed with local delim (from don2.bud), T, test/data/m144.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m144.xml.bin, test/data/m144e.dat.tmp, test/data/m144.out
+
+# m145 - A single simple delim field. (from e-delim.bud)
+D, decode-m145 A single simple delim field (from e-delim.bud), T, test/data/m145.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m145.dat, test/data/m145d.xml.tmp, test/data/m145.xml
+E, encode-m145 A single simple delim field (from e-delim.bud), T, test/data/m145.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m145.xml, test/data/m145e.dat.tmp, test/data/m145.dat
+
+# m155 - Fixed-length fields. (from fix.bud)
+D, decode-m155 Fixed-length fields (from fix.bud), T, test/data/m155.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m155.dat, test/data/m155d.xml.tmp, test/data/m155.xml
+E, encode-m155 Fixed-length fields (from fix.bud), T, test/data/m155.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m155.xml, test/data/m155e.dat.tmp, test/data/m155.dat
+
+# m157 - Delims defined locally with dot in element names. (from funky.bud)
+D, decode-m157 Delims defined locally with dot in element names (from funky.bud), T, test/data/m157.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m157.dat, test/data/m157d.xml.tmp, test/data/m157.xml
+E, encode-m157 Delims defined locally with dot in element names (from funky.bud), T, test/data/m157.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m157.xml, test/data/m157e.dat.tmp, test/data/m157.dat
+
+# m158 - Fixed-length fields. (from gh2.bud)
+D, decode-m158 Fixed-length fields (from gh2.bud), T, test/data/m158.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m158.dat, test/data/m158d.xml.tmp, test/data/m158.xml
+E, encode-m158 Fixed-length fields (from gh2.bud), T, test/data/m158.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m158.xml, test/data/m158e.dat.tmp, test/data/m158.dat
+
+# m162 - Default init strings, both binary and string literal. (from init.bud)
+D, decode-m162 Default init strings with both binary and string literal (from init.bud), T, test/data/m162.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m162.dat, test/data/m162d.xml.tmp, test/data/m162.xml
+E, encode-m162 Default init strings with both binary and string literal (from init.bud), T, test/data/m162.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m162.xml, test/data/m162e.dat.tmp, test/data/m162.dat
+
+# m165 - Sales Order records with choice nodes. (from jerry.bud)
+D, decode-m165 Sales Order records with choice nodes (from jerry.bud), T, test/data/m165.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m165.dat, test/data/m165d.xml.tmp, test/data/m165.xml
+E, encode-m165 Sales Order records with choice nodes (from jerry.bud), T, test/data/m165.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m165.xml, test/data/m165e.dat.tmp, test/data/m165.dat
+
+# m166 - Non-ASCII constant delimiter. (from john.bud)
+D, decode-m166 Non-ASCII constant delimiter (from john.bud), T, test/data/m166.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m166.dat, test/data/m166d.xml.tmp, test/data/m166.xml
+E, encode-m166 Non-ASCII constant delimiter. (from john.bud), T, test/data/m166.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m166.xml, test/data/m166e.dat.tmp, test/data/m166.dat
+
+# m169 - Customer complex data structure. (from les2.bud) ## I have to modify original data to satisfy term=favor. Also changed maxOccurs="3" for "Segment"-means there is still problem
+D, decode-m169 Customer complex data structure (from les2.bud), T, test/data/m169.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m169.dat, test/data/m169d.xml.tmp, test/data/m169%i%.xml
+E, encode-m169 Customer complex data structure (from les2.bud), T, test/data/m169.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m169.xml, test/data/m169e.dat.tmp, test/data/m169.out
+
+# m170 - A record per line. (from lines.bud)
+D, decode-m170 A record per line. (from lines.bud), T, test/data/m170.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m170.dat, test/data/m170d.xml.tmp, test/data/m170.xml
+E, encode-m170 A record per line. (from lines.bud), T, test/data/m170.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m170.xml, test/data/m170e.dat.tmp, test/data/m170.out
+
+# m173 - Using maxOccurs on field. (from max.bud)
+D, decode-m173 Using maxOccurs on field (from max.bud), T, test/data/m173.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m173.dat, test/data/m173d.xml.tmp, test/data/m173.xml
+E, encode-m173 Using maxOccurs on field (from max.bud), T, test/data/m173.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m173.xml, test/data/m173e.dat.tmp, test/data/m173.dat
+
+# m179 - Optional delimiter. (from opdel.bud)
+D, decode-m179 Optional delimiter (from opdel.bud), T, test/data/m179.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m179.dat, test/data/m179d.xml.tmp, test/data/m179.xml
+E, encode-m179 Optional delimiter (from opdel.bud), T, test/data/m179.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m179.xml, test/data/m179e.dat.tmp, test/data/m179.dat
+
+# m180 - Optional or repeating fields. (from opt.bud)
+D, decode-m180 Optional or repeating fields (from opt.bud), T, test/data/m180.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m180.dat, test/data/m180d.xml.tmp, test/data/m180.xml
+E, encode-m180 Optional or repeating fields (from opt.bud), T, test/data/m180.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m180.xml, test/data/m180e.dat.tmp, test/data/m180.dat
+
+# m181 - Optionally repeating field. (from optrep.bud)
+D, decode-m181 Optionally repeating field (from optrep.bud), T, test/data/m181.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m181.dat, test/data/m181d.xml.tmp, test/data/m181.xml
+E, encode-m181 Optionally repeating field (from optrep.bud), T, test/data/m181.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m181.xml, test/data/m181e.dat.tmp, test/data/m181.dat
+
+# m182 - Any-order fields. (from order.bud)
+D, decode-m182 Any-order fields (from order.bud), T, test/data/m182.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m182.dat, test/data/m182d.xml.tmp, test/data/m182.xml
+E, encode-m182 Any-order fields (from order.bud), T, test/data/m182.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m182.xml, test/data/m182e.dat.tmp, test/data/m182.out
+
+# m182A - Any-order fields with wrong input.
+D, decode-m182A Any-order fields with wrong input-negative, F, test/data/m182.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m182A.dat, test/data/m182ad.xml.tmp, test/data/m182ad.xml.err
+
+# m183 - Repeating group of nothing mandatory. (from orep.bud)
+D, decode-m183 Repeating group of nothing mandatory (from orep.bud), T, test/data/m183.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m183.dat, test/data/m183d.xml.tmp, test/data/m183.xml
+E, encode-m183 Repeating group of nothing mandatory (from orep.bud), T, test/data/m183.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m183.xml, test/data/m183e.dat.tmp, test/data/m183.dat
+
+# m190 - Byte-array fields. (from raw.bud)
+D, decode-m190 Byte-array fields (from raw.bud), T, test/data/m190.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m190.dat, test/data/m190d.xml.tmp, test/data/m190.xml
+E, encode-m190 Byte-array fields (from raw.bud), T, test/data/m190.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m190.xml, test/data/m190e.dat.tmp, test/data/m190.dat
+
+# m191 - Byte-array unbounded fields. (from raw2.bud)
+D, decode-m191 Byte-array unbounded fields (from raw2.bud), T, test/data/m191.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m191.dat, test/data/m191d.xml.tmp, test/data/m191.xml
+E, encode-m191 Byte-array unbounded fields (from raw2.bud), T, test/data/m191.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m191.xml, test/data/m191e.dat.tmp, test/data/m191.dat
+
+# m192 - Recursive structure, delimited data. (from recur1.bud)
+D, decode-m192 Recursive structure with delimited data (from recur1.bud), T, test/data/m192.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m192.dat, test/data/m192d.xml.tmp, test/data/m192.xml
+E, encode-m192 Recursive structure with delimited data (from recur1.bud), T, test/data/m192.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m192.xml, test/data/m192e.dat.tmp, test/data/m192.dat
+
+# m193 - Recursive structure, fixed data. (from recur2.bud)
+D, decode-m193 Recursive structure with fixed data (from recur2.bud), T, test/data/m193.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m193.dat, test/data/m193d.xml.tmp, test/data/m193.xml
+E, encode-m193 Recursive structure with fixed data (from recur2.bud), T, test/data/m193.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m193.xml, test/data/m193e.dat.tmp, test/data/m193.dat
+
+# m193a - Recursive structure, fixed data. (from recur2.bud)
+D, decode-m193a Recursive structure with fixed data (from recur2.bud), T, test/data/m193a.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m193.dat, test/data/m193ad.xml.tmp, test/data/m193a.xml
+E, encode-m193a Recursive structure with fixed data (from recur2.bud), T, test/data/m193a.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m193a.xml, test/data/m193ae.dat.tmp, test/data/m193.dat
+
+# m194 - Repeating field. (from rep.bud)
+D, decode-m194 Repeating field (from rep.bud), T, test/data/m194.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m194.dat, test/data/m194d.xml.tmp, test/data/m194.xml
+E, encode-m194 Repeating field (from rep.bud), T, test/data/m194.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m194.xml, test/data/m194e.dat.tmp, test/data/m194.dat
+
+# m195 - Repeating group of non-repeating fields. (from rep2.bud)
+D, decode-m195 Repeating group of non-repeating fields (from rep2.bud), T, test/data/m195.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m195.dat, test/data/m195d.xml.tmp, test/data/m195.xml
+E, encode-m195 Repeating group of non-repeating fields (from rep2.bud), T, test/data/m195.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m195.xml, test/data/m195e.dat.tmp, test/data/m195.dat
+
+# m196 - Binary fields, any option/repeat combo. (from rraw.bud)
+D, decode-m196 Binary fields with any option/repeat combo (from rraw.bud), T, test/data/m196.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m196.dat, test/data/m196d.xml.tmp, test/data/m196.xml
+E, encode-m196 Binary fields with any option/repeat combo (from rraw.bud), T, test/data/m196.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m196.xml, test/data/m196e.dat.tmp, test/data/m196.dat
+
+# m198 - Conflicting delimiters, first is prefix of last. (from song.bud)
+D, decode-m198 Conflicting delimiters with first being prefix of last (from song.bud), T, test/data/m198.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m198.dat, test/data/m198d.xml.tmp, test/data/m198.xml
+E, encode-m198 Conflicting delimiters with first being prefix of last (from song.bud), T, test/data/m198.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m198.xml, test/data/m198e.dat.tmp, test/data/m198.out
+
+# m199 - One binary image-JPG-in base64Binary
+# m199 - Only a single field containing a binary image of Java logo (use base64Binary to store in decoded XML)
+D, decode-m199 One binary image-JPG-in base64Binary, T, test/data/m199.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m199.dat, test/data/m199d.xml.tmp, test/data/m199.xml
+E, encode-m199 One binary image-JPG-in base64Binary, T, test/data/m199.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m199.xml, test/data/m199e.dat.tmp, test/data/m199.dat
+
+# m200 - One binary image-GIF-in hexBinary
+# m200 - Only a single field containing a binary image of High five (use hexBinary to store in decoded XML)
+D, decode-m200 One binary image-GIF-in hexBinary, T, test/data/m200.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m200.dat, test/data/m200d.xml.tmp, test/data/m200.xml
+E, encode-m200 One binary image-GIF-in hexBinary, T, test/data/m200.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m200.xml, test/data/m200e.dat.tmp, test/data/m200.dat
+
+# m201 - Text + Binary image in JPG
+# m201 - 2 fields: first is text summary, 2nd contains jpg image.
+D, decode-m201 Text + Binary image in JPG, T, test/data/m201.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m201.dat, test/data/m201d.xml.tmp, test/data/m201.xml
+##E, encode-m201 Text + Binary image in JPG, T, test/data/m201.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m201.xml, test/data/m201e.dat.tmp, test/data/m201.dat
+
+# m202 - Text + Binary image in GIF
+# m202 - 2 fields: first is text summary, 2nd contains gif image.
+D, decode-m202 Text + Binary image in GIF, T, test/data/m202.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m202.dat, test/data/m202d.xml.tmp, test/data/m202.xml
+##E, encode-m202 Text + Binary image in GIF, T, test/data/m202.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m202.xml, test/data/m202e.dat.tmp, test/data/m202.dat
+
+# m203 - Text + Binary images
+# m203 - 3 fields: first is text summary, 2nd contains jpg image, 3rd contains gif image.
+D, decode-m203 Text + Binary images, T, test/data/m203.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m203.dat, test/data/m203d.xml.tmp, test/data/m203.xml
+##E, encode-m203 Text + Binary images, T, test/data/m203.xsd, {http://xml.netbeans.org/schema/customenc}Root, test/data/m203.xml, test/data/m203e.dat.tmp, test/data/m203.dat

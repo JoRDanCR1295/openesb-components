@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="request-response-initiateno-parent"
+                 targetNamespace="http://www.seebeyond.com/eInsight/request-response-initiateno-parent"
+                 sbynpxp:end_YLoc="103.0"
+                 sbynpxp:start_YLoc="43.0"
+                 sbynpxp:linkStyle="angular"
+                 sbynpxp:start_XLoc="-11.0"
+                 sbynpxp:end_XLoc="688.0"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/request-response-initiateno-parent"
+                 xmlns:ns4="urn:request-response-initiateno-childTargetNamespace"
+                 xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+                 xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="urn:jmsservice"
+                 xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/"
+                 xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+                 xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel"
+                 xmlns:slink="ServiceLinkTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe2"
+                 xmlns:ns1="http://webservices.request-response-initiateno-parent.com/websvc"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+                 xmlns:cor="Correlation/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe0"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns3="https://webservices.request-response-initiateno-parent.com/websvc"
+                 xmlns:ns2="request-response-initiateno-parent"
+                 xmlns:sdt="SimpleDataTypes/SeeBeyond/eInsight/4ce091:1021c042b38:-7fe1">
+    <bpel_20:import namespace="request-response-initiateno-parent"
+                    location="request-response-initiateno-parent.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:import namespace="urn:request-response-initiateno-childTargetNamespace"
+                    location="request-response-initiateno-child.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="request-response-initiateno-parentServiceLink"
+                             partnerLinkType="ns2:request-response-initiateno-parentServiceLinkType"
+                             myRole="Server"/>
+        <bpel_20:partnerLink name="request-response-initiateno-childPartner"
+                             partnerLinkType="ns4:request-response-initiateno-childServiceLinkType"
+                             partnerRole="request-response-initiateno-childServerRole"/>
+        <partnerLink name="request-response-initiateno-parentServiceLink1"
+                     partnerLinkType="ns2:request-response-initiateno-parentServiceLinkType1"
+                     myRole="Server"/>
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="MyRole_request-response-initiateno-parentOperation_Output"
+                          messageType="ns2:request-response-initiateno-parentMessage"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <bpel_20:variable name="request-response-initiateno-childContainer"
+                          messageType="ns4:request-response-initiateno-childMessage"></bpel_20:variable>
+        <bpel_20:variable name="MyRole_request-response-initiateno-parentOperation_Input"
+                          messageType="ns2:request-response-initiateno-parentMessage"
+                          sbyncreation:type="auto"></bpel_20:variable>
+        <variable name="request-response-initiateno-parentOperation1_Output"
+                  messageType="ns2:request-response-initiateno-parentMessage1"></variable>
+    </bpel_20:variables>
+    <correlationSets>
+        <correlationSet name="cSet1"
+                        properties="ns2:property "/>
+        <correlationSet name="cSet2"
+                        properties="ns4:request-response-initiateno-childProp "/>
+    </correlationSets>
+    <sequence>
+        <bpel_20:receive name="MyRole.request-response-initiateno-parentOperation.Receive"
+                         partnerLink="request-response-initiateno-parentServiceLink"
+                         portType="ns2:request-response-initiateno-parentPortType"
+                         operation="request-response-initiateno-parentOperation"
+                         variable="MyRole_request-response-initiateno-parentOperation_Output"
+                         createInstance="yes"
+                         sbynpxp:XLoc="22.0"
+                         sbynpxp:YLoc="37.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="yes"/>
+            </correlations>
+        </bpel_20:receive>
+        <bpel_20:assign name="Assign"
+                        sbynpxp:XLoc="134.0"
+                        sbynpxp:YLoc="77.0">
+            <copy>
+                <from>$MyRole_request-response-initiateno-parentOperation_Output.request-response-initiateno-parentPart/string</from>
+                <to>$request-response-initiateno-childContainer.request-response-initiateno-childPart/string</to>
+            </copy>
+        </bpel_20:assign>
+        <bpel_20:invoke name="Activity"
+                        partnerLink="request-response-initiateno-childPartner"
+                        portType="ns4:request-response-initiateno-childPortType"
+                        operation="request-response-initiateno-childOperation"
+                        inputVariable="request-response-initiateno-childContainer"
+                        outputVariable="request-response-initiateno-childContainer"
+                        sbynpxp:XLoc="232.0"
+                        sbynpxp:YLoc="92.0">
+            <correlations>
+                <correlation set="cSet1"
+                             initiate="no"
+                             pattern="request-response"/>
+                <correlation set="cSet2"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </bpel_20:invoke>
+        <receive name="request-response-initiateno-parentOperation1"
+                 partnerLink="request-response-initiateno-parentServiceLink1"
+                 portType="ns2:request-response-initiateno-parentPortType1"
+                 operation="request-response-initiateno-parentOperation1"
+                 variable="request-response-initiateno-parentOperation1_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="446.0"
+                 sbynpxp:YLoc="95.0">
+            <correlations>
+                <correlation set="cSet2"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <bpel_20:reply name="MyRole.request-response-initiateno-parentOperation.Reply"
+                       partnerLink="request-response-initiateno-parentServiceLink"
+                       portType="ns2:request-response-initiateno-parentPortType"
+                       operation="request-response-initiateno-parentOperation"
+                       variable="MyRole_request-response-initiateno-parentOperation_Output"
+                       sbynpxp:XLoc="573.0"
+                       sbynpxp:YLoc="91.0"></bpel_20:reply>
+    </sequence>
+</bpel_20:process>

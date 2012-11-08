@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="TestSwiftWsdl" targetNamespace="http://j2ee.netbeans.org/TestSwiftWsdl"
+    xmlns:tns="http://j2ee.netbeans.org/TestSwiftWsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://schemas.xmlsoap.org/ws/2004/03/partner-link/" xmlns:swift="http://schemas.sun.com/jbi/wsdl-extensions/swift/">
+    <message name="message1">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="TestSwiftWsdlPortType">
+        <operation name="TestSwiftWsdlOperation">
+            <input name="input1" message="tns:message1"/>           
+        </operation>
+    </portType>
+    <binding name="binding1" type="tns:TestSwiftWsdlPortType">
+        <swift:binding/>
+        <operation name="TestSwiftWsdlOperation">
+            <swift:operation/>
+            <input name="input1">
+                <swift:message part="part1" use="encoded" encodingStyle="swiftencoder-1.0"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="service1">
+        <port name="port1" binding="tns:binding1">	
+            <swift:address location="swift://localhost:48002" transportProtocolName="tcp-ip"/>
+            <swift:protocolproperties versionID="2.1"  softwareVendorOrganization="Sun Microsystems, Inc." softwareCertifiedVersionOrReleaseNumber="6.0" softwareProductName="Sun Swift BC" softwareBinaryID="6.0" softwareProductInformation="It is a Swift Binding component" softwareInstallDate=""/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="TestSwiftWsdlPartner">
+        <plink:role name="TestSwiftWsdlPortTypeRole" portType="tns:TestSwiftWsdlPortType"/>
+    </plink:partnerLinkType>
+</definitions>

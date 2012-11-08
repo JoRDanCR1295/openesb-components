@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/DirectElem"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/DirectElem" name="DirectElem" xmlns:ns="http://xml.netbeans.org/schema/DirectElemSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/DirectElemSchema" xmlns:tns1="http://xml.netbeans.org/schema/DirectElemSchema">
+            <xsd:complexType name="MsgType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="MsgElem" type="tns1:MsgType"></xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="InboundMsg">
+        <wsdl:part name="Input" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:message name="OutboundMsg">
+        <wsdl:part name="Output" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:portType name="CallBPPT">
+        <wsdl:operation name="CallBPOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+            <wsdl:output name="output1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CallJavaEEPT">
+        <wsdl:operation name="CallJavaEEOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+            <wsdl:output name="output1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CallBPBinding" type="tns:CallBPPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="CallBPOper">
+            <wsdl:input name="input1">
+                <soap:body parts="Input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="Output" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CallJavaEEBinding" type="tns:CallJavaEEPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="CallJavaEEOper">
+            <wsdl:input name="input1">
+                <soap:body parts="Input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="Output" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CallBPService">
+        <wsdl:port name="CallBPPort" binding="tns:CallBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/MsgDirectElem/DirectElem/CallBPPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="CallJavaEEService">
+        <wsdl:port name="CallJavaEEPort" binding="tns:CallJavaEEBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/MsgDirectElem/DirectElem/CallJavaEEPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="CallBPPartnerLinkType">
+        <plnk:role name="CallBPPTRole" portType="tns:CallBPPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="CallJavaEEPartnerLinkType">
+        <plnk:role name="CallJavaEEPTRole" portType="tns:CallJavaEEPT"/>
+    </plnk:partnerLinkType>
+</definitions>

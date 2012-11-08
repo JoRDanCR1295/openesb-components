@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AssignIMFD"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignIgnoreMissingFromData/AssignIMFD"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AssignIgnoreMissingFromData/AssignIMFD" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns0="http://j2ee.netbeans.org/wsdl/AssignIMFD" xmlns:ns1="http://xml.netbeans.org/schema/TestSchema" xmlns:sxtx="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Transaction" sxtx:ignoreMissingFromData="yes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AssignIMFD" location="AssignIMFD.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/TestSchema" location="TestSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/AssignIMFD" partnerLinkType="tns:AssignIMFD" myRole="AssignIMFDPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SimpleVar" type="xsd:string"/>
+        <variable name="XsdVar" type="ns1:ComplexType"/>
+        <variable name="TestMessage" messageType="ns0:TestMessage"/>
+        <variable name="AssignIMFDOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/AssignIMFD" messageType="tns:AssignIMFDOperationResponse"/>
+        <variable name="AssignIMFDOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/AssignIMFD" messageType="tns:AssignIMFDOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="AssignIMFDOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/AssignIMFD" portType="tns:AssignIMFDPortType" variable="AssignIMFDOperationIn"/>
+        <scope name="Scope1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                        <from variable="SimpleVar"/>
+                        <to variable="AssignIMFDOperationOut" part="Output"/>
+                    </copy>
+                </assign>
+                <assign name="Assign3">
+                    <copy>
+                        <from>$XsdVar/ns1:newElement</from>
+                        <to variable="AssignIMFDOperationOut" part="Output"/>
+                    </copy>
+                </assign>
+                <assign name="Assign4">
+                    <copy>
+                        <from>$TestMessage.TestPart/ns1:Id</from>
+                        <to variable="AssignIMFDOperationOut" part="Output"/>
+                    </copy>
+                </assign>
+                <assign name="Assign5">
+                    <copy>
+                        <from>'Some Data'</from>
+                        <to>$TestMessage.TestPart/ns1:Id</to>
+                    </copy>
+                    <copy>
+                        <from>'Some Data'</from>
+                        <to>$XsdVar/ns1:newElement2</to>
+                    </copy>
+                </assign>
+                <assign name="Assign6">
+                    <copy>
+                        <from>$XsdVar/ns1:newElement2</from>
+                        <to variable="AssignIMFDOperationOut" part="Output"/>
+                    </copy>
+                </assign>
+                <assign name="Assign7">
+                    <copy>
+                        <from>$TestMessage.TestPart/ns1:Data</from>
+                        <to variable="AssignIMFDOperationOut" part="Output"/>
+                    </copy>
+                </assign>
+            </sequence>
+        </scope>
+        <assign name="Assign1">
+            <copy>
+                <from>'Process completed successfully.'</from>
+                <to variable="AssignIMFDOperationOut" part="Output"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="AssignIMFDOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/AssignIMFD" portType="tns:AssignIMFDPortType" variable="AssignIMFDOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="AlertMef"
+         targetNamespace="http://www.truebaseline.com/bpel/MefWorkflow/AlertMef"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:tns="http://www.truebaseline.com/bpel/MefWorkflow/AlertMef" 
+         xmlns:ns1="http://www.truebaseline.com/CallSD.wsdl" 
+         xmlns:ns2="http://www.truebaseline.com/AlertMefBpel" 
+         xmlns:ns4="http://www.truebaseline.com/UtilityService" 
+         xmlns:ns5="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" 
+         xmlns:ns6="http://www.truebaseline.com/CallMef.wsdl" xmlns:ns7="http://www.truebaseline.com/LogCurrentState.wsdl" xmlns:ns8="http://www.truebaseline.com/MEF">
+    <import namespace="http://www.truebaseline.com/CallSD.wsdl" location="CallSD.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.truebaseline.com/AlertMefBpel" location="AlertMefBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd" location="WorkflowInformation.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <import namespace="http://www.truebaseline.com/CallMef.wsdl" location="CallMef.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://www.truebaseline.com/MEF" location="MEFWEBService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="AlertMefBpelPartnerLink" partnerLinkType="ns2:AlertMefBpelPartnerLinkType" myRole="AlertMefBpelRole"/>
+        <partnerLink name="CallMefPartnerLink" partnerLinkType="ns6:CallMefPartnerLinkType" partnerRole="CallMefRole"/>
+        <partnerLink name="CallSDPartnerLink" partnerLinkType="ns1:CallSDPartnerLinkType" partnerRole="CallSDRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TestVar" type="xsd:string"/>
+        <variable name="ReplyCallMefOut" messageType="ns6:ReplyCallMefResponse"/>
+        <variable name="ReplyCallMefIn" messageType="ns6:ReplyCallMefRequest"/>
+        <variable name="IntermediateEventMessage" element="ns5:EventMessage"/>
+        <variable name="SignalEventOut" messageType="ns8:SignalEventSoapOut"/>
+        <variable name="CallSDOut" messageType="ns1:CallSDResponse"/>
+        <variable name="CallSDIn" messageType="ns1:CallSDRequest"/>
+        <variable name="CallMefOut" messageType="ns6:CallMefResponse"/>
+        <variable name="CallMefIn" messageType="ns6:CallMefRequest"/>
+        <variable name="OriginalConfiguration" element="ns5:Configuration"/>
+        <variable name="OriginalEventMessage" element="ns5:EventMessage"/>
+        <variable name="NewCorrelationId" type="xsd:string"/>
+        <variable name="OriginalCorrelationId" type="xsd:string"/>
+        <variable name="SignalEventIn" messageType="ns8:SignalEventSoapIn"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="MefWorkflowCorrelationSet" properties="ns8:CorrelationId"/>
+    </correlationSets>
+    <faultHandlers>
+        <catch faultName="ns1:CallSDFault" faultMessageType="ns1:CallSDFault" faultVariable="CallSDFaultVar">
+            <sequence name="Sequence2">
+                <assign name="PrepareCallSDFault">
+                    <copy>
+                        <from variable="CallSDFaultVar" part="EventMessage"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage</to>
+                    </copy>
+                    <copy>
+                        <from variable="CallSDFaultVar" part="Configuration"/>
+                        <to>$SignalEventOut.parameters/ns5:Configuration</to>
+                    </copy>
+                    <copy>
+                        <from variable="CallSDFaultVar" part="EventMessage"/>
+                        <to variable="ReplyCallMefIn" part="EventMessage"/>
+                    </copy>
+                    <copy>
+                        <from variable="CallSDFaultVar" part="Configuration"/>
+                        <to variable="ReplyCallMefIn" part="Configuration"/>
+                    </copy>
+                </assign>
+                <assign name="RestoreCorrelationId2">
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$ReplyCallMefIn.EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                </assign>
+                <invoke name="ReplyCallMef2" partnerLink="CallMefPartnerLink" operation="ReplyCallMef" portType="ns6:CallMefPortType" inputVariable="ReplyCallMefIn" outputVariable="ReplyCallMefOut"/>
+                <reply name="ReplyCallSDFault" partnerLink="AlertMefBpelPartnerLink" operation="SignalEvent" portType="ns2:AlertMefBpelPortType" variable="SignalEventOut"/>
+            </sequence>
+        </catch>
+        <catch faultName="ns6:CallMefFault" faultMessageType="ns6:CallMefFault" faultVariable="CallMefFaultVar">
+            <sequence name="Sequence3">
+                <assign name="PrepareCallMefFault">
+                    <copy>
+                        <from variable="CallMefFaultVar" part="EventMessage"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage</to>
+                    </copy>
+                    <copy>
+                        <from variable="CallMefFaultVar" part="Configuration"/>
+                        <to>$SignalEventOut.parameters/ns5:Configuration</to>
+                    </copy>
+                    <copy>
+                        <from variable="CallMefFaultVar" part="EventMessage"/>
+                        <to variable="ReplyCallMefIn" part="EventMessage"/>
+                    </copy>
+                    <copy>
+                        <from variable="CallMefFaultVar" part="Configuration"/>
+                        <to variable="ReplyCallMefIn" part="Configuration"/>
+                    </copy>
+                </assign>
+                <assign name="RestoreCorrelationId3">
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$ReplyCallMefIn.EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                </assign>
+                <invoke name="ReplyCallMef3" partnerLink="CallMefPartnerLink" operation="ReplyCallMef" portType="ns6:CallMefPortType" inputVariable="ReplyCallMefIn" outputVariable="ReplyCallMefOut"/>
+                <reply name="ReplyCallMefFault" partnerLink="AlertMefBpelPartnerLink" operation="SignalEvent" portType="ns2:AlertMefBpelPortType" variable="SignalEventOut"/>
+            </sequence>
+        </catch>
+        <catchAll>
+            <sequence name="Sequence1">
+                <assign name="PrepareSystemFault">
+                    <copy>
+                        <from>
+                            <literal>SystemError</literal>
+                        </from>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage/ns5:EventName</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>SystemError</literal>
+                        </from>
+                        <to>$ReplyCallMefIn.EventMessage/ns5:EventName</to>
+                    </copy>
+                </assign>
+                <assign name="RestoreCorrelatioId1">
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                    <copy>
+                        <from variable="OriginalCorrelationId"/>
+                        <to>$ReplyCallMefIn.EventMessage/ns5:CorrelationId</to>
+                    </copy>
+                </assign>
+                <invoke name="ReplyCallMef1" partnerLink="CallMefPartnerLink" operation="ReplyCallMef" portType="ns6:CallMefPortType" inputVariable="ReplyCallMefIn" outputVariable="ReplyCallMefOut"/>
+                <reply name="ReplySystemFault" partnerLink="AlertMefBpelPartnerLink" operation="SignalEvent" portType="ns2:AlertMefBpelPortType" variable="SignalEventOut"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="ProcessEventRequest" createInstance="yes" partnerLink="AlertMefBpelPartnerLink" operation="SignalEvent" portType="ns2:AlertMefBpelPortType" variable="SignalEventIn">
+            <correlations>
+                <correlation set="MefWorkflowCorrelationSet" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="SetupProcess">
+            <copy>
+                <from>$SignalEventIn.parameters/ns5:EventMessage</from>
+                <to variable="OriginalEventMessage"/>
+            </copy>
+            <copy>
+                <from>$SignalEventIn.parameters/ns5:Configuration</from>
+                <to variable="OriginalConfiguration"/>
+            </copy>
+            <copy>
+                <from variable="SignalEventIn" part="parameters"/>
+                <to variable="SignalEventOut" part="parameters"/>
+            </copy>
+            <copy>
+                <from variable="OriginalEventMessage"/>
+                <to variable="CallMefIn" part="EventMessage"/>
+            </copy>
+            <copy>
+                <from variable="OriginalConfiguration"/>
+                <to variable="CallMefIn" part="Configuration"/>
+            </copy>
+            <copy>
+                <from variable="OriginalEventMessage"/>
+                <to variable="CallSDIn" part="EventMessage"/>
+            </copy>
+            <copy>
+                <from variable="OriginalConfiguration"/>
+                <to variable="CallSDIn" part="Configuration"/>
+            </copy>
+            <copy>
+                <from variable="OriginalEventMessage"/>
+                <to variable="IntermediateEventMessage"/>
+            </copy>
+            <copy>
+                <from variable="OriginalEventMessage"/>
+                <to variable="ReplyCallMefIn" part="EventMessage"/>
+            </copy>
+            <copy>
+                <from variable="OriginalConfiguration"/>
+                <to variable="ReplyCallMefIn" part="Configuration"/>
+            </copy>
+        </assign>
+        <if name="SwitchOnEventName">
+            <condition>                     ( $OriginalEventMessage/ns5:EventName = 'ActivateAlertRequest' )                     </condition>
+            <sequence name="Sequence5">
+                <assign name="PrepareCallLocalStore">
+                    <copy>
+                        <from variable="OriginalEventMessage"/>
+                        <to variable="CallMefIn" part="EventMessage"/>
+                    </copy>
+                    <copy>
+                        <from variable="OriginalConfiguration"/>
+                        <to variable="CallMefIn" part="Configuration"/>
+                    </copy>
+                    <copy>
+                        <from>$OriginalEventMessage/ns5:TargetUri</from>
+                        <to>$CallMefIn.EventMessage/ns5:SourceUri</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>mef://LocalStore</literal>
+                        </from>
+                        <to>$CallMefIn.EventMessage/ns5:TargetUri</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>GetServiceOrderPoliciesXmlListRequest</literal>
+                        </from>
+                        <to>$CallMefIn.EventMessage/ns5:EventName</to>
+                    </copy>
+                    <copy>
+                        <from>true()</from>
+                        <to part="waitForReply" variable="CallMefIn"/>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal><Parameters xmlns="http://www.truebaseline.com/TrueOMF/WorkflowInformation.xsd"><Parameter isIn="false" isOut="true" name="serviceInstanceGuid"><Value/></Parameter><Parameter isIn="false" isOut="true" name="policyType"><Value/></Parameter></Parameters></literal>
+                        </from>
+                        <to>$CallMefIn.EventMessage/ns5:Body/ns5:Request/ns5:Parameters</to>
+                    </copy>
+                </assign>
+                <assign name="Assign1">
+                    <copy>
+                        <from>$OriginalEventMessage/node()/*[ ( local-name() = 'Request' ) ]/*[ ( local-name() = 'Parameters' ) ]/*[ (  ( local-name() = 'Parameter' )  and  ( @name = 'serviceOrderGuid' )  ) ]/*[ ( local-name() = 'Value' ) ]</from>
+                        <to variable="TestVar"/>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>dddddddd-0323-4cbd-aaef-1a9748142f20</literal>
+                        </from>
+                        <to>$OriginalEventMessage/node()/*[ ( local-name() = 'Request' ) ]/*[ ( local-name() = 'Parameters' ) ]/*[ (  ( local-name() = 'Parameter' )  and  ( @name = 'serviceOrderGuid' )  ) ]/*[ ( local-name() = 'Value' ) ]</to>
+                    </copy>
+                </assign>
+                <assign name="Assign2">
+                    <copy>
+                        <from>$OriginalEventMessage/node()/*[ ( local-name() = 'Request' ) ]/*[ ( local-name() = 'Parameters' ) ]/*[ (  ( local-name() = 'Parameter' )  and  ( @name = 'serviceOrderGuid' )  ) ]/*[ ( local-name() = 'Value' ) ]</from>
+                        <to>$CallMefIn.EventMessage/node()/*[ ( local-name() = 'Request' ) ]/*[ ( local-name() = 'Parameters' ) ]/*[ (  ( local-name() = 'Parameter' )  and  ( @name = 'serviceInstanceGuid' )  ) ]/*[ ( local-name() = 'Value' ) ]</to>
+                    </copy>
+                </assign>
+                <assign name="PrepreResponse">
+                    <copy>
+                        <from variable="CallMefIn" part="EventMessage"/>
+                        <to>$SignalEventOut.parameters/ns5:EventMessage</to>
+                    </copy>
+                    <copy>
+                        <from variable="CallMefIn" part="Configuration"/>
+                        <to>$SignalEventOut.parameters/ns5:Configuration</to>
+                    </copy>
+                </assign>
+            </sequence>
+            <elseif>
+                <condition>         ( $OriginalEventMessage/ns5:EventName = 'ProcessAlertRequest' )         </condition>
+                <sequence name="Sequence6">
+                    <assign name="PrepareCallAlertManagerSD1">
+                        <copy>
+                            <from>
+                                <literal>ProcessAlertRequest</literal>
+                            </from>
+                            <to part="solutionDomainName" variable="CallSDIn"/>
+                        </copy>
+                        <copy>
+                            <from variable="OriginalEventMessage"/>
+                            <to variable="CallSDIn" part="EventMessage"/>
+                        </copy>
+                        <copy>
+                            <from variable="OriginalConfiguration"/>
+                            <to variable="CallSDIn" part="Configuration"/>
+                        </copy>
+                    </assign>
+                    
+                    
+                    <invoke name="CallAlertManagerSD1" partnerLink="CallSDPartnerLink" operation="CallSD" portType="ns1:CallSDPortType" inputVariable="CallSDIn" outputVariable="CallSDOut"/>
+                </sequence>
+            </elseif>
+            <else>
+                <sequence name="Sequence4">
+                    <assign name="PrepareReplyCallMef">
+                        <copy>
+                            <from>
+                                <literal>UnknownEventNameError</literal>
+                            </from>
+                            <to>$ReplyCallMefIn.EventMessage/ns5:EventName</to>
+                        </copy>
+                    </assign>
+                    <assign name="RestoreCorrelationId4">
+                        <copy>
+                            <from variable="OriginalCorrelationId"/>
+                            <to>$ReplyCallMefIn.EventMessage/ns5:CorrelationId</to>
+                        </copy>
+                    </assign>
+                    <invoke name="ReplyCallMef" partnerLink="CallMefPartnerLink" operation="ReplyCallMef" portType="ns6:CallMefPortType" inputVariable="ReplyCallMefIn" outputVariable="ReplyCallMefOut"/>
+                    <assign name="PrepareUnknownEventNameFault">
+                        <copy>
+                            <from>
+                                <literal>UnknownEventNameError</literal>
+                            </from>
+                            <to part="parameters" variable="SignalEventOut"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </else>
+        </if>
+        <reply name="ProcessEventResponse" partnerLink="AlertMefBpelPartnerLink" operation="SignalEvent" portType="ns2:AlertMefBpelPortType" variable="SignalEventOut"/>
+    </sequence>
+</process>

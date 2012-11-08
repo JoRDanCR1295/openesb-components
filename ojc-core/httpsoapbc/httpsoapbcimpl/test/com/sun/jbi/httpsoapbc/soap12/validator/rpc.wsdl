@@ -1,0 +1,52 @@
+
+<definitions
+              targetNamespace="http://example.org/bar/"
+              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+              xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+              xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+              xmlns="http://schemas.xmlsoap.org/wsdl/"
+              xmlns:bar="http://example.org/bar/"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:foo="http://example.org/foo/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://example.org/foo/"
+              xmlns:tns="http://example.org/foo/"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              elementFormDefault="qualified"
+              attributeFormDefault="unqualified">
+            <xsd:complexType
+              name="fooType">
+                <xsd:sequence>
+                    <xsd:element ref="tns:bar"/>
+                    <xsd:element ref="tns:baf"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="bar" type="xsd:string"/>
+            <xsd:element name="baf" type="xsd:integer"/>
+        </xsd:schema>
+    </types>
+    <message  name="BarMsg">
+        <part name="BarAccessor" type="foo:fooType"/>
+    </message>
+    <portType  name="BarPortType">
+        <operation  name="BarOperation">
+            <input  message="bar:BarMsg"/>
+        </operation>
+    </portType>
+    <binding name="Barwsoap12ing"  type="bar:BarPortType">
+        <wsoap12:binding   transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"   style="rpc"/>
+        <operation name="BarOperation">
+            <input>
+                <wsoap12:body use="literal" namespace="http://example.org/bar/"/>
+            </input>
+        </operation>
+    </binding>
+    <service  name="serviceName">
+        <port name="BarSOAPPort" binding="bar:Barwsoap12ing">
+            <wsoap12:address    location="http://localhost:9080/myBarSOAPPort"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="rpc">
+        <plink:role name="rpcRole" portType="bar:BarPortType"/>
+    </plink:partnerLinkType>
+</definitions>

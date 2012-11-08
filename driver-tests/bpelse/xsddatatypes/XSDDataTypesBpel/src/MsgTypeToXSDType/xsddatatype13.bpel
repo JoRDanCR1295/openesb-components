@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="xsddatatype13"
+         targetNamespace="http://www.seebeyond.com/eInsight/xsddatatype13"
+         xmlns:tns="http://www.seebeyond.com/eInsight/xsddatatype13"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/xsddatatype13"
+         xmlns:ns1="urn:SampleXSD"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/xsddatatype13"
+            location="xsddatatype13.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="urn:SampleXSD2"
+            location="SampleXSD2.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"></import>
+    <import namespace="urn:SampleXSD"
+            location="SampleXSD.xsd"
+            importType="http://www.w3.org/2001/XMLSchema"></import>
+            
+    <partnerLinks>
+				<partnerLink name="Client2BP" partnerLinkType="ns0:SLT" myRole="server"/>
+		</partnerLinks>
+    <variables>
+        <variable name="messageType_Output"
+                  messageType="ns0:xsddatatype13"></variable>
+        <variable name="messageType_Input"
+                  messageType="ns0:xsddatatype13"></variable>
+        <variable name="xsdDataType_element13"
+                  element="ns1:Comment"></variable>
+    </variables>
+    <sequence>
+        <receive name="xsddatatype13"
+                 partnerLink="Client2BP"
+                 portType="ns0:xsddatatype13"
+                 operation="xsddatatype13"
+                 variable="messageType_Output"
+                 createInstance="yes"></receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$messageType_Output.part/name</from>
+                <to variable="xsdDataType_element13"/>
+            </copy>            
+        </assign>                 
+        <assign name="Assign2">
+            <copy>
+                <from variable="xsdDataType_element13"/>
+                <to>$messageType_Input.part/name</to>
+            </copy>            
+        </assign>
+        <reply name="xsddatatype13.Reply"
+               partnerLink="Client2BP"
+               portType="ns0:xsddatatype13"
+               operation="xsddatatype13"
+               variable="messageType_Input"></reply>
+    </sequence>
+</process>

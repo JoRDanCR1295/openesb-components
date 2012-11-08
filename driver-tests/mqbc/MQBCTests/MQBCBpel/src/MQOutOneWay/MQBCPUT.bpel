@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="MQBCPUT" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/MQBCPUT"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MQBCPUT" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapInOut" xmlns:ns2="http://localhost/MQBCBpel/MQOutPut">
+    <import namespace="http://j2ee.netbeans.org/wsdl/SoapInOut" location="SoapInOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://localhost/MQBCBpel/MQOutPut" location="MQOutPut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkMqPut" partnerLinkType="ns2:partnerlinktypeQPut" partnerRole="partnerlinktyperoleQPut"/>
+        <partnerLink name="PartnerLinksoap" partnerLinkType="ns1:partnerlinktypeSaopInOut" myRole="partnerlinktyperoleSoapInOut"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SoapInOutOprationOut1" messageType="ns1:SoapRespMsg"/>
+        <variable name="OperationMQPutIn1" messageType="ns2:mqTextMessage"/>
+        <variable name="SoapInOutOprationIn1" messageType="ns1:SoapRecvMsg"/>
+    </variables>
+    <sequence>
+        
+            <receive name="ReceiveSoap" createInstance="yes" partnerLink="PartnerLinksoap" operation="soapInOutOpration" portType="ns1:SoapInOutStrPortType" variable="SoapInOutOprationIn1"/>
+            <assign name="Assign1">
+                  <bpws:copy>
+                        <bpws:from variable="SoapInOutOprationIn1" part="strvalueIn"/>
+                        <bpws:to variable="OperationMQPutIn1" part="mqMessageTextBody"/>
+                  </bpws:copy>
+            </assign>
+            <invoke name="InvokeMqPut" partnerLink="PartnerLinkMqPut" operation="operationMQPut" portType="ns2:portTypeMqPut" inputVariable="OperationMQPutIn1"/>
+            <assign name="Assign2">
+                <copy>
+                    <from>'soap response mq put'</from>
+                    <to part="strvalueOut" variable="SoapInOutOprationOut1"/>
+                </copy>
+            </assign>
+            <reply name="ReplySoap" partnerLink="PartnerLinksoap" operation="soapInOutOpration" portType="ns1:SoapInOutStrPortType" variable="SoapInOutOprationOut1"/>
+       
+   </sequence>
+   
+</process>

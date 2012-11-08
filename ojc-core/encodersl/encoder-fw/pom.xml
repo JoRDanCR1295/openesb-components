@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ # BEGIN_HEADER - DO NOT EDIT
+ #
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+
+<!--
+ # @(#)pom.xml
+ # Copyright 2006-2008 Sun Microsystems, Inc. All Rights Reserved.
+ #
+ # END_HEADER - DO NOT EDIT
+-->
+<project>
+    <parent>
+        <artifactId>build-common</artifactId>
+        <groupId>open-jbi-components</groupId>
+        <version>1.1</version>
+        <relativePath>../../build-common</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>open-jbi-components</groupId>
+    <artifactId>encoder-fw</artifactId>
+    <name>encoder-fw</name>
+    <version>${encodersl.artifact.version}</version>
+    <description>encoder framework description</description>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-secondary-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="SET-UP ${SECONDARY_ARTIFACT_ID} package..." />
+
+                                <!-- copy the classes we want in the secondary jar: -->
+                                <delete dir="${project.build.directory}/${SECONDARY_ARTIFACT_ID}" />
+                                <mkdir  dir="${project.build.directory}/${SECONDARY_ARTIFACT_ID}" />
+                                <echo message="Creating ${SECONDARY_ARTIFACT_ID}.jar." />
+                                <copy todir="${project.build.directory}/${SECONDARY_ARTIFACT_ID}">
+                                    <fileset dir="${project.build.outputDirectory}">
+                                        <include name="**/*.class"/>
+                                        <include name="**/*.code"/>
+                                        <include name="**/*.map"/>
+                                        <exclude name="com/sun/encoder/builder/**/*.class"/>
+                                        <exclude name="com/sun/encoder/fog/fed/**/*.class"/>
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-secondary-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classesDirectory>${project.build.directory}/${SECONDARY_ARTIFACT_ID}</classesDirectory>
+                            <classifier>${SECONDARY_ARTIFACT_ID}</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <!-- Important ***************************************************************
+             Setting dependency to customized-xmlbeans is just for some
+             junit tests in execbc to pass.  Encoder framework
+             does not depend on any customized XmlBeans features and it
+             should NOT.  The reason is that NetBeans only packages
+             XmlBeans released jars.  If at runtime we use customized XmlBeans it
+             will prevent Encoder from working within NetBeans design time
+             environment.
+          **************************************************************************** -->
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>customized-xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>jsr173_api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>encoderfrmwk-xsdextension</artifactId>
+        </dependency>
+    </dependencies>
+    <properties>
+        <SECONDARY_ARTIFACT_ID>encoderfwrt</SECONDARY_ARTIFACT_ID>
+    </properties>
+</project>

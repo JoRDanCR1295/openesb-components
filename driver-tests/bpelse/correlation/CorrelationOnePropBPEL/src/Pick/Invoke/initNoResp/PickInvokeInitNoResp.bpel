@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrPickInvokeInitNoResp"
+         targetNamespace="http://enterprise.netbeans.org/bpel/corrPickInvokeInitNoResp"
+         xmlns:tns="http://enterprise.netbeans.org/bpel/corrPickInvokeInitNoResp"
+         xmlns:child="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp"
+            location="PickInvokeInitNoResp.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp_child"
+            location="PickInvokeInitNoResp_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1"
+                     partnerLinkType="ns0:corrPickInvokePLinkType"
+                     myRole="corrPickInvokePLinkRole"/>
+        <partnerLink name="SubPLink"
+                     partnerLinkType="child:corrPickInvokePLinkType"
+                     partnerRole="corrPickInvokePLinkRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input" messageType="ns0:CorrelationMessage"/>
+        <variable name="output" messageType="ns0:CorrelationMessage"/>
+        <variable name="childInput" messageType="child:CorrelationChildMessage"/>
+        <variable name="childOutput" messageType="child:CorrelationChildMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet1" properties="ns0:prop1 "/>
+    </correlationSets>
+    <sequence>
+        <bpws:pick name="Pick1" createInstance="yes">
+            <bpws:onMessage partnerLink="PartnerLink1" operation="CorrelationOperation" 
+                            portType="ns0:CorrelationPortType" variable="input">
+                <bpws:correlations>
+                    <bpws:correlation set="cSet1" initiate="yes"/>
+                </bpws:correlations>
+                <bpws:assign>
+                    <bpws:copy>
+                        <bpws:from part="data" variable="input"/>
+                        <bpws:to part="data" variable="childInput"/>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:onMessage>
+        </bpws:pick>
+        <bpws:invoke name="Invoke1" partnerLink="SubPLink" operation="CorrelationOperation" 
+                     portType="child:CorrelationPortType" inputVariable="childInput" outputVariable="childOutput">
+            <bpws:correlations>
+                <bpws:correlation set="cSet1" initiate="no" pattern="response"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="childOutput" part="data"/>
+                <bpws:to variable="output" part="data"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="CorrelationOperation" portType="ns0:CorrelationPortType" variable="output"/>
+    </sequence>
+</process>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bpel_20:process name="assignTest"
+                 targetNamespace="urn:assign:assignService"
+                 sbynpers:persist="yes"
+                 xmlns:tns="urn:assign:assignService"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:sbynpers="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+                 xmlns:ns0="urn:assign:assignService"
+                 xmlns:sbyncreation="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/creation"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <bpel_20:import namespace="urn:assign:assignService"
+                    location="assign.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></bpel_20:import>
+    <bpel_20:partnerLinks>
+        <bpel_20:partnerLink name="caller"
+                             partnerLinkType="ns0:assignSLT"
+                             myRole="caller"/>
+	  <bpel_20:partnerLink name="InvokePLT" partnerLinkType="ns0:AssignInvokePLT" 
+                     partnerRole="AssignInvokeRole"/>
+
+    </bpel_20:partnerLinks>
+    <bpel_20:variables>
+        <bpel_20:variable name="request"
+                          messageType="tns:AssignMessageType"></bpel_20:variable>
+        <bpel_20:variable name="response"
+                          messageType="tns:AssignMessageType"></bpel_20:variable>
+    </bpel_20:variables>
+    <bpel_20:sequence name="AssignSequence">
+        <bpel_20:receive name="AssignReceive"
+                         partnerLink="caller"
+                         portType="tns:assignPT"
+                         operation="assign"
+                         variable="request"
+                         createInstance="yes"></bpel_20:receive>
+        <bpel_20:assign>
+            <bpel_20:copy>
+                <bpel_20:from variable="request"
+                              part="strPart"/>
+                <bpel_20:to variable="response"
+                            part="strPart"/>
+            </bpel_20:copy>
+        </bpel_20:assign>
+	  <!--
+        <bpel_20:reply name="AssignReply"
+                       partnerLink="caller"
+                       portType="tns:assignPT"
+                       operation="assign"
+                       variable="response"></bpel_20:reply>
+	  -->
+	 <bpel_20:invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="oneWayInvokeOper" portType="tns:invokePortType"
+                inputVariable="response"/>
+	  	
+    </bpel_20:sequence>
+</bpel_20:process>

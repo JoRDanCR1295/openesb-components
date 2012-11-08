@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/Fault"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Fault" name="Fault" xmlns:ns="http://xml.netbeans.org/schema/FaultSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/FaultSchema" xmlns:tns1="http://xml.netbeans.org/schema/FaultSchema">
+            <xsd:element name="InoutElem" type="xsd:string"></xsd:element>
+            <xsd:element name="faultElem" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="InoutMsg">
+        <wsdl:part name="InoutPart" element="ns:InoutElem"/>
+    </message>
+    <message name="FaultMsg">
+        <wsdl:part name="FaultPort" element="ns:faultElem"/>
+    </message>
+    <portType name="FaultPortType">
+        <wsdl:operation name="FaultOperation">
+            <wsdl:input name="input1" message="tns:InoutMsg"/>
+            <wsdl:output name="output1" message="tns:InoutMsg"/>
+            <wsdl:fault name="fault1" message="tns:FaultMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="FaultBinding" type="tns:FaultPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="FaultOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="InoutPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="InoutPart" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </binding>
+    <service name="FaultService">
+        <wsdl:port name="FaultServicePort" binding="tns:FaultBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/FaultBP/Fault/FaultServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="FaultPartner">
+        <plnk:role name="FaultPortTypeRole" portType="tns:FaultPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

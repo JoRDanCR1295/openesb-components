@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TestAttrProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestAttr/TestAttrProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TestAttr/TestAttrProcess">
+    <import namespace="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" location="NumberService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" partnerLinkType="tns:NumberServicePLink" myRole="NumberServiceInterfaceRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="NumFaultVar" xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" messageType="tns:NumberServiceOperationFault"/>
+        <variable name="NumberServiceOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" messageType="tns:NumberServiceOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="NumberServiceOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" portType="tns:NumberServiceInterface" variable="NumberServiceOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>10</from>
+                <to>$NumFaultVar.fault/@code</to>
+            </copy>
+            <copy>
+                <from>10</from>
+                <to>$NumFaultVar.fault/number</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="NumberServiceOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/BpelModule2/NumberService" portType="tns:NumberServiceInterface" faultName="tns:numFault" variable="NumFaultVar"/>
+    </sequence>
+</process>

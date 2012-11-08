@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/HttpService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/HttpService" name="HttpService" xmlns:ns="http://xml.netbeans.org/schema/HttpServiceSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/HttpServiceSchema" xmlns:tns1="http://xml.netbeans.org/schema/HttpServiceSchema">
+            <xsd:element name="MsgElem" type="xsd:string"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="InoutMsg">
+        <wsdl:part name="InoutPart" element="ns:MsgElem"/>
+    </message>
+    <portType name="HttpServicePortType">
+        <wsdl:operation name="HttpServiceOperation">
+            <wsdl:input name="input1" message="tns:InoutMsg"/>
+            <wsdl:output name="output1" message="tns:InoutMsg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="HttpBinding" type="tns:HttpServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="HttpServiceOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="InoutPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="InoutPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="HttpService">
+        <wsdl:port name="HttpServicePort" binding="tns:HttpBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/FaultBP/HttpService/HttpServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="HttpServicePartner">
+        <plnk:role name="HttpServicePortTypeRole" portType="tns:HttpServicePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

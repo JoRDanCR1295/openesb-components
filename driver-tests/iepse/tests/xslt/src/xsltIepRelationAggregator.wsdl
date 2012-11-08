@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:defns="iepRelationAggregator_iep" 
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:tns="iepRelationAggregator_iep" 
+             xmlns:typens="iepRelationAggregator_iep" 
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             targetNamespace="iepRelationAggregator_iep">
+    <types>
+        <xsd:schema targetNamespace="iepRelationAggregator_iep">
+            <xsd:element name="AllFile_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="avg" type="xsd:double"/>
+                        <xsd:element name="min" type="xsd:double"/>
+                        <xsd:element name="max" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="IBMFile_MsgObj">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="avg" type="xsd:double"/>
+                        <xsd:element name="min" type="xsd:double"/>
+                        <xsd:element name="max" type="xsd:double"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="IBMFile_Msg">
+        <part name="output" type="typens:IBMFile_MsgType"/>
+    </message>
+    <message name="AllFile_Msg">
+        <part name="output" type="typens:AllFile_MsgType"/>
+    </message>
+    <portType name="OutputPt_IBMFile">
+        <operation name="IBMFile">
+            <input message="tns:IBMFile_Msg"/>
+        </operation>
+    </portType>
+    <portType name="OutputPt_AllFile">
+        <operation name="AllFile">
+            <input message="tns:AllFile_Msg"/>
+        </operation>
+    </portType>
+    <binding name="OutputBinding_IBMFile" type="defns:OutputPt_IBMFile">
+        <file:binding/>
+        <operation name="IBMFile">
+            <file:operation/>
+            <input>
+                <file:message fileName="actualIBM.txt"
+                            fileNameIsPattern="false"
+                            addEOL="false"
+                            multipleRecordsPerFile="true"
+                            use="literal">
+                </file:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="OutputBinding_AllFile" type="defns:OutputPt_AllFile">
+        <file:binding/>
+        <operation name="AllFile">
+            <file:operation/>
+            <input>
+                <file:message fileName="actualAll.txt"
+                            fileNameIsPattern="false"
+                            addEOL="false"
+                            multipleRecordsPerFile="true"
+                            use="literal">
+                </file:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutputService_IBMFile">
+        <port binding="tns:OutputBinding_IBMFile" name="OutputPort_IBMFile">
+            <file:address fileDirectory="@drivertest_dir@/iepse/tests/jbi/test/IepRelationAggregator/"/>
+        </port>
+    </service>
+    <service name="OutputService_AllFile">
+        <port binding="tns:OutputBinding_AllFile" name="OutputPort_AllFile">
+            <file:address fileDirectory="@drivertest_dir@/iepse/tests/jbi/test/IepRelationAggregator/"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_IBMFile">
+        <plnk:role name="OutputRn_IBMFile" portType="tns:OutputPt_IBMFile"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="OutputPlt_AllFile">
+        <plnk:role name="OutputRn_AllFile" portType="tns:OutputPt_AllFile"/>
+    </plnk:partnerLinkType>
+</definitions>

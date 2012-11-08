@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/BPwithMsgElemQualified"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/BPwithMsgElemQualified" name="BPwithMsgElemQualified" xmlns:ns="http://xml.netbeans.org/schema/BPwithMsgElemQualifiedSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/BPwithMsgElemQualifiedSchema" 
+                    xmlns:tns1="http://xml.netbeans.org/schema/BPwithMsgElemQualifiedSchema"
+                    elementFormDefault="qualified">
+            <xsd:complexType name="MsgType">
+                <xsd:sequence>
+                    <xsd:element name="msgId" type="xsd:int"></xsd:element>
+                    <xsd:element name="msgStr" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="MsgElem" type="tns1:MsgType"></xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="InboundMsg">
+        <wsdl:part name="part1" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:message name="OutboundMsg">
+        <wsdl:part name="part1" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:portType name="ExtPT">
+        <wsdl:operation name="ExtPTOper">
+            <wsdl:input name="input1" message="tns:InboundMsg"/>
+            <wsdl:output name="output1" message="tns:OutboundMsg"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ExtBind" type="tns:ExtPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="ExtPTOper">
+            <wsdl:input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ExtSchemQualifiedService">
+        <wsdl:port name="serviceSchemaQualifiedPort" binding="tns:ExtBind">
+            <soap:address location="http://localhost:${HttpDefaultPort}/BPwithMsgElemQualified/BPwithMsgElemQualified/serviceSchemaQualifiedPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="BPwithMsgElemQualifiedPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ExtPTRole" portType="tns:ExtPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="BPwithMsgElemQualifiedPartner1">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ExtPTRole" portType="tns:ExtPT"/>
+    </plnk:partnerLinkType>    
+</definitions>

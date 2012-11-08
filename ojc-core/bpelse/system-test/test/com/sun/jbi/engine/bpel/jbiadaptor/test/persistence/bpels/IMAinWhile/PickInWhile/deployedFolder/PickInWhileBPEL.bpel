@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PickInWhileBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/PickInWhile/PickInWhileBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/PickInWhile/PickInWhileBPEL" xmlns:ns0="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor">
+   <import namespace="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" location="PickInWhileBPEL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" location="WizardCorrelationProperties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="responsePLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" partnerLinkType="tns:PickInWhileWSDL4" partnerRole="ResponsePortTypeRole"/>
+      <partnerLink name="CreateBPLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" partnerLinkType="tns:PickInWhileWSDL" myRole="PickInWhileWSDLPortTypeRole"/>
+      <partnerLink name="correlatePLink" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" partnerLinkType="tns:PickInWhileWSDL3" myRole="correlatingPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="Variable1" type="xsd:int"/>
+      <variable name="ResponseOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" messageType="tns:ResponseMessage"/>
+      <variable name="CorrelatingOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" messageType="tns:PickInWhileWSDLOperationRequest"/>
+      <variable name="PickInWhileWSDLOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" messageType="tns:PickInWhileWSDLOperationRequest"/>
+   </variables>
+   <correlationSets>
+      <correlationSet name="wzrd_set_Receive1_Receive2" properties="ns0:wzrd_prop_string_string"/>
+   </correlationSets>
+   <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="CreateBPLink" operation="PickInWhileWSDLOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" portType="tns:PickInWhileWSDLPortType" variable="PickInWhileWSDLOperationIn">
+         <correlations>
+            <correlation set="wzrd_set_Receive1_Receive2" initiate="yes"/>
+         </correlations>
+      </receive>
+      <assign name="Assign1">
+         <copy>
+            <from>0</from>
+            <to variable="Variable1"/>
+         </copy>
+      </assign>
+      <while name="While1">
+         <condition>$Variable1 &lt;= 3</condition>
+         <sequence name="Sequence1">
+            <assign name="Assign3">
+               <copy>
+                  <from>1 + $Variable1</from>
+                  <to variable="Variable1"/>
+               </copy>
+            </assign>
+            <pick name="Pick1">
+               <onMessage partnerLink="correlatePLink" operation="correlatingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" portType="tns:correlatingPortType" variable="CorrelatingOperationIn">
+                                  <correlations>
+                     <correlation set="wzrd_set_Receive1_Receive2" initiate="no"/>
+                  </correlations>
+                  <assign name="Assign2">
+                     <copy>
+                           <from>concat($CorrelatingOperationIn.inputString, ' ', $Variable1)</from>
+                              <to variable="ResponseOperationIn" part="part1"/>
+                        </copy>
+                  </assign>
+               </onMessage>
+            </pick>
+         </sequence>
+      </while>
+      <invoke name="Invoke2" partnerLink="responsePLink" operation="ResponseOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/PickInWhileWSDL" portType="tns:ResponsePortType" inputVariable="ResponseOperationIn"/>
+   </sequence>
+</process>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DefaultTH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/DefaultTH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/DefaultTH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL6" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL61">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL6" location="IOWSDL6.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:IOWSDL6Plink" myRole="IOWSDL6PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IOWSDL6OperationIn" messageType="ns1:IOWSDL6OperationRequest"/>
+        <variable name="IOWSDL6OperationOut" messageType="ns1:IOWSDL6OperationReply"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL6Operation" portType="ns1:IOWSDL6PortType" variable="IOWSDL6OperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL6OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <ns2:scope name="Scope1">
+            <ns2:faultHandlers>
+                <ns2:catch faultName="ns2:someFault">
+                    <ns2:sequence name="Sequence4">
+                        <ns2:assign name="Assign5">
+                            <ns2:copy>
+                                <ns2:from>concat($outputString, ' \n 5. Caught someFault. Sending Output from FH')</ns2:from>
+                                <ns2:to part="OutputPart" variable="IOWSDL6OperationOut"/>
+                            </ns2:copy>
+                        </ns2:assign>
+                        <ns2:reply name="Reply2" partnerLink="PartnerLinkInOut" operation="IOWSDL6Operation" portType="ns1:IOWSDL6PortType" variable="IOWSDL6OperationOut"/>
+                    </ns2:sequence>
+                </ns2:catch>
+            </ns2:faultHandlers>
+            <ns2:sequence name="Sequence5">
+                <ns2:flow name="Flow1">
+                    <ns2:sequence name="Sequence1">
+                        <ns2:wait name="Wait1">
+                            <ns2:for>'P0Y0M0DT0H0M2S'</ns2:for>
+                        </ns2:wait>
+                        <ns2:assign name="Assign3">
+                            <ns2:copy>
+                                <ns2:from>concat($outputString, ' \n 3. In Branch1: Fault occurs here ')</ns2:from>
+                                <ns2:to variable="outputString"/>
+                            </ns2:copy>
+                        </ns2:assign>
+                        <ns2:throw name="Throw1" faultName="ns2:someFault"/>
+                        </ns2:sequence>
+                        <ns2:sequence name="Sequence2">
+                            <ns2:scope name="RunningScope">
+                                    <ns2:sequence name="Sequence3">
+                                            <ns2:scope name="InnerScope">
+                                                    <ns2:compensationHandler>
+                                                         <ns2:assign name="Assign4">
+                                                             <ns2:copy>
+                                                                 <ns2:from>concat($outputString, ' \n 4. In CH - ', 'Call made by Default TH ')</ns2:from>
+                                                                 <ns2:to variable="outputString"/>
+                                                             </ns2:copy>
+                                                         </ns2:assign>
+                                                    </ns2:compensationHandler>                                                
+                                                    <ns2:assign name="Assign2">
+                                                        <ns2:copy>
+                                                            <ns2:from>concat($outputString, ' \n 2. In Branch2 ')</ns2:from>
+                                                            <ns2:to variable="outputString"/>
+                                                        </ns2:copy>
+                                                    </ns2:assign>
+                                            </ns2:scope>                                                <ns2:wait name="Wait2">
+                                                    <ns2:for>'P0Y0M0DT0H0M30S'</ns2:for>
+                                                </ns2:wait>
+                                        </ns2:sequence>
+                                </ns2:scope>
+                        </ns2:sequence>
+                </ns2:flow>
+                <ns2:assign name="Assign6">
+                    <ns2:copy>
+                        <ns2:from variable="outputString"/>
+                        <ns2:to variable="IOWSDL6OperationOut" part="OutputPart"/>
+                    </ns2:copy>
+                </ns2:assign>
+                <ns2:reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL6Operation" portType="ns1:IOWSDL6PortType" variable="IOWSDL6OperationOut"/>
+            </ns2:sequence>
+        </ns2:scope>
+    </sequence>
+</process>

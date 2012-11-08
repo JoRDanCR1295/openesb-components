@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="QNameAssignment"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignNamespaces/QNameAssignment"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/AssignNamespaces/QNameAssignment" xmlns:ns1="http://j2ee.netbeans.org/wsdl/QNameAssignment">
+    <import namespace="http://j2ee.netbeans.org/wsdl/QNameAssignment" location="QNameAssignment.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:QNameAssignment1" myRole="QNameAssignmentPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="QNameAssignmentOperationOut" messageType="ns1:QNameAssignmentOperationReply"/>
+        <variable name="QNameAssignmentOperationIn" messageType="ns1:QNameAssignmentOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="QNameAssignmentOperation" portType="ns1:QNameAssignmentPortType" variable="QNameAssignmentOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($QNameAssignmentOperationIn.qNamePart, ' in the BPEL assignment')</from>
+                <to part="qNamePart" variable="QNameAssignmentOperationOut"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="QNameAssignmentOperation" portType="ns1:QNameAssignmentPortType" variable="QNameAssignmentOperationOut"/>
+    </sequence>
+</process>

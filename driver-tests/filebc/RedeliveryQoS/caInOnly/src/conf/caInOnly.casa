@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/fileOutOnly" xmlns:ns2="http://j2ee.netbeans.org/wsdl/fileInOnly" xmlns:ns3="http://enterprise.netbeans.org/bpel/oneWayFileInOut/bpIO" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="fileOutOnlyPort" interface-name="ns1:fileOutOnlyPortType" name="endpoint1" service-name="ns1:fileOutOnlyService"/>
+<endpoint endpoint-name="fileInOnlyPort" interface-name="ns2:fileInOnlyPortType" name="endpoint2" service-name="ns2:fileInOnlyService"/>
+<endpoint display-name="PartnerLink1" endpoint-name="fileInOnlyPortTypeRole_myRole" file-path="bpIO.bpel" interface-name="ns2:fileInOnlyPortType" name="endpoint3" process-name="bpIO" service-name="ns3:PartnerLink1"/>
+<endpoint display-name="PartnerLink2" endpoint-name="fileOutOnlyPortTypeRole_partnerRole" file-path="bpIO.bpel" interface-name="ns1:fileOutOnlyPortType" name="endpoint4" process-name="bpIO" service-name="ns3:PartnerLink2"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="bpInOnly.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="caInOnly-bpInOnly" unit-name="bpInOnly" unknown="false" x="164" y="99">
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="caInOnly-sun-file-binding" unit-name="sun-file-binding">
+<ports>
+<port x="67" y="118">
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileInOnly.wsdl#xpointer(/definitions/service[@name='fileInOnlyService']/port[@name='fileInOnlyPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint2"/>
+<provides endpoint="endpoint2"/>
+</port>
+<port x="67" y="39">
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileOutOnly.wsdl#xpointer(/definitions/service[@name='fileOutOnlyService']/port[@name='fileOutOnlyPort'])" xlink:type="simple"/>
+<consumes endpoint="endpoint1"/>
+<provides endpoint="endpoint1"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint2" provider="endpoint3" state="unchanged">
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="2" waitTime="3000">
+        <on-failure>
+          <suspend/>
+        </on-failure>
+    </redelivery>
+</connection>
+<connection consumer="endpoint4" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiasa/Http.wsdl#xpointer(/definitions/portType[@name='HttpPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileInOnly.wsdl#xpointer(/definitions/portType[@name='fileInOnlyPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileOutOnly.wsdl#xpointer(/definitions/portType[@name='fileOutOnlyPortType'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiasa/Http.wsdl#xpointer(/definitions/binding[@name='HttpBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileInOnly.wsdl#xpointer(/definitions/binding[@name='fileInOnlyBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileOutOnly.wsdl#xpointer(/definitions/binding[@name='fileOutOnlyBinding'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiasa/Http.wsdl#xpointer(/definitions/service[@name='HttpService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileInOnly.wsdl#xpointer(/definitions/service[@name='fileInOnlyService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/bpInOnly/fileOutOnly.wsdl#xpointer(/definitions/service[@name='fileOutOnlyService'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowPick" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/FlowPick"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/FlowPick" xmlns:ns1="http://j2ee.netbeans.org/wsdl/FlowPick">
+    <import namespace="http://j2ee.netbeans.org/wsdl/FlowPick" location="FlowPick.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:FlowPickPickPLT" myRole="FlowPickPickPLTRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowPickMainPLT" myRole="FlowPickMainPLTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InputMessage2" messageType="ns1:RequestMessage"/>
+        <variable name="OnAlarmBranch_variable" type="xsd:string"/>
+        <variable name="OnMessageBranch_variable" type="xsd:string"/>
+        <variable name="FlowBranch_variable" type="xsd:string"/>
+        <variable name="OutputMessage1" messageType="ns1:ResponseMessage"/>
+        <variable name="InputMessage1" messageType="ns1:RequestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowPickMainOperation" portType="ns1:MainPortType" variable="InputMessage1" createInstance="yes">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from>'NOT EXECUTED'</from>
+                <to variable="OnAlarmBranch_variable"/>
+            </copy>
+            <copy>
+                <from>'NOT EXECUTED'</from>
+                <to variable="OnMessageBranch_variable"/>
+            </copy>
+            <copy>
+                <from>'NOT EXECUTED'</from>
+                <to variable="FlowBranch_variable"/>
+            </copy>
+        </assign>
+        <flow name="FlowWithPick">
+            <assign name="Assign1">
+                <copy>
+                    <from>concat('EXECUTED:  ', $InputMessage1.FlowBranch)</from>
+                    <to variable="FlowBranch_variable"/>
+                </copy>
+            </assign>
+            <pick name="PickInsideFlow">
+                <onMessage partnerLink="PartnerLink2" operation="FlowPickPickOperation" portType="ns1:PickPortType" variable="InputMessage2">
+                    <correlations>
+                        <correlation set="CorrelationSet1" initiate="no"/>
+                    </correlations>
+                    <assign name="Assign3">
+                        <copy>
+                            <from>concat('EXECUTED:  ', $InputMessage1.OnMessageBranch, $InputMessage2.OnMessageBranch)</from>
+                            <to variable="OnMessageBranch_variable"/>
+                        </copy>
+                    </assign>
+                </onMessage>
+                <onAlarm>
+                    <for>'P0Y0M0DT0H0M30S'</for>
+                    <assign name="Assign4">
+                        <copy>
+                            <from>concat('EXECUTED:  ', $InputMessage1.OnAlarmBranch)</from>
+                            <to variable="OnAlarmBranch_variable"/>
+                        </copy>
+                    </assign>
+                </onAlarm>
+            </pick>
+        </flow>
+        <assign name="Assign5">
+            <copy>
+                <from variable="OnAlarmBranch_variable"/>
+                <to variable="OutputMessage1" part="OnAlarmBranch"/>
+            </copy>
+            <copy>
+                <from variable="OnMessageBranch_variable"/>
+                <to variable="OutputMessage1" part="OnMessageBranch"/>
+            </copy>
+            <copy>
+                <from variable="FlowBranch_variable"/>
+                <to variable="OutputMessage1" part="FlowBranch"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowPickMainOperation" portType="ns1:MainPortType" variable="OutputMessage1"/>
+    </sequence>
+   
+</process>

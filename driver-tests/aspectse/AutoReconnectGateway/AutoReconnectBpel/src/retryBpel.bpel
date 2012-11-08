@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="retryBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/retryBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/retryBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/retryBpel" xmlns:ns2="http://j2ee.netbeans.org/wsdl/retry" xmlns:ns3="http://j2ee.netbeans.org/wsdl/helloPartner">
+    <import namespace="http://j2ee.netbeans.org/wsdl/retryBpel" location="retryBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/retry" location="retry.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/helloPartner" location="helloPartner.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="AspectPartnerLink" partnerLinkType="ns2:retry1" partnerRole="retryPortTypeRole"/>
+        <bpws:partnerLink name="BpelPartnerLink" partnerLinkType="ns1:retryBpel1" myRole="retryBpelPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="RetryBpelOperationOut" messageType="ns1:retryBpelOperationReply"/>
+        <bpws:variable name="RetryOperationOut" messageType="ns3:helloPartnerOperationReply"/>
+        <bpws:variable name="RetryOperationIn" messageType="ns3:helloPartnerOperationRequest"/>
+        <bpws:variable name="RetryBpelOperationIn" messageType="ns1:retryBpelOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="BpelPartnerLink" operation="retryBpelOperation" portType="ns1:retryBpelPortType" variable="RetryBpelOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="RetryBpelOperationIn" part="part1"/>
+                <bpws:to variable="RetryOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="AspectPartnerLink" operation="retryOperation" portType="ns2:retryPortType" inputVariable="RetryOperationIn" outputVariable="RetryOperationOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="RetryOperationOut" part="part1"/>
+                <bpws:to variable="RetryBpelOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="BpelPartnerLink" operation="retryBpelOperation" portType="ns1:retryBpelPortType" variable="RetryBpelOperationOut"/>
+    </sequence>
+</process>

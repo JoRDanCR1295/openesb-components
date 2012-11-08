@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ForEachWithPick" 
+             targetNamespace="http://enterprise.netbeans.org/wsdl/ForEachWithPick"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://enterprise.netbeans.org/wsdl/ForEachWithPick" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    
+    <message name="ForEachInputMsg">
+        <part name="data" type="xsd:string"/>
+        <part name="count" type="xsd:int"/>
+    </message>
+    <message name="ForEachOutputMsg">
+        <part name="data" type="xsd:string"/>
+    </message>
+    <portType name="ForEachPortType">
+        <operation name="ForEachOperation">
+            <input name="input1" message="tns:ForEachInputMsg"/>
+            <output name="output1" message="tns:ForEachOutputMsg"/>
+        </operation>
+    </portType>
+    <portType name="portType2">
+        <operation name="PickOperation2">
+            <input name="input1" message="tns:ForEachInputMsg"/>
+        </operation>
+    </portType>
+    <portType name="InvokePortType">
+        <operation name="InvokeOperation">
+            <input name="input1" message="tns:ForEachOutputMsg"/>
+        </operation>
+    </portType>
+    <binding name="ForEachBinding" type="tns:ForEachPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="ForEachOperation">
+            <input name="input1"><soap:body/></input>
+            <output name="output1"><soap:body/></output>
+        </operation>
+    </binding>
+    <binding name="binding2" type="tns:portType2">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="PickOperation2">
+        	<input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="InvokeOperation">
+        	<input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <service name="ForEachService">
+        <port name="ForEachPort" binding="tns:ForEachBinding">
+            <soap:address location="http://localhost:20000/ForEach"/>
+        </port>
+        <port name="port2" binding="tns:binding2">
+            <soap:address location="http://localhost:18181/ForEachPickOnMsg"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+        	<soap:address location="http://localhost:20001/Invoke"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="ForEachPartnerLinkType">
+        <plink:role name="ForEachPLinkTypeRole" portType="tns:ForEachPortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="partnerlinktype2">
+        <plink:role name="partnerlinktyperole2" portType="tns:portType2"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="InvokePLT">
+    	<plink:role name="InvokePLinkTypeRole" portType="tns:InvokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UpdateBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/UpdateBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/UpdateBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/UpdateTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/UpdateTrigger" location="UpdateTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="UpdateTable.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:UpdateTriggerPartner" myRole="UpdateTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="UpdateTriggerOperationOut" messageType="ns1:UpdateTriggerOperationReply"/>
+      <bpws:variable name="UpdateOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="UpdateIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="UpdateTriggerOperationIn" messageType="ns1:UpdateTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="UpdateTriggerOperation" portType="ns1:UpdateTriggerPortType" variable="UpdateTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>$UpdateTriggerOperationIn.part1/ns0:TestSal</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:TestSal</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$UpdateTriggerOperationIn.part1/ns0:TestID</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:TestID</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$UpdateTriggerOperationIn.part1/ns0:TestFlag</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:TestFlag</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$UpdateTriggerOperationIn.part1/ns0:TestName</bpws:from>
+            <bpws:to>$UpdateIn.part/ns0:TestName</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="update" portType="ns2:jdbcPortType" inputVariable="UpdateIn" outputVariable="UpdateOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="UpdateOut" part="part"/>
+            <bpws:to variable="UpdateTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="UpdateTriggerOperation" portType="ns1:UpdateTriggerPortType" variable="UpdateTriggerOperationOut"/>
+   </sequence>
+</process>

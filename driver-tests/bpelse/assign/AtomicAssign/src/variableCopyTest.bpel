@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="variableCopyTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AtomicAssign/variableCopyTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AtomicAssign/variableCopyTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/variableCopyTest" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/variableCopyTest" location="variableCopyTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:variableCopyTest1" myRole="variableCopyTestPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="VariableCopyTestOperationOut" messageType="ns1:variableCopyTestOperationReply"/>
+        <bpws:variable name="VariableCopyTestOperationIn" messageType="ns1:variableCopyTestOperationRequest"/>
+    </variables>
+    <faultHandlers>
+        <bpws:catchAll>
+            <bpws:sequence name="Sequence1">
+                <bpws:assign name="Assign2">
+                    <bpws:copy>
+                        <bpws:from variable="VariableCopyTestOperationIn" part="part1"/>
+                        <bpws:to variable="VariableCopyTestOperationOut" part="part1"/>
+                    </bpws:copy>
+                </bpws:assign>
+                <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="variableCopyTestOperation" portType="ns1:variableCopyTestPortType" variable="VariableCopyTestOperationOut"/>
+            </bpws:sequence>
+        </bpws:catchAll>
+    </faultHandlers>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="variableCopyTestOperation" portType="ns1:variableCopyTestPortType" variable="VariableCopyTestOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from> ( $VariableCopyTestOperationIn.part1/ns0:int + 1 ) </bpws:from>
+                <bpws:to>$VariableCopyTestOperationIn.part1/ns0:int</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <!-- this copy is designed to fail -->
+                <bpws:from>$VariableCopyTestOperationOut.part1/ns0:string</bpws:from>
+                <bpws:to>$VariableCopyTestOperationOut.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+    </sequence>
+</process>

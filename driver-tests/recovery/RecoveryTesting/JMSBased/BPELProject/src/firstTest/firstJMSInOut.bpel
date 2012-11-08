@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="firstJMSInOut"
+         targetNamespace="http://www.seebeyond.com/eInsight/firstJMSInOut"
+         xmlns:tns="http://www.seebeyond.com/eInsight/firstJMSInOut"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/BPELProject/JMSIn"
+         xmlns:ns1="http://localhost/BPELProject/JMSOut"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://localhost/BPELProject/JMSIn"
+            location="JMSIn.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://localhost/BPELProject/JMSOut"
+            location="JMSOut.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="jmsInLink"
+                     partnerLinkType="ns0:JMSInLinkType"
+                     myRole="Server"/>
+        <partnerLink name="jmsOutLink"
+                     partnerLinkType="ns1:JMSOutLinkType"
+                     partnerRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operation_JMSIn_Output"
+                  messageType="ns0:message_JMSIn"></variable>
+        <variable name="operation_JMSOut_Input"
+                  messageType="ns1:message_JMSOut"></variable>
+    </variables>
+    <sequence>
+        <receive name="operation_JMSIn"
+                 partnerLink="jmsInLink"
+                 portType="ns0:portType_JMSIn"
+                 operation="operation_JMSIn"
+                 variable="operation_JMSIn_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from variable="operation_JMSIn_Output"
+                      part="part_JMSIn"/>
+                <to variable="operation_JMSOut_Input"
+                    part="part_JMSOut"/>
+            </copy>
+            <copy>
+                <from variable="operation_JMSIn_Output"
+                      part="IdProperty"/>
+                <to variable="operation_JMSOut_Input"
+                    part="IdProperty"/>                    
+            </copy>
+        </assign>
+        <wait>
+            <for>'P0Y0M0DT0H0M1S'</for>
+        </wait>
+        <invoke name="operation_JMSOut"
+                partnerLink="jmsOutLink"
+                portType="ns1:portType_JMSOut"
+                operation="operation_JMSOut"
+                inputVariable="operation_JMSOut_Input"></invoke>
+    </sequence>
+</process>

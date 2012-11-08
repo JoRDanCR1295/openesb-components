@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://www.seebeyond.com/eInsight/simpleCorrelationJMSInOut" xmlns:ns2="http://localhost/BPELProject/simpleCorrelationJMSIn" xmlns:ns3="http://www.seebeyond.com/eInsight/firstJMSInOut" xmlns:ns4="http://localhost/BPELProject/JMSIn" xmlns:ns5="http://localhost/BPELProject/simpleCorrelationJMSOut" xmlns:ns6="http://localhost/BPELProject/JMSOut" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="Server1_myRole" interface-name="ns2:portType_JMSIn1" name="endpoint1" service-name="ns1:jmsInLink1"/>
+<endpoint endpoint-name="Server_myRole" interface-name="ns2:portType_JMSIn" name="endpoint2" service-name="ns1:jmsInLink"/>
+<endpoint endpoint-name="Server_myRole" interface-name="ns4:portType_JMSIn" name="endpoint3" service-name="ns3:jmsInLink"/>
+<endpoint endpoint-name="Server_partnerRole" interface-name="ns5:portType_JMSOut" name="endpoint4" service-name="ns1:jmsOutLink"/>
+<endpoint endpoint-name="Server_partnerRole" interface-name="ns6:portType_JMSOut" name="endpoint5" service-name="ns3:jmsOutLink"/>
+<endpoint endpoint-name="port_simpleCorrelationJMSOut" interface-name="ns5:portType_JMSOut" name="endpoint6" service-name="ns5:service_simpleCorrelationJMSOut"/>
+<endpoint endpoint-name="port_JMSOut" interface-name="ns6:portType_JMSOut" name="endpoint7" service-name="ns6:service_JMSOut"/>
+<endpoint endpoint-name="port_JMSIn" interface-name="ns2:portType_JMSIn" name="endpoint8" service-name="ns2:service_simpleCorrelationJMSIn"/>
+<endpoint endpoint-name="port_JMSIn" interface-name="ns4:portType_JMSIn" name="endpoint9" service-name="ns4:service_JMSIn"/>
+<endpoint endpoint-name="port_JMSIn1" interface-name="ns2:portType_JMSIn1" name="endpoint10" service-name="ns2:service_simpleCorrelationJMSIn"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="ClusterBPEL.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="ClusterJBI-ClusterBPEL" unit-name="ClusterBPEL" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint1"/>
+<provides endpoint="endpoint2"/>
+<provides endpoint="endpoint3"/>
+<consumes endpoint="endpoint4"/>
+<consumes endpoint="endpoint5"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="ClusterJBI-sun-jms-binding" unit-name="sun-jms-binding">
+<ports>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/service[@name='service_simpleCorrelationJMSIn']/port[@name='port_JMSIn'])" xlink:type="simple"/>
+<consumes endpoint="endpoint8"/>
+<consumes endpoint="endpoint9"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/service[@name='service_simpleCorrelationJMSIn']/port[@name='port_JMSIn1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint10"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSOut.wsdl#xpointer(/definitions/service[@name='service_simpleCorrelationJMSOut']/port[@name='port_simpleCorrelationJMSOut'])" xlink:type="simple"/>
+<provides endpoint="endpoint6"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSIn.wsdl#xpointer(/definitions/service[@name='service_JMSIn']/port[@name='port_JMSIn'])" xlink:type="simple"/>
+<consumes endpoint="endpoint8"/>
+<consumes endpoint="endpoint9"/>
+</port>
+<port x="-1" y="-1">
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSOut.wsdl#xpointer(/definitions/service[@name='service_JMSOut']/port[@name='port_JMSOut'])" xlink:type="simple"/>
+<provides endpoint="endpoint7"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint8" provider="endpoint2" state="unchanged"/>
+<connection consumer="endpoint9" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint4" provider="endpoint6" state="unchanged"/>
+<connection consumer="endpoint5" provider="endpoint7" state="unchanged"/>
+<connection consumer="endpoint10" provider="endpoint1" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/portType[@name='portType_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/portType[@name='portType_JMSIn1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSOut.wsdl#xpointer(/definitions/portType[@name='portType_JMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSIn.wsdl#xpointer(/definitions/portType[@name='portType_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSOut.wsdl#xpointer(/definitions/portType[@name='portType_JMSOut'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/binding[@name='binding_simpleCorrelationJMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/binding[@name='binding_simpleCorrelationJMSIn1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSOut.wsdl#xpointer(/definitions/binding[@name='binding_simpleCorrelationJMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSIn.wsdl#xpointer(/definitions/binding[@name='binding_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSOut.wsdl#xpointer(/definitions/binding[@name='binding_JMSOut'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSIn.wsdl#xpointer(/definitions/service[@name='service_simpleCorrelationJMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleCorrelation/JMSOut.wsdl#xpointer(/definitions/service[@name='service_simpleCorrelationJMSOut'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSIn.wsdl#xpointer(/definitions/service[@name='service_JMSIn'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/ClusterBPEL/simpleEcho/JMSOut.wsdl#xpointer(/definitions/service[@name='service_JMSOut'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

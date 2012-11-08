@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://complex.test14.imolinfo.it" xmlns:imolaejb="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/"
+	xmlns:tns="http://complex.test14.imolinfo.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc11="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+  <wsdl:types>
+            
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://complex.test14.imolinfo.it">
+<xsd:element name="throwException">
+<xsd:complexType/>
+</xsd:element>
+<xsd:element name="throwExceptionResponse">
+<xsd:complexType/>
+</xsd:element>
+<xsd:complexType name="UserProfileException"/>
+<xsd:element name="UserProfileException" type="tns:UserProfileException"/>
+
+<xsd:element name="getUserProfile">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="in0" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="UserProfile">
+<xsd:sequence>
+<xsd:element minOccurs="1" name="address" nillable="true" type="xsd:string"/>
+<xsd:element minOccurs="1" name="age" type="xsd:long"/>
+<xsd:element minOccurs="1" name="name" nillable="true" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="getUserProfileResponse">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element maxOccurs="1" minOccurs="1" name="out" nillable="true" type="tns:UserProfile"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
+
+</wsdl:types>
+
+<imolaejb:types>
+        <imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfile" UID="8891581763048162223"/>
+        <imolaejb:serialVersionUID className="it.imolinfo.test14.complex.UserProfileException" UID="-6098976502009828357"/>
+</imolaejb:types>
+
+
+
+  <wsdl:message name="getUserProfileResponse">
+    <wsdl:part name="parameters" element="tns:getUserProfileResponse"/>
+  </wsdl:message>
+  <wsdl:message name="throwExceptionResponse">
+    <wsdl:part name="parameters" element="tns:throwExceptionResponse"/>
+  </wsdl:message>
+  <wsdl:message name="getUserProfileRequest">
+    <wsdl:part name="parameters" element="tns:getUserProfile"/>
+  </wsdl:message>
+  <wsdl:message name="throwExceptionRequest">
+    <wsdl:part name="parameters" element="tns:throwException"/>
+  </wsdl:message>
+  <wsdl:message name="UserProfileException">
+    <wsdl:part name="UserProfileException" element="tns:UserProfileException"/>
+  </wsdl:message>
+  
+  <wsdl:portType name="TestComplexSessionRemote">
+    <wsdl:operation name="throwException">
+      <wsdl:input name="throwExceptionRequest" message="tns:throwExceptionRequest"/>
+      <wsdl:output name="throwExceptionResponse" message="tns:throwExceptionResponse"/>
+      <wsdl:fault name="UserProfileException" message="tns:UserProfileException"/>    
+    </wsdl:operation>
+    <wsdl:operation name="getUserProfile">
+      <wsdl:input name="getUserProfileRequest" message="tns:getUserProfileRequest"/>
+      <wsdl:output name="getUserProfileResponse" message="tns:getUserProfileResponse"/>      
+    </wsdl:operation>    
+  </wsdl:portType>
+  
+  <wsdl:binding name="TestComplexSessionRemoteBinding" type="tns:TestComplexSessionRemote">
+      
+      <imolaejb:binding>
+		<imolaejb:orb>
+			<imolaejb:property name="org.omg.CORBA.ORBInitialPort" value="1050"/>
+			<imolaejb:property name="org.omg.CORBA.ORBInitialHost" value="localhost"/>
+		</imolaejb:orb>
+	 </imolaejb:binding>
+  
+    <wsdl:operation name="throwException">      
+      <wsdl:input name="throwExceptionRequest"/>
+      <wsdl:output name="throwExceptionResponse"/>        
+      <wsdl:fault name="UserProfileException"/>        
+    </wsdl:operation>
+    <wsdl:operation name="getUserProfile">      
+      <wsdl:input name="getUserProfileRequest"/>        
+      <wsdl:output name="getUserProfileResponse"/>
+    </wsdl:operation>
+
+  </wsdl:binding>
+  
+  <wsdl:service name="TestComplexSessionRemote">
+    <wsdl:port name="TestComplexSessionRemotePort" binding="tns:TestComplexSessionRemoteBinding">      
+    	<imolaejb:address name="corbaname:iiop:127.0.0.1:3700#ejb/TestComplexSessionBean" localizationType="corbaname"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

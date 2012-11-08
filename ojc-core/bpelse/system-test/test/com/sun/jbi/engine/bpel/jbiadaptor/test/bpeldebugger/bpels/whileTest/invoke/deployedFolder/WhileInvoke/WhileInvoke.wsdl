@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="WhileInvoke" 
+             targetNamespace="http://sun.com/wsdl/WhileInvoke"
+             xmlns:tns="http://sun.com/wsdl/WhileInvoke"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+    <message name="WhileInvokeMessage">
+        <part name="string" type="xsd:string"/>
+        <part name="counter" type="xsd:int"/>
+    </message>
+    
+    <portType name="WhileInvokePortType">
+        <operation name="WhileInvokeOperation">
+            <input name="input1" message="tns:WhileInvokeMessage"/>
+            <output name="output1" message="tns:WhileInvokeMessage"/>
+        </operation>
+    </portType>
+    <portType name="invokePortType">
+        <operation name="oneWayInvokeOper">
+            <input name="input" message="tns:WhileInvokeMessage"/>
+        </operation>
+    </portType>
+    
+    <binding name="WhileInvokeBinding" type="tns:WhileInvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="WhileInvokeOperation">
+            <input name="input1"><soap:body/></input>
+            <output name="output1"><soap:body/></output>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="oneWayInvokeOper">
+            <input name="input"><soap:body/></input>
+        </operation>
+    </binding>
+    
+    <service name="WhileInvokeService">
+        <port name="WhileInvokePort" binding="tns:WhileInvokeBinding">
+            <soap:address location="http://localhost:20000/WhileInvoke"/>
+        </port>
+        <port name="InvokeWhilePort" binding="tns:InvokeWhileBinding">
+            <soap:address location="http://localhost:20001/WhileInvoke"/>
+        </port>
+    </service>
+    
+    <plink:partnerLinkType name="WhileInvokePartnerLinkType">
+        <plink:role name="WhileInvokePartnerLinkTypeRole" portType="tns:WhileInvokePortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="WhileInvokePLT">
+        <plink:role name="WhileInvokeRole" portType="tns:invokePortType"/>
+    </plink:partnerLinkType>
+</definitions>

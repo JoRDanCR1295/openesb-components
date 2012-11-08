@@ -1,0 +1,146 @@
+/*
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the "License").  You may not use this file except
+ * in compliance with the License.
+ *
+ * You can obtain a copy of the license at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * HEADER in each file and include the License file at
+ * https://open-esb.dev.java.net/public/CDDLv1.0.html.
+ * If applicable add the following below this CDDL HEADER,
+ * with the fields enclosed by brackets "[]" replaced with
+ * your own identifying information: Portions Copyright
+ * [year] [name of copyright owner]
+ */
+
+/*
+ * Copyright 2004-2006 Sun Microsystems, Inc. All Rights Reserved.
+ */
+
+/*
+ * __NAME__.java
+ *
+ * Created on __DATE__, __TIME__
+ */
+
+package JBISupport.codegen.components.binding;
+
+import com.sun.jbi.sample.component.runtime.RuntimeHelper;
+import com.sun.jbi.sample.component.runtime.ServiceDescriptor;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+import javax.management.StandardMBean;
+
+/**
+ * This class provides the management of the JMXEndpointMBean. It has methods to
+ * create the mbean implemenation, register and unregister the mbean to enable/disable
+ * the endpiont provided by the BC to invoke the service using jmx.
+ *
+ * @author  __USER__
+ */
+public class JMXEndpointManager {
+    
+    /**
+     * jmx domain name with which the JMXEndpointMBeans will be registered to the mbean
+     * server.
+     */
+    public static final String JMX_DOMAIN = "com.sun.jbi.sample.component.jmx.binding";
+    
+    /**
+     * key in the mbean object name of the JMXEndpointMBean
+     */
+    public static final String ENDPOINT_ADDRESS_MBEAN = "endpoint-address-mbean";
+    
+    /**
+     * Creates a new instance of JMXEndpointManager
+     */
+    private JMXEndpointManager() {
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public static JMXEndpointManager newInstance() {
+        return new JMXEndpointManager();
+    }
+    
+    /**
+     *
+     * @param endpointAddressMBean
+     * @throws javax.management.MalformedObjectNameException
+     * @return
+     */
+    public static ObjectName createJMXEndpointMBeanObjectName(String endpointAddressMBean)
+    throws MalformedObjectNameException {
+        String objectName = JMX_DOMAIN + ":" + ENDPOINT_ADDRESS_MBEAN + "=" + endpointAddressMBean;
+        return new ObjectName(objectName);
+    }
+    
+    /**
+     *
+     * @return
+     */
+    protected MBeanServer getMBeanServer() {
+        return RuntimeHelper.getComponentContext().getMBeanServer();
+    }
+    
+    /**
+     *
+     * @param endpointAddressMBean
+     * @param serviceDesc
+     * @throws javax.management.NotCompliantMBeanException
+     * @throws javax.management.MalformedObjectNameException
+     * @throws javax.management.InstanceAlreadyExistsException
+     * @throws javax.management.MBeanRegistrationException
+     */
+    public void registerJMXEndpointMBean(String endpointAddressMBean, ServiceDescriptor serviceDesc)
+    throws NotCompliantMBeanException, MalformedObjectNameException,
+        InstanceAlreadyExistsException, MBeanRegistrationException {
+        
+        JMXEndpointMBean impl = createJMXEndpointMBean(serviceDesc);
+        StandardMBean mbean = new StandardMBean(impl, JMXEndpointMBean.class);
+        ObjectName objectName = createJMXEndpointMBeanObjectName(endpointAddressMBean);
+        this.getMBeanServer().registerMBean(mbean, objectName);
+    }
+    
+    /**
+     *
+     * @param endpointAddressMBean
+     * @throws javax.management.MalformedObjectNameException
+     */
+    public void unregisterJMXEndpointMBean(String endpointAddressMBean)
+    throws MalformedObjectNameException {
+        
+        ObjectName objectName = createJMXEndpointMBeanObjectName(endpointAddressMBean);
+        try {
+            this.getMBeanServer().unregisterMBean(objectName);
+        } catch (MBeanRegistrationException ex) {
+            ex.printStackTrace();
+        } catch (InstanceNotFoundException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     *
+     * @param serviceDesc
+     * @return
+     */
+    public JMXEndpointMBean createJMXEndpointMBean(ServiceDescriptor serviceDesc) {
+        JMXEndpointMBean impl = null;
+        impl = new JMXEndpointMBeanImpl(serviceDesc);
+        return impl;
+    }
+    
+}

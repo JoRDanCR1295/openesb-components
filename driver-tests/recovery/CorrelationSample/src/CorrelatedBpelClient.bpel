@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="CorrelatedBpelClient" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/CorrelatedBpelClient"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/CorrelatedBpelClient" xmlns:ns1="http://j2ee.netbeans.org/wsdl/CorrelatedBpelClient" xmlns:ns2="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" xmlns:ns0="http://xml.netbeans.org/schema/CorrelationSample">
+    <import location="CorrelatedBpelClient.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpelClient"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" location="CorrelatedBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:CorrelatedBpelClientPartner" myRole="CorrelatedBpelClientPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkC" partnerLinkType="ns1:PostReplyToJMSPartner" partnerRole="PostReplyToJMSPortTypeRole"/>
+        <partnerLink name="PartnerLinkB" partnerLinkType="ns2:CorrelatedBpelPartner" myRole="CallBackPortTypeRole" partnerRole="CallInPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutMessage" messageType="ns2:CallBackOperationRequest"/>
+        <variable name="InMessage" messageType="ns2:CallInOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns1:correlationId"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Start" createInstance="yes" partnerLink="PartnerLinkA" operation="MessageInOperation" portType="ns1:CorrelatedBpelClientPortType" variable="InMessage"></receive>
+        <bpws:assign name="DummyAssign1">
+            <bpws:copy>
+                <bpws:from>concat($InMessage.InMessage/ns0:InMessage, ' Reached 1st Node.')</bpws:from>
+                <bpws:to>$InMessage.InMessage/ns0:InMessage</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <invoke name="Invoke" partnerLink="PartnerLinkB" operation="CallInOperation" portType="ns2:CallInPortType" inputVariable="InMessage">
+            <correlations>
+                <correlation set="CorrelationSet" initiate="yes"/>
+            </correlations>
+        </invoke>
+        <receive name="Receive" partnerLink="PartnerLinkB" operation="CallBackOperation" portType="ns2:CallBackPortType" createInstance="no" variable="OutMessage">
+            <correlations>
+                <correlation set="CorrelationSet" initiate="no"/>
+            </correlations>
+        </receive>
+        <bpws:assign name="DummyAssign2">
+            <bpws:copy>
+                <bpws:from>concat($OutMessage.OutMessage/ns0:OutMessage, ' Reached 2nd Node.')</bpws:from>
+                <bpws:to>$OutMessage.OutMessage/ns0:OutMessage</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="InvokeJMS" partnerLink="PartnerLinkC" operation="PostReplyToJMSOperation" portType="ns1:PostReplyToJMSPortType" inputVariable="OutMessage"/>
+    </sequence>
+   
+</process>

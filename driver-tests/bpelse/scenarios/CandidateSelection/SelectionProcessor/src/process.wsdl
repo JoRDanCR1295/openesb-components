@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="process" targetNamespace="http://j2ee.netbeans.org/wsdl/process"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/process" 
+    xmlns:ns1="http://xml.netbeans.org/schema/candidate" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/candidate"
+            xmlns:tns="http://xml.netbeans.org/schema/candidate"
+            elementFormDefault="qualified">
+            <!--xsd:import schemaLocation="candidate.xsd" namespace="http://xml.netbeans.org/schema/candidate"/-->
+    <xsd:simpleType name="level">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="beginner"/>
+            <xsd:enumeration value="intermediate"/>
+            <xsd:enumeration value="expert"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="firm">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="name" type="xsd:string"></xsd:element>
+                <xsd:element name="fromdate" type="xsd:date"></xsd:element>
+                <xsd:element name="todate" type="xsd:date"></xsd:element>
+                <xsd:element name="technology" maxOccurs="unbounded">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element name="name" type="xsd:string"></xsd:element>
+                            <xsd:element name="expertise" type="tns:level"></xsd:element>
+                            <xsd:element name="numofyears" type="xsd:float"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="candidate">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="firstname" type="xsd:string"></xsd:element>
+                <xsd:element name="lastname" type="xsd:string"></xsd:element>
+                <xsd:element name="ssn" type="xsd:int"></xsd:element>
+                <xsd:element name="dob" type="xsd:date"></xsd:element>
+                <xsd:element name="gender">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="male|female"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="phone" type="xsd:int"></xsd:element>
+                <xsd:element name="email" type="xsd:string"></xsd:element>
+                <xsd:element name="address">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element name="street" type="xsd:string"></xsd:element>
+                            <xsd:element name="apt" type="xsd:string" minOccurs="0"></xsd:element>
+                            <xsd:element name="state" type="xsd:string"></xsd:element>
+                            <xsd:element name="zip" type="xsd:int"></xsd:element>
+                            <xsd:element name="country" type="xsd:string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="degree">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="masters|bachelors"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="experience">
+                    <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                        <xsd:sequence>
+                            <xsd:element ref="tns:firm" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="applydate" type="xsd:date"></xsd:element>
+                <xsd:element name="selected" default="no">
+                    <xsd:simpleType>
+                        <xsd:restriction xmlns:xsd="http://www.w3.org/2001/XMLSchema" base="xsd:string">
+                            <xsd:pattern value="no|yes"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>            
+            <xsd:element name="candidates">
+                <xsd:complexType xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                    <xsd:sequence>
+                        <xsd:element ref="tns:candidate" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="CandidateList">
+        <wsdl:part name="listpart" element="ns1:candidates"/>
+    </message>
+    <message name="CandidateInfo">
+        <wsdl:part name="infopart" element="ns1:candidate"/>
+    </message>
+    <message name="SelectionResult">
+        <wsdl:part name="resultpart" type="xsd:boolean"/>
+    </message>
+    <portType name="CandidateList">
+        <wsdl:operation name="CandidateListOper">
+            <wsdl:input name="input1" message="tns:CandidateList"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="SelectionPT">
+        <wsdl:operation name="SelectionOper">
+            <wsdl:input name="input1" message="tns:CandidateInfo"/>
+            <wsdl:output name="output1" message="tns:SelectionResult"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="CandidateListBinding" type="tns:CandidateList">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="CandidateListOper">
+            <wsdl:input name="input1">
+                <soap:body parts="listpart" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="SelectionBinding" type="tns:SelectionPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="SelectionOper">
+            <wsdl:input name="input1">
+                <soap:body parts="infopart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="resultpart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="CandidateListServ">
+        <wsdl:port name="CandidateListPort" binding="tns:CandidateListBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SelectionProcess/process/CandidateListPort"/>
+        </wsdl:port>
+    </service>
+    <service name="SelectionServ">
+        <wsdl:port name="SelectionPort" binding="tns:SelectionBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/SelectionProcess/process/SelectionPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="ListProcessorPLT">
+        <plnk:role name="CandidateListRole" portType="tns:CandidateList"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="SelectionProcessorPLT">
+        <plnk:role name="SelectionPTRole" portType="tns:SelectionPT"/>
+    </plnk:partnerLinkType>
+</definitions>

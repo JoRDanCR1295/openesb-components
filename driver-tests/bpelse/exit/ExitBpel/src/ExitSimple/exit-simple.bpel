@@ -1,0 +1,50 @@
+
+<process name="exit-simple"
+                 targetNamespace="http://www.seebeyond.com/eInsight/exit-simple"
+                 xmlns:tns="http://www.seebeyond.com/eInsight/exit-simple"
+                 xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns0="urn:exit-simple"
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:exit-simple"
+                    location="exit-simple.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/">
+    </import>
+    <partnerLinks>
+        <partnerLink name="p1"
+                             partnerLinkType="ns0:HelloIFServiceLink"
+                             myRole="exit-simpleIFRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="sayHello_In" messageType="ns0:HelloIF_sayHello">
+        </variable>
+        <variable name="sayHello_Out" messageType="ns0:HelloIF_sayHelloResponse">
+        </variable>
+    </variables>
+    <sequence>
+        <receive partnerLink="p1"
+                         portType="ns0:exit-simpleIF"
+                         operation="sayHello"
+                         variable="sayHello_In"
+                         createInstance="yes"/>
+        <assign>
+            <copy>
+                <from>'Assigned in business process'</from>
+                <to>$sayHello_In.body/string</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>$sayHello_In.body/ns0:string = 'Assigned in business process'</condition>
+            <exit/>
+        </if>
+        <assign name="Assign6"> <!-- hot fix -->
+            <copy>
+                <from variable="sayHello_Out"/>
+                <to variable="sayHello_Out"/>
+            </copy>
+        </assign>
+        <reply partnerLink="p1"
+                         portType="ns0:exit-simpleIF"
+                         operation="sayHello"
+                         variable="sayHello_Out"/>
+    </sequence>
+</process>

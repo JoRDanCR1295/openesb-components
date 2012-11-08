@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://enterprise.netbeans.org/bpel/OneWayBpelService1Bpel/OneWayBpelService1" xmlns:ns2="http://j2ee.netbeans.org/wsdl/OutputToFile" xmlns:ns3="http://j2ee.netbeans.org/wsdl/OneWayBpelService1" xmlns:ns4="http://j2ee.netbeans.org/wsdl/RedeliveryRedirectToBPFail1" xmlns:ns5="http://enterprise.netbeans.org/bpel/RedeliveryRedirectToBPFail1Bpel/RedeliveryRedirectToBPFail1" version="1.0">
+<service-assembly>
+<identification>
+<name>RedeliveryRedirectCompApp</name>
+<description>Represents the Service Assembly of RedeliveryRedirectCompApp</description>
+</identification>
+<connections>
+<connection>
+<consumer endpoint-name="OutputToFilePortTypeRole_partnerRole" service-name="ns1:PartnerLink2"/>
+<provider endpoint-name="OutputToFilePort" service-name="ns2:OutputToFileService"/>
+</connection>
+<connection>
+<consumer endpoint-name="OneWayBpelService1InPort" service-name="ns3:OneWayBpelService1InService"/>
+<provider endpoint-name="OneWayBpelService1InPortTypeRole_myRole" service-name="ns1:PartnerLink1"/>
+</connection>
+<connection>
+<consumer endpoint-name="RedeliveryRedirectToBPFail1Port" service-name="ns4:RedeliveryRedirectToBPFail1Service"/>
+<provider endpoint-name="RedeliveryRedirectToBPFail1PortTypeRole_myRole" service-name="ns5:PartnerLink1"/>
+</connection>
+<connection>
+<consumer endpoint-name="DummyWsdlPortTypeRole_partnerRole" service-name="ns5:PartnerLink2"/>
+<provider endpoint-name="DummyWsdlPort" service-name="ns3:DummyWsdlService"/>
+</connection>
+</connections>
+<connections xmlns="http://www.sun.com/jbi/qos">
+<connection>
+<consumer endpoint-name="DummyWsdlPortTypeRole_partnerRole" service-name="ns5:PartnerLink2"/>
+<provider endpoint-name="DummyWsdlPort" service-name="ns3:DummyWsdlService"/>
+<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="1" waitTime="">
+                <on-failure>
+                    <redirect endpoint-name="OneWayBpelService1InPortTypeRole_myRole" operation="OneWayBpelService1InOperation" service-name="ns1:PartnerLink1"/>
+                </on-failure>
+            </redelivery>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

@@ -1,0 +1,122 @@
+//From: ftp://ftp.3gpp.org/Specs/2005-03/Rel-6/32_series/32303-630.zip
+//File: ManagedGenericIRPConstDefs.idl
+
+#ifndef _MANAGEDGENERICIRPCONSTDEFS_IDL_
+#define _MANAGEDGENERICIRPCONSTDEFS_IDL_
+
+#include "TimeBase.idl"
+
+// This statement must appear after all include statements
+#pragma prefix "3gppsa5.org"
+
+/* ## Module: ManagedGenericIRPConstDefs
+This module contains definitions commonly used among all IRPs such as Alarm IRP.
+================================================================
+*/
+module ManagedGenericIRPConstDefs
+{
+   /*
+   Definition imported from CosTime.  
+   The time refers to time in Greenwich Time Zone.
+   It also consists of a time displacement factor in the form of minutes of
+   displacement from the Greenwich Meridian.
+   */
+   typedef TimeBase::UtcT IRPTime;
+
+   enum Signal {OK, FAILURE, PARTIALFAILURE};
+
+   /*
+   The VersionNumber is a string that identifies the IRP specification name
+   and its version number.  See definition "IRP document version number 
+   string" or "IRPVersion". 
+   
+   The VersionNumberSet is a sequenece of such VersionNumber.  It is returned
+   by get_XXX_IRP_versions().  The sequence order has no significance.
+   */
+   typedef string VersionNumber;
+   typedef sequence <VersionNumber> VersionNumberSet;
+
+   typedef string MethodName;
+   typedef string ParameterName;
+   typedef sequence <ParameterName> ParameterList;
+
+   /*
+   The Method defines the structure to be returned as part of
+   get_supported_operations_profile().  The name shall be the actual method
+   name (ex. "attach_push", "change_subscription_filter", etc.)
+   The parameter_list contains a list of strings.  Each string shall be
+   the actual parameter name (ex. "manager_reference", "filter", etc.)
+   */
+   struct Method
+   {
+      MethodName name;
+      ParameterList parameter_list;
+   };
+
+   /*
+   List of all methods and their associated parameters.
+   */
+   typedef sequence <Method> MethodList;
+
+   /*
+   StringTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union StringTypeOpt switch (boolean)
+   {
+      case TRUE: string value;
+	case FALSE: string value1;
+
+   };
+
+   /*
+   ShortTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union ShortTypeOpt switch (boolean)
+   {
+      case TRUE: short value;
+	case FALSE: string value1;
+   };
+
+   /*
+   UnsignedShortTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union UnsignedShortTypeOpt switch (boolean)
+   {
+      case TRUE: unsigned short value;
+	case FALSE: unsigned short value1;
+
+   };
+
+   /*
+   LongTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union LongTypeOpt switch (boolean)
+   {
+      case TRUE: long value;
+	case FALSE: long value1;
+
+   };
+
+   /*
+   UnsignedLongTypeOpt is a type carrying an optional parameter.
+   If the boolean is TRUE, then the value is present.
+   Otherwise the value is absent.
+   */
+   union UnsignedLongTypeOpt switch (boolean)
+   {
+      case TRUE: unsigned long value;
+	case FALSE: unsigned long value1;
+
+   };
+};
+
+#endif  // _MANAGEDGENERICIRPCONSTDEFS_IDL_
+

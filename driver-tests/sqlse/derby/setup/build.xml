@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SQLSE-Derby-Setup" default="SQLSE-Derby-Setup" basedir=".">
+    <description>Setup tables for JDBCBC</description>
+    <property name="database.baseURL" value="jdbc:derby://localhost:1527/" />
+    <property name="database.driver" value="org.apache.derby.jdbc.ClientDriver" />
+    <property name="database.driver.classpath" value="../glassfish/javadb/lib/derbyclient.jar" />
+    <property name="database.name" value="sample" />
+    <property name="database.user" value="app" />
+    <property name="database.password" value="app" />
+
+    <target name="SQLSE-Derby-Setup">
+        <sql driver="${database.driver}" url="${database.baseURL}/${database.name};create=true" 		
+			userid="${database.user}" password="${database.password}">
+            <classpath>
+                <pathelement location="${database.driver.classpath}"/>
+            </classpath>
+
+
+            create schema "COMPANY"; 
+
+
+
+            create table "COMPANY"."DISCOUNT_CODE"
+            (
+                "DISCOUNT_CODE" CHAR(1) not null primary key,
+                "RATE" DECIMAL(4) default NULL
+            );
+
+
+
+            create table "COMPANY"."MICRO_MARKETS"
+            (
+                "ZIP_CODE" VARCHAR(10) not null primary key,
+                "RADIUS" FLOAT(26) default NULL,
+                "AREA_LENGTH" DOUBLE default NULL,
+                "AREA_WIDTH" DOUBLE default NULL
+            );
+
+
+
+            create table "COMPANY"."CUSTOMER"
+            (
+                "CUSTOMER_NUM" INTEGER not null primary key,
+                "DISCOUNT_CODE" CHAR(1) not null,
+                "ZIP" VARCHAR(10) not null,
+                "NAME" VARCHAR(30) default 'NULL',
+                "ADDR_LN1" VARCHAR(30) default 'NULL',
+                "ADDR_LN2" VARCHAR(30) default 'NULL',
+                "CITY" VARCHAR(25) default 'NULL',
+                "STATE" CHAR(2) default 'NULL',
+                "PHONE" CHAR(12) default 'NULL',
+                "FAX" CHAR(12) default 'NULL',
+                "EMAIL" VARCHAR(40) default 'NULL',
+                "CREDIT_LIMIT" INTEGER default NULL,
+                "LAST_SALE_DATE" DATE default NULL,
+                "LAST_SALE_TIME" TIME default NULL,
+                CONSTRAINT FK_DISCOUNT_CODE FOREIGN KEY (DISCOUNT_CODE) REFERENCES "COMPANY"."DISCOUNT_CODE"(DISCOUNT_CODE) ,
+                CONSTRAINT FK_ZIP_CODE FOREIGN KEY (ZIP) REFERENCES "COMPANY"."MICRO_MARKETS"(ZIP_CODE) 
+            );
+
+
+            INSERT INTO "COMPANY"."DISCOUNT_CODE" VALUES ('H',15), ('M',10), ('L',5), ('N',0);
+
+
+
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '33015',    255.59,     689.856,    478.479);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '33055',    157.869,    385.821,    147.538);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '75200',    758.648,    328.963,    482.164);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '12347',    475.965,    385.849,    146.937);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '94401',    368.386,    285.848,    173.794);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '95035',    683.396,    472.859,    379.757);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '95117',    755.778,    547.967,    468.858);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '48128',    684.675,    475.854,    408.074);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '48124',    753.765,    487.664,    456.632);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '10095',    1987.854,   975.875,    865.681);
+            INSERT INTO "COMPANY"."MICRO_MARKETS" VALUES (
+            '10096',    1876.766,   955.666,    923.556);
+
+
+
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            1,  'N',    '33015',    'SuperCom',         '490 Rivera Drive', 'Suite 678',    'Miami',    'FL',   '305-777-4632', '305-777-4635', 'supercom@aol.com', 100000, '1998-01-02',   '08:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            2,  'M',    '33055',    'Livingston Enterprises',   '9754 Main Street', 'P.O. Box 567', 'Miami',    'FL',   '305-456-8888', '305-456-8889', 'www.tsoftt.com',   50000,      '1998-01-02',   '09:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            25, 'M',    '75200',    'Oak Computers',        '8989 Qume Drive',  'Suite 9897',   'Dallas',   'TX',   '214-999-1234', '214-999-5432', 'www.oakc.com',     25000,      '1998-01-06',   '10:15:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            3,  'L',    '12347',    'MicroApple',           '8585 Murray Drive',    'P.O. Box 456', 'Alanta',   'GA',   '555-275-9900', '555-275-9911', 'www.Microapple.net',   90000,      '1998-01-03',   '11:01:06');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            36, 'H',    '94401',    'HostProCom',           '65653 El Camino',  'Suite 2323',   'San Mateo',    'CA',   '650-456-8876', '650-456-1120', 'www.hostprocom.net',   65000,      '1998-01-03',   '11:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            106,    'L',    '95035',    'CentralComp',          '829 Flex Drive',   'Suite 853',    'San Jose', 'CA',   '408-987-1256', '408-987-1277', 'www.centralcomp.com',  26500,      '1998-01-04',   '14:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            149,    'L',    '95117',    'Golden Valley Computers',  '4381 Kelly Ave',   'Suite 77', 'San Jose', 'CA',   '408-432-6868', '408-432-6899', 'www.gvc.net',      70000,      '1998-01-12',   '16:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            863,    'N',    '94401',    'HPSystems',            '456 4th Street',   'Suite 45', 'San Mateo',    'CA',   '650-345-5656', '650-345-4433', 'www.hpsys.net',    25000,      '1998-01-13',   '13:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            777,    'L',    '48128',    'West Valley Inc.',     '88 North Drive',   'Building C',   'Dearborn', 'MI',   '313-563-9900', '313-563-9911', 'www.westv.com',    100000, '1997-02-15',   '10:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            753,    'H',    '48128',    'Ford Motor Co',        '2267 Michigan Ave',    'Building 21',  'Dearborn', 'MI',   '313-787-2100', '313-787-3100', 'www.parts@ford.com',   5000000,'1998-01-28',   '13:30:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            722,    'N',    '48124',    'Small Car Parts',      '52963 Outer Dr',   'Suite 35', 'Detroit',  'MI',   '313-788-7682', '313-788-7600', 'www.sparts.com',   50000,      '1998-02-20',   '09:00:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            409,    'L',    '10095',    'NY Media Productions',     '4400 22nd Street', 'Suite 562',    'New York', 'NY',   '212-222-5656', '212-222-5600', 'www.nymedia.com',  10000,      '1997-10-20',   '09:30:00');
+            INSERT INTO "COMPANY"."CUSTOMER" VALUES (
+            410,    'M',    '10096',    'NY Computer Repair',       '9653 33rd Ave',    'Floor 4',  'New York', 'NY',   '212-535-7000', '212-535-7100', 'www.nycomp@repair.com',25000,      '1998-02-15',   '10:00:00');
+
+
+
+
+            create view "COMPANY"."v1058" as select * from app.customer;
+
+            create view "COMPANY"."v1059" as select * from app.customer;
+
+            CREATE TABLE "app"."altertab" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."altertable" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."emp" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."emp1" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."emp2" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."emp3" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            CREATE TABLE "COMPANY"."dept" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."dept1" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."dept2" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."dept3" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."DEPT123" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."dept1234" (dno integer,dname varchar(10),loc varchar(10));
+
+            CREATE TABLE "COMPANY"."dummydrop" (eno integer, ename varchar(20),sal integer,deptno integer);
+
+            insert into "app"."altertab" values(101,'umesh',30000,10);
+            insert into "app"."altertab" values(102,'nitesh',20000,20);
+            insert into "app"."altertab" values(103,'rajesh',32000,10);
+            insert into "app"."altertab" values(104,'himanshu',25000,30);
+            insert into "app"."altertab" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."altertable" values(101,'umesh',30000,10);
+            insert into "COMPANY"."altertable" values(102,'nitesh',20000,20);
+            insert into "COMPANY"."altertable" values(103,'rajesh',32000,10);
+            insert into "COMPANY"."altertable" values(104,'himanshu',25000,30);
+            insert into "COMPANY"."altertable" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."emp" values(101,'umesh',30000,10);
+            insert into "COMPANY"."emp" values(102,'nitesh',20000,20);
+            insert into "COMPANY"."emp" values(103,'rajesh',32000,10);
+            insert into "COMPANY"."emp" values(104,'himanshu',25000,30);
+            insert into "COMPANY"."emp" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."emp1" values(101,'umesh',30000,10);
+            insert into "COMPANY"."emp1" values(102,'nitesh',20000,20);
+            insert into "COMPANY"."emp1" values(103,'rajesh',32000,10);
+            insert into "COMPANY"."emp1" values(104,'himanshu',25000,30);
+            insert into "COMPANY"."emp1" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."emp2" values(101,'umesh',30000,10);
+            insert into "COMPANY"."emp2" values(102,'nitesh',20000,20);
+            insert into "COMPANY"."emp2" values(103,'rajesh',32000,10);
+            insert into "COMPANY"."emp2" values(104,'himanshu',25000,30);
+            insert into "COMPANY"."emp2" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."emp3" values(101,'umesh',30000,10);
+            insert into "COMPANY"."emp3" values(102,'nitesh',20000,20);
+            insert into "COMPANY"."emp3" values(103,'rajesh',32000,10);
+            insert into "COMPANY"."emp3" values(104,'himanshu',25000,30);
+            insert into "COMPANY"."emp3" values(105,'nari',3000,20);
+
+            insert into "COMPANY"."dept" values(10,'engg','blore');
+            insert into "COMPANY"."dept" values(20,'sales','delhi');
+            insert into "COMPANY"."dept" values(30,'marketing','madras');
+
+            insert into "COMPANY"."dept1" values(10,'engg','blore');
+            insert into "COMPANY"."dept1" values(20,'sales','delhi');
+            insert into "COMPANY"."dept1" values(30,'marketing','madras');
+            insert into "COMPANY"."dept1" values(40,'faalto','seasaw');
+
+            insert into "COMPANY"."dept2" values(10,'engg','blore');
+            insert into "COMPANY"."dept2" values(20,'sales','delhi');
+            insert into "COMPANY"."dept2" values(30,'marketing','madras');
+            insert into "COMPANY"."dept2" values(40,'faalto','seasaw');
+
+            insert into "COMPANY"."dept3" values(10,'engg','blore');
+            insert into "COMPANY"."dept3" values(20,'sales','delhi');
+            insert into "COMPANY"."dept3" values(30,'marketing','madras');
+            insert into "COMPANY"."dept3" values(40,'faalto','seasaw');
+
+            insert into "COMPANY"."DEPT123" values(10,'engg','blore');
+            insert into "COMPANY"."DEPT123" values(20,'sales','delhi');
+            insert into "COMPANY"."DEPT123" values(30,'marketing','madras');
+            insert into "COMPANY"."DEPT123" values(40,'faalto','seasaw');
+
+            insert into "COMPANY"."dept1234" values(10,'engg','blore');
+            insert into "COMPANY"."dept1234" values(20,'sales','delhi');
+            insert into "COMPANY"."dept1234" values(30,'marketing','madras');
+            insert into "COMPANY"."dept1234" values(40,'faalto','seasaw');
+
+            create view "COMPANY"."v1fullqual" as select * from "APP"."CUSTOMER";
+        </sql>
+    </target>
+</project>

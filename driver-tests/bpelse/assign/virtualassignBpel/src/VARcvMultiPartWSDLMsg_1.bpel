@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="VARcvMultiPartWSDLMsg_1" 
+    targetNamespace="http://www.mycomp.org/VARcvMultiPartWSDLMsg/VARcvMultiPartWSDLMsg_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl">
+  
+    <import namespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+            location="virtualAssignTest_1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="Plnk_for_incoming_receive" partnerLinkType="wsdlNS:virtualAssignLinkType4" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  type="wsdlNS:complexExampleType"></variable>
+        <variable name="var2"
+		  type="wsdlNS:complexExampleType"></variable>
+        <variable name="var3"
+                  type="xsd:int"></variable>
+        <variable name="var4"
+                  type="xsd:string"></variable>
+    </variables>   
+    <sequence>
+        <receive name="incoming_receive_with_mpWSDL"
+                 partnerLink="Plnk_for_incoming_receive"
+                 operation="virtualAssignOperation4"
+                 portType="wsdlNS:virtualAssignPortType4"
+                 createInstance="yes"
+                 variable="var1">
+             <!-- fromPart part="virtualAssignMessageFirstPart" toVariable="var3"
+                  fromPart part="virtualAssignMessageSecondPart" toVariable="var4" -->
+        </receive>
+        <assign>
+            <copy>
+            <from variable="var1"/><to variable="var2"/>
+            </copy>
+        </assign>
+        <reply name="outgoing_reply_with_mpWSDL" 
+               partnerLink="Plnk_for_incoming_receive"
+               operation="virtualAssignOperation4"
+               portType="wsdlNS:virtualAssignPortType4"
+               variable="var2">
+           <!-- toPart part="virtualAssignMessageFirstPart" fromVariable="var3"
+                toPart part="virtualAssignMessageSecondPart" fromVariable="var4" -->
+        </reply>
+    </sequence> 
+</process>

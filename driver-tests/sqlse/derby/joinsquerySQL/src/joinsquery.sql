@@ -1,0 +1,1 @@
+select name from "COMPANY"."CUSTOMER" where credit_limit = (select MAX (credit_limit) from "COMPANY"."CUSTOMER")

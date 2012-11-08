@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FlowInWhile" targetNamespace="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhile" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhileSchema">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhileSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/TestFlowInWhile/FlowInWhileSchema">
+            <xsd:complexType name="StringArray">
+                <xsd:sequence>
+                    <xsd:element name="RetVal" type="xsd:string" maxOccurs="unbounded"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="TestReturn">
+                <xsd:sequence>
+                    <xsd:element name="inv1output" type="xsd:string" maxOccurs="unbounded"></xsd:element>
+                    <xsd:element name="inv2output" type="xsd:string" maxOccurs="unbounded"></xsd:element>
+                    <xsd:element name="inv21output" type="xsd:string" maxOccurs="unbounded"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="RetElem" type="tns:StringArray"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="FlowInWhileOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="FlowInWhileOperationResponse">
+        <part name="part1" type="ns0:TestReturn"/>
+    </message>
+    <message name="InvokeRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="InvokeResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="FlowInWhilePortType">
+        <operation name="FlowInWhileOperation">
+            <input name="input1" message="tns:FlowInWhileOperationRequest"/>
+        </operation>
+    </portType>
+    <portType name="InvokePT">
+        <operation name="InvokeOper">
+            <input name="input1" message="tns:InvokeRequest"/>
+            <output name="output1" message="tns:InvokeResponse"/>
+        </operation>
+    </portType>
+    <portType name="FlowInWhileRespPT">
+        <operation name="FlowInWhileRespOper">
+            <input name="input1" message="tns:FlowInWhileOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="FlowInWhilePortTypeBinding" type="tns:FlowInWhilePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="FlowInWhileOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="InvokePTBinding" type="tns:InvokePT">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="InvokeOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="FlowInWhileRespPTBinding" type="tns:FlowInWhileRespPT">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="FlowInWhileRespOper">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="FlowInWhileService">
+        <port name="FlowInWhilePortTypeBindingPort" binding="tns:FlowInWhilePortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/StartService"/>
+        </port>
+    </service>
+    <service name="InvokeService">
+        <port name="InvokePTBindingPort" binding="tns:InvokePTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/InvokeService"/>
+        </port>
+    </service>
+    <service name="FlowInWhileRespService">
+        <port name="FlowInWhileRespPTBindingPort" binding="tns:FlowInWhileRespPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/RespService"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="StartPLT">
+        <plnk:role name="FlowInWhilePortTypeRole" portType="tns:FlowInWhilePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="invokePLT">
+        <plnk:role name="InvokePTRole" portType="tns:InvokePT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="FlowInWhileRespPLT">
+        <plnk:role name="FlowInWhileRespPTRole" portType="tns:FlowInWhileRespPT"/>
+    </plnk:partnerLinkType>
+</definitions>

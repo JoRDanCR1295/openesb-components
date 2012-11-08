@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="rtti_testBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Test/rtti_testBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/Test/rtti_testBpel" xmlns:sxed2="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2" xmlns:ns0="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" xmlns:ns1="http://rttitypes/">
+    <import namespace="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" location="rtti_testConsumer.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" partnerLinkType="tns:rtti_test" myRole="rtti_testPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoEnumIn" messageType="ns0:echoEnum"/>
+        <variable name="EchoEnumOut" messageType="ns0:echoEnumResponse"/>
+        <variable name="Enum_echo9Out" messageType="ns0:enum_echo9Response"/>
+        <variable name="Enum_echo9In" messageType="ns0:enum_echo9"/>
+        <variable name="Enum_echo8In" messageType="ns0:enum_echo8"/>
+        <variable name="Enum_echo8Out" messageType="ns0:enum_echo8Response"/>
+        <variable name="Enum_echo7Out" messageType="ns0:enum_echo7Response"/>
+        <variable name="Enum_echo7In" messageType="ns0:enum_echo7"/>
+        <variable name="Enum_echo6In" messageType="ns0:enum_echo6"/>
+        <variable name="Enum_echo6Out" messageType="ns0:enum_echo6Response"/>
+        <variable name="Enum_echo5In" messageType="ns0:enum_echo5"/>
+        <variable name="Enum_echo5Out" messageType="ns0:enum_echo5Response"/>
+        <variable name="Enum_echo4In" messageType="ns0:enum_echo4"/>
+        <variable name="Enum_echo4Out" messageType="ns0:enum_echo4Response"/>
+        <variable name="Enum_echo3In" messageType="ns0:enum_echo3"/>
+        <variable name="Enum_echo3Out" messageType="ns0:enum_echo3Response"/>
+        <variable name="Enum_echo2In" messageType="ns0:enum_echo2"/>
+        <variable name="Enum_echo2Out" messageType="ns0:enum_echo2Response"/>
+        <variable name="Enum_echo1Out" messageType="ns0:enum_echo1Response"/>
+        <variable name="Enum_echo1In" messageType="ns0:enum_echo1"/>
+        <variable name="Any_echo4Out" messageType="ns0:any_echo4Response"/>
+        <variable name="Any_echo4In" messageType="ns0:any_echo4"/>
+        <variable name="Any_echo3In" messageType="ns0:any_echo3"/>
+        <variable name="Any_echo3Out" messageType="ns0:any_echo3Response"/>
+        <variable name="EchoAnyExceptionFaultVar" messageType="ns0:EchoAnyException"/>
+        <variable name="Any_echo2Out" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" messageType="tns:any_echo2Response"/>
+        <variable name="Any_echo2In" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" messageType="tns:any_echo2"/>
+        <variable name="Any_echo1In" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" messageType="tns:any_echo1"/>
+        <variable name="Any_echo1Out" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" messageType="tns:any_echo1Response"/>
+    </variables>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink1" operation="any_echo1" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" portType="tns:rtti_test" variable="Any_echo1In">
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>$Any_echo1In.parameters/tns:msg</from>
+                            <to>$Any_echo1Out.parameters/tns:msg</to>
+                        </copy>
+                        <copy>
+                            <from>'good return'</from>
+                            <to>$Any_echo1Out.parameters/tns:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply1" partnerLink="PartnerLink1" operation="any_echo1" portType="tns:rtti_test" variable="Any_echo1Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="any_echo2" xmlns:tns="http://it.imolinfo.jbi4corba.test.rtti.rtti_test" portType="tns:rtti_test" variable="Any_echo2In">
+                <sequence name="Sequence2">
+                    <if name="If1">
+                        <condition>'exception' = $Any_echo2In.parameters/ns0:msg</condition>
+                        <sequence name="Sequence5">
+                            <assign name="Assign5">
+                                <copy>
+                                    <from>$Any_echo2In.parameters/tns:msg</from>
+                                    <to>$EchoAnyExceptionFaultVar.EchoAnyException/tns:reason</to>
+                                </copy>
+                            </assign>
+                            <reply name="Reply5" partnerLink="PartnerLink1" operation="any_echo2" portType="tns:rtti_test" faultName="tns:EchoAnyException" variable="EchoAnyExceptionFaultVar"/>
+                        </sequence>
+                    </if>
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$Any_echo2In.parameters/tns:msg</from>
+                            <to>$Any_echo2Out.parameters/tns:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply2" partnerLink="PartnerLink1" operation="any_echo2" portType="tns:rtti_test" variable="Any_echo2Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="any_echo3" portType="ns0:rtti_test" variable="Any_echo3In">
+                <sequence name="Sequence3">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>$Any_echo3In.parameters/ns0:msg/ns1:two_format</from>
+                            <to>$Any_echo3Out.parameters/ns0:return/ns1:fieldAny</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply3" partnerLink="PartnerLink1" operation="any_echo3" portType="ns0:rtti_test" variable="Any_echo3Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="any_echo4" portType="ns0:rtti_test" variable="Any_echo4In">
+                <sequence name="Sequence4">
+                    <assign name="Assign4">
+                        <copy>
+                            <from>$Any_echo4In.parameters/ns0:msg/ns1:fieldBoolean</from>
+                            <to>$Any_echo4Out.parameters/ns0:msg/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$Any_echo4In.parameters/ns0:msg/ns1:fieldChar</from>
+                            <to>$Any_echo4Out.parameters/ns0:msg/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$Any_echo4In.parameters/ns0:msg/ns1:fieldAny</from>
+                            <to>$Any_echo4Out.parameters/ns0:msg/ns1:fieldAny</to>
+                        </copy>
+                        <copy>
+                            <from>$Any_echo4In.parameters/ns0:msg/ns1:fieldAny</from>
+                            <to>$Any_echo4Out.parameters/ns0:return/item</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply4" partnerLink="PartnerLink1" operation="any_echo4" portType="ns0:rtti_test" variable="Any_echo4Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo1" portType="ns0:rtti_test" variable="Enum_echo1In">
+                <sequence name="Sequence6">
+                    <assign name="Assign6">
+                        <copy>
+                            <from>concat($Enum_echo1In.parameters/ns0:msg/ns1:primo, $Enum_echo1In.parameters/ns0:msg/ns1:altro, $Enum_echo1In.parameters/ns0:msg/ns1:secondo, $Enum_echo1In.parameters/ns0:msg/ns1:third)</from>
+                            <to>$Enum_echo1Out.parameters/ns0:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply6" partnerLink="PartnerLink1" operation="enum_echo1" portType="ns0:rtti_test" variable="Enum_echo1Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo2" portType="ns0:rtti_test" variable="Enum_echo2In">
+                <sequence name="Sequence7">
+                    <assign name="Assign7">
+                        <copy>
+                            <from>true()</from>
+                            <to>$Enum_echo2Out.parameters/ns0:return/ns1:altro</to>
+                        </copy>
+                        <copy>
+                            <from>$Enum_echo2In.parameters/ns0:msg/ns1:alfanumeric</from>
+                            <to>$Enum_echo2Out.parameters/ns0:msg/ns1:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply7" partnerLink="PartnerLink1" operation="enum_echo2" portType="ns0:rtti_test" variable="Enum_echo2Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo3" portType="ns0:rtti_test" variable="Enum_echo3In">
+                <sequence name="Sequence8">
+                    <assign name="Assign8">
+                        <copy>
+                            <from>true()</from>
+                            <to>$Enum_echo3Out.parameters/ns0:return/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>10</from>
+                            <to>$Enum_echo3Out.parameters/ns0:return/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$Enum_echo3In.parameters/ns0:msg</from>
+                            <to>$Enum_echo3Out.parameters/ns0:return/ns1:fieldWChar/ns1:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply8" partnerLink="PartnerLink1" operation="enum_echo3" portType="ns0:rtti_test" variable="Enum_echo3Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo4" portType="ns0:rtti_test" variable="Enum_echo4In">
+                <sequence name="Sequence9">
+                    <assign name="Assign9">
+                        <copy>
+                            <from>concat($Enum_echo4In.parameters/ns0:msg/ns1:fieldBoolean, $Enum_echo4In.parameters/ns0:msg/ns1:fieldChar, $Enum_echo4In.parameters/ns0:msg/ns1:fieldWChar/ns1:numeric, $Enum_echo4In.parameters/ns0:msg/ns1:fieldWChar/ns1:alfanumeric, $Enum_echo4In.parameters/ns0:msg/ns1:fieldWChar/ns1:two_format)</from>
+                            <to>$Enum_echo4Out.parameters/ns0:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply9" partnerLink="PartnerLink1" operation="enum_echo4" portType="ns0:rtti_test" variable="Enum_echo4Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo5" portType="ns0:rtti_test" variable="Enum_echo5In">
+                <sequence name="Sequence10">
+                    <assign name="Assign10">
+                        <copy>
+                            <from>$Enum_echo5In.parameters/ns0:msg/ns1:fieldBoolean</from>
+                            <to>$Enum_echo5Out.parameters/ns0:msg/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>$Enum_echo5In.parameters/ns0:msg/ns1:fieldChar</from>
+                            <to>$Enum_echo5Out.parameters/ns0:msg/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>$Enum_echo5In.parameters/ns0:msg/ns1:fieldWChar/ns1:alfanumeric</from>
+                            <to>$Enum_echo5Out.parameters/ns0:msg/ns1:fieldWChar/ns1:alfanumeric</to>
+                        </copy>
+                        <copy>
+                            <from>$Enum_echo5In.parameters/ns0:msg/ns1:fieldWChar/ns1:alfanumeric</from>
+                            <to>$Enum_echo5Out.parameters/ns0:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply10" partnerLink="PartnerLink1" operation="enum_echo5" portType="ns0:rtti_test" variable="Enum_echo5Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo6" portType="ns0:rtti_test" variable="Enum_echo6In">
+                <sequence name="Sequence11">
+                    <assign name="Assign11">
+                        <copy>
+                            <from>true()</from>
+                            <to>$Enum_echo6Out.parameters/ns0:return/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>100</from>
+                            <to>$Enum_echo6Out.parameters/ns0:return/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>concat('Received: ', $Enum_echo6In.parameters/ns0:msg)</from>
+                            <to>$Enum_echo6Out.parameters/ns0:return/ns1:fieldWChar/ns1:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply11" partnerLink="PartnerLink1" operation="enum_echo6" portType="ns0:rtti_test" variable="Enum_echo6Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo7" portType="ns0:rtti_test" variable="Enum_echo7In">
+                <sequence name="Sequence12">
+                    <assign name="Assign12">
+                        <copy>
+                            <from>true()</from>
+                            <to>$Enum_echo7Out.parameters/ns0:return/ns1:item/ns1:fieldBoolean</to>
+                        </copy>
+                        <copy>
+                            <from>10</from>
+                            <to>$Enum_echo7Out.parameters/ns0:return/ns1:item/ns1:fieldChar</to>
+                        </copy>
+                        <copy>
+                            <from>concat('Received: ', $Enum_echo7In.parameters/ns0:msg)</from>
+                            <to>$Enum_echo7Out.parameters/ns0:return/ns1:item/ns1:fieldWChar/ns1:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply12" partnerLink="PartnerLink1" operation="enum_echo7" portType="ns0:rtti_test" variable="Enum_echo7Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo8" portType="ns0:rtti_test" variable="Enum_echo8In">
+                <sequence name="Sequence13">
+                    <assign name="Assign13">
+                        <copy>
+                            <from>$Enum_echo8In.parameters/ns0:msg</from>
+                            <to>$Enum_echo8Out.parameters/ns0:return/ns1:alfanumeric</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply13" partnerLink="PartnerLink1" operation="enum_echo8" portType="ns0:rtti_test" variable="Enum_echo8Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="enum_echo9" portType="ns0:rtti_test" variable="Enum_echo9In">
+                <sequence name="Sequence14">
+                    <assign name="Assign14">
+                        <copy>
+                            <from>concat($Enum_echo9In.parameters/ns0:msg/ns1:item/ns1:fieldBoolean, $Enum_echo9In.parameters/ns0:msg/ns1:item/ns1:fieldChar, $Enum_echo9In.parameters/ns0:msg/ns1:item/ns1:fieldWChar/ns1:alfanumeric)</from>
+                            <to>$Enum_echo9Out.parameters/ns0:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply14" partnerLink="PartnerLink1" operation="enum_echo9" portType="ns0:rtti_test" variable="Enum_echo9Out"/>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="PartnerLink1" operation="echoEnum" portType="ns0:rtti_test" variable="EchoEnumIn">
+                <sequence name="Sequence15">
+                    <assign name="Assign15">
+                        <copy>
+                            <from>$EchoEnumIn.parameters/ns0:e</from>
+                            <to>$EchoEnumOut.parameters/ns0:return</to>
+                        </copy>
+                    </assign>
+                    <reply name="Reply15" partnerLink="PartnerLink1" operation="echoEnum" portType="ns0:rtti_test" variable="EchoEnumOut"/>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

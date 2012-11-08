@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <project name="" default="default" basedir=".">
+     <property file="build.properties"/>
+     <property file="${basedir}/../common.properties"/>
+     <property file="${basedir}/../../../../samples/bp-project/build.properties"/>
+     <property file="${javaee.server.passwordfile}"/>
+
+     <property name="jar.compress" value="false"/>
+     <property name="javac.classpath" value=""/>
+
+     <target name="default" depends="compile"/>
+
+     <target name="init">
+        <!-- preparing libraries -->
+        <condition property="jbi.username.password" value=" -Djbi.username=${javaee.server.username} -Djbi.password=${AS_ADMIN_PASSWORD} ">
+          <and>
+            <not>
+              <equals arg1="${javaee.server.username}" arg2=""/>
+            </not>
+            <not>
+				  <equals arg1="${javaee.server.password}" arg2=""/>
+            </not>
+          </and>
+        </condition>
+        <condition property="jbi.username.password" value="">
+          <not>
+            <isset property="jbi.username.password"/>
+          </not>
+        </condition>
+        <condition property="ant.command" value="${javaee.home}/bin/asant.bat">
+           <os family="windows"/>
+        </condition>
+        <condition property="ant.command" value="${javaee.home}/bin/asant">
+           <os family="unix"/>
+        </condition>
+        <property name="ant.command" value="${javaee.home}/bin/asant"/>
+        </target>
+
+    <target name="all" depends="compile, package-module, deploy, run"/>
+
+    <target name="clean" depends="undeploy">
+		 <delete dir="${dist.folder}"/>
+		 <delete dir="${build.folder}"/>
+     </target>
+
+ <target name="compile">
+	<antcall target="copy-template"/>
+	<antcall target="build-bpel"/>
+	<antcall target="build-http"/>
+	<jar destfile="${build.folder}/${bpelse.su.jar}" basedir="${build.folder}/bpelSE"/>
+	<jar destfile="${build.folder}/${httpbc.su.jar}" basedir="${build.folder}/httpBC"/>
+ </target>
+
+<target name="build-bpel">
+		 <copy todir="${build.folder}/bpelSE">
+			 <fileset dir="${src.folder}"/>
+		 </copy>
+</target>
+
+<target name="build-http">
+		 <copy todir="${build.folder}/httpBC">
+			 <fileset dir="${src.folder}">
+				  <exclude name="*.bpel"/>
+			 </fileset>
+		 </copy>
+</target>
+
+<target name="copy-template">
+	  <mkdir dir="${build.folder}"/>
+	  <copy todir="${build.folder}">
+		  <fileset dir="${deployment.artifacts}"/>
+	  </copy>
+</target>
+
+<target name="package-module">
+	<mkdir dir="${dist.folder}"/>
+   	<zip destfile="${dist.folder}/${service.assembly.zip}" basedir="build"/>
+</target>
+
+<target name="deploy" depends="init">
+        <exec failonerror="false" executable="${ant.command}">
+            <arg line="-f ${jbi.home}/bin/jbi_admin.xml ${jbi.username.password} -Djbi.port=${jbi.port} -Djbi.deploy.file=${basedir}/${dist.folder}/${service.assembly.zip} deploy-service-assembly"/>
+        </exec>
+        <exec failonerror="false" executable="${ant.command}">
+            <arg line="-f ${jbi.home}/bin/jbi_admin.xml ${jbi.username.password} -Djbi.port=${jbi.port} -Djbi.service.assembly.name=${jbi.service.assembly.name} start-service-assembly"/>
+        </exec>
+</target>
+
+
+<target name="undeploy" depends="init">
+        <exec failonerror="false" executable="${ant.command}">
+            <arg line="-f ${jbi.home}/bin/jbi_admin.xml ${jbi.username.password} -Djbi.port=${jbi.port} -Djbi.service.assembly.name=${jbi.service.assembly.name} stop-service-assembly"/>
+        </exec>
+        <exec failonerror="false" executable="${ant.command}">
+            <arg line="-f ${jbi.home}/bin/jbi_admin.xml ${jbi.username.password} -Djbi.port=${jbi.port} -Djbi.service.assembly.name=${jbi.service.assembly.name} shut-down-service-assembly"/>
+        </exec>
+        <exec failonerror="false" executable="${ant.command}">
+            <arg line="-f ${jbi.home}/bin/jbi_admin.xml ${jbi.username.password} -Djbi.port=${jbi.port} -Djbi.service.assembly.name=${jbi.service.assembly.name} undeploy-service-assembly"/>
+        </exec>
+</target>
+
+<target name="inventoryserviceFault">
+	 <java fork="true" classname="SoapClient">
+		 <arg value="./test/inventoryserviceFault/Concurrent.properties"/>
+		 <arg value="${basedir}/../common.properties"/>
+		 <classpath>
+
+                <pathelement location="${javaee.home}/lib/javaee.jar"/>
+                <pathelement location="${javaee.home}/lib/appserv-ws.jar"/>
+                <pathelement location="${javaee.home}/lib/webservices-rt.jar"/>
+            <pathelement path="${java.class.path}"/>
+			<pathelement location="${test.framework.dir}"/>
+		 </classpath>
+	 </java>
+</target>
+<target name="poserviceFault">
+	 <java fork="true" classname="SoapClient">
+		 <arg value="./test/poserviceFault/Concurrent.properties"/>
+		 <arg value="${basedir}/../common.properties"/>
+		 <classpath>
+                <pathelement location="${javaee.home}/lib/javaee.jar"/>
+                <pathelement location="${javaee.home}/lib/appserv-ws.jar"/>
+                <pathelement location="${javaee.home}/lib/webservices-rt.jar"/>
+				<pathelement path="${java.class.path}"/>
+				<pathelement location="${test.framework.dir}"/>
+		 </classpath>
+	 </java>
+</target>
+
+<target name="sunnyDay">
+	 <java fork="true" classname="SoapClient">
+		 <arg value="./test/sunnyDay/Concurrent.properties"/>
+		 <arg value="${basedir}/../common.properties"/>
+		 <classpath>
+                <pathelement location="${javaee.home}/lib/javaee.jar"/>
+                <pathelement location="${javaee.home}/lib/appserv-ws.jar"/>
+                <pathelement location="${javaee.home}/lib/webservices-rt.jar"/>
+				<pathelement path="${java.class.path}"/>
+				<pathelement location="${test.framework.dir}"/>
+		 </classpath>
+	 </java>
+</target>
+
+    <target name="run"  depends="init">
+		<antcall target="sunnyDay"/>
+		<antcall target="poserviceFault"/>
+		<antcall target="inventoryserviceFault"/>
+    </target>
+</project>

@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0062)file://H:\coke\orch\bluePrints\latest\BP1_ProblemSolution.html -->
+  <title>Concurrent Asynchronous Coordination of Events Using BPEL</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta content="MSHTML 6.00.2900.2604" name="GENERATOR">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="GENERATOR" content="Dreamweaver">
+  <meta name="CREATED" content="20060325">
+  <meta name="CHANGEDBY" content="Shauna Pickett-Gordon">
+  <meta name="CHANGED" content="20060601">
+  <style>
+	<!--
+		@page { size: 8.5in 11in; margin: 0.79in }
+		P { margin-bottom: 0.08in }
+	-->
+	</style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="GENERATOR" content="StarOffice 8  (Win32)">
+  <meta name="CREATED" content="20060325;11473500">
+  <meta name="CHANGED" content="20060607;5075600">
+  <style>
+	<!--
+		@page { size: 8.5in 11in; margin: 0.79in }
+		P { margin-bottom: 0.08in }
+	-->
+	</style>
+</head>
+<body dir="ltr">
+<h1 style="font-weight: normal;"><small>BPEL BluePrint 5</small></h1>
+<h1>Concurrent Asynchronous Coordination of Events Using BPEL</h1>
+<p>Kiran Bhumana, Ryan Kennedy, Shauna Pickett-Gordon </p>
+<h2>Problem Description</h2>
+<p>Complex applications need concurrent execution capability, and
+today's programming languages have evolved to support
+concurrency.&nbsp; The BPEL language defines concurrency constructs
+and, in particular, certain synchronized constructs.&nbsp; Thus,
+developers can concentrate more on designing the business logic of
+their BPEL processes, and less on writing complex concurrency execution
+code.</p>
+<p>This BluePrint focuses on the design aspects and common usage
+patterns of concurrency constructs.&nbsp; In our scenario, the BPEL
+business process coordinates concurrent events. The process initiates,
+requests a reservation from multiple systems, and waits for the
+partners to simultaneously accept the messages within a specified time.</p>
+<h2>Solution</h2>
+<p>The BPEL construct <code>Flow</code> lets you define multiple
+execution paths. In a <code>pick</code> activity (which is described
+in the fourth BluePrint), one
+path is chosen. In a <code>Flow</code> activity, all the path branches
+are executed concurrently. </p>
+<p>BPEL also defines a synchronization construct called a <code>Flow
+Link</code>.
+This construct enables serialized execution within the Flow branches.
+In addition, BPEL defines the concurrency constructs <code>EventHandler</code>
+and <code>forEach.</code> This BluePrint does not cover these
+constructs in depth, but briefly mentions their design considerations.</p>
+<p>Correlation is used in this BluePrint. If you're not familiar with
+correlation, see the second
+BluePrint.</p>
+<h2>Design Details</h2>
+<h2 style="font-weight: normal;"><small><small>In this
+scenario, a business process initiates, then requests a reservation
+from multiple systems, then waits for asynchronous responses from the
+partners. The business process accepts the responses and can consume
+the messages concurrently.
+</small></small></h2>
+<p>The main BPEL process provisions a reservation order request and
+consumes reservations from three subsystems. The process also
+provisions a callback to coordinate the three asynchronous responses
+from the subsystems' reservation services. See the first BluePrint for
+details on
+asynchronous servicing.</p>
+<p>The reservation and the subsystems' reservation services are
+provisioned by BPEL services within the same BPEL Service Engine
+component. An external client consumes the reservation service, and the
+binding is implemented in SOAP over HTTP. </p>
+<p>Three reservation subsystems--airline, hotel, and car--are used in
+this scenario. Our use case doesn't explain the very complex details of
+a typical reservation system<span style="font-family: monospace;"> </span>that
+would involve external partner services. Instead, the emphasis is on
+the usage
+patterns of a BPEL process in such an asynchronous, concurrent
+coordination of events.</p>
+<p><img alt="Concurrent and Asynchronous Service Implementation"
+ src="images/bp5-fig1.PNG" style="width: 515px; height: 233px;"><br>
+<b>Figure 1: Concurrent and Asynchronous Service Implementation</b></p>
+<p>The following BPEL constructs are used in this scenario: </p>
+<ul>
+  <li>The <code>flow</code> construct. </li>
+  <li>The <code>pick onMessage</code> and <code>onAlarm</code>
+constructs. See the second and fourth BluePrints for details. </li>
+  <li>Correlations. See the second
+BluePrint. </li>
+</ul>
+<!-- =============================================== -->
+<h3>Business Logic of the Services</h3>
+<!-- =============================================== -->
+<p>This pattern shows how concurrent asynchronous consumption and
+provisioning of services might be used in a typical, real-world
+scenario. The scenario involves four services; in addition, three
+callback services provide the asynchronous behavior.</p>
+<p>The main reservation service is consumed by an external client
+through SOAP over HTTP. This reservation service orchestrates other
+services, specifically three subsystem reservation services and three
+callback services that asynchronously return the result of the
+subsystem's reservation.</p>
+<p>An external client consumes a reservation service implemented by the
+<code>ReservationSystem</code> BPEL process. When <code>ReservationSystem</code>
+receives the request, the process initializes the correlation ID, does
+some data massaging, and then invokes all three subsystems. All the
+subsystems are invoked concurrently, and responses from the subsystems
+are expected in a concurrent fashion. Since the responses are
+asynchronous, a time-triggered execution path ensures an alternative
+execution path in case of a missing response.</p>
+<p> The main BPEL process, <code>ReservationSystem</code>,
+orchestrates the three subsystem reservation services: <code>AirLineReservation</code>,
+<code>CarReservation</code>, and <code>HotelReservation</code>.<br>
+</p>
+<p>The presence of&nbsp; a string "book_airline", "book_car" and
+"book_hotel" in the description field of the reservation request
+message will result in respective successful reservations. Refer to the
+input data section.<br>
+</p>
+<h3>Define the WSDL</h3>
+<!-- =============================================== -->
+<p>WSDL definitions follow for <code>ReservationSystem</code>, <code>HotelReservation</code>,
+<code>CarReservation</code>, and <code>AirLineReservation</code>.</p>
+<p style="margin-left: 40px;"><code style="font-weight: bold;">ReservationSystem</code><span
+ style="font-weight: bold;"> </span><br>
+The <code>ReservationSystem</code> WSDL defines the main
+reservation service, which provisions a synchronous <code>reserve</code>
+operation.</p>
+<pre style="margin-left: 40px;">    &lt;portType name="doReservePortType"&gt;<br>        &lt;operation name="reserve"&gt;<br>            &lt;input name="reserveMesg"<br>                   message="tns:reserveMesg"&gt;&lt;/input&gt;<br>            &lt;output name="reservationStatus"<br>                    message="tns:reservationStatus"&gt;&lt;/output&gt;<br>            &lt;fault name="reservationFailed"<br>                   message="tns:reservationFailed"&gt;&lt;/fault&gt;<br>        &lt;/operation&gt;        <br>    &lt;/portType&gt;<br></pre>
+<p style="margin-left: 40px;">The <code>ReservationSystem</code> WSDL
+defines a <code>property</code>,
+a <code>reservationID</code>, and a <code>propertyAlias</code> that
+ties <code>reservationID</code> to a value defined in the received
+message.</p>
+<pre style="margin-left: 40px;">    &lt;bpws:property name="reservationID" type="xsd:long"&gt;&lt;/bpws:property&gt;<br><br>    &lt;bpws:propertyAlias part="reservePart"<br>                        propertyName="tns:reservationID"<br>                        messageType="tns:reserveMesg"&gt;<br>        &lt;bpws:query&gt;/reserve/reservationID&lt;/bpws:query&gt;                            <br>    &lt;/bpws:propertyAlias&gt; <br></pre>
+<p style="margin-left: 40px;"><code style="font-weight: bold;"><br>
+HotelReservation</code><br>
+The <code>HotelReservation</code><span style="font-weight: bold;"> </span>WSDL
+defines the following service. Notice that two of
+<code>HotelReservation</code>'s operations support the asynchronous
+interaction with this service.</p>
+<pre style="margin-left: 40px;">   &lt;portType name="HotelReservationPortType"&gt;<br>      &lt;operation name="reserveHotel"&gt;<br>         &lt;input name="reserveMesg"<br>                message="tns:HotelReservation"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br><br>   &lt;portType name="HotelStatusPortType"&gt;<br>      &lt;operation name="sendHotelStatus"&gt;<br>         &lt;input name="statusMesg"<br>                message="tns:HotelReservationStatus"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br></pre>
+<p style="margin-left: 40px;">Next, the <code>HotelReservation</code>
+WSDL defines a <code>propertyAlias</code>
+and associates it with the ReservationSystem WSDL's property <code>reservationID.</code></p>
+<pre style="margin-left: 40px;">    &lt;bpws:propertyAlias part="status"<br>                        propertyName="res:reservationID"<br>                        messageType="tns:HotelReservationStatus"&gt;<br>        &lt;bpws:query&gt;/reserveStatus/reservationID&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt; <br></pre>
+<p style="margin-left: 40px;">Notice that the <code>property</code>
+associated with this <code>propertyAlias</code>
+is defined in the <code>Reservation</code> WSDL.</p>
+<p style="margin-left: 40px;"><code style="font-weight: bold;">CarReservation<br>
+</code>The <code>CarReservation</code> WSDL defines the following
+service.
+Again, this WSDL defines two operations that support asynchronous
+interactions with this service.</p>
+<pre style="margin-left: 40px;">   &lt;portType name="CarReservationPortType"&gt;<br>      &lt;operation name="reserveCar"&gt;<br>         &lt;input name="reserveMesg"<br>                message="tns:CarReservation"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br><br>   &lt;portType name="CarStatusPortType"&gt;<br>      &lt;operation name="sendCarStatus"&gt;<br>         &lt;input name="statusMesg"<br>                message="tns:CarReservationStatus"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br></pre>
+<p style="margin-left: 40px;">The <code>CarReservation</code> WSDL
+defines a <code>propertyAlias</code>
+and associates it with the ReservationSystem WSDL's property <code>reservationID.</code></p>
+<pre style="margin-left: 40px;">    &lt;bpws:propertyAlias part="status"<br>                        propertyName="res:reservationID"<br>                        messageType="tns:CarReservationStatus"&gt;<br>        &lt;bpws:query&gt;/reserveStatus/reservationID&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt;   <br></pre>
+<p style="margin-left: 40px;">Notice that the property associated with
+this property alias is
+defined in the <code>ReservationSystem</code> WSDL.</p>
+<p style="margin-left: 40px;"><code style="font-weight: bold;"><br>
+AirLineReservation<br>
+</code>The <code>AirLineReservation</code> WSDL defines the following
+service, which also supports asynchronous interactions.</p>
+<pre style="margin-left: 40px;">   &lt;portType name="AirlineReservationPortType"&gt;<br>      &lt;operation name="reserveAirline"&gt;<br>         &lt;input name="reserveMesg"<br>                message="tns:AirlineReservation"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br><br>   &lt;portType name="AirlineStatusPortType"&gt;<br>      &lt;operation name="sendAirlineStatus"&gt;<br>         &lt;input name="statusMesg"<br>                message="tns:AirlineReservationStatus"&gt;&lt;/input&gt;<br>      &lt;/operation&gt;<br>   &lt;/portType&gt;<br></pre>
+<p style="margin-left: 40px;">This <code>AirLineReservation </code>WSDL
+defines a <code>propertyAlias</code> and associates it with the
+ReservationSystem WSDL's property <code>reservationID</code>.</p>
+<pre style="margin-left: 40px;">    &lt;bpws:propertyAlias part="status"<br>                        propertyName="res:reservationID"<br>                        messageType="tns:AirlineReservationStatus"&gt;<br>        &lt;bpws:query&gt;/reserveStatus/reservationID&lt;/bpws:query&gt;<br>    &lt;/bpws:propertyAlias&gt;   <br></pre>
+<p style="margin-left: 40px;">Notice that the <code>property</code>
+associated with this <code>propertyAlias</code>
+is defined in the <code>ReservationSystem </code>WSDL.
+</p>
+<p>See the first and second BluePrints for more
+information on specifying WSDL for BPEL processes.</p>
+<!-- =============================================== -->
+<h3>Define the BPEL</h3>
+<!-- =============================================== -->
+<p>The <code>ReservationService</code> BPEL process uses correlation
+to route messages to the appropriate process instance. The value of <code>reservationID</code>
+in the <code>reserveMesg</code> message is used as the correlation
+identifier. </p>
+<p>Here, we define a <code>correlationSet</code> on the <code>reservationID</code>
+property.</p>
+<pre>   &lt;correlationSets&gt;<br>      &lt;correlationSet name="reservationCorrelationSet"<br>                      properties="ns0:reservationID "/&gt;<br>   &lt;/correlationSets&gt;<br></pre>
+<p>Correlation is initialized here, and when the <code>receive</code>
+is executed, a unique ID is associated with the <code>ReservationService</code>
+process instance. </p>
+<pre>   &lt;receive name="reserve"<br>            partnerLink="reservationPLink"<br>            portType="ns0:doReservePortType"<br>            operation="reserve"<br>            variable="reserve"<br>            createInstance="yes"&gt;<br>      <span
+ style="font-weight: bold;">&lt;correlations&gt;</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">         &lt;correlation set="reservationCorrelationSet"</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">                      initiate="yes"/&gt;</span><br
+ style="font-weight: bold;"><span style="font-weight: bold;">      &lt;/correlations&gt;</span><br>   &lt;/receive&gt;<br></pre>
+<p>Asynchronous responses from the reservation subsystems are routed to
+the correct instance with the usage of correlation. The following BPEL
+code
+snippet routes the <code>HotelReservation</code> response to the
+correct <code>Reservation</code> system instance.</p>
+<pre>    &lt;onMessage partnerLink="hotelReservationStatusPLink"<br>          portType="ns3:HotelStatusPortType"<br>          operation="sendHotelStatus"<br>          variable="hotelStatusVar"<br>          sbynpx:lineLabel="Message Event"&gt;<br>       &lt;correlations&gt;<br>          &lt;correlation set="reservationCorrelationSet"<br>                       initiate="no"/&gt;<br>       &lt;/correlations&gt;<br>       ...<br>    &lt;/onMessage&gt;<br></pre>
+<p>In the same way, correlation is used to route the <code>AirlineReservation</code>
+and <code>CarReservation</code> responses.</p>
+<p>
+</p>
+<p>The reservation subsystems are called concurrently from the main <code>ReservationService
+</code>process. The following BPEL code snippet makes these concurrent
+calls. Note that the sequences in the <code>flow</code> activity are
+executed in
+parallel.</p>
+<pre>        &lt;flow name="Flow2"&gt;<br>                &lt;invoke name="reserveAirline"<br>                        partnerLink="airlineReservation"<br>                        portType="ns1:AirlineReservationPortType"<br>                        operation="reserveAirline"<br>                        inputVariable="reserveAirlineVar"&gt;&lt;/invoke&gt;<br>                &lt;invoke name="reserveCar"<br>                        partnerLink="carReservationPLink"<br>                        portType="ns2:CarReservationPortType"<br>                        operation="reserveCar"<br>                        inputVariable="reserveCarVar"&gt;&lt;/invoke&gt;<br>                &lt;invoke name="reserveHotel"<br>                        partnerLink="hoteReservationPLink"<br>                        portType="ns3:HotelReservationPortType"<br>                        operation="reserveHotel"<br>                        inputVariable="reserveHotelVar"&gt;&lt;/invoke&gt;<br>        &lt;/flow&gt;<br></pre>
+<p>Similarly, another <code>flow</code> construct is used to receive
+messages concurrently. See the BPEL source code for details on using
+the <code>flow</code> construct in this example. </p>
+<p>Notice that there are other ways of using BPEL to achieve the same
+functionality. For instance, in another example, a developer could use
+just one <code>flow</code> construct, while this example uses two.<br>
+</p>
+<p>Click on the folllowing image for a visual representation of the <code>ReservationSystem</code><span
+ style="font-weight: bold;">&nbsp;</span> BPEL process. For
+implementation details, see the <a
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+files</a>.<br>
+</p>
+<p><a href="images/bp5_reservation.png"><img
+ alt="ReservationSystem.bpel Edge View"
+ src="images/bp5_reservation_edge.png"
+ style="border: 0px solid ; width: 159px; height: 161px;"></a><br>
+</p>
+<p><br>
+<b>Figure 2: The </b><code style="font-weight: bold;">ReservationSystem</code><span
+ style="font-weight: bold;"></span><b> BPEL Process<br>
+</b></p>
+<p>The following diagrams illustrate the subsystem reservation services
+referenced in this BluePrint. <br>
+</p>
+<p><img alt="HotelReservation.bpel" src="images/bp5_hotel.png"
+ style="width: 337px; height: 356px;"><br>
+</p>
+<p><b>Figure 3: The </b><code style="font-weight: bold;">HotelReservation
+</code><b>BPEL Process<br>
+<br>
+</b></p>
+<p><img alt="CarReservation.bpel" src="images/bp5_car.png"
+ style="width: 334px; height: 356px;"><br>
+</p>
+<p><b>Figure 4: The </b><code style="font-weight: bold;">CarReservation
+</code><b>BPEL Process<br>
+</b></p>
+<p><br>
+</p>
+<p><img alt="AirLineReservation.bpel" src="images/bp5_airline.png"
+ style="width: 337px; height: 356px;"><br>
+</p>
+<p><b>Figure 5: The </b><code style="font-weight: bold;">AirLineReservation</code><code
+ style="font-weight: bold;"> </code><b>BPEL Process</b>
+</p>
+<h3>Other Design Considerations</h3>
+<ul>
+  <li>When you write concurrent execution-enabled BPELs, watch out for
+concurrent update of artifacts like variables and <code>partnerLinks</code>.
+Such updates have unpredictable results.</li>
+  <li><code>Flow</code> links can be used to synchronize sections of
+the concurrent execution. However, take extra caution to avoid deadlock
+situations.</li>
+</ul>
+<h3>Other Concurrency Artifacts</h3>
+<ul>
+  <li><code>eventHandlers</code> resemble the <code>pick</code>
+syntax. They are associated with the <code>scope</code> or the BPEL's <code>process</code>
+element, which itself can be also be viewed as one of the scopes.
+Execution of the scope enables these <code>eventHandlers</code>,
+because they are executed concurrently with the main thread of
+execution. You could, for example, use <code>eventHandlers</code> to
+obtain the status of a particular instance's execution, or to trigger
+an abort event.</li>
+  <li>The concurrency feature of <code>forEach</code> can be viewed as
+a dynamic <code>flow</code> construct. While <code>flow</code>
+defines the number of branches and the behavior of each branch almost
+statically, <code>forEach</code> defines much of this dynamically. </li>
+</ul>
+<!-- =============================================== -->
+<h3><a name="Input_Data"></a>Input Data XML for Different Scenarios</h3>
+<!-- =============================================== -->
+<h4 style="font-weight: normal;">An input XML instance that reserves
+airline, car and hotel successfully:</h4>
+<pre>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:res="http://ReservationSystem.org/xsd/reserve" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;res:reserve&gt;<br>      &lt;res:reservationID&gt;0000098761&lt;/res:reservationID&gt;<br>      &lt;res:description&gt;book_car, book_hotel, book_airline&lt;/res:description&gt;<br>    &lt;/res:reserve&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<h4 style="font-weight: normal;">Output XML instance that succesfully
+reserved airline, car and hotel successfully:</h4>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" <br>xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;SOAP-ENV:Header/&gt;<br>  &lt;SOAP-ENV:Body&gt;<br>    &lt;reservationStatusOfAll xmlns="http://ReservationSystem.org/xsd/reserve"&gt;<br>      &lt;airlineStatus&gt;true&lt;/airlineStatus&gt;<br>      &lt;hotelStatus&gt;true&lt;/hotelStatus&gt;<br>      &lt;carStatus&gt;true&lt;/carStatus&gt;<br>    &lt;/reservationStatusOfAll&gt;<br>  &lt;/SOAP-ENV:Body&gt;<br>&lt;/SOAP-ENV:Envelope&gt;</pre>
+<h4 style="font-weight: normal;">An input XML instance that reserves
+only airline:<br>
+</h4>
+<pre>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"<br>xmlns:res="http://ReservationSystem.org/xsd/reserve" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" <br>xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/"&gt;<br>  &lt;soapenv:Body&gt;<br>    &lt;res:reserve&gt;<br>      &lt;res:reservationID&gt;0000098762&lt;/res:reservationID&gt;<br>      &lt;res:description&gt;book_airline&lt;/res:description&gt;<br>    &lt;/res:reserve&gt;<br>  &lt;/soapenv:Body&gt;<br>&lt;/soapenv:Envelope&gt;</pre>
+<h2>References<br>
+</h2>
+<ul>
+  <li>Browse the <a target="_blank"
+ href="https://blueprints.dev.java.net/bpcatalog/ee5/soa/codelinks.html">source
+code</a> for this BluePrint, including the
+BPEL process files and WSDL files.</li>
+  <li>See the BPEL BluePrint sample projects included in the <a
+ href="http://www.netbeans.org/products/enterprise/index.html">NetBeans
+Enterprise Pack 5.5 Beta IDE</a>.</li>
+  <li>For general information on BPEL, see <a
+ href="http://developers.sun.com/prodtech/javatools/jsenterprise/tpr/reference/techart/bpel.html">Business
+Process Execution Language, Part 1: An Introduction</a>.</li>
+</ul>
+<hr>
+<small>© Sun Microsystems 2006. All of the material in The Java
+BluePrints Solutions Catalog is <a
+ href="https://bpcatalog.dev.java.net/nonav/COPYRIGHT.html">copyright</a>-protected
+and may not be published in other works without express written
+permission from Sun Microsystems. </small>
+</body>
+</html>

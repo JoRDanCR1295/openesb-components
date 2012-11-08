@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="invoke_response_join_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/invoke_response_join_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/invoke_response_join_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:invoke_response_joinChildTargetNamespace"
+         xmlns:ns1="invoke_response_joinParent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:invoke_response_joinChildTargetNamespace"
+            location="invoke_response_join_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="invoke_response_joinParent"
+            location="invoke_response_join_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:invoke_response_joinChildServiceLinkType"
+                     partnerRole="invoke_response_joinChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:invoke_response_joinParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:invoke_response_joinParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childOperation"
+                  messageType="ns0:invoke_response_joinChildMessage"></variable>
+        <variable name="invoke_response_joinParentOperation_Output"
+                  messageType="ns1:invoke_response_joinParentMessage"></variable>
+        <variable name="invoke_response_joinParentOperation_Input"
+                  messageType="ns1:invoke_response_joinParentMessage"></variable>
+        <variable name="invoke_response_joinParentOperation1_Output"
+                  messageType="ns1:invoke_response_joinParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corProp1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="invoke_response_joinParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:invoke_response_joinParentPortType"
+                 operation="invoke_response_joinParentOperation"
+                 variable="invoke_response_joinParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$invoke_response_joinParentOperation_Output.invoke_response_joinParentPart/string</from>
+                <to>$childOperation.invoke_response_joinChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke name="Activity" partnerLink="plink_child"
+                portType="ns0:invoke_response_joinChildPortType"
+                operation="invoke_response_joinChildOperation"
+                inputVariable="childOperation"
+                outputVariable="childOperation">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="join"
+                             pattern="response"/>
+            </correlations>
+        </invoke>
+        <receive name="invoke_response_joinParentOperation1"
+                 partnerLink="plink_parent1"
+                 portType="ns1:invoke_response_joinParentPortType1"
+                 operation="invoke_response_joinParentOperation1"
+                 variable="invoke_response_joinParentOperation1_Output">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$invoke_response_joinParentOperation1_Output.invoke_response_joinParentPart/string</from>
+                <to>$invoke_response_joinParentOperation_Input.invoke_response_joinParentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parent"
+               portType="ns1:invoke_response_joinParentPortType"
+               operation="invoke_response_joinParentOperation"
+               variable="invoke_response_joinParentOperation_Input"></reply>
+    </sequence>
+</process>

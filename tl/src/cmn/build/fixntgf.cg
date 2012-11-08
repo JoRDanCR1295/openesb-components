@@ -1,0 +1,28 @@
+#!/bin/codegen
+#
+# fixntgf - create shell script wrappers for some key glassfish *.bat scripts
+#
+
+AS8BASE=$AS8BASE:nameof:env
+%ifndef AS8BASE %return AS8BASE is undefined
+
+asadmin_bat = $AS8BASE/bin/asadmin.bat
+%ifnot $asadmin_bat:r %return Did not find $AS8BASE/bin/asadmin.bat script - fix not needed.
+
+CG_ROOT=$AS8BASE
+CG_MODE=0555
+
+shell_template := << EOF
+#!/bin/sh
+exec {=AS8BASE=}/bin/{=COMMAND_NAME=}.bat "$@"
+EOF
+
+COMMAND_NAME = asadmin
+%evalmacro ECHO_TXT shell_template
+%echo Installing shell wrapper for ${COMMAND_NAME}.bat
+echo	bin/$COMMAND_NAME
+
+COMMAND_NAME = asant
+%evalmacro ECHO_TXT shell_template
+%echo Installing shell wrapper for ${COMMAND_NAME}.bat
+echo	bin/$COMMAND_NAME

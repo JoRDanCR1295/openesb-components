@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ReadProvideResult"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TestHL7Encoder/ReadProvideResult"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/TestHL7Encoder/ReadProvideResult"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/Correlation"
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReadResult"
+    xmlns:ns3="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ProviderResult"
+    xmlns:ns0="http://xml.netbeans.org/schema/OutputEnvelope"
+    xmlns:ns4="http://xml.netbeans.org/schema/TestHL7Encoder/OutputEnvelope">
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ReadResult"
+        location="ReadResult.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/ProviderResult"
+        location="ProviderResult.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/TestHL7Encoder/Correlation"
+        location="Correlation.wsdl"
+        importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns3:ProviderResult1"
+            myRole="ProviderResultPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns2:ReadResult1"
+            myRole="ReadResultPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="ProviderResultOperationOut"
+            messageType="ns3:ProviderResultOperationReply"/>
+        <bpws:variable name="ReadResultOperationIn"
+            messageType="ns2:ReadResultOperationRequest"/>
+        <bpws:variable name="ProviderResultOperationIn"
+            messageType="ns3:ProviderResultOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:JoinAction"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="RecFile" createInstance="yes"
+            partnerLink="PartnerLink1" operation="ReadResultOperation"
+            portType="ns2:ReadResultPortType" variable="ReadResultOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:receive name="RecSOAP" createInstance="no"
+            partnerLink="PartnerLink2" operation="ProviderResultOperation"
+            portType="ns3:ProviderResultPortType" variable="ProviderResultOperationIn">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$ReadResultOperationIn.rroIn/ns4:Payload</bpws:from>
+                <bpws:to>$ProviderResultOperationOut.proOut</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink2"
+            operation="ProviderResultOperation" portType="ns3:ProviderResultPortType"
+            variable="ProviderResultOperationOut"/>
+    </sequence>
+</process>

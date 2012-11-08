@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="ClientEmployeeInfo" targetNamespace="http://j2ee.netbeans.org/wsdl/RemoteClientEmployeeInfo"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/RemoteClientEmployeeInfo"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+
+  <!-- Message definitions -->
+  <message name ="RemoteClientEmployeeInfoRequest">
+    <part name="id" type="xsd:string"/>
+  </message>
+
+  <message name ="RemoteClientEmployeeInfoResponse">
+    <part name="item" type="xsd:string"/>
+  </message>
+
+
+  <!-- Port type definitions -->
+  <portType name="RemoteClientEmployeeInfoPortType">
+    <operation name="RemoteClientEmployeeInfoOperation">
+      <input message="tns:RemoteClientEmployeeInfoRequest"/>
+      <output message="tns:RemoteClientEmployeeInfoResponse"/>
+    </operation>
+  </portType>
+
+  <!-- Binding definitions -->
+  <binding name="RemoteClientEmployeeInfoBinding" type="tns:RemoteClientEmployeeInfoPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="RemoteClientEmployeeInfoOperation">
+      <soap:operation soapAction="ClientEmployee"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      </operation>
+  </binding>
+
+  <service name="RemoteClientEmployeeInfoService">
+    <port name="RemoteClientEmployeeInfoPort" binding="tns:RemoteClientEmployeeInfoBinding">
+      <soap:address location="http://localhost:${HttpDefaultPort}/service/RemoteClientEmployeeInfo"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="RemoteClientEmployeeInfo">
+        <plink:role name="server" portType="tns:RemoteClientEmployeeInfoPortType"/>
+    </plink:partnerLinkType>
+</definitions>

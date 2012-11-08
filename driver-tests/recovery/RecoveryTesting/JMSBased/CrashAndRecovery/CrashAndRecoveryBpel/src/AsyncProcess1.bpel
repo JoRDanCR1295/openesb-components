@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="AsyncProcess1"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AsyncProcess1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AsyncProcess1" xmlns:ns1="http://j2ee.netbeans.org/wsdl/AsyncProcess1" xmlns:ns2="http://j2ee.netbeans.org/wsdl/MessageTypes">
+    <import namespace="http://j2ee.netbeans.org/wsdl/AsyncProcess1" location="AsyncProcess1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="AsyncProcess1PLink" partnerLinkType="ns1:AsyncReqResProcessPLT" myRole="provider" partnerRole="requestor"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="AsyncProcess1RequestOperationIn" messageType="ns2:message1"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="AsyncProcess1PLink" operation="AsyncProcess1RequestOperation" portType="ns1:AsyncProcess1RequestPortType" variable="AsyncProcess1RequestOperationIn"/>
+        <bpws:invoke name="Invoke1" partnerLink="AsyncProcess1PLink" operation="AsyncProcess1ResponseOperation" portType="ns1:AsyncProcess1ResponsePortType" inputVariable="AsyncProcess1RequestOperationIn"/>
+    </sequence>
+</process>

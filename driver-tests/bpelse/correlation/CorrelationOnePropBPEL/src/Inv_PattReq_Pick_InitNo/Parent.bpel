@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Inv_PattReq_Pick_InitNo_Parent_BPEL"
+                 targetNamespace="Inv_PattReq_Pick_InitNo_Parent_BPEL_TNS"
+                 xmlns:tns="Inv_PattReq_Pick_InitNo_Parent_BPEL_TNS"
+                 xmlns:childWSDLns="Inv_PattReq_Pick_InitNo_Child_WSDL_TNS"
+                 xmlns:parentWSDLns="Inv_PattReq_Pick_InitNo_Parent_WSDL_TNS"                               
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+                 xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="Inv_PattReq_Pick_InitNo_Parent_WSDL_TNS"
+                    location="Parent.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="Inv_PattReq_Pick_InitNo_Child_WSDL_TNS"
+                    location="Child.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="ParentServiceLink"
+                             partnerLinkType="parentWSDLns:ParentServiceLinkType"
+                             myRole="Server"/>
+        <partnerLink name="ChildPartner"
+                             partnerLinkType="childWSDLns:ChildServiceLinkType"
+                             partnerRole="ChildServerRole"/>
+        <partnerLink name="ParentServiceLink1"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MyRole_ParentOperation_Output" messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="ChildContainer" messageType="childWSDLns:ChildMessage"></variable>
+        <variable name="MyRole_ParentOperation_Input" messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="MyRole_ParentOperation1_Input" messageType="parentWSDLns:ParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet" properties="childWSDLns:ChildProp"/>
+    </correlationSets>
+
+    <sequence>
+        <receive name="MyRole.ParentOperation.Receive"
+                         partnerLink="ParentServiceLink"
+                         portType="parentWSDLns:ParentPortType"
+                         operation="ParentOperation"
+                         variable="MyRole_ParentOperation_Input"
+                         createInstance="yes">
+        </receive>
+        <assign name="Assign">
+            <copy>
+                <from>$MyRole_ParentOperation_Input.ParentPart/string</from>
+                <to>$ChildContainer.ChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeChildBP"
+                        partnerLink="ChildPartner"
+                        portType="childWSDLns:ChildPortType"
+                        operation="ChildOperation"
+                        inputVariable="ChildContainer"
+                        outputVariable="ChildContainer">
+            <correlations>
+                <correlation set="cSet" initiate="yes" pattern="request"/>
+            </correlations>
+        </invoke>
+        <pick name="Pick1">
+            <onMessage partnerLink="ParentServiceLink1" operation="ParentOperation1" portType="parentWSDLns:ParentPortType1" variable="MyRole_ParentOperation1_Input">
+                <correlations>
+                    <correlation set="cSet" initiate="no"/>
+                </correlations>
+                <sequence name="Sequence1">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>concat($MyRole_ParentOperation_Input.ParentPart/ns0:string, $ChildContainer.ChildPart/ns0:string, $MyRole_ParentOperation1_Input.ParentPart/ns0:string)</from>
+                            <to>$MyRole_ParentOperation_Output.ParentPart/ns0:string</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            </onMessage>
+        </pick>
+        <reply name="MyRole.ParentOperation.Reply"
+                       partnerLink="ParentServiceLink"
+                       portType="parentWSDLns:ParentPortType"
+                       operation="ParentOperation"
+                       variable="MyRole_ParentOperation_Output">
+                  </reply>
+    </sequence>
+</process>

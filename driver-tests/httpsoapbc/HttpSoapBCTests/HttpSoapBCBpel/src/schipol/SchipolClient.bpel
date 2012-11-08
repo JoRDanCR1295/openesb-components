@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SchipolClient" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SchipolClient"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SchipolClient" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/SchipolWrapper" 
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/Client" 
+    xmlns:ns3="http://getBagItem.demo.sun.com/" 
+    xmlns:ns4="http://flightJourney.demo.sun.com/" 
+    xmlns:ns5="http://beltDetail.demo.sun.com/">
+    <import location="Client.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/Client"/>
+    <import location="SchipolWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/SchipolWrapper"/>
+    <import location="BeltDetail.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://beltDetail.demo.sun.com/"/>
+    <import location="FlightJourney.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://flightJourney.demo.sun.com/"/>
+    <import location="GetBagItem.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://getBagItem.demo.sun.com/"/>
+    <partnerLinks>
+        <partnerLink name="clientPartnerLink" partnerLinkType="ns1:clientPartnerlinktype" myRole="clientPartnerlinktyperole"/>
+        <partnerLink name="beltDetailPartnerLink" partnerLinkType="ns1:beltDetailPartnerlinktype" partnerRole="beltDetailPartnerlinktyperole"/>
+        <partnerLink name="flightJourneyPartnerLink" partnerLinkType="ns1:flightJourneyPartnerlinktype" partnerRole="flightJourneyPartnerlinktyperole"/>
+        <partnerLink name="getBagPartnerLink" partnerLinkType="ns1:getBagPartnerlinktype" partnerRole="getBagPartnerlinktyperole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="Operation1Out1" messageType="ns2:outputMessage"/>
+        <variable name="GetBeltDetailOut1" messageType="ns5:getBeltDetailResponse"/>
+        <variable name="GetBeltDetailIn1" messageType="ns5:getBeltDetail"/>
+        <variable name="GetFlightJourneyOut1" messageType="ns4:getFlightJourneyResponse"/>
+        <variable name="GetFlightJourneyIn1" messageType="ns4:getFlightJourney"/>
+        <variable name="GetBagOut1" messageType="ns3:getBagResponse"/>
+        <variable name="GetBagIn1" messageType="ns3:getBag"/>
+        <variable name="Operation1In1" messageType="ns2:InputMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="clientPartnerLink" operation="operation1" portType="ns2:IBeltService" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+            <from>$Operation1In1.inputPart/bagItemID</from><to>$GetBagIn1.parameters/bagItemID</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="getBagPartnerLink" operation="getBag" portType="ns3:GetBagItemEJB" inputVariable="GetBagIn1" outputVariable="GetBagOut1"/>
+        <assign name="Assign2">
+            <copy>
+            <from>$GetBagOut1.parameters/return/bagItemID/bagItemID</from><to>$GetFlightJourneyIn1.parameters/bagItem/bagItemID/bagItemID</to>
+            </copy>
+            <copy>
+            <from>$GetBagOut1.parameters/return/flightNumber</from><to>$GetFlightJourneyIn1.parameters/bagItem/flightNumber</to>
+            </copy>
+            <copy>
+            <from>$GetBagOut1.parameters/return/owner</from><to>$GetFlightJourneyIn1.parameters/bagItem/owner</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke2" partnerLink="flightJourneyPartnerLink" operation="getFlightJourney" portType="ns4:FlightJourneyEJB" inputVariable="GetFlightJourneyIn1" outputVariable="GetFlightJourneyOut1"/>
+        <assign name="Assign3">
+            <copy>
+            <from>$GetFlightJourneyOut1.parameters/return/airline</from><to>$GetBeltDetailIn1.parameters/fltJourney/airline</to>
+            </copy>
+            <copy>
+            <from>$GetFlightJourneyOut1.parameters/return/arrivalLocation</from><to>$GetBeltDetailIn1.parameters/fltJourney/arrivalLocation</to>
+            </copy>
+            <copy>
+            <from>$GetFlightJourneyOut1.parameters/return/departureLocation</from><to>$GetBeltDetailIn1.parameters/fltJourney/departureLocation</to>
+            </copy>
+            <copy>
+            <from>$GetFlightJourneyOut1.parameters/return/flightNumber</from><to>$GetBeltDetailIn1.parameters/fltJourney/flightNumber</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke3" partnerLink="beltDetailPartnerLink" operation="getBeltDetail" portType="ns5:BeltDetailEJB" inputVariable="GetBeltDetailIn1" outputVariable="GetBeltDetailOut1"/>
+        <assign name="Assign4">
+            <copy>
+            <from>$GetBeltDetailOut1.parameters/return/beltLine</from><to>$Operation1Out1.outputPart/return/beltLine</to>
+            </copy>
+            <copy>
+            <from>$GetBeltDetailOut1.parameters/return/beltName</from><to>$Operation1Out1.outputPart/return/beltName</to>
+            </copy>
+            <copy>
+            <from>$GetBeltDetailOut1.parameters/return/extensionName</from><to>$Operation1Out1.outputPart/return/extensionName</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="clientPartnerLink" operation="operation1" portType="ns2:IBeltService" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="forEach_basic2" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/forEach_basic2"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/forEach_basic2" xmlns:ns1="http://localhost/ForEachBpel/forEach_basic2">
+    <import namespace="http://localhost/ForEachBpel/forEach_basic2" location="forEach_basic2.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:forEach_basic2Partnerlinktype" myRole="forEach_basic2Partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="output1" messageType="ns1:message_out"/>
+        <variable name="input1" messageType="ns1:message_in"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="forEach_basic2Operation" portType="ns1:forEach_basic2PortType" variable="input1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>'Start'</from><to part="part1" variable="output1"/>
+            </copy>
+            <copy>
+            <from>0</from><to part="part2" variable="output1"/>
+            </copy>
+        </assign>
+        <forEach name="ForEach1" counterName="index2" parallel="yes" >
+            <startCounterValue>number($input1.part1)</startCounterValue>
+            <finalCounterValue>number($input1.part2)</finalCounterValue>
+            <scope name="Scope1">
+                <sequence name="Sequence1">
+                    <assign name="Assign2">
+                        <copy>
+                        <from>concat($output1.part1, 'Loop', $input1.part1)</from><to part="part1" variable="output1"/>
+                        </copy>
+                    </assign>
+                    <assign name="Assign3">
+                        <copy>
+                        <from> ( $input1.part1 + 2 ) </from><to part="part1" variable="input1"/>
+                        </copy>
+                    </assign>
+                </sequence>
+            </scope>
+        </forEach>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="forEach_basic2Operation" portType="ns1:forEach_basic2PortType" variable="output1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,1 @@
+create table "COMPANY"."teMP11" (sal integer, ename varchar(10))

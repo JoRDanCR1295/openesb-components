@@ -1,0 +1,660 @@
+/*
+ * BEGIN_HEADER - DO NOT EDIT
+ * 
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the "License").  You may not use this file except
+ * in compliance with the License.
+ *
+ * You can obtain a copy of the license at
+ * https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ * See the License for the specific language governing
+ * permissions and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * HEADER in each file and include the License file at
+ * https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ * If applicable add the following below this CDDL HEADER,
+ * with the fields enclosed by brackets "[]" replaced with
+ * your own identifying information: Portions Copyright
+ * [year] [name of copyright owner]
+ */
+
+/*
+ * @(#)SimpleTestDriver.java 
+ *
+ * Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ * 
+ * END_HEADER - DO NOT EDIT
+ */
+
+package com.sun.encoder.hl7.runtime.provider;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.xmlbeans.SchemaGlobalElement;
+import org.apache.xmlbeans.SchemaTypeLoader;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.sun.encoder.hl7.runtime.LexicalException;
+import com.sun.encoder.runtime.provider.SimpleContentHandler;
+import com.sun.encoder.util.UnicodeFile;
+
+/**
+ * This class facilitates simple functional and performance testing on HL7
+ * encoder.
+ * 
+ * @author Jun Xu
+ */
+public class SimpleTestDriver {
+    
+    //define delimiter type names
+    private static final Map<Integer, String> mDelimTypes =
+        new HashMap<Integer, String>();
+    static {
+        mDelimTypes.put(
+                Delimiter.Type.DELIM_NOT_READ,
+                "delimiter.not.read");
+        mDelimTypes.put(
+                Delimiter.Type.SEG_TERM,
+                "segment.terminator");
+        mDelimTypes.put(
+                Delimiter.Type.FIELD_SEP,
+                "field.separator");
+        mDelimTypes.put(
+                Delimiter.Type.REPET_SEP,
+                "repetition.separator");
+        mDelimTypes.put(
+                Delimiter.Type.COMPO_SEP,
+                "component.separator");
+        mDelimTypes.put(
+                Delimiter.Type.SUBCOMPO_SEP,
+                "subcomponent.separator");
+    }
+    
+    //define token type names
+    private static final Map<Token.Type, String> mTokenTypes =
+        new HashMap<Token.Type, String>();
+    static {
+        mTokenTypes.put(Token.Type.SEG_NAME, "segment.name");
+        mTokenTypes.put(Token.Type.VALUE, "value");
+        mTokenTypes.put(Token.Type.EOF, "end.of.file");
+    }
+    
+    //prepare data for ADT_A44:
+    private static final String mStringData;
+    private static final byte[] mBytesData;
+    static {
+        StringBuffer sb = new StringBuffer();
+        sb.append("MSH|^~\\&|REGADT|MCM|RSP1P8|MCM|").append(
+                "199601051530|SEC|ADT^A44|00000007|P|2.3.1|||||").append(
+                        "|UTF-8~ISO-8859-1~ISO-8859-2|||c1^sc1&c2\r");
+        sb.append("EVN|A44|199601051530\r");
+        sb.append("PID|||MR2^^^XYZ^MR||JONES^WILLIAM^A^JR||").append(
+                "19501010|M|||123 EAST STREET^^NY^NY^10021|").append(
+                        "|(212)111-3333|||S|ACCT|1\r");
+        sb.append("MRG|MR1^^^XYZ^MR||ACCT1\r");
+        sb.append("Z01|A44|199601051530");
+        mStringData = sb.toString();
+        try {
+            mBytesData = mStringData.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private final SchemaGlobalElement mRootElement;
+    private final URL mSchemaLocation;
+    
+    public SimpleTestDriver(URL schemaLocation, SchemaGlobalElement rootElement) {
+        mRootElement = rootElement;
+        mSchemaLocation = schemaLocation;
+    }
+    
+    public void testLexingFromString(String stringData,
+        int loops, boolean doPrint)
+            throws IOException, LexicalException {
+        System.out.println("data size (chars) = " + stringData.length());
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        final int finalLoops = loops;
+        final boolean finalDoPrint = doPrint;
+        int i;
+        for (i = 0; i < finalLoops; i++) {
+            //Prepare lexer using StringReader
+            Lexer lexer =
+                new Lexer(
+                    new InputSource(
+                        new StringReader(stringData)),
+                            stringData.length() + 1);
+            //Do lexing
+            Token token = new Token();
+            while(lexer.fillNextToken(token)) {
+                if (finalDoPrint) {
+                    System.out.println(
+                        new String(token.mChars, token.mOffset, token.mCount)
+                            + ", " + token.mLine + ", " + token.mCol
+                            + ", " + token.mLexerPos + ", "
+                            + mTokenTypes.get(token.mTokenType) + ", "
+                            + mDelimTypes.get(token.mDelimType));
+                }
+            }
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+        System.out.println("Characters/ms: "
+                + i * stringData.length() / elapsed);
+    }
+    
+    public void testLexingFromBytes(byte[] bytes, int loops, boolean doPrint)
+            throws IOException, LexicalException {
+        System.out.println("data size (bytes) = " + mStringData.length());
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        final int finalLoops = loops;
+        final boolean finalDoPrint = doPrint;
+        int i;
+        for (i = 0; i < finalLoops; i++) {
+            //Prepare lexer using StringReader
+            InputSource input = new InputSource(
+                    new ByteArrayInputStream(bytes));
+            input.setEncoding("UTF-8");
+            Lexer lexer =
+                new Lexer(input, bytes.length + 1);
+            
+            //Do lexing
+            Token token = new Token();
+            while(lexer.fillNextToken(token)) {
+                if (finalDoPrint) {
+                    System.out.println(
+                        new String(token.mChars, token.mOffset, token.mCount)
+                            + ", " + token.mLine + ", " + token.mCol
+                            + ", " + token.mLexerPos + ", "
+                            + mTokenTypes.get(token.mTokenType) + ", "
+                            + mDelimTypes.get(token.mDelimType));
+                }
+            }
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+        System.out.println("Bytes/ms: "
+                + i * bytes.length / elapsed);
+    }
+
+    public void testDecodeFromString(String stringData, int loops, boolean doPrint)
+            throws XmlException, IOException, SAXException {
+        System.out.println("data size (chars) = " + stringData.length());
+        
+        //Prepare content handler
+        ContentHandler handler =
+            new SimpleContentHandler(doPrint);
+        
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        final int finalLoops = loops;
+        int i;
+        UnmarshalAdaptor adaptor;
+        for (i = 0; i < finalLoops; i++) {
+            //Prepare UnmarshalAdaptor
+            adaptor =
+                new UnmarshalAdaptor(mSchemaLocation, mRootElement, stringData.length() + 1);
+            adaptor.setContentHandler(handler);
+
+            //Prepare InputSource
+            InputSource input = new InputSource(new StringReader(stringData));
+            input.setPublicId("string data");
+            
+            //Do parsing using simple content handler
+            adaptor.parse(input);
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+        System.out.println("Characters/ms: "
+                + i * stringData.length() / elapsed);
+    }
+    
+    public void testDecodeFromBytes(byte[] bytes, int loops, boolean doPrint)
+            throws XmlException, IOException, SAXException {
+        System.out.println("data size (bytes) = " + bytes.length);
+        
+        //Prepare content handler
+        ContentHandler handler =
+            new SimpleContentHandler(doPrint);
+        
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        final int finalLoops = loops;
+        int i;
+        UnmarshalAdaptor adaptor;
+        for (i = 0; i < finalLoops; i++) {
+            //Prepare UnmarshalAdaptor
+            adaptor =
+                new UnmarshalAdaptor(mSchemaLocation, mRootElement, bytes.length + 1);
+            adaptor.setContentHandler(handler);
+
+            //Prepare InputSource
+            InputSource input = new InputSource(
+                    new ByteArrayInputStream(bytes));
+            input.setEncoding("UTF-8");
+            input.setPublicId("bytes data");
+            
+            //Do parsing using simple content handler
+            adaptor.parse(input);
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+        System.out.println("Bytes/ms: "
+                + i * bytes.length / elapsed);
+    }
+    
+    public void testEncodeToString(String stringData,
+            int loops, boolean doPrint)
+        throws XmlException, IOException,
+            TransformerFactoryConfigurationError, TransformerException {
+        System.out.println("source data size = " + stringData.length());
+        
+        System.out.println("Prepare DOM Source ...");
+        DOMSource domSource = getDOMData(stringData);
+        
+        final int finalLoops = loops;
+        int i;
+        Transformer transformer =
+            TransformerFactory.newInstance().newTransformer();
+        SAXResult saxResult;
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        for (i = 0; i < finalLoops; i++) {
+            saxResult = new SAXResult(
+                    new MarshalHandler(mRootElement, new StringWriter()));
+            transformer.transform(domSource, saxResult);
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        
+        //Either visiting DOM tree or transforming is very costy, we need to
+        //exclude the cost.  We use the SimpleContentHandler to run it this
+        //time.  SimpleContentHandler almost does nothing when doPrint is false.
+        saxResult = new SAXResult(
+                new SimpleContentHandler(false));
+        System.out.println("Estimate cost ...");
+        startedAt = System.currentTimeMillis();
+        for (i = 0; i < finalLoops; i++) {
+            transformer.transform(domSource, saxResult);
+        }
+        endedAt = System.currentTimeMillis();
+        long elapsed2 = endedAt - startedAt;
+        if (elapsed2 < 0) {
+            elapsed2 = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        elapsed = elapsed - elapsed2;
+        StringWriter writer = new StringWriter();
+        saxResult = new SAXResult(
+                new MarshalHandler(mRootElement, writer));
+        transformer.transform(domSource, saxResult);
+        String resultString = writer.toString();
+        if (doPrint) {
+            System.out.println(resultString);
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+
+        System.out.println("result data size (chars) = "
+                + resultString.length());
+        System.out.println("Characters/ms: "
+                + i * resultString.length() / elapsed);
+    }
+    
+    public void testEncodeToBytes(byte[] bytes, int loops, boolean doPrint)
+        throws XmlException, IOException,
+            TransformerFactoryConfigurationError, TransformerException {
+        System.out.println("source data size (bytes) = " + bytes.length);
+        
+        System.out.println("Prepare DOM Source ...");
+        DOMSource domSource = getDOMData(bytes);
+        
+        System.out.println("Start ...");
+        long startedAt = System.currentTimeMillis();
+        final int finalLoops = loops;
+        int i;
+        Transformer transformer =
+            TransformerFactory.newInstance().newTransformer();
+        SAXResult saxResult;
+        for (i = 0; i < finalLoops; i++) {
+            saxResult = new SAXResult(
+                    new MarshalHandler(mRootElement,
+                            new BufferedOutputStream(
+                                    new ByteArrayOutputStream()),
+                                        "UTF-8"));
+            transformer.transform(domSource, saxResult);
+        }
+        long endedAt = System.currentTimeMillis();
+        long elapsed = endedAt - startedAt;
+        if (elapsed < 0) {
+            elapsed = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        
+        //Either visiting DOM tree or transforming is very costy, we need to
+        //exclude the cost.  We use the SimpleContentHandler to run it this
+        //time.  SimpleContentHandler almost does nothing when doPrint is false.
+        saxResult = new SAXResult(
+                new SimpleContentHandler(false));
+        System.out.println("Estimate cost ...");
+        startedAt = System.currentTimeMillis();
+        for (i = 0; i < finalLoops; i++) {
+            transformer.transform(domSource, saxResult);
+        }
+        endedAt = System.currentTimeMillis();
+        long elapsed2 = endedAt - startedAt;
+        if (elapsed2 < 0) {
+            elapsed2 = (Long.MAX_VALUE - startedAt) + endedAt;
+        }
+        elapsed = elapsed - elapsed2;
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        saxResult = new SAXResult(
+                new MarshalHandler(mRootElement,
+                        new BufferedOutputStream(outStream),
+                                    "UTF-8"));
+        transformer.transform(domSource, saxResult);
+        byte[] resultBytes = outStream.toByteArray();
+        if (doPrint) {
+            System.out.println(new String(resultBytes, "UTF-8"));
+        }
+        System.out.println("End ...");
+        System.out.println("Elapsed: " + elapsed + "ms");
+        if (elapsed == 0) {
+            elapsed = 1;
+        }
+        System.out.println("result data size (bytes) = " + resultBytes.length);
+        System.out.println("result bytes/ms: "
+                + i * resultBytes.length / elapsed);
+    }
+
+    private static SchemaGlobalElement getRootElement(
+            File schemaFile, QName rootElementName)
+        throws XmlException, IOException {
+        
+        XmlObject schemaXmlObj =
+            XmlObject.Factory.parse(schemaFile);
+        SchemaTypeSystem schemaTS =
+            XmlBeans.compileXsd(new XmlObject[]{schemaXmlObj},
+                XmlBeans.getContextTypeLoader(), null);
+        SchemaTypeLoader typeLoader =
+            XmlBeans.typeLoaderUnion(
+                new SchemaTypeLoader[]{XmlBeans.getContextTypeLoader(),
+                        schemaTS});
+        SchemaGlobalElement rootElement =
+            typeLoader.findElement(rootElementName);
+        return rootElement;
+    }
+    
+    private static SchemaGlobalElement getRootElement(
+            URL schemaURL, QName rootElementName)
+        throws XmlException, IOException {
+        
+            XmlOptions options = new XmlOptions();
+            options.put(XmlOptions.COMPILE_DOWNLOAD_URLS, Boolean.TRUE);
+            XmlObject schemaXmlObj =
+                XmlObject.Factory.parse(schemaURL, options);
+            SchemaTypeSystem schemaTS =
+                XmlBeans.compileXsd(new XmlObject[]{schemaXmlObj},
+                    XmlBeans.getContextTypeLoader(), options);
+            SchemaTypeLoader typeLoader =
+                XmlBeans.typeLoaderUnion(
+                    new SchemaTypeLoader[]{XmlBeans.getContextTypeLoader(),
+                            schemaTS});
+            SchemaGlobalElement rootElement =
+                typeLoader.findElement(rootElementName);
+            return rootElement;
+    }
+    
+    private DOMSource getDOMData(String stringData)
+            throws TransformerFactoryConfigurationError, TransformerException {
+        StreamSource streamSource = new StreamSource(
+                new StringReader(stringData));
+        Transformer transformer =
+            TransformerFactory.newInstance().newTransformer();
+        DOMResult domResult = new DOMResult();
+        transformer.transform(streamSource, domResult);
+        return new DOMSource(domResult.getNode());
+    }
+    
+    private DOMSource getDOMData(byte[] bytesData)
+            throws TransformerFactoryConfigurationError, TransformerException {
+        StreamSource streamSource = new StreamSource(
+                new ByteArrayInputStream(bytesData));
+        Transformer transformer =
+            TransformerFactory.newInstance().newTransformer();
+        DOMResult domResult = new DOMResult();
+        transformer.transform(streamSource, domResult);
+        return new DOMSource(domResult.getNode());
+    }
+
+    private static class JarEntityResolver implements EntityResolver {
+
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+            InputStream in = new URL(systemId).openStream();
+            InputSource inputSource = new InputSource(in);
+            inputSource.setPublicId(publicId);
+            inputSource.setSystemId(systemId);
+            return inputSource;
+        }
+    }
+    
+    public static void main(String[] args) {
+        
+        String testWhat = "ds";
+        int loops = 1;
+        boolean printResult = false;
+        File testDir =
+            new File(System.getProperty("ENCODER_SHAREDLIBRARY") + "hl7/test");
+        String inputFileName = null;
+        String schemaFileName = null;
+        String schemaURLString = null;
+        String rootElementName = null;
+        for (int i = 0; args != null && i < args.length; i++) {
+            if ("-t".equals(args[i])) {
+                //test what?
+                if (i + 1 < args.length) {
+                    testWhat = args[i + 1];
+                }
+            } else if ("-d".equals(args[i])) {
+                //testing directory
+                if (i + 1 < args.length) {
+                    testDir = new File(args[i + 1]);
+                }
+            } else if ("-l".equals(args[i])) {
+                //number of loops
+                if (i + 1 < args.length) {
+                    loops = Integer.parseInt(args[i + 1]);
+                }
+            } else if ("-p".equals(args[i])) {
+                //print result?
+                printResult = true; 
+            } else if ("-i".equals(args[i])) {
+                //input file
+                if (i + 1 < args.length) {
+                    inputFileName = args[i + 1];
+                }
+            } else if ("-s".equals(args[i])) {
+                //schema file using file path
+                if (i + 1 < args.length) {
+                    schemaFileName = args[i + 1];
+                }
+            } else if ("-u".equals(args[i])) {
+                //schema file using URL
+                if (i + 1 < args.length) {
+                    schemaURLString = args[i + 1];
+                }
+            } else if ("-r".equals(args[i])) {
+                //root element
+                if (i + 1 < args.length) {
+                    rootElementName = args[i + 1];
+                }
+            } else if ("-help".equals(args[i]) || "/?".equals(args[i])) {
+                System.out.println("Usage: java SimplePerfTest "
+                        + "[-d <testing dir>] "
+                        + "[-t <test what, value=(ls, lb, ds, db, es or eb)] "
+                        + "[-l <number of loops>] "
+                        + "[-p]");
+                System.exit(1);
+            }
+        }
+        
+        try {
+            System.out.println("Load input data ...");
+            String stringData = mStringData;
+            byte[] bytesData = mBytesData;
+            if (inputFileName != null) {
+                stringData = UnicodeFile.getText(
+                        new File(testDir, inputFileName));
+                bytesData = stringData.getBytes("UTF-8");
+            }
+            
+            System.out.println("Prepare XSD ...");
+            File schemaFile = null;
+            URL schemaURL = null;
+            if (schemaFileName == null && schemaURLString == null) {
+                schemaFile = new File(testDir, "data/hl7_231_xsd/ADT_A43.xsd");
+            } else if (schemaFileName != null) {
+                schemaFile = new File(testDir, schemaFileName);
+            } else {
+                schemaURL = new URL(schemaURLString);
+            }
+            SchemaGlobalElement rootElement;
+            if (rootElementName == null) {
+                if (schemaFile != null) {
+                    rootElement = getRootElement(schemaFile,  
+                        new QName("urn:hl7-org:v2xml", "ADT_A43"));
+                } else {
+                    rootElement = getRootElement(schemaURL,  
+                            new QName("urn:hl7-org:v2xml", "ADT_A43"));
+                }
+            } else {
+                QName qName;
+                if (rootElementName.charAt(0) == '{') {
+                    int pos = rootElementName.indexOf('}');
+                    qName =
+                        new QName(rootElementName.substring(1, pos),
+                                rootElementName.substring(pos + 1));
+                } else {
+                    qName = new QName(rootElementName);
+                }
+                if (schemaFile != null) {
+                    rootElement = getRootElement(schemaFile, qName);
+                } else {
+                    rootElement = getRootElement(schemaURL, qName);
+                }
+            }
+            SimpleTestDriver perfTest;
+            if (schemaURL != null) {
+                perfTest = new SimpleTestDriver(schemaURL, rootElement);
+            } else {
+                perfTest = new SimpleTestDriver(schemaFile.toURL(), rootElement);
+            }
+            if ("ls".equals(testWhat)) {
+                perfTest.testLexingFromString(stringData, loops, printResult);
+            } else if ("lb".equals(testWhat)) {
+                perfTest.testLexingFromBytes(bytesData, loops, printResult);
+            } else if ("ds".equals(testWhat)) {
+                perfTest.testDecodeFromString(stringData, loops, printResult);
+            } else if ("db".equals(testWhat)) {
+                perfTest.testDecodeFromBytes(bytesData, loops, printResult);
+            } else if ("es".equals(testWhat)) {
+                perfTest.testEncodeToString(stringData, loops, printResult);
+            } else if ("eb".equals(testWhat)) {
+                perfTest.testEncodeToBytes(bytesData, loops, printResult);
+            } else {
+                System.out.println("Usage: java SimplePerfTest "
+                        + "[-d <testing dir>] "
+                        + "[-t <test what, value=(ls, lb, ds, db, es or eb)] "
+                        + "[-l <number of loops>] "
+                        + "[-p]");
+                System.exit(1);
+            }
+        } catch (XmlException e) {
+            e.printStackTrace();
+            System.exit(2);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(3);
+        } catch (TransformerFactoryConfigurationError e) {
+            e.printStackTrace();
+            System.exit(4);
+        } catch (SAXException e) {
+            e.printStackTrace();
+            System.exit(5);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+            System.exit(6);
+        }
+        System.exit(0);
+    }
+}

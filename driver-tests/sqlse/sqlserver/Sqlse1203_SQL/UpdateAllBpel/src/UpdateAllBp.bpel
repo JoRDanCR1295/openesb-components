@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UpdateAllBp"
+    targetNamespace="http://enterprise.netbeans.org/bpel/UpdateAllBp"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/UpdateAllBp" xmlns:ns1="http://com.sun.jbi/sqlse/sqlseengine" xmlns:ns2="http://j2ee.netbeans.org/wsdl/UpdateAllBpel">
+   <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="UpdateAllSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/UpdateAllBpel" location="UpdateAllBpel.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:UpdateAllBpelPartner" partnerRole="UpdateAllBpelPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:UpdateAllSql_sqlsePartnerLinkType" myRole="UpdateAllSql_myrole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="UpdateAllOut" messageType="ns1:UpdateAllResponse"/>
+      <bpws:variable name="UpdateAllBpelOperationOut" messageType="ns2:UpdateAllBpelOperationReply"/>
+      <bpws:variable name="UpdateAllBpelOperationIn" messageType="ns2:UpdateAllBpelOperationRequest"/>
+      <bpws:variable name="UpdateAllIn" messageType="ns1:UpdateAllRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="UpdateAll" portType="ns1:UpdateAllSql_sqlsePortType" variable="UpdateAllIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="UpdateAllIn" part="UpdateAllRequestPart"/>
+            <bpws:to variable="UpdateAllBpelOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="UpdateAllBpelOperation" portType="ns2:UpdateAllBpelPortType" inputVariable="UpdateAllBpelOperationIn" outputVariable="UpdateAllBpelOperationOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="UpdateAllBpelOperationOut" part="part1"/>
+            <bpws:to variable="UpdateAllOut" part="UpdateAllResponsePart"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="UpdateAll" portType="ns1:UpdateAllSql_sqlsePortType" variable="UpdateAllOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,30 @@
+drop table "COMPANY"."dept";
+drop table "COMPANY"."dept1";
+drop table "COMPANY"."dept2";
+drop table "COMPANY"."dept3";
+drop table "COMPANY"."dept123";
+drop table "COMPANY"."dept1234";
+drop table "COMPANY"."emp";
+drop table "COMPANY"."emp1";
+drop table "COMPANY"."emp2";
+drop table "COMPANY"."emp3";
+drop table "COMPANY"."temp1";
+drop table "COMPANY"."temp2";
+drop table "COMPANY"."temp3";
+drop table "COMPANY"."TEMP";
+drop table "COMPANY"."newtemp";
+drop table "COMPANY"."teMP11";
+drop table "app"."TEMP1";
+drop table "COMPANY"."dummydrop";
+drop table "app"."altertab";
+drop table "COMPANY"."altertable";
+
+drop view "COMPANY"."v1058";
+drop view "app"."v1";
+drop view "COMPANY"."v1fullqual";
+drop view "COMPANY"."v1059";
+DROP TABLE "COMPANY"."CUSTOMER";
+DROP TABLE "COMPANY"."DISCOUNT_CODE";
+DROP TABLE "COMPANY"."MICRO_MARKETS";
+drop schema "COMPANY" restrict;
+

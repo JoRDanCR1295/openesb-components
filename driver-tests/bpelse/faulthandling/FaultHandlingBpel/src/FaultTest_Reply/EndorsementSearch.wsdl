@@ -1,0 +1,98 @@
+<definitions targetNamespace="http://stc.com/snowboard-info"
+             name="EndorsementSearch"
+             xmlns:tns="http://stc.com/snowboard-info"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+             
+             <types>
+             <xsd:schema  attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://stc.com/snowboard-info">
+             <xsd:element name="GetEndorsingBoarder" type="tns:GetEndorsingBoarderType"/>
+             <xsd:complexType name="GetEndorsingBoarderType">
+             <xsd:sequence>
+             <xsd:element name="manufacturer" type="xsd:string"/>
+             <xsd:element name="model" type="xsd:string"/>
+             </xsd:sequence>   
+             </xsd:complexType>
+                        
+             
+             <xsd:element name="GetEndorsingBoarderResponse" type="tns:GetEndorsingBoarderResponseType"/>
+             <xsd:complexType name="GetEndorsingBoarderResponseType">
+             <xsd:sequence>
+             <xsd:element name="endorsingBoarder" type="xsd:string"/>
+             </xsd:sequence>  
+                     
+             </xsd:complexType>
+             
+             
+             <xsd:element name="GetEndorsingBoarderFault" type="tns:GetEndorsingBoarderFaultType"/>
+             <xsd:complexType name="GetEndorsingBoarderFaultType">
+             <xsd:sequence>
+             <xsd:element name="errorMessage" type="xsd:string"/>
+             
+             
+             </xsd:sequence>
+             
+             
+             </xsd:complexType>      
+             </xsd:schema>
+             </types>
+             
+             <message name="GetEndorsingBoarderRequest">
+                 <part name="body" element="tns:GetEndorsingBoarder"/>
+             </message>
+             
+             <message name="GetEndorsingBoarderResponse">
+                <part name="body" element="tns:GetEndorsingBoarderResponse"/>
+             </message>
+             
+             <message name="GetEndorsingBoarderFault">
+                <part name="body" element="tns:GetEndorsingBoarderFault"/>
+             </message>
+             
+      <portType name="GetEndorsingBoarderPortType">
+         <operation name="GetEndorsingBoarder">
+            <input message="tns:GetEndorsingBoarderRequest"/>
+            <output message="tns:GetEndorsingBoarderResponse"/>
+            <fault name="fault1" message="tns:GetEndorsingBoarderFault"/>
+         </operation>
+      </portType>
+                     
+      <binding name="EndorsementSearchSoapBinding"
+             type="tns:GetEndorsingBoarderPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetEndorsingBoarder">
+            <soap:operation soapAction="EndorsementSearch"/>
+            <input>
+                <soap:body parts="body" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="body" use="literal"/>
+            </output>
+            <fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="EndorsementSearchService">
+        <documentation>
+      snowboarding-info.com Endorsement Service
+    </documentation>
+        <port name="GetEndorsingBoarderPort"
+              binding="tns:EndorsementSearchSoapBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/EndorsementSearch"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="EndorsementSearchrole" portType="tns:GetEndorsingBoarderPortType"/>
+    </plnk:partnerLinkType>
+</definitions>
+
+             
+             
+             
+             
+     
+

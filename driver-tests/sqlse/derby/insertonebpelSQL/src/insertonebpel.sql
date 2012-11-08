@@ -1,0 +1,1 @@
+insert into "COMPANY"."dept" values(45,'Engineer','India')

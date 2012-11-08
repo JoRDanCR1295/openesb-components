@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://localhost/BPELProject/simpleCorrelationJMSIn" xmlns:ns2="http://www.seebeyond.com/eInsight/simpleCorrelationJMSInOut" xmlns:ns3="http://localhost/BPELProject/JMSIn" xmlns:ns4="http://www.seebeyond.com/eInsight/firstJMSInOut" xmlns:ns5="http://localhost/BPELProject/simpleCorrelationJMSOut" xmlns:ns6="http://localhost/BPELProject/JMSOut" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+<service-assembly>
+<identification>
+<name>ClusterJBI</name>
+<description>Represents the Service Assembly of ClusterJBI</description>
+</identification>
+<service-unit>
+<identification>
+<name>ClusterJBI-ClusterBPEL</name>
+<description>Represents this Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>ClusterBPEL.jar</artifacts-zip>
+<component-name>com.sun.bpelse-1.0-2</component-name>
+</target>
+</service-unit>
+
+
+
+
+<service-unit>
+<identification>
+<name>ClusterJBI-com.sun.jmsbc-1.0-2</name>
+<description>Represents this Service Unit</description>
+</identification>
+<target>
+<artifacts-zip>com.sun.jmsbc-1.0-2.jar</artifacts-zip>
+<component-name>com.sun.jmsbc-1.0-2</component-name>
+</target>
+</service-unit>
+
+
+
+
+
+<connections>
+<connection>
+<consumer endpoint-name="port_JMSIn" service-name="ns1:service_simpleCorrelationJMSIn"/>
+<provider endpoint-name="Server_myRole" service-name="ns2:jmsInLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="port_JMSIn" service-name="ns3:service_JMSIn"/>
+<provider endpoint-name="Server_myRole" service-name="ns4:jmsInLink"/>
+</connection>
+<connection>
+<consumer endpoint-name="Server_partnerRole" service-name="ns2:jmsOutLink"/>
+<provider endpoint-name="port_simpleCorrelationJMSOut" service-name="ns5:service_simpleCorrelationJMSOut"/>
+</connection>
+<connection>
+<consumer endpoint-name="Server_partnerRole" service-name="ns4:jmsOutLink"/>
+<provider endpoint-name="port_JMSOut" service-name="ns6:service_JMSOut"/>
+</connection>
+<connection>
+<consumer endpoint-name="port_JMSIn1" service-name="ns1:service_simpleCorrelationJMSIn"/>
+<provider endpoint-name="Server1_myRole" service-name="ns2:jmsInLink1"/>
+</connection>
+</connections>
+</service-assembly>
+</jbi>

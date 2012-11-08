@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="InvokeServicewithRepeat" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/InvokeServicewithRepeat"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/InvokeServicewithRepeat" xmlns:ns1="http://j2ee.netbeans.org/wsdl/InvokeServicewithRepeat" xmlns:ns2="http://j2ee.netbeans.org/wsdl/EchoService">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeServicewithRepeat" location="InvokeServicewithRepeat.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/EchoService" location="EchoWithRepeat.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EchoOperationOut1" messageType="ns2:EchoMessage2"/>
+        <variable name="EchoOperationIn1" messageType="ns2:EchoMessage2"/>
+        <variable name="Operation1Out1" messageType="ns1:message1"/>
+        <variable name="Operation1In1" messageType="ns1:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="operation1" portType="ns1:InvRPTservicePortType1" variable="Operation1In1"/>
+        <assign name="Assign1">
+            <copy>
+                <from>0</from>
+                <to part="count" variable="Operation1In1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign4">
+                    <copy>
+                        <from variable="Operation1In1" part="Name"/>
+                        <to variable="EchoOperationIn1" part="Name"/>
+                    </copy>
+                    <copy>
+                        <from variable="Operation1In1" part="count"/>
+                        <to variable="EchoOperationIn1" part="count"/>
+                    </copy>
+                </assign>
+                <invoke name="Invoke1" partnerLink="PartnerLink2" operation="EchoOperation" portType="ns2:EchoPort1" inputVariable="EchoOperationIn1" outputVariable="EchoOperationOut1"/>
+                <assign name="Assign3">
+                    <copy>
+                        <from variable="EchoOperationOut1" part="Name"/>
+                        <to variable="Operation1Out1" part="Name"/>
+                    </copy>
+                    <copy>
+                        <from variable="EchoOperationOut1" part="count"/>
+                        <to variable="Operation1Out1" part="count"/>
+                    </copy>
+                </assign>
+                <assign name="Assign5">
+                    <copy>
+                        <from variable="Operation1Out1" part="Name"/>
+                        <to variable="Operation1In1" part="Name"/>
+                    </copy>
+                </assign>
+                <assign name="Assign6">
+                    <copy>
+                        <from>concat($Operation1In1.Name, 'In Consumer service...')</from>
+                        <to part="Name" variable="Operation1In1"/>
+                    </copy>
+                    <copy>
+                        <from> ( 1 + $Operation1In1.count ) </from>
+                        <to part="count" variable="Operation1In1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition>   ( $Operation1In1.count >= 2 )   </condition>
+        </repeatUntil>
+        <assign name="Assign2">
+            <copy>
+                <from variable="Operation1In1" part="Name"/>
+                <to variable="Operation1Out1" part="Name"/>
+            </copy>
+            <copy>
+                <from variable="Operation1In1" part="count"/>
+                <to variable="Operation1Out1" part="count"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation1" portType="ns1:InvRPTservicePortType1" variable="Operation1Out1"/>
+    </sequence>
+   
+</process>

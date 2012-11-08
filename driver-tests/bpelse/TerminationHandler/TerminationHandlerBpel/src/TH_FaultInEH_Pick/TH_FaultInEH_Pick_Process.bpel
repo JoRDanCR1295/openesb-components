@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TH_FaultInEH_Pick_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/TH_FaultInEH_Pick_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/TH_FaultInEH_Pick_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL13" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL131">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL13" location="IOWSDL13.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:IOWSDL13Plink" myRole="IOWSDL13PortTypeRole"/>
+        <partnerLink name="CorrelationPlink" partnerLinkType="ns1:CorrelationPlink" myRole="CorrelationPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IntVariable" type="xsd:int"/>
+        <variable name="IOWSDL13OperationIn" messageType="ns1:IOWSDL13OperationRequest"/>
+        <variable name="IOWSDL13OperationOut" messageType="ns1:IOWSDL13OperationReply"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVar"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL13Operation" portType="ns1:IOWSDL13PortType" variable="IOWSDL13OperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL13OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="GlobalScope">
+            <faultHandlers>
+                <catch faultName="ns2:someFault">
+                    <sequence name="Sequence8">
+                        <assign name="Assign7">
+                            <copy>
+                                <from>concat($outputString, ' \n 6. Caught someFault. Sending Output from FH')</from>
+                                <to variable="IOWSDL13OperationOut" part="OutputPart"/>
+                            </copy>
+                        </assign>
+                        <reply name="Reply2" partnerLink="PartnerLinkInOut" operation="IOWSDL13Operation" portType="ns1:IOWSDL13PortType" variable="IOWSDL13OperationOut"/>
+                    </sequence>
+                </catch>
+                <catchAll>
+                    <sequence name="Sequence9">
+                        <assign name="Assign8">
+                            <copy>
+                                <from>
+                                    <literal>Incorrect execution. This fault handler should not have executed.</literal>
+                                </from>
+                                <to part="OutputPart" variable="IOWSDL13OperationOut"/>
+                            </copy>
+                        </assign>
+                        <reply name="Reply3" partnerLink="PartnerLinkInOut" operation="IOWSDL13Operation" portType="ns1:IOWSDL13PortType" variable="IOWSDL13OperationOut"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence1">
+                <scope name="SimpleScope">
+                    <variables>
+                        <variable name="CorrelationOperationIn" messageType="ns1:IOWSDL13OperationRequest"/>
+                    </variables>
+                    <terminationHandler>
+                        <assign name="Assign6">
+                            <copy>
+                                <from>concat($outputString, 'This will not get executed bcoz TH will not be called for SimpleScope')</from>
+                                <to variable="outputString"/>
+                            </copy>                                           
+                        </assign>
+                    </terminationHandler>                    
+                    <eventHandlers>
+                        <onAlarm>
+                            <for>'P0Y0M0DT0H0M5S'</for>
+                            <scope name="EventHandler_OnAlarm_Scope">
+                                <sequence name="Sequence7">
+                                    <scope name="EH_InnerScope">
+                                        <assign name="Assign4">
+                                            <copy>
+                                                <from>concat($outputString, ' \n 4. In EH : Fault occurs here ')</from>
+                                                <to variable="outputString"/>
+                                            </copy>
+                                        </assign>
+                                    </scope>
+                                    <throw name="Throw1" faultName="ns2:someFault"/>
+                                </sequence>
+                            </scope>
+                        </onAlarm>
+                    </eventHandlers>
+                    <sequence name="Sequence2">
+                        <flow name="MainFlow">
+                            <sequence name="Sequence5">
+                                <pick name="Pick_OnAlarm">
+                                    <onMessage partnerLink="CorrelationPlink" operation="CorrelationOperation" portType="ns1:CorrelationPortType" variable="CorrelationOperationIn">
+                                        <correlations>
+                                            <correlation set="CorrelationSet1" initiate="no"/>
+                                        </correlations>
+                                        <empty name="Empty1"/>
+                                    </onMessage>
+                                    <onAlarm>
+                                        <for>'P0Y0M0DT0H0M1S'</for>
+                                        <sequence name="Sequence6">
+                                            <assign name="Assign3">
+                                                <copy>
+                                                    <from>concat($outputString, ' \n 3. In Branch1: Pick ')</from>
+                                                    <to variable="outputString"/>
+                                                </copy>
+                                            </assign>
+                                            <wait name="Wait2">
+                                                <for>'P0Y0M0DT0H0M20S'</for>
+                                            </wait>
+                                        </sequence>
+                                    </onAlarm>
+                                </pick>
+                            </sequence>
+                            <sequence name="Sequence3">
+                                <scope name="ScopeToBeTerminated">
+                                    <terminationHandler>
+                                        <assign name="Assign5">
+                                            <copy>
+                                                <from>concat($outputString, ' \n 5. In TH of ScopeToBeTerminated ')</from>
+                                                <to variable="outputString"/>
+                                            </copy>                                                            
+                                        </assign>
+                                    </terminationHandler>                                    
+                                    <sequence name="Sequence4">
+                                        <assign name="Assign2">
+                                            <copy>
+                                                <from>concat($outputString, ' \n 2. In Branch2 ')</from>
+                                                <to variable="outputString"/>
+                                            </copy>
+                                        </assign>
+                                        <wait name="Wait1">
+                                            <for>'P0Y0M0DT0H0M20S'</for>
+                                        </wait>
+                                    </sequence>
+                                </scope>
+                            </sequence>
+                        </flow>
+                    </sequence>
+                </scope>
+                <assign name="Assign9">
+                    <copy>
+                        <from variable="IntVariable"/>
+                        <to variable="IOWSDL13OperationOut" part="OutputPart"/>
+                    </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL13Operation" portType="ns1:IOWSDL13PortType" variable="IOWSDL13OperationOut"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

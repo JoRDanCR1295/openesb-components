@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/Corrtest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Corrtest" name="Corrtest" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="FirstMessage">
+        <part name="MessageCorrelationID" type="xsd:long"/>       
+        <part name="MessageText" type="xsd:string"/>
+    </message>
+    <message name="CorrelatedMessage">
+        <part name="MessageCorrelationID" type="xsd:long"/>         
+        <part name="MessageText" type="xsd:string"/>
+    </message>
+    <message name="JMSInvokeMessage">
+        <part name="MessageText" type="xsd:string"/>
+    </message>    
+    <portType name="FirstMessagePortType">
+        <wsdl:operation name="CorrtestOperation">
+            <wsdl:input name="input" message="tns:FirstMessage"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="CorrelatedMessagePortType">
+        <wsdl:operation name="CorrtestOperation">
+            <wsdl:input name="input" message="tns:CorrelatedMessage"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="JMSInvokeMessagePortType">
+        <wsdl:operation name="CorrtestOperation">
+            <wsdl:input name="input" message="tns:JMSInvokeMessage"/>
+        </wsdl:operation>
+    </portType> 
+    
+    <binding name="FirstMessageBinding" type="tns:FirstMessagePortType">
+        <jms:binding/>
+        <wsdl:operation name="CorrtestOperation">
+            <jms:operation destination="JMSPropCorrelationQueueIn1" destinationType="Queue"/>
+            <wsdl:input name="input">
+                <jms:message messageType="TextMessage" textPart="MessageText">
+                    <jms:properties>
+                        <jms:property part="MessageCorrelationID" type="long" name="correlationId"></jms:property>
+                    </jms:properties>                
+                </jms:message>                 
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="CorrelatedMessageBinding" type="tns:CorrelatedMessagePortType">
+        <jms:binding/>
+        <wsdl:operation name="CorrtestOperation">
+            <jms:operation destination="JMSPropCorrelationQueueIn2" destinationType="Queue"></jms:operation>
+            <wsdl:input name="input">
+                <jms:message messageType="TextMessage" textPart="MessageText">
+                    <jms:properties>
+                        <jms:property part="MessageCorrelationID" type="long" name="correlationId"></jms:property>
+                    </jms:properties>                
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="JMSInvokeMessageBinding" type="tns:JMSInvokeMessagePortType">
+        <jms:binding/>
+        <wsdl:operation name="CorrtestOperation">
+            <jms:operation destination="JMSPropCorrelationQueueOut" destinationType="Queue"></jms:operation>
+            <wsdl:input name="input">
+                <jms:message messageType="TextMessage" textPart="MessageText"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>    
+    
+    <service name="JMSFirstMessageService">
+        <wsdl:port name="InPort1" binding="tns:FirstMessageBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <service name="JMSCorrelatedMessageService">
+        <wsdl:port name="InPort1" binding="tns:CorrelatedMessageBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </wsdl:port>
+    </service>
+    <service name="JMSInvokeMessageService">
+        <port name="InPort1" binding="tns:JMSInvokeMessageBinding">
+            <jms:address connectionURL="mq://localhost:7676" />
+        </port>
+    </service>
+    
+    <plnk:partnerLinkType name="FirstMessagePLT">
+        <plnk:role name="CorrtestPortTypeRole" portType="tns:FirstMessagePortType"/>
+    </plnk:partnerLinkType>
+    
+    <plnk:partnerLinkType name="CorrelatedMessagePLT">
+        <plnk:role name="CorrtestPortType1Role" portType="tns:CorrelatedMessagePortType"/>
+    </plnk:partnerLinkType>
+    
+    <plnk:partnerLinkType name="JMSInvokeMessagePLT">
+        <plnk:role name="CorrtestPortType1Role" portType="tns:JMSInvokeMessagePortType"/>
+    </plnk:partnerLinkType>
+    
+    <vprop:property name="prop1" type="xsd:string"/>
+    <vprop:property name="prop2" type="xsd:long"/>
+    
+    <vprop:propertyAlias propertyName="tns:prop1" messageType="tns:FirstMessage" part="MessageText"/>
+    <vprop:propertyAlias propertyName="tns:prop1" messageType="tns:CorrelatedMessage" part="MessageText"/>
+    <vprop:propertyAlias propertyName="tns:prop2" messageType="tns:FirstMessage" part="MessageCorrelationID"/>
+    <vprop:propertyAlias propertyName="tns:prop2" messageType="tns:CorrelatedMessage" part="MessageCorrelationID"/>    
+</definitions>

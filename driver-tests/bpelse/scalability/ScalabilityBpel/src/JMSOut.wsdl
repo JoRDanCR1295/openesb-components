@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="http://localhost/BPELProject/JMSOut"
+             name="JMSOut"
+             xmlns:tns="http://localhost/BPELProject/JMSOut"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" xmlns:ns0="http://java.sun.com/products/oss/xml/TroubleTicket">
+    <import location="ScalabilityTest1.wsdl" namespace="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper"/>
+    <types>
+        <xsd:schema targetNamespace="http://localhost/BPELProject/JMSOut">
+            <xsd:import namespace="http://java.sun.com/products/oss/xml/TroubleTicket" schemaLocation="XmlTroubleTicketSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="JMSOutOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="message_JMSOut">
+        <part name="part_JMSOut" element="ns0:createTroubleTicketByValueRequest"></part>
+        <part name="IdProperty" type="xsd:string"/>
+        <wsdl:part name="timestamp" type="xsd:string"/>
+    </message>
+    <portType name="ReceivedPortType">
+        <operation name="operation_JMSOut">
+            <input name="input"
+                   message="tns:message_JMSOut"></input>
+        </operation>
+    </portType>
+    <portType name="ProcessedPortType">
+        <wsdl:operation name="JMSOutOperation">
+            <wsdl:input name="input1" message="tns:message_JMSOut"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="JMSOut1Binding"
+             type="tns:ReceivedPortType">
+        <jms:binding></jms:binding>
+        <operation name="operation_JMSOut">
+            <jms:operation deliveryMode="NON_PERSISTENT"
+                           disableMessageTimeStamp="true"
+                           disableMessageID="true"
+                           transaction="NoTransaction"
+                           destinationType="Queue"
+                           destination="queue_start">
+                <jms:options>
+                    <jms:option name="JMSJCA.pooltimeout" value="0"/>
+                </jms:options>                           
+            </jms:operation>
+            <input name="input">
+                <jms:message messageType="TextMessage"
+                             textPart="part_JMSOut">
+                    <jms:properties>
+                        <jms:property part="IdProperty" type="string" name="messageID"></jms:property>
+                        <jms:property name="startTime" part="timestamp" type="string"/>
+                    </jms:properties>
+                </jms:message>
+                
+            </input>
+        </operation>
+    </binding>
+    <binding name="JMSOut2Binding" type="tns:ProcessedPortType">
+        <jms:binding/>
+        <wsdl:operation name="JMSOutOperation">
+            <jms:operation destination="queue_finish" destinationType="Queue" transaction="NoTransaction" deliveryMode="NON_PERSISTENT"/>
+            <wsdl:input name="input1">
+                <jms:message messageType="TextMessage" textPart="part_JMSOut">
+                    <jms:properties>
+                        <jms:property name="messageID" part="IdProperty" type="string"/>
+                        <jms:property name="finishtime" part="timestamp" type="string"/>
+                    </jms:properties>
+                </jms:message>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="JMSOUT_Service1">
+        <port name="port1" binding="tns:JMSOut1Binding">
+            <jms:address password="admin" username="admin" connectionURL="mq://localhost:7676" />
+        </port>
+    </service>
+    <service name="JMSOUT_Service2">
+        <wsdl:port name="port1" binding="tns:JMSOut2Binding">
+            <jms:address connectionURL="mq://localhost:7676" username="admin" password="admin"/>
+        </wsdl:port>
+    </service>
+    <plink:partnerLinkType name="StartJMSOutLinkType">
+        <plink:role name="Start_PLT" portType="tns:ReceivedPortType"/>
+    </plink:partnerLinkType>    
+    <plink:partnerLinkType name="FinishJMSOutLinkType">
+        <plink:role name="Finish_PLT" portType="tns:ProcessedPortType"/>
+    </plink:partnerLinkType>
+</definitions>

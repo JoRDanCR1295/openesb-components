@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<wsdl:definitions name="virtualAssignTest_wsdl"
+             targetNamespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+             xmlns:tns="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"                          
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+   
+    <types>
+        <xsd:schema xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    targetNamespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+                    attributeFormDefault="unqualified"
+		    elementFormDefault="qualified"
+		    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+		    xmlns:tns="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+		<xsd:simpleType name="simpleIntType">
+			<xsd:restriction base="xsd:positiveInteger">
+    				<xsd:minInclusive value="0"/>
+    				<xsd:maxInclusive value="100000"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+                <xsd:simpleType name="simpleStringType">
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[A-Z]{256}"/>   
+                        </xsd:restriction>
+                </xsd:simpleType>
+		<xsd:simpleType name="simpleDoubleType">
+			<xsd:restriction base="xsd:double">
+    				<xsd:minInclusive value="0.0"/>
+    				<xsd:maxInclusive value="100000.0"/>
+			</xsd:restriction>
+		</xsd:simpleType>  
+                <xsd:complexType name="complexStringType">
+                	<xsd:sequence>
+                    		<xsd:element type="xsd:string"
+                                	     name="string"></xsd:element>
+                	</xsd:sequence>
+		</xsd:complexType>
+                <xsd:complexType name="complexExampleType">
+                    <xsd:sequence>
+                        <xsd:element name="complexExampleResult" maxOccurs="unbounded" 
+                                     form="qualified">
+                                    <xsd:complexType>
+                                           <xsd:attribute name="someID" type="xsd:int"/>
+                                           <xsd:attribute name="someResult" type="xsd:string"/>
+                                    </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+                <xsd:element name="simpleStringElement" 
+                             type="xsd:string"/>                            
+                <xsd:element name="simpleIntElement"
+                             type="xsd:int"/>    
+                <xsd:element name="simpleDoubleElement"
+                             type="xsd:double"/>                           
+                <xsd:element name="complexElement" form="qualified">
+                    <xsd:complexType>
+                        <xsd:attribute name="complexElementAttr1" type="xsd:int"/>
+                        <xsd:attribute name="complexElementAttr2" type="xsd:string"/>
+                    </xsd:complexType>
+                </xsd:element>		
+        </xsd:schema>      
+    </types>
+    <message name="virtualAssignSimpleIntegerMessage">
+	<part name="simpleIntegerPart"
+	      type="xsd:positiveInteger"></part>
+    </message> 
+     <message name="virtualAssignSimpleStringMessage">
+        <part name="simpleStringPart"
+              type="xsd:string"></part>
+    </message>
+    <message name="virtualAssignSimpleDoubleMessage">
+	<part name="simpleDoublePart"
+	      type="xsd:double"></part>
+    </message>
+    <message name="virtualAssignComplexStringMessage">
+	<part name="complexStringPart"
+	      type="tns:complexStringType"></part>
+    </message>    
+    <message name="virtualAssignComplexExampleMessage">
+	<part name="complexExamplePart"
+	      type="tns:complexExampleType"></part>
+    </message>        
+     <message name="virtualAssignSimpleStringPartMessage">
+        <part name="simpleElementPart"
+	      element="tns:simpleStringElement"></part>
+    </message>       
+    <message name="virtualAssignSimpleIntPartMessage">
+        <part name="simpleElementPart"
+	      element="tns:simpleIntElement"></part>
+    </message>
+    <message name="virtualAssignComplexPartMessage">
+        <part name="complexElementPart"
+              element="tns:complexElement"></part>
+    </message>     
+    <message name="virtualAssignSimpleDoublePartMessage">
+	<part name="simpleDoublePart"
+	      element="tns:simpleDoubleElement"></part>
+    </message>    
+    <message name="virtualAssignMultiPartMessage">
+        <part name="virtualAssignMessageFirstPart"
+	      type="xsd:string"></part>
+	<part name="virtualAssignMessageSecondPart"
+              type="xsd:int"></part>
+    </message>    
+ 
+    <wsdl:portType name="virtualAssignPortType1">
+        <wsdl:operation name="virtualAssignOperation1">
+            <wsdl:input message="tns:virtualAssignSimpleStringMessage"></wsdl:input>
+            <wsdl:output message="tns:virtualAssignSimpleStringMessage"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="virtualAssignPortType11">
+        <wsdl:operation name="virtualAssignOperation1">
+            <wsdl:input message="tns:virtualAssignSimpleStringMessage"></wsdl:input>
+            <wsdl:output message="tns:virtualAssignSimpleStringMessage"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>    
+    <wsdl:portType name="virtualAssignPortType2">
+        <wsdl:operation name="virtualAssignOperation2">
+            <wsdl:input message="tns:virtualAssignSimpleDoubleMessage"></wsdl:input>
+	    <wsdl:output message="tns:virtualAssignSimpleDoubleMessage"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType> 
+    <wsdl:portType name="virtualAssignPortType3">
+        <wsdl:operation name="virtualAssignOperation3">
+            <wsdl:input message="tns:virtualAssignComplexPartMessage"></wsdl:input>
+            <wsdl:output message="tns:virtualAssignComplexPartMessage"></wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="virtualAssignPortType4">
+        <wsdl:operation name="virtualAssignOperation4">
+            <wsdl:input message="tns:virtualAssignMultiPartMessage"></wsdl:input>
+            <wsdl:output message="tns:virtualAssignMultiPartMessage"></wsdl:output>
+            <wsdl:fault name="virtualAssignMultiPartMessageFault"
+                   message="tns:virtualAssignMultiPartMessage"></wsdl:fault>
+        </wsdl:operation>
+    </wsdl:portType>     
+    
+     <binding name="virtualAssignBinding1"
+             type="tns:virtualAssignPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="virtualAssignOperation1">
+            <soap:operation soapAction="virtualAssignOperation1"/>
+            <input>
+                <soap:body parts="simpleStringPart"
+			   use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simpleStringPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="virtualAssignBinding11"
+             type="tns:virtualAssignPortType11">
+        <soap:binding style="document"
+                    transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="virtualAssignOperation1">
+            <soap:operation soapAction="virtualAssignOperation1"/>
+            <input>
+                <soap:body parts="simpleStringPart"
+			   use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simpleStringPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>   
+    <binding name="virtualAssignBinding2"
+             type="tns:virtualAssignPortType2">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="virtualAssignOperation2">
+            <soap:operation soapAction="virtualAssignOperation2"/>
+            <input>
+                <soap:body parts="simpleDoublePart"
+			   use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simpleDoublePart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="virtualAssignBinding3"
+             type="tns:virtualAssignPortType3">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="virtualAssignOperation3">
+            <soap:operation soapAction="virtualAssignOperation3"/>
+            <input>
+                <soap:body parts="complexElementPart"
+			   use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="complexElementPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+     <binding name="virtualAssignBinding4"
+             type="tns:virtualAssignPortType4">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="virtualAssignOperation4">
+            <soap:operation soapAction="virtualAssignOperation4"/>
+            <input>
+                <soap:body parts="virtualAssignMessageFirstPart"
+			   use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="virtualAssignMessageSecondPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>       
+        
+        
+    <service name="virtualAssignService1">
+        <port name="virtualAssignPort1"
+              binding="tns:virtualAssignBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/virtualAssign1"/>
+        </port>
+    </service>
+    <service name="virtualAssignService11">
+        <port name="virtualAssignPort11"
+              binding="tns:virtualAssignBinding11">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/virtualAssign11"/>
+        </port>
+    </service>
+    <service name="virtualAssignService2">
+        <port name="virtualAssignPort2"
+              binding="tns:virtualAssignBinding2">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/virtualAssign2"/>
+        </port>
+    </service>
+    
+    <service name="virtualAssignService3">
+        <port name="virtualAssignPort3"
+              binding="tns:virtualAssignBinding3">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/virtualAssign3"/>
+        </port>
+    </service>
+    <service name="virtualAssignService4">
+        <port name="virtualAssignPort4"
+              binding="tns:virtualAssignBinding4">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/virtualAssign4"/>
+        </port>
+    </service>        
+        
+
+    <plnk:partnerLinkType name="virtualAssignLinkType1"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="virtualAssignLinkType1_outbound"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType11"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="virtualAssignLinkType1_for_pick"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="virtualAssignLinkType1_for_RcvAsgnRply"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType1"></plnk:role>
+    </plnk:partnerLinkType>    
+    <plnk:partnerLinkType name="virtualAssignLinkType2"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType2"></plnk:role>
+    </plnk:partnerLinkType>    
+    <plnk:partnerLinkType name="virtualAssignLinkType3"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType3"></plnk:role>
+    </plnk:partnerLinkType>    
+    <plnk:partnerLinkType name="virtualAssignLinkType4"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="server"
+                   portType="tns:virtualAssignPortType4"></plnk:role>
+    </plnk:partnerLinkType>    
+
+</wsdl:definitions>
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

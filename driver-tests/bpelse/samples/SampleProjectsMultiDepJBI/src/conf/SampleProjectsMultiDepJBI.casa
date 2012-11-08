@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://www.mycomp.org/SynchronousSample/SynchronousSample_1" xmlns:ns2="http://localhost/SynchronousSample/SynchronousSample" xmlns:ns3="http://enterprise.netbeans.org/bpel/EndToEnd" xmlns:ns4="http://j2ee.netbeans.org/wsdl/EndToEnd" xmlns:ns5="http://www.mycomp.org/AsynchronousSample" xmlns:ns6="http://www.mycomp.org/AsynchronousSampleClient" xmlns:xlink="http://www.w3.org/2000/xlink">
+<endpoints>
+<endpoint endpoint-name="partnerlinktyperole1_myRole" interface-name="ns2:portType1" name="endpoint1" service-name="ns1:SynchronousSample"/>
+<endpoint endpoint-name="E2Epartnerlinktyperole1_myRole" interface-name="ns4:E2EportType1" name="endpoint2" service-name="ns3:PartnerLink1"/>
+<endpoint endpoint-name="serviceProvider_myRole" interface-name="ns5:MyPortType" name="endpoint3" service-name="ns5:partnerLinkA"/>
+<endpoint endpoint-name="AsynchronousClientProvider_myRole" interface-name="ns6:MyPortTypeClient" name="endpoint4" service-name="ns6:partnerLinkA"/>
+<endpoint endpoint-name="serviceRequestor_myRole" interface-name="ns5:MyCallbackPortType" name="endpoint5" service-name="ns6:partnerLinkB"/>
+<endpoint endpoint-name="serviceRequestor_partnerRole" interface-name="ns5:MyCallbackPortType" name="endpoint6" service-name="ns5:partnerLinkA"/>
+<endpoint endpoint-name="serviceProvider_partnerRole" interface-name="ns5:MyPortType" name="endpoint7" service-name="ns6:partnerLinkB"/>
+<endpoint endpoint-name="AsynchronousSample_asyncPortName" interface-name="ns5:MyPortType" name="endpoint8" service-name="ns5:AsynchronousSample_asyncService"/>
+<endpoint endpoint-name="port1" interface-name="ns2:portType1" name="endpoint9" service-name="ns2:service1"/>
+<endpoint endpoint-name="AsynchronousClient_asyncCallbackPortName" interface-name="ns5:MyCallbackPortType" name="endpoint10" service-name="ns5:AsynchronousClient_asyncCallbackService"/>
+<endpoint endpoint-name="E2Eport1" interface-name="ns4:E2EportType1" name="endpoint11" service-name="ns4:E2Eservice1"/>
+<endpoint endpoint-name="AsynchronousClientPortName" interface-name="ns6:MyPortTypeClient" name="endpoint12" service-name="ns6:AsynchronousClientService"/>
+</endpoints>
+<service-units>
+<service-engine-service-unit artifacts-zip="SynchronousSample.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="SampleProjectsMultiDepJBI-SynchronousSample" unit-name="SynchronousSample" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint1"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="EndToEndScenario.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="SampleProjectsMultiDepJBI-EndToEndScenario" unit-name="EndToEndScenario" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint2"/>
+</service-engine-service-unit>
+<service-engine-service-unit artifacts-zip="AsynchronousSample.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="SampleProjectsMultiDepJBI-AsynchronousSample" unit-name="AsynchronousSample" unknown="false" x="-1" y="-1">
+<provides endpoint="endpoint3"/>
+<provides endpoint="endpoint4"/>
+<provides endpoint="endpoint5"/>
+<consumes endpoint="endpoint6"/>
+<consumes endpoint="endpoint7"/>
+</service-engine-service-unit>
+<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="SampleProjectsMultiDepJBI-sun-http-binding" unit-name="sun-http-binding">
+<ports>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/service[@name='AsynchronousSample_asyncService']/port[@name='AsynchronousSample_asyncPortName'])" xlink:type="simple"/>
+<consumes endpoint="endpoint8"/>
+<provides endpoint="endpoint8"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/service[@name='AsynchronousClient_asyncCallbackService']/port[@name='AsynchronousClient_asyncCallbackPortName'])" xlink:type="simple"/>
+<consumes endpoint="endpoint10"/>
+<provides endpoint="endpoint10"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSampleClient.wsdl#xpointer(/definitions/service[@name='AsynchronousClientService']/port[@name='AsynchronousClientPortName'])" xlink:type="simple"/>
+<consumes endpoint="endpoint12"/>
+<provides endpoint="endpoint12"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/EndToEndScenario/EndToEnd.wsdl#xpointer(/definitions/service[@name='E2Eservice1']/port[@name='E2Eport1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint11"/>
+<provides endpoint="endpoint11"/>
+</port>
+<port x="0" y="-1">
+<link xlink:href="../jbiServiceUnits/SynchronousSample/SynchronousSample.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+<consumes endpoint="endpoint9"/>
+<provides endpoint="endpoint9"/>
+</port>
+</ports>
+</binding-component-service-unit>
+</service-units>
+<connections>
+<connection consumer="endpoint8" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint7" provider="endpoint3" state="unchanged"/>
+<connection consumer="endpoint9" provider="endpoint1" state="unchanged"/>
+<connection consumer="endpoint10" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint6" provider="endpoint5" state="unchanged"/>
+<connection consumer="endpoint11" provider="endpoint2" state="unchanged"/>
+<connection consumer="endpoint12" provider="endpoint4" state="unchanged"/>
+</connections>
+<porttypes>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/portType[@name='MyPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/portType[@name='MyCallbackPortType'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSampleClient.wsdl#xpointer(/definitions/portType[@name='MyPortTypeClient'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EndToEndScenario/EndToEnd.wsdl#xpointer(/definitions/portType[@name='E2EportType1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SynchronousSample/SynchronousSample.wsdl#xpointer(/definitions/portType[@name='portType1'])" xlink:type="simple"/>
+</porttypes>
+<bindings>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/binding[@name='SoapBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/binding[@name='CallbackSoapBinding'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSampleClient.wsdl#xpointer(/definitions/binding[@name='SoapBindingClient'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EndToEndScenario/EndToEnd.wsdl#xpointer(/definitions/binding[@name='E2Ebinding1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SynchronousSample/SynchronousSample.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+</bindings>
+<services>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/service[@name='AsynchronousSample_asyncService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSample.wsdl#xpointer(/definitions/service[@name='AsynchronousClient_asyncCallbackService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/AsynchronousSample/AsynchronousSampleClient.wsdl#xpointer(/definitions/service[@name='AsynchronousClientService'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/EndToEndScenario/EndToEnd.wsdl#xpointer(/definitions/service[@name='E2Eservice1'])" xlink:type="simple"/>
+<link xlink:href="../jbiServiceUnits/SynchronousSample/SynchronousSample.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+</services>
+<regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

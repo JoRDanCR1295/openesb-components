@@ -1,0 +1,86 @@
+<definitions targetNamespace="InsertStreamInput.InsertStreamInput_iep"
+             xmlns:tns="InsertStreamInput.InsertStreamInput_iep"
+             xmlns:typens="InsertStreamInput.InsertStreamInput_iep"
+             xmlns:defns="InsertStreamInput.InsertStreamInput_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="InsertStreamInput.InsertStreamInput_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="aInt1" type="xsd:int"/>
+                    <xsd:element name="aBigint1" type="xsd:long"/>
+                    <xsd:element name="double1" type="xsd:double"/>
+                    <xsd:element name="date1" type="xsd:date"/>
+                    <xsd:element name="ts1" type="xsd:dateTime"/>
+                    <xsd:element name="varchar1" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0Batch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                    <xsd:element name="aInt1" type="xsd:int"/>
+                    <xsd:element name="aBigint1" type="xsd:long"/>
+                    <xsd:element name="double1" type="xsd:double"/>
+                    <xsd:element name="date1" type="xsd:date"/>
+                    <xsd:element name="ts1" type="xsd:dateTime"/>
+                    <xsd:element name="varchar1" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="PassThroughOutput_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="aInt1_0" type="xsd:int"/>
+                   <xsd:element name="aBigint1_0" type="xsd:long"/>
+                   <xsd:element name="double1_0" type="xsd:double"/>
+                   <xsd:element name="date1_0" type="xsd:date"/>
+                   <xsd:element name="ts1_0" type="xsd:dateTime"/>
+                   <xsd:element name="varchar1_0" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamInput0Batch_Msg">
+    <part name="input" element="typens:StreamInput0Batch_MsgObj"/>
+</message>
+<message name="PassThroughOutput_Msg">
+    <part name="output" element="typens:PassThroughOutput_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <input message="tns:StreamInput0Batch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_PassThroughOutput">
+    <operation name="PassThroughOutput">
+        <input message="tns:PassThroughOutput_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_PassThroughOutput" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_PassThroughOutput" portType="tns:OutputPt_PassThroughOutput"/>
+</plnk:partnerLinkType>
+</definitions>

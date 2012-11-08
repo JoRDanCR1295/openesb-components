@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="throwInsideFH" 
+    targetNamespace="http://www.mycomp.org/throwInsideFH/throwInsideFH"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/throwInsideFH/throwInsideFH">
+    <import location="throwInsideFH.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://www.mycomp.org/throwInsideFH/throwInsideFH"/>
+    <partnerLinks>
+        <partnerLink name="invokePLink" partnerLinkType="wsdlNS:throwInsideFHPartnerLinkType" partnerRole="throwInsideFHProvider"/>
+        <partnerLink name="receivePLink" partnerLinkType="wsdlNS:receiveOperPartnerLinkType" myRole="receiveOperationProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReceiveOperIn1" messageType="wsdlNS:message1"/>
+        <variable name="OneWayInvokeOperIn1" messageType="wsdlNS:message1"/>
+    </variables>
+    <bpws:faultHandlers>
+<bpws:catch faultName="bpws:testFault1" faultMessageType="wsdlNS:message1" faultVariable="processInstanceFaultVar">            <bpws:sequence name="Sequence4">
+        <assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>concat($ReceiveOperIn1.part1, ' With In Process level fault handler')</bpws:from>
+                <bpws:to part="part1" variable="OneWayInvokeOperIn1"/>
+            </bpws:copy>
+        </assign>
+        <invoke name="Invoke2" partnerLink="invokePLink" operation="oneWayInvokeOper" portType="wsdlNS:invokePortType" inputVariable="OneWayInvokeOperIn1"/>
+                    <bpws:throw name="Throw4" faultVariable="OneWayInvokeOperIn1" faultName="bpws:testFault1"/>
+            </bpws:sequence>
+        </bpws:catch>
+    </bpws:faultHandlers>
+    <sequence>
+        <receive name="Receive1" partnerLink="receivePLink" operation="receiveOper" portType="wsdlNS:receivePortType" variable="ReceiveOperIn1" createInstance="yes"/>
+        <bpws:if name="If1">
+            <bpws:condition> ( $ReceiveOperIn1.part1 = 'normal' ) </bpws:condition>
+            <bpws:sequence name="Sequence1">
+        <assign name="Assign1">
+            <copy>
+            <from variable="ReceiveOperIn1" part="part1"/><to variable="OneWayInvokeOperIn1" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="invokePLink" operation="oneWayInvokeOper" portType="wsdlNS:invokePortType" inputVariable="OneWayInvokeOperIn1"/>
+            </bpws:sequence>
+            <bpws:elseif>
+                <bpws:condition>contains($ReceiveOperIn1.part1, 'test scope level FH')</bpws:condition>
+                <bpws:scope name="Scope1">
+                    <bpws:faultHandlers>
+                        <bpws:catch faultName="bpws:testFault1" faultMessageType="wsdlNS:message1" faultVariable="scopeFaultVar">
+                            <bpws:sequence name="Sequence3">
+        <assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($ReceiveOperIn1.part1, ' WithIn Scopes Fault Handler')</bpws:from>
+		        <bpws:to part="part1" variable="ReceiveOperIn1"/>
+            </bpws:copy>
+        </assign>
+                    <bpws:throw name="Throw3" faultVariable="ReceiveOperIn1" faultName="bpws:testFault1"/>
+                            </bpws:sequence>
+                        </bpws:catch>
+                    </bpws:faultHandlers>
+                    <bpws:throw name="Throw2" faultVariable="ReceiveOperIn1" faultName="bpws:testFault1"/>
+                </bpws:scope>
+            </bpws:elseif>
+            <bpws:else>
+                <bpws:sequence name="Sequence2">
+                    <bpws:empty name="Empty1"/>
+                    <bpws:throw name="Throw1" faultVariable="ReceiveOperIn1" faultName="bpws:testFault1"/>
+                </bpws:sequence>
+            </bpws:else>
+        </bpws:if>
+    </sequence>
+   
+</process>

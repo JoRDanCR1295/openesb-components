@@ -1,0 +1,1 @@
+delete from "COMPANY"."dept2" where dno=? or dname=?

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSWSDLSymmetryTest" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSWSDLSymmetryTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSWSDLSymmetryTest" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/">
+    <types/>
+    <message name="JMSWSDLSymmetryTestOperationRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+    </message>
+    <message name="JMSWSDLSymmetryTestOperationReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="JMSWSDLSymmetryTestPortType">
+        <operation name="JMSWSDLSymmetryTestOperation">
+            <input name="input1" message="tns:JMSWSDLSymmetryTestOperationRequest"/>
+            <output name="output1" message="tns:JMSWSDLSymmetryTestOperationReply"/>
+        </operation>
+    </portType>
+    <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+    <binding name="JMSWSDLSymmetryTestBinding" type="tns:JMSWSDLSymmetryTestPortType">
+        <jms:binding/>
+        <operation name="JMSWSDLSymmetryTestOperation">
+            <jms:operation destination="JMSWSDLSymmetryTestDestination" destinationType="Topic" messageSelector="JMSType='FOO.Type'"/>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1" typePart="part2"/>
+            </input>
+            <output name="output1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="JMSWSDLSymmetryTestService">
+        <port name="JMSWSDLSymmetryTestPort" binding="tns:JMSWSDLSymmetryTestBinding">
+            <jms:address connectionURL="mq://localhost:7676"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="JMSWSDLSymmetryTestPartner">
+        <plink:role name="JMSWSDLSymmetryTestPortTypeRole" portType="tns:JMSWSDLSymmetryTestPortType"/>
+    </plink:partnerLinkType>
+</definitions>

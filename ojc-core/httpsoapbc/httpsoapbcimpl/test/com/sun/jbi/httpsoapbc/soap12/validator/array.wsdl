@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="array" targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/array"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/EchoBP/array" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/EchoBP/array">
+            <xsd:element name="MyArray1"  type="tns:MyArray1Type"/>
+            <xsd:element name="IntArray"  type="tns:IntArrayType"/>
+            <xsd:complexType name="MyArray1Type">
+                <xsd:sequence>
+                    <xsd:element name="x" type="xsd:string" minOccurs="0"  maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="IntArrayType">
+                <xsd:sequence>
+                    <xsd:element name="y" type="xsd:int" minOccurs="0"  maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="arrayOperationRequest">
+        <part name="part1" element="tns:MyArray1"/>
+        <part name="part2" element="tns:IntArray"/>
+    </message>
+    <message name="arrayOperationResponse">
+        <part name="part1" element="tns:MyArray1"/>
+        <part name="part2" element="tns:IntArray"/>
+    </message>
+    <portType name="arrayPortType">
+        <operation name="arrayOperation">
+            <input name="input1" message="tns:arrayOperationRequest"/>
+            <output name="output1" message="tns:arrayOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="arrayPortTypeBinding" type="tns:arrayPortType">
+        <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+        <operation name="arrayOperation">
+            <soap12:operation/>
+            <input name="input1">
+                <soap12:body  use="literal"/>
+            </input>
+            <output name="output1">
+                <soap12:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="arrayService">
+        <port name="arrayPort" binding="tns:arrayPortTypeBinding">
+            <soap12:address location="http://localhost:${HttpDefaultPort}/EchoBP/array/arrayPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="array">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="arrayPortTypeRole" portType="tns:arrayPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

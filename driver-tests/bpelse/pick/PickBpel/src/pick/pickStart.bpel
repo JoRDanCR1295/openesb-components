@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="pickStart"
+         targetNamespace="http://www.seebeyond.com/eInsight/pickStart"
+         xmlns:tns="http://www.seebeyond.com/eInsight/pickStart"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:pickStartTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:pickStartTargetNamespace"
+            location="pickStart.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_pickStart"
+                     partnerLinkType="ns0:pickStartServiceLinkType"
+                     myRole="pickStartServerRole"/>
+        <partnerLink name="plink_pickStart1"
+                     partnerLinkType="ns0:pickStartServiceLinkType"
+                     myRole="pickStartServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="pickStartOperation_Output"
+                  messageType="ns0:pickStartMessage"></variable>
+        <variable name="pickStartOperation_Input"
+                  messageType="ns0:pickStartMessage"></variable>
+        <variable name="pickStartOperation1_Output"
+                  messageType="ns0:pickStartMessage"></variable>
+        <variable name="pickStartOperation1_Input"
+                  messageType="ns0:pickStartMessage"></variable>
+    </variables>
+    <sequence>
+        <pick createInstance="yes">
+            <onMessage partnerLink="plink_pickStart"
+                       portType="ns0:pickStartPortType"
+                       operation="pickStartOperation"
+                       variable="pickStartOperation_Output">
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>concat(&apos;MESSAGE1&apos;, $pickStartOperation_Output.pickStartPart/string)</from>
+                            <to>$pickStartOperation_Input.pickStartPart/string</to>
+                        </copy>
+                    </assign>
+                    <reply partnerLink="plink_pickStart"
+                           portType="ns0:pickStartPortType"
+                           operation="pickStartOperation"
+                           variable="pickStartOperation_Input"></reply>
+                </sequence>
+            </onMessage>
+            <onMessage partnerLink="plink_pickStart1"
+                       portType="ns0:pickStartPortType1"
+                       operation="pickStartOperation1"
+                       variable="pickStartOperation1_Output">
+                <sequence>
+                    <assign>
+                        <copy>
+                            <from>concat(&apos;MESSAGE2&apos;, $pickStartOperation1_Output.pickStartPart/string)</from>
+                            <to>$pickStartOperation1_Input.pickStartPart/string</to>
+                        </copy>
+                    </assign>
+                    <reply partnerLink="plink_pickStart1"
+                           portType="ns0:pickStartPortType1"
+                           operation="pickStartOperation1"
+                           variable="pickStartOperation1_Input"></reply>
+                </sequence>
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

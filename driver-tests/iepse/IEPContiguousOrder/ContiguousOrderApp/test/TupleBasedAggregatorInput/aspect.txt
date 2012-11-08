@@ -1,0 +1,10 @@
+#This is the primary operator that is tested
+PrimaryOperator: ContiguousOrder
+
+#This is the operator which gives input to the primary operator
+InputOperator: TupleBasedAggregator
+
+#Text description of what aspect is being tested, the operator configuration, etc.
+#If more than one test exists per cell, use AspectDesc.1, AspectDesc.2, etc
+
+AspectDesc.0: ContiguousOrder with bigint as the sort key. The start value is 1000000002 but it receives events starting from 1000000001 which should be ignored. The events are sent such that only 2, 3 and 4 will be received, 1 is ignored. If no partition exists, then build will fail with "ERROR: property "attributeList" is required but undefined". So, partition key is set to anint.

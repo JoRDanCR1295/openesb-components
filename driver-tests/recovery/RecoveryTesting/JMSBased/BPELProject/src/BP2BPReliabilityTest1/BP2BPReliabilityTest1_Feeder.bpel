@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="CorrelatedBpelClient" 
+    targetNamespace="http://j2ee.netbeans.org/bpel/BP2BPReliabilityTest1_Feeder"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/BP2BPReliabilityTest1_Feeder" 
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" 
+    xmlns:ns0="http://xml.netbeans.org/schema/CorrelationSample">
+    
+    <import namespace="http://j2ee.netbeans.org/wsdl/BP2BPReliabilityTest1_Feeder" 
+    	    location="BP2BPReliabilityTest1_Feeder.wsdl" 
+    	    importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" 
+            location="CorrelatedBpel.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+    <partnerLinks>
+        <partnerLink name="PartnerLinkA" partnerLinkType="ns1:JMSReceiverPartner" myRole="JMSReceiverRole"/>
+        <partnerLink name="PartnerLinkC" partnerLinkType="ns1:PostReplyToJMSPartner" partnerRole="PostReplyToJMSPortTypeRole"/>
+        <partnerLink name="PartnerLinkB" partnerLinkType="ns2:CorrelatedBpelPartner" myRole="CallBackPortTypeRole" partnerRole="CallInPortTypeRole"/>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="JMSInMessage" messageType="ns1:TextMessage"/>
+        <variable name="JMSOutMessage" messageType="ns1:TextMessage"/>
+        <variable name="InMessage" messageType="ns2:CallInOperationRequest"/>
+        <variable name="OutMessage" messageType="ns2:CallBackOperationRequest"/>
+    </variables>
+    
+    <correlationSets>
+        <correlationSet name="CorrelationSet" properties="ns2:correlationId"/>
+    </correlationSets>
+    
+    <sequence>
+        <receive name="FeederBpelStart" 
+                 createInstance="yes" 
+                 partnerLink="PartnerLinkA" 
+                 portType="ns1:JMSReceiverPortType" 
+                 operation="MessageInOperation" 
+                 variable="JMSInMessage"/>
+        <assign name="FeederBpelAssign1">
+            <copy>
+                <from>0</from>
+                <to>$InMessage.InMessage/ns0:Counter</to>
+            </copy>
+            <copy>
+                <from>999</from>
+                <to>$InMessage.InMessage/ns0:Id</to>
+            </copy>        	    
+        </assign>
+        
+        <repeatUntil>
+          <sequence>
+            <assign name="FeederBpelAssign2">
+                <copy>
+                    <from>$InMessage.InMessage/ns0:Counter + 1</from>
+                    <to>$InMessage.InMessage/ns0:Counter</to>
+                </copy>
+            </assign>
+            <invoke name="FeederBpelInvoke" 
+	             partnerLink="PartnerLinkB" 
+	             portType="ns2:CallInPortType" 
+	             operation="CallInOperation" 
+	             inputVariable="InMessage">
+                <correlations>
+                    <correlation set="CorrelationSet" initiate="join"/>
+                </correlations>
+            </invoke>
+            <receive name="FeederBpelReceive" 
+	              partnerLink="PartnerLinkB" 
+	              portType="ns2:CallBackPortType" 
+	              operation="CallBackOperation" 
+	              variable="OutMessage">
+                <correlations>
+                    <correlation set="CorrelationSet" initiate="no"/>
+                </correlations>
+            </receive>
+          </sequence>
+          <condition>$InMessage.InMessage/ns0:Counter != $OutMessage.OutMessage/ns0:Counter</condition>
+        </repeatUntil>
+        
+        <assign name="FeederBpelAssign3">
+            <copy>
+                <from>concat('Test failed. ', 'Expected counter: ' , $InMessage.InMessage/ns0:Counter, '; received counter: ' , $OutMessage.OutMessage/ns0:Counter)</from>
+                <to>$JMSOutMessage.TextPart</to>
+            </copy>
+        </assign>
+        <invoke name="FeederBpelEnd" 
+                partnerLink="PartnerLinkC" 
+                portType="ns1:PostReplyToJMSPortType" 
+                operation="PostReplyToJMSOperation" 
+                inputVariable="JMSOutMessage"/>
+    </sequence>
+</process>

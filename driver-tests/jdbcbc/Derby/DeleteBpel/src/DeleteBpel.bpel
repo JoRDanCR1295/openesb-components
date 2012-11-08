@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="DeleteBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/DeleteBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/DeleteBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/DeleteTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/DeleteTrigger" location="DeleteTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="DeleteTable.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:DeleteTriggerPartner" myRole="DeleteTriggerPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="DeleteTriggerOperationOut" messageType="ns1:DeleteTriggerOperationReply"/>
+      <bpws:variable name="DeleteOut" messageType="ns2:insertRetMsg"/>
+      <bpws:variable name="DeleteIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="DeleteTriggerOperationIn" messageType="ns1:DeleteTriggerOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="DeleteTriggerOperation" portType="ns1:DeleteTriggerPortType" variable="DeleteTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="DeleteTriggerOperationIn" part="part1"/>
+            <bpws:to>$DeleteIn.part/ns0:TestID</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="delete" portType="ns2:jdbcPortType" inputVariable="DeleteIn" outputVariable="DeleteOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="DeleteOut" part="part"/>
+            <bpws:to variable="DeleteTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="DeleteTriggerOperation" portType="ns1:DeleteTriggerPortType" variable="DeleteTriggerOperationOut"/>
+   </sequence>
+</process>

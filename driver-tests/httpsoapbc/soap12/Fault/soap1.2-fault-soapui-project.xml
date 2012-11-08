@@ -1,0 +1,3534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="soap1.2-fault" soapui-version="2.0.2" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@projectRoot">C:\openesb\open-jbi-components\driver-tests\httpsoapbc\soap12\Fault</con:setting></con:settings><con:interface name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemSameActIFBinding_NoFault" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>Hello Field 1</faul:Field1_1>
+         <faul:Field1_2>Hello Field 2</faul:Field1_2>
+         <faul:Field1_3>Hello Field 3</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemSameActIFBinding_SingleFault" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>AAA</faul:Field1_1>
+         <faul:Field1_2>BBB</faul:Field1_2>
+         <faul:Field1_3>CCC</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>AAA</faul:Field1_1>
+         <faul:Field1_2>ZZZ</faul:Field1_2>
+         <faul:Field1_3>SSS</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header>
+      <faul:Elem2>AAA</faul:Elem2>
+   </soap:Header>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>SSS</faul:Field1_1>
+         <faul:Field1_2>DDD</faul:Field1_2>
+         <faul:Field1_3>FFF</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>AAA</faul:Field1_1>
+         <faul:Field1_2>XXX</faul:Field1_2>
+         <faul:Field1_3>ZZZ</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>SSS</faul:Field1_1>
+         <faul:Field1_2>DDD</faul:Field1_2>
+         <faul:Field1_3>AAA</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header>
+      <faul:Elem2>AAA</faul:Elem2>
+   </soap:Header>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>ZZZ</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>AAA</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>?</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:interface name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" bindingName="{http://faulttest.webservice.namespace}MultiOpSameMsgElemElemDiffActIFBinding_NoFault" soapVersion="1_2" definition="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl"><con:settings/><con:endpoints><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation1" name="operation1" bindingOperationName="operation1" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>ZZZ</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:operation isOneWay="false" action="http://www.seebeyond.com/com.stc.httpsoapbc#operation2" name="operation2" bindingOperationName="operation2" inputName="" receivesAttachments="false" sendsAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest</con:endpoint><con:request><![CDATA[<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:faul="http://faulttest.webservice.namespace">
+   <soap:Header/>
+   <soap:Body>
+      <faul:Elem1>
+         <faul:Field1_1>AAA</faul:Field1_1>
+         <faul:Field1_2>?</faul:Field1_2>
+         <faul:Field1_3>?</faul:Field1_3>
+      </faul:Elem1>
+   </soap:Body>
+</soap:Envelope>]]></con:request></con:call></con:operation><con:definitionCache rootPart="http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl" type="TEXT"><con:part><con:url>http://localhost:9080/service/SingleFaultNotWSDLDefinedOriginBCTest?wsdl</con:url><con:content><![CDATA[<definitions name="FaultTest" targetNamespace="http://faulttest.webservice.namespace" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FaultBP/FaultTest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:y="http://faulttest.webservice.namespace" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <types>
+    <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://faulttest.webservice.namespace" xmlns:z="http://faulttest.webservice.namespace">
+      <xs:element name="Elem1" type="z:CType1">
+        <xs:annotation>
+          <xs:documentation>Comment describing your root element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:complexType name="CType1">
+        <xs:sequence>
+          <xs:element name="Field1_1" type="xs:string"/>
+          <xs:element name="Field1_2" type="xs:int"/>
+          <xs:element name="Field1_3" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Elem2" type="xs:int"></xs:element>
+      <xs:element name="Elem3" type="xs:string"></xs:element>
+    </xs:schema>
+  </types>
+  <message name="SomeException_Fault">
+    <part name="SomeException" element="y:Elem2"></part>
+  </message>
+  <message name="message1Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2Result">
+    <part name="result" element="y:Elem1"></part>
+  </message>
+  <message name="message2">
+    <part name="body" element="y:Elem1"></part>
+    <part name="header" element="y:Elem2"></part>
+  </message>
+  <message name="message2_Fault">
+    <part name="someOther2HeaderFault" element="y:Elem1"></part>
+    <part name="message2HeaderFault" element="y:Elem3"></part>
+  </message>
+  <message name="message1">
+    <part name="body" element="y:Elem1"></part>
+  </message>
+  <message name="RoutingException_Fault">
+    <part name="RoutingException" element="y:Elem3"></part>
+  </message>
+  <portType name="MultiOpSameMsg2ElemElemIF">
+    <operation name="operation1">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message2"></input>
+      <output message="y:message2Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <portType name="MultiOpSameMsgElemElemIF">
+    <operation name="operation1">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+    <operation name="operation2">
+      <input message="y:message1"></input>
+      <output message="y:message1Result"></output>
+      <fault name="RoutingFault" message="y:RoutingException_Fault"></fault>
+      <fault name="SomeFault" message="y:SomeException_Fault"></fault>
+      <fault name="AnotherFault" message="y:RoutingException_Fault"></fault>
+    </operation>
+  </portType>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_SingleFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults" type="y:MultiOpSameMsg2ElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:header message="y:message2" part="header" use="literal">
+          <soap12:headerfault message="y:message2_Fault" part="someOtherHeaderFault" use="literal"/>
+          <soap12:headerfault message="y:message2_Fault" part="message2HeaderFault" use="literal"/>
+        </soap12:header>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <binding name="MultiOpSameMsgElemElemSameActIFBinding_NoFault" type="y:MultiOpSameMsgElemElemIF">
+    <soap12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+    <operation name="operation1">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation1"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="operation2">
+      <soap12:operation soapAction="http://www.seebeyond.com/com.stc.httpsoapbc#operation2"/>
+      <input>
+        <soap12:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap12:body parts="result" use="literal"/>
+      </output>
+      <fault name="RoutingFault">
+        <soap12:fault name="RoutingFault" use="literal"/>
+      </fault>
+      <fault name="SomeFault">
+        <soap12:fault name="SomeFault" use="literal"/>
+      </fault>
+      <fault name="AnotherFault">
+        <soap12:fault name="AnotherFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="FaultTestService">
+    <port name="NoFault_NotWSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="SingleHeaderFault_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_SingleHeaderFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleHeaderFaultOriginSETest"/>
+    </port>
+    <port name="NoFault_NotWSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_NoFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultNotWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleHeaderFaults_OriginSE_Port" binding="y:MultiOpSameMsg2ElemElemDiffActIFBinding_MultipleHeaderFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleHeaderFaultsOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginBCTest"/>
+    </port>
+    <port name="MultipleFaults_WSDLDefined_OriginSE_Port" binding="y:MultiOpSameMsgElemElemDiffActIFBinding_MultipleFaults">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/MultipleFaultsWSDLDefinedOriginSETest"/>
+    </port>
+    <port name="SingleFault_WSDLDefined_OriginBC_Port" binding="y:MultiOpSameMsgElemElemSameActIFBinding_SingleFault">
+      <soap12:address location="http://sbiswas-tecra.stc.com:9080/service/SingleFaultWSDLDefinedOriginBCTest"/>
+    </port>
+  </service>
+  <plnk:partnerLinkType name="FaultTestIFServiceLink">
+    <plnk:role name="MultiOpSameMsgElemElemIFRole" portType="y:MultiOpSameMsgElemElemIF"/>
+    <plnk:role name="MultiOpSameMsg2ElemElemIFRole" portType="y:MultiOpSameMsg2ElemElemIF"/>
+  </plnk:partnerLinkType>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache></con:interface><con:properties/><con:wssContainer/></con:soapui-project>

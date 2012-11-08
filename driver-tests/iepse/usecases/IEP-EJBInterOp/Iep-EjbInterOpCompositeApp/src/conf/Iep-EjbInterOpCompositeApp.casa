@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="Iep_EjbEventProcess_iep" xmlns:ns2="http://j2ee.netbeans.org/wsdl/iepTriggerWSDL" xmlns:ns3="Iep-EjbEventProcess_iep" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="OutputPort_IEP_EJB_StreamOutput" interface-name="ns1:OutputPt_IEP_EJB_StreamOutput" name="endpoint1" service-name="ns1:OutputService_IEP_EJB_StreamOutput"/>
+        <endpoint endpoint-name="InputPort" interface-name="ns1:InputPt" name="endpoint2" service-name="ns1:InputService"/>
+        <endpoint endpoint-name="iepTriggerWSDLPort" interface-name="ns2:iepTriggerWSDLPortType" name="endpoint3" service-name="ns2:iepTriggerWSDLService"/>
+        <endpoint display-name="InputRn" endpoint-name="InputRn" file-path="Iep-EjbEventProcess.iep" interface-name="ns3:InputPt" name="endpoint4" process-name="Iep-EjbEventProcess" service-name="ns3:InputPl"/>
+        <endpoint display-name="OutputRn_IEP_EJB_StreamOutput" endpoint-name="OutputRn_IEP_EJB_StreamOutput" file-path="Iep-EjbEventProcess.iep" interface-name="ns3:OutputPt_IEP_EJB_StreamOutput" name="endpoint5" process-name="Iep-EjbEventProcess" service-name="ns3:OutputPl_IEP_EJB_StreamOutput"/>
+        <endpoint endpoint-name="javaee_OutputPort_IEP_EJB_StreamOutput" interface-name="ns1:OutputPt_IEP_EJB_StreamOutput" name="endpoint6" service-name="ns1:OutputService_IEP_EJB_StreamOutput"/>
+        <endpoint endpoint-name="javaee_InputPort" interface-name="ns1:InputPt" name="endpoint7" service-name="ns1:InputService"/>
+        <endpoint endpoint-name="javaee_iepTriggerWSDLPort" interface-name="ns2:iepTriggerWSDLPortType" name="endpoint8" service-name="ns2:iepTriggerWSDLService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="Iep-EjbInterOpIEPModule.jar" component-name="sun-iep-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="Iep-EjbInterOpCompositeApp-Iep-EjbInterOpIEPModule" unit-name="Iep-EjbInterOpIEPModule" unknown="false" x="125" y="99">
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="Iep-EjbInterOp-Outbound-EJBModule.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="Iep-EjbInterOpCompositeApp-Iep-EjbInterOp-Outbound-EJBModule" unit-name="Iep-EjbInterOp-Outbound-EJBModule" unknown="false" x="78" y="238">
+            <provides endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="Ejb-IepInterOp-Inbound-EJBModule.jar" component-name="sun-javaee-engine" defined="true" description="Represents this Service Unit" internal="true" name="Iep-EjbInterOpCompositeApp-Ejb-IepInterOp-Inbound-EJBModule" unit-name="Ejb-IepInterOp-Inbound-EJBModule" unknown="false" x="83" y="377">
+            <provides endpoint="endpoint8"/>
+            <consumes endpoint="endpoint7"/>
+            <consumes endpoint="endpoint6"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-file-binding.jar" component-name="sun-file-binding" description="Represents this Service Unit" name="Iep-EjbInterOpCompositeApp-sun-file-binding" unit-name="sun-file-binding">
+            <ports>
+                <port x="117" y="197">
+                    <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='OutputService_IEP_EJB_StreamOutput']/port[@name='OutputPort_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="Iep-EjbInterOpCompositeApp-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="117" y="118">
+                    <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/iepTriggerWSDL.wsdl#xpointer(/definitions/service[@name='iepTriggerWSDLService']/port[@name='iepTriggerWSDLPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+                <port x="117" y="39">
+                    <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='InputService']/port[@name='InputPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint6" state="unchanged"><throttling maximumConcurrencyLimit="1" xmlns="http://www.sun.com/jbi/qos/throttling"/></connection>
+        <connection consumer="endpoint7" provider="endpoint2" state="unchanged"><throttling maximumConcurrencyLimit="1" xmlns="http://www.sun.com/jbi/qos/throttling"/></connection>
+        <connection consumer="endpoint3" provider="endpoint8" state="unchanged"><throttling maximumConcurrencyLimit="1" xmlns="http://www.sun.com/jbi/qos/throttling"/></connection>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/iepTriggerWSDL.wsdl#xpointer(/definitions/portType[@name='iepTriggerWSDLPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='OutputPt_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/iepTriggerWSDL.wsdl#xpointer(/definitions/portType[@name='iepTriggerWSDLPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='OutputPt_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='InputPt'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/portType[@name='OutputPt_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/iepTriggerWSDL.wsdl#xpointer(/definitions/binding[@name='iepTriggerWSDLBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='OutputBinding_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/iepTriggerWSDL.wsdl#xpointer(/definitions/binding[@name='iepTriggerWSDLBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='OutputBinding_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='InputBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/binding[@name='OutputBinding_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/iepTriggerWSDL.wsdl#xpointer(/definitions/service[@name='iepTriggerWSDLService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/client/Iep-EjbEventProcess/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='OutputService_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Ejb-IepInterOp-Inbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/iepTriggerWSDL.wsdl#xpointer(/definitions/service[@name='iepTriggerWSDLService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOp-Outbound-EJBModule/META-INF/wsdl/NewWebServiceFromWSDL/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='OutputService_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='InputService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Iep-EjbInterOpIEPModule/Iep-EjbEventProcess.wsdl#xpointer(/definitions/service[@name='OutputService_IEP_EJB_StreamOutput'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

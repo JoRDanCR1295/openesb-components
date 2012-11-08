@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="FlowIfWithin" 
+    targetNamespace="http://www.mycomp.org/BpelModule1/BpelModule1_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/BpelModule1/BpelModule1_1" xmlns:ns1="http://www.mycomp.org/DefaultServiceName">
+    <import namespace="http://www.mycomp.org/DefaultServiceName" location="FlowIfWithin.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowIfWithinPartnerLinkType" myRole="FlowIfWithinProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="branch1" type="xsd:string"/>
+        <variable name="branch2" type="xsd:string"/>
+        <variable name="Output" messageType="ns1:message1"/>
+        <variable name="Input" messageType="ns1:message1"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="FlowIfWithinOperation" portType="ns1:FlowIfWithinPortType" variable="Input" createInstance="yes"/>
+        <flow name="Flow1">
+            <assign name="Assign1">
+                <copy>
+                    <from>'Branch1'</from>
+                    <to variable="branch1"/>
+                </copy>
+            </assign>
+            <if name="If1">
+                <condition> ( $Input.ifbranch1 = 'If Branch' ) </condition>
+                <assign name="Assign2">
+                    <copy>
+                        <from>'IfBranch2'</from>
+                        <to variable="branch2"/>
+                    </copy>
+                </assign>
+                <elseif>
+                    <condition> ( $Input.ifbranch1 = 'ElseIf Branch' ) </condition>
+                    <assign name="Assign5">
+                        <copy>
+                            <from>'ElseIfBranch2'</from>
+                            <to variable="branch2"/>
+                        </copy>
+                    </assign>
+                </elseif>
+                <else>
+                    <assign name="Assign3">
+                        <copy>
+                            <from>'ElseBranch2'</from>
+                            <to variable="branch2"/>
+                        </copy>
+                    </assign>
+                </else>
+            </if>
+        </flow>
+        <assign name="Assign4">
+            <copy>
+                <from>concat($branch2, $Input.ifbranch1)</from>
+                <to part="ifbranch1" variable="Output"/>
+            </copy>
+            <copy>
+                <from>concat($branch1, $Input.branch1)</from>
+                <to part="branch1" variable="Output"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="FlowIfWithinOperation" portType="ns1:FlowIfWithinPortType" variable="Output"/>
+    </sequence>
+   
+</process>

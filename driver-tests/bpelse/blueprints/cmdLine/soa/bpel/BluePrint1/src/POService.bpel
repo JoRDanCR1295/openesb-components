@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Header: /cvs/open-jbi-components/driver-tests/bpelse/blueprints/cmdLine/soa/bpel/BluePrint1/src/POService.bpel,v 1.10 2010/02/04 06:07:49 fkieviet Exp $ -->
+<process name="POService"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:pos="http://manufacturing.org/wsdl/purchase/bp1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:invs="http://manufacturing.org/wsdl/inventory/bp1"
+    targetNamespace="http://manufacturing.org/wsdl/purchase/bp1">
+    <import namespace="http://manufacturing.org/wsdl/purchase/bp1"
+    location="POService.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://manufacturing.org/wsdl/inventory/bp1"
+    location="InventoryService.wsdl"
+    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="POServicePLink"
+        partnerLinkType="pos:purchasingLT"
+        myRole="purchaseService"/>
+        <partnerLink name="requestInventoryPLink"
+        partnerLinkType="invs:inventoryRequestingLT"
+        partnerRole="inventoryService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="purchaseOrderRequest"
+        messageType="pos:POMessage"></variable>
+        <variable name="purchaseOrderReply"
+        messageType="pos:POMessage"></variable>
+        <variable name="purchaseOrderFault"
+        messageType="pos:orderFaultType"></variable>
+        <variable name="inventoryServiceRequest"
+        messageType="invs:POMessage"></variable>
+        <variable name="inventoryServiceReply"
+        messageType="invs:InventoryMessage"></variable>
+        <variable name="inventoryServiceFault"
+        messageType="invs:inventoryFault"></variable>
+    </variables>
+    <sequence>
+        <receive name="sendPurchaseOrder"
+        partnerLink="POServicePLink"
+        portType="pos:purchaseOrderPT"
+        operation="sendPurchaseOrder"
+        variable="purchaseOrderRequest"
+        createInstance="yes"/>
+        <assign name="Assign">
+            <copy>
+                <from>49.98</from>
+                <to>$purchaseOrderRequest.purchaseOrder/price</to>
+            </copy>
+            <copy>
+            <from>$purchaseOrderRequest.purchaseOrder/orderId</from><to>$inventoryServiceRequest.purchaseOrder/orderId</to>
+            </copy>
+            <copy>
+            <from>$purchaseOrderRequest.purchaseOrder/customerId</from><to>$inventoryServiceRequest.purchaseOrder/customerId</to>
+            </copy>
+            <copy>
+            <from>$purchaseOrderRequest.purchaseOrder/orderDescription</from><to>$inventoryServiceRequest.purchaseOrder/orderDescription</to>
+            </copy>
+            <copy>
+            <from>$purchaseOrderRequest.purchaseOrder/price</from><to>$inventoryServiceRequest.purchaseOrder/price</to>
+            </copy>
+        </assign>
+        <invoke name="inventoryService"
+            partnerLink="requestInventoryPLink"
+            portType="invs:inventoryPortType"
+            operation="inventoryService"
+            inputVariable="inventoryServiceRequest"
+            outputVariable="inventoryServiceReply">
+        </invoke>
+        <if name="Decision">
+            <condition>$inventoryServiceReply.inventoryPart/inventoryStatus</condition>
+                <sequence name="Case2">
+                    <assign name="Assign1">
+                        <copy>
+                            <from>$purchaseOrderRequest.purchaseOrder</from><to>$purchaseOrderReply.purchaseOrder</to>
+                        </copy>
+                    </assign>
+                    <reply name="sendPurchaseOrder.Reply1" 
+                    partnerLink="POServicePLink" 
+                    operation="sendPurchaseOrder" 
+                    portType="pos:purchaseOrderPT" 
+                    variable="purchaseOrderRequest"/>
+                </sequence>
+            <else>
+                <sequence name="Case1">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$inventoryServiceReply.inventoryPart/inventoryStatusMessage</from><to>$purchaseOrderFault.faultInfo</to>
+                        </copy>
+                    </assign>
+                    <reply name="sendPurchaseOrder.Reply"
+                    partnerLink="POServicePLink"
+                    portType="pos:purchaseOrderPT"
+                    operation="sendPurchaseOrder"
+                    variable="purchaseOrderFault"
+                    faultName="pos:cannotCompleteOrder"
+                    />
+                </sequence>
+            </else>
+        </if>
+    </sequence>
+</process>

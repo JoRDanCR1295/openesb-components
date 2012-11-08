@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="insertonebpelSQL" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:tns="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://com.sun.jbi/sqlse/sqlseengine" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="insertonebpelRequest"><xsd:complexType><xsd:sequence/></xsd:complexType></xsd:element><xsd:element name="numRowsEffected" type="xsd:int"/></xsd:schema>
+  </types>
+  <message name="insertonebpelResponse">
+    <part name="insertonebpelResponsePart" element="tns:numRowsEffected"/>
+  </message>
+  <message name="insertonebpelRequest">
+    <part name="insertonebpelRequestPart" element="tns:insertonebpelRequest"/>
+  </message>
+  <portType name="insertonebpelSQL_sqlsePortType">
+    <operation name="insertonebpel">
+      <input name="insertonebpelRequest" message="tns:insertonebpelRequest"/>
+      <output name="insertonebpelResponse" message="tns:insertonebpelResponse"/>
+    </operation>
+  </portType>
+  <binding name="insertonebpelSQLBinding" type="tns:insertonebpelSQL_sqlsePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="insertonebpel">
+      <soap:operation/>
+      <input name="insertonebpelRequest">
+        <soap:body/>
+      </input>
+      <output name="insertonebpelResponse">
+        <soap:body/>
+      </output>
+    </operation>
+  </binding>
+  <service name="insertonebpelSQL_sqlseService">
+    <port name="insertonebpelSQL_sqlsePort" binding="tns:insertonebpelSQLBinding">
+      <soap:address location="http://localhost:18181/insertonebpelSQL/insertonebpelSQL/insertonebpelSQL_sqlsePort"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="insertonebpelSQL_sqlsePartnerLinkType" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plink:role name="insertonebpelSQL_myrole" portType="tns:insertonebpelSQL_sqlsePortType"/>
+    </plink:partnerLinkType>
+</definitions>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/soapTrigger"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/soapTrigger" name="soapTrigger" xmlns:ns="http://j2ee.netbeans.org/xsd/tableSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/soapTrigger">
+            <xsd:import namespace="http://j2ee.netbeans.org/xsd/tableSchema" schemaLocation="DRIVERTEST_EMP.xsd"/>
+            <xsd:element name="inputEle">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="deptno" type="xsd:decimal"/>
+                     </xsd:sequence>
+                    </xsd:complexType>
+            </xsd:element>
+             <xsd:element name="outputEle">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="recordsUpdate" type="xsd:int"/>
+                     </xsd:sequence>
+                    </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="soapTriggerOperationRequest">
+        <wsdl:part name="part1" element="tns:inputEle"/>
+    </wsdl:message>
+    <wsdl:message name="soapTriggerOperationReply">
+        <wsdl:part name="part1" element="tns:outputEle"/>
+    </wsdl:message>
+    <wsdl:portType name="soapTriggerPortType">
+        <wsdl:operation name="soapTriggerOperation">
+            <wsdl:input name="input1" message="tns:soapTriggerOperationRequest"/>
+            <wsdl:output name="output1" message="tns:soapTriggerOperationReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="soapTriggerBinding" type="tns:soapTriggerPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="soapTriggerOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="soapService62">
+        <wsdl:port name="soapPort62" binding="tns:soapTriggerBinding">
+            <soap:address location="http://localhost:18181/soapService62/soapPort62"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="soapTriggerPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="soapTriggerPortTypeRole" portType="tns:soapTriggerPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="repeatingNodeWithPosition" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/repeatingNodeWithPosition"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/repeatingNodeWithPosition" xmlns:ns1="http://j2ee.netbeans.org/wsdl/repeatingNodeWithPosition" xmlns:ns0="http://xml.netbeans.org/schema/newXMLSchema">
+   <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/repeatingNodeWithPosition" location="repeatingNodeWithPosition.wsdl"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:repeatingNodeWithPositionPartner" myRole="repeatingNodeWithPositionPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="counter" type="xsd:int"/>
+      <bpws:variable name="RepeatingNodeOperationOut" messageType="ns1:repeatingNodeWithPositionOperationReply"/>
+      <bpws:variable name="RepeatingNodeOperationIn" messageType="ns1:repeatingNodeWithPositionOperationRequest"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="repeatingNodeWithPositionOperation" portType="ns1:repeatingNodeWithPositionPortType" variable="RepeatingNodeOperationIn"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>0</bpws:from>
+            <bpws:to variable="counter"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:while name="While1">
+         <bpws:condition>  ( $counter &lt; 6 )  </bpws:condition>
+         <bpws:assign name="Assign1">
+            <bpws:copy>
+               <bpws:from>  ( $counter + 1 )  </bpws:from>
+               <bpws:to variable="counter"/>
+            </bpws:copy>
+            <bpws:copy>
+               <bpws:from>$RepeatingNodeOperationIn.part1/ns0:Collection[position()=$counter]/ns0:leafElement</bpws:from>
+               <bpws:to>$RepeatingNodeOperationOut.part1/ns0:Collection[position()=$counter]/ns0:leafElement</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+      </bpws:while>
+
+<!--
+      <bpws:assign name="Assign3">
+         <bpws:copy>
+            <bpws:from variable="RepeatingNodeOperationIn" part="part1"/>
+            <bpws:to variable="RepeatingNodeOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+-->      
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="repeatingNodeWithPositionOperation" portType="ns1:repeatingNodeWithPositionPortType" variable="RepeatingNodeOperationOut"/>
+   </sequence>
+   
+</process>

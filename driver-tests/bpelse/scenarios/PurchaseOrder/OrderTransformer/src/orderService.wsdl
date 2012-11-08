@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="orderService" targetNamespace="http://j2ee.netbeans.org/wsdl/orderService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/orderService" xmlns:ns1="http://xml.netbeans.org/schema/orders" xmlns:ns0="http://xml.netbeans.org/schema/custhistory" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/orderService">
+            <xsd:import schemaLocation="orders.xsd" namespace="http://xml.netbeans.org/schema/orders"/>
+            <xsd:import schemaLocation="custhistory.xsd" namespace="http://xml.netbeans.org/schema/custhistory"/>
+        </xsd:schema>
+    </types>
+    <message name="orderMesg">
+        <wsdl:part name="orderPart" element="ns1:Orders"/>
+    </message>
+    <message name="custHistMesg">
+        <wsdl:part name="custHistPart" element="ns0:CustomerHistoryEntries"/>
+    </message>
+    <portType name="orderServicePortType">
+        <wsdl:operation name="orderServiceOperation">
+            <wsdl:input name="input1" message="tns:orderMesg"/>
+            <wsdl:output name="output1" message="tns:custHistMesg"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="orderBinding" type="tns:orderServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="orderServiceOperation">
+            <wsdl:input name="input1">
+                <soap:body parts="orderPart" use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body parts="custHistPart" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="orderService">
+        <wsdl:port name="orderServicePort" binding="tns:orderBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/OrderTransformer/orderService/orderServicePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="orderServicePLT">
+        <plnk:role name="orderServicePortTypeRole" portType="tns:orderServicePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

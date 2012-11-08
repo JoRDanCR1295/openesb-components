@@ -1,0 +1,116 @@
+											---
+											Asynchronous Communication
+											---
+											Mirco Casoni, Marco Piraccini
+											---
+											24/02/2007
+
+Introduction
+
+  An asynchronous communication is referred to a process that calls an operation
+	and does not wait until that operation is finished but it continue its activity.
+  (Sometimes the developers calls this kind of operations "send and forget method"
+	to emphasize their behavior.)
+  The component support the asynchronous communication in both roles.
+
+
+Provider and Consumer IDL-First
+
+  In CORBA the asynchronous communications is implemented using the keyword
+	<<oneway>> defined directly in IDL file used as a <<modifier>>
+	of a corba operation.
+
+
++------------------------------------------+
+  interface EchoOnewayInterface{
+
+    oneway void echoOneway(in string message);
+
+  };
++------------------------------------------+
+
+
+	The CORBA specifications defines some limitations for this kind of operations.
+	In fact, the requirement is the following:
+
+
+  * They must not contain any output parameters.
+
+  * They must specify a <<void>> return type.
+
+  * They must not declare any application exception (but they should raise a system one).
+
+
+  From the perspective of a corba system this kind of communication is totally
+	delegated to the stub (client) implementation.
+	In fact the skeleton of a corba servant generated is the same for both
+	communication types (asynchronous and synchronous).
+
+
+	The WSDL of the endpoint that exposes a oneway operation is similar to the others
+	but the operation has only the input message (Conforming to the WSDL specifications)
+	and the BUS recognises the <<In Only>> MEP thanks this characteristic.
+
+  
++------------------------------------------+
+  <wsdl:operation name="echoOneway">
+    <wsdl:input name="echoOnewayRequest">
+    </wsdl:input>
+  </wsdl:operation>
++------------------------------------------+
+
+
+	This scenario is completely managed by the component and the user configure it
+	using the standard IDL syntax.
+
+
+Consumer WSDL-First
+
+  This kind of communication is also supported by JBI4CORBA when it acts as a
+	consumer.
+	The endpoint created has an interface (WSDL) that contains the operations
+	without the output message.
+
++------------------------------------------+
+    <wsdl:operation name="echoOneway">
+      <wsdl:input name="echoOnewayRequest">
+      </wsdl:input>
+    </wsdl:operation>
++------------------------------------------+
+
+  The component creates one or more IDL files that can be used to implement the
+	corba client for our service, but the IDL file generated that defines the
+	corba interface <<does not contain the oneway>> declaration
+	(This problem is already registered in our issue tracking system),
+	so if you want use it to create a corba client that invoke asynchronously
+	our operations you should add this information to the IDL file.
+
+	No other tasks are required to the user.
+
+	From the perspective of the BUS the sending operation is performed using the
+	appropriate API (i.e. It it the component that recognise the asynchronous operations).
+
+
+  An example of IDL operation generated.
+
++------------------------------------------+
+  interface EchoOnewayInterface{
+
+    void echoOneway(in string message);
+
+  };
++------------------------------------------+
+
+
+  An example of how the IDL should be modified by the user.
+
++------------------------------------------+
+  interface EchoOnewayInterface{
+
+    oneway void echoOneway(in string message);
+
+  };
++------------------------------------------+
+
+
+

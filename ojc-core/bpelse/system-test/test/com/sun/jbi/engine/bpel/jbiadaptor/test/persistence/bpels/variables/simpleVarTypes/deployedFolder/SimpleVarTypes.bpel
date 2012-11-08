@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="SimpleVarTypes" 
+         targetNamespace="http://sun.com/bpel/SimpleVarTypes"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://sun.com/wsdl/SimpleVarTypes">
+    <import namespace="http://sun.com/wsdl/SimpleVarTypes" location="SimpleVarTypes.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokePLT" partnerLinkType="ns1:VarInvokePLT" 
+                     partnerRole="VarInvokeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:VarPartnerLinkType" 
+                     myRole="VarPartnerLinkTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="VarInMessage" messageType="ns1:VarMessage"/>
+        <variable name="InvokeMessage" messageType="ns1:VarMessage"/>
+        <variable name="VarOutMessage" messageType="ns1:VarMessage"/>
+        <bpws:variable name="varDecimal" type="xsd:decimal"/>
+        <bpws:variable name="varInteger" type="xsd:integer"/>
+        <bpws:variable name="varNegInt" type="xsd:negativeInteger"/>
+        <bpws:variable name="varNonNegInt" type="xsd:nonNegativeInteger"/>
+        <bpws:variable name="varPosInt" type="xsd:positiveInteger"/>
+        <bpws:variable name="varNonPosInt" type="xsd:nonPositiveInteger"/>
+        <bpws:variable name="varLong" type="xsd:long"/>
+        <bpws:variable name="varInt" type="xsd:int"/>
+        <bpws:variable name="varShort" type="xsd:short"/>
+        <bpws:variable name="varByte" type="xsd:byte"/>
+        <bpws:variable name="varUnsignedLong" type="xsd:unsignedLong"/>
+        <bpws:variable name="varUnsignedShort" type="xsd:unsignedShort"/>
+        <bpws:variable name="varUnsignedInt" type="xsd:unsignedInt"/>
+        <bpws:variable name="varUnsignedByte" type="xsd:unsignedByte"/>
+        <bpws:variable name="varFloat" type="xsd:float"/>
+        <bpws:variable name="varDouble" type="xsd:double"/>
+    </variables>
+    <faultHandlers>
+        <bpws:catchAll>
+            <bpws:invoke name="InvokeBad" partnerLink="InvokePLT" operation="oneWayInvokeOper" portType="ns1:invokePortType" inputVariable="VarOutMessage"/>
+        </bpws:catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" 
+                 operation="VarOperation" portType="ns1:VarPortType" 
+                 variable="VarInMessage" createInstance="yes"/>
+		<assign name="Assign1">
+			<copy>
+            	<from part="part1" variable="VarInMessage"/>
+				<to part="part1" variable="VarOutMessage"/>
+         	</copy>
+		    <bpws:copy>
+		        <bpws:from>-5</bpws:from>
+		        <bpws:to variable="varByte"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>12345.6789</bpws:from>
+		        <bpws:to variable="varDecimal"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>-123456.00789</bpws:from>
+		        <bpws:to variable="varDouble"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456.00789</bpws:from>
+		        <bpws:to variable="varFloat"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456789</bpws:from>
+		        <bpws:to variable="varInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456789</bpws:from>
+		        <bpws:to variable="varInteger"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456789123456</bpws:from>
+		        <bpws:to variable="varLong"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>-123456</bpws:from>
+		        <bpws:to variable="varNegInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456</bpws:from>
+		        <bpws:to variable="varNonNegInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>-123456</bpws:from>
+		        <bpws:to variable="varNonPosInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456</bpws:from>
+		        <bpws:to variable="varPosInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>12345</bpws:from>
+		        <bpws:to variable="varShort"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123</bpws:from>
+		        <bpws:to variable="varUnsignedByte"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456789</bpws:from>
+		        <bpws:to variable="varUnsignedInt"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123456789123</bpws:from>
+		        <bpws:to variable="varUnsignedLong"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from>123</bpws:from>
+		        <bpws:to variable="varUnsignedShort"/>
+		    </bpws:copy>
+		    <bpws:copy>
+		        <bpws:from variable="VarInMessage" part="part1"/>
+		        <bpws:to variable="InvokeMessage" part="part1"/>
+		    </bpws:copy>
+		</assign>
+        <invoke name="Invoke1" partnerLink="InvokePLT"
+                operation="oneWayInvokeOper" portType="ns1:invokePortType"
+                inputVariable="InvokeMessage"/>
+        <bpws:sequence name="Sequence2">
+            <bpws:if>
+                <bpws:condition> ( $varByte != -5 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varByte = ', $varByte)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varDecimal != 12345.6789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varDecimal = ', $varDecimal)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varDouble != -123456.00789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varDouble = ', $varDouble)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varFloat != 123456.00789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varFloat = ', $varFloat)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varInt != 123456789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varInt = ', $varInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varInteger != 123456789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varInteger = ', $varInteger)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varLong != 123456789123456 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varLong = ', $varLong)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varNegInt != -123456 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varNegInt = ', $varNegInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varNonNegInt != 123456 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varNonNegInt = ', $varNonNegInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varNonPosInt != -123456 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varNonPosInt = ', $varNonPosInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varPosInt != 123456 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varPosInt = ', $varPosInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varShort != 12345 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varShort = ', $varShort)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varUnsignedByte != 123 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varUnsignedByte = ', $varUnsignedByte)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varUnsignedInt != 123456789 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varUnsignedInt = ', $varUnsignedInt)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varUnsignedLong != 123456789123 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varUnsignedLong = ', $varUnsignedLong)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+            <bpws:if>
+                <bpws:condition> ( $varUnsignedShort != 123 ) </bpws:condition>
+                <bpws:sequence>
+					<assign>
+						<copy>
+							<from>concat('varUnsignedShort = ', $varUnsignedShort)</from>
+							<to part="part1" variable="VarOutMessage"/>
+						</copy>
+					</assign>
+                    <bpws:throw faultName="bpws:MyFault"/>
+                </bpws:sequence>
+            </bpws:if>
+        </bpws:sequence>
+        <bpws:invoke name="InvokeEnd" partnerLink="InvokePLT" operation="oneWayInvokeOper" portType="ns1:invokePortType" inputVariable="VarOutMessage"/>
+    </sequence>
+</process>

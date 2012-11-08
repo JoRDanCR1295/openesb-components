@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    name="Transform"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/Transform"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/Transform"
+    xmlns:ns="http://xml.netbeans.org/schema/TestCustomEncoder/CustomEncoder"
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/TestCustomEncoder/Transform">
+            <xsd:import namespace="http://xml.netbeans.org/schema/TestCustomEncoder/CustomEncoder"
+                schemaLocation="CustomEncoder.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TransformOperationRequest">
+        <part name="toIn" element="ns:root"/>
+    </message>
+    <message name="TransformOperationReply">
+        <part name="toOut" element="ns:root"/>
+    </message>
+    <portType name="TransformPortType">
+        <wsdl:operation name="TransformOperation">
+            <wsdl:input name="input1" message="tns:TransformOperationRequest"/>
+            <wsdl:output name="output1" message="tns:TransformOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="TransformBinding" type="tns:TransformPortType">
+        <file:binding/>
+        <wsdl:operation name="TransformOperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="encoded" fileName="input.txt"
+                    pollingInterval="1000" encodingStyle="customencoder-1.0"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <file:message use="encoded" fileName="output.txt"
+                    encodingStyle="customencoder-1.0"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="TransformService">
+        <wsdl:port name="TransformPort" binding="tns:TransformBinding">
+            <file:address fileDirectory="testcustomencoder"
+                relativePath="true" pathRelativeTo="Default System Temp Dir"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="Transform1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="TransformPortTypeRole" portType="tns:TransformPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

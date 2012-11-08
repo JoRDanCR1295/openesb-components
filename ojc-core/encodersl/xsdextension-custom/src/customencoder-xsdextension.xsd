@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+<!-- 
+ # @(#)customencoder-xsdextension.xsd 
+ #
+ # Copyright 2004-2008 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+<!-- edited with XMLSpy v2006 rel. 3 sp1 (http://www.altova.com) by ltang (SeeBeyond Technology Corp.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:com.sun:encoder-custom-1.0" xmlns:ns1="urn:com.sun:encoder" targetNamespace="urn:com.sun:encoder-custom-1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:import namespace="urn:com.sun:encoder" schemaLocation="../../xsdextension-fw/src/encoderfrmwk-xsdextension.xsd"/>
+  <xs:element name="nodeProperties" type="tns:nodeProperties">
+    <xs:annotation>
+      <xs:documentation>Defines custom node properties that will be used in custom encoder XSDs as additional application information</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="nodeProperties">
+    <xs:sequence>
+      <xs:element name="nodeType">
+        <xs:annotation>
+          <xs:documentation>Defines node type</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="group"/>
+            <xs:enumeration value="array"/>
+            <xs:enumeration value="delimited"/>
+            <xs:enumeration value="fixedLength"/>
+            <xs:enumeration value="transient"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="inputCharset" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the character set of the input data.  This is only needed if the parsing is done upon byte array data and the character set that the byte array data is encoded against is not safe for delimiter scanning.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="parsingCharset" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Character set used to decode byte array data into string during parsing.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="serializingCharset" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Character set used to encode string data into byte array data during serializing.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="outputCharset" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the character set if it  needs to be different than the serializing character set.  This character set may be unsafe for delimiter scanning.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="delimiterSet" type="tns:delimiterSet" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the delimiter set on this node.  It might affect descendant's delimiter setting if the delimiter set has multiple levels.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="order" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the sequence of a group node or an element node (complex type element). If 'sequence', then child nodes must appear in the sequence given in the metadata. If 'any', then child nodes must remain grouped, but the groups can appear in any order. If 'mixed', then child nodes can appear in any order.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="sequence">
+              <xs:annotation>
+                <xs:documentation>Child nodes must appear in the sequence given in the metadata.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="any">
+              <xs:annotation>
+                <xs:documentation>Child nodes must remain grouped, but the groups can appear in any order.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="mixed">
+              <xs:annotation>
+                <xs:documentation>Child nodes can appear in any order.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="match" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines match pattern.  If alignment is "regex", then this holds the regex match pattern.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="alignment" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the alignment mode for a match pattern. If 'blind', then always performs a match without looking at data (just pass-through). Any value set for the match is ignored. If 'exact', then exactly matchs the byte pattern. If 'begin', then fully matches beginning portion of data bytes. If 'final', then fully matches final portion of data bytes. If 'inter', then fully matches slice of data bytes. If 'super', then data bytes must be slice of match pattern. If 'oneof', then data is one of the prefix-delim'ed list of legal data specified in match. If 'regex', then data must match a regular expression specified in match.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="blind"/>
+            <xs:enumeration value="exact"/>
+            <xs:enumeration value="begin"/>
+            <xs:enumeration value="final"/>
+            <xs:enumeration value="inter"/>
+            <xs:enumeration value="super"/>
+            <xs:enumeration value="oneof"/>
+            <xs:enumeration value="regex"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="delimiter" type="xs:string" minOccurs="0" maxOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This is a read only property, which indicates the delimiters  for the node.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="length" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the length of the data if the node is a fixed length node. Alternatively indicates the length of encode length value if position has a value.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:int"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="offset" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the offset of the data (starting from the beginning of first sibling) if the node is a fixed length node.  Offset shall only be used if fields are not aligned consecutively.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="position" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the offset between the current parsing position and the position where the encoded length can be found.  Position is only applicable if the node is an encoded length field.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="scvngr" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines scavenger characters to skip.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="chars" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>Defines the scavenger characters to skip during delimiter searching.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="emit1st" type="xs:boolean" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>If true then output the first scavenger character before outputting the field (even before the begin delimiter if there is any).</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nOfN" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines constraints on the number of children.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="minN" type="xs:int" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>Defines the minimum number of children (different kinds) that must have data.  If absent, means no such constraint.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="maxN" type="xs:int" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>Defines the maximum number of children (different kinds) that must have data.  If absent, means no such constraint.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="minOcc" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the minimum number of occurrences of the node.  The value specified here overrides the minOccurs value in XSD's element declaration.  This property is needed only when the order is mixed so in XSD repeating choice group must be used and the minOccurs in XSD does not actually represent the minOccurs.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="maxOcc" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines the maximum number of occurrences of the node.  The value specified here overrides the maxOccurs value in XSD's element declaration.  This property is needed only when the order is mixed so in XSD repeating choice group must be used and the maxOccurs in XSD does not actually represent the maxOccurs.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="undefDataPolicy" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines if undefined (trailing) data is allowed and/or will be mapped.  If this flag is set to 'skip', undefined (trailing) data is skipped silently; If this flag is set to 'map', undefined (trailing) data is allowed and will be mapped to field named '_undefined_' with the predefined namespace "urn:com.sun:encoder:instance"; If the flag is set to 'prohibit', undefined (trailing) data is not allowed and if they do appear, exception will be thrown.  The setting is global, so the flag only needs to be set on a root element.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="prohibit"/>
+            <xs:enumeration value="map"/>
+            <xs:enumeration value="skip"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="fineInherit" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Defines if delimiters can be inherited individually within a delimiter level.  If the flag is true, begin delimiter, end delimiter and repeating delimiter can be inherited individually from its parent node.  Otherwise, once a delimiter level on a child node is defined, it overrides the relevant delimiter level as a whole on parent nodes.  The setting is global, so the flag only needs to be set on a root element.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="delimOfFixed" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Begin delimiter for fixed length field.  Once the value of a fixed length field is extracted, this delimiter can be used to skip some bytes.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="beginBytes">
+              <xs:annotation>
+                <xs:documentation>Bytes of the begin delimiter.</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:minLength value="1"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="beginAnch" type="xs:boolean" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>If the begin delimiter is anchored.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="noMatch" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Flag indicates if the match condition should be reverted.  The flag acts as a logical Not against the match condition.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="escapeSequence" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Global level escape sequence. Should only be set at root level.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="delimiterSet">
+    <xs:sequence>
+      <xs:element name="level" type="tns:delimiterLevel" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Encloses delimiters for one level.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="delimiterLevel">
+    <xs:sequence>
+      <xs:element name="delimiter" type="tns:delimiter" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>Defines one delimiter.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="delimiter">
+    <xs:all>
+      <xs:element name="kind" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Delimiter kind, indicating whether a delimiter is a normal delimiter, or escape delimiter (ignored when matched) or a delimiter specifically for separating repetitive fields (nodes).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="normal">
+              <xs:annotation>
+                <xs:documentation>Indicating the delimiter is a normal delimiter</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="escape">
+              <xs:annotation>
+                <xs:documentation>Indicating the delimiter is an escape delimiter. Here is how escape delimiter works: Once the bytes of the escape delimiter is matched, no action is taken except the search is continued at the postion right after the delimiter bytes. The purpose of escape delimiter is to escape special bytes (such as delimiters) using predefined escape sequences.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="repeat">
+              <xs:annotation>
+                <xs:documentation>Indicating the delimiter is a delimiter that delimits repetitive fields (nodes). If a node's occurrence is defined to be repetitive, then a delimiter can be used to delimits repetitive nodes, which a normal delimiter terminates the repetition, like following:
+
+a|b|c1~c2~c3~c4~c5|
+
+where '~' is a delimiter that delimits repetitive nodes and '|' is a normal delimiter that terminates repetitive nodes.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="quot-escape">
+              <xs:annotation>
+                <xs:documentation>Indicating the delimiter is a quot-escape delimiter.  Quot-escape delimiter is used to escape special bytes using quotation style escaping. For example, assuming ',' is a normal delimiter. To escape ',' in the data, either we can use an escape sequence, e.g., 'some data\,other data' or we can use quotation marks, e.g., "some data,other data". The bytes defined in the quot-escape delimiter is used as quotation mark.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="precedence" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The precedence of the delimiter. Value range should be between 0 and 100. The bigger the value is, the higher the precedence. Precedence is used to determine which delimiter should be matched if multiple delimiters have overlaped bytes. For example, one delimiter's bytes is "a" and another one's bytes is "ab". Delimiters with higher precedence get more chance to be matched.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:short">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="100"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element ref="tns:bytes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The end bytes of delimiter, which is the bytes that ends the delimited data. Delimiter can have begin bytes, end bytes or both.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="optionalMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>For optional node, indicating whether the delimiter should appear when the node is absent. Optional mode determines whether data should look like "a,b" or "a,,,b,," if there are some optional nodes between "a" and "b" and after "b".</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="never">
+              <xs:annotation>
+                <xs:documentation>If the node is absent, the delimiter is not allowed in either input or output. Appearance of the delimiter will be interpreted as empty value ("").</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="allow">
+              <xs:annotation>
+                <xs:documentation>If the node is absent, the delimiter is allowed in input but will not be emitted in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="favor">
+              <xs:annotation>
+                <xs:documentation>If the node is absent, the delimiter is allowed in input and will also be emitted in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="force">
+              <xs:annotation>
+                <xs:documentation>If the node is absent, the delimiter must appear in input and will be emitted in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="terminatorMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Indicating whether the delimiter should appear for the last node of current level. Termination mode determines whether data should look like "a,b,|" or "a,b|" assuming "," is the current level delimiter and "|" is the parent level delimiter.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="never">
+              <xs:annotation>
+                <xs:documentation>The delimiter is not allowed to be a terminator (the delimiter that terminates the last child of this level) in input and will not be emitted as terminator in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="allow">
+              <xs:annotation>
+                <xs:documentation>The delimiter is allowed to be a terminator (the delimiter that terminates the last child of this level) in input but will not be emitted as terminator in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="favor">
+              <xs:annotation>
+                <xs:documentation>The delimiter is allowed to be a terminator (the delimiter that terminates the last child of this level) in input and will be emitted as terminator in output.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="force">
+              <xs:annotation>
+                <xs:documentation>The delimiter must appear as a terminator (the delimiter that terminates the last child of this level) in input and will be emitted as terminator in output as well.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="skipLeading" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The purpose of this flag is to facilitate tabular data parsing. This flag indicates whether multiple consecutive delimiters at the beginning of the data shall be skipped. For example, assuming data to be parsed is "   AAA ", the delimiter is ' ' (Space character) and the current position is at 0, if this flag is true, the match will not stop at position 0. Instead, if ' ' is defined as begin bytes, it will stop at position 3 (all consecutive begin bytes will be skipped) and if ' ' is defined as end bytes, it will stop at position 6 (all consecutive leading end bytes will be skipped and the data will be parsed and delimiter scan stops at the
+first end bytes after the data).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="collapse" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This flag is also for facilitating tabular data parsing same as flag skipLeading. This flag indicates whether multiple end delimiters should be collapsed into one. For example, assuming data is "AAA   XYZ    ", the delimiter is ' ' (Space) and the current position is at 0, if this flag is on, the delimiter scan will not stop at position 3, but at position 5. Next scan will stop at position 12 instead of 9.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="beginBytes" type="tns:delimiterBytes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The begin bytes of the delimiter, which is the bytes that indicates the start of the delimited data. Delimiter can have begin bytes, end bytes or both.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="beginAnch" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This flag indicates if the begin bytes shall be anchored. For example, if the data is "{a}  {b}", after the first field ("a") is parsed, the current position is at 3. If the begin bytes is marked as anchored, then it must appear at position 3, so basically the above data will fail parsing, but data "{a}{b}" will be successfully parsed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="endAnch" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This flag indicates if the end bytes shall be anchored. For example, if the data is "{[a][b]   }", after field "b" is parsed, the current position is at 7. If the end bytes "}" is marked as anchored, then it must appear at position 7, so basically the above data will fail parsing, but data "{[a][b]}" will be parsed successfully.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="origin" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This element describes where the delimiter is originated from. 'define' means it is explicitly defined at the node. 'dummy' means it is faked up during some kind conversion (basically it is a dummy delimiter that may not occur in the input or output at all and may only serves as a placeholder.  'default' means it is copied from a default delimiter set during metadata migration from Custom Encoder's predecessors. If this element is not presented, default is 'define'.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="define"/>
+            <xs:enumeration value="dummy"/>
+            <xs:enumeration value="default"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="delimiterBytes">
+    <xs:choice>
+      <xs:element name="constant">
+        <xs:annotation>
+          <xs:documentation>Defines constant delimiter bytes.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="embedded" type="tns:embeddedBytes">
+        <xs:annotation>
+          <xs:documentation>Defines delimiter bytes as to be extracted from the data.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="embeddedBytes">
+    <xs:attribute name="offset">
+      <xs:annotation>
+        <xs:documentation>The offset from which the delimiter will be extracted.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int">
+          <xs:minInclusive value="0"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="length">
+      <xs:annotation>
+        <xs:documentation>The length of the delimiter bytes being extracted.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:short">
+          <xs:minInclusive value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="customEncoding">
+    <xs:annotation>
+      <xs:documentation>The complex type that governs the content used in appinfo that defines custom encoding settings</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="ns1:encodingBase">
+        <xs:sequence>
+          <xs:element ref="tns:nodeProperties" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="bytes" type="tns:delimiterBytes"/>
+  <xs:element name="endBytes" substitutionGroup="tns:bytes">
+    <xs:annotation>
+      <xs:documentation>This element is an alias for element "bytes".</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+</xs:schema>

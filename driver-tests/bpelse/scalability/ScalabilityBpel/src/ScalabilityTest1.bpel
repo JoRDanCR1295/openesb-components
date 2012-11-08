@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ScalabilityTest1"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ScalabilityBpel/ScalabilityTest1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ScalabilityBpel/ScalabilityTest1" 
+    xmlns:ns1="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" 
+    xmlns:ns2="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl" 
+    xmlns:ns0="http://java.sun.com/products/oss/xml/TroubleTicket" 
+    xmlns:ns3="http://j2ee.netbeans.org/wsdl/SubBPWSDL"
+    xmlns:tt="http://java.sun.com/products/oss/xml/TroubleTicket"
+    xmlns:qosutil="http://java.sun.com/products/oss/xml/QualityOfService/PM/Util"
+    xmlns:qosthresh="http://java.sun.com/products/oss/xml/QualityOfService/PM/Threshold"
+    xmlns:qostmeas="http://java.sun.com/products/oss/xml/QualityOfService/PM/Measurement"
+    xmlns:qostmonitor="http://java.sun.com/products/oss/xml/QualityOfService/FM/Monitor"
+    xmlns:commutil="http://java.sun.com/products/oss/xml/Common/Util"
+    xmlns:comm="http://java.sun.com/products/oss/xml/Common" xmlns:ns4="http://localhost/BPELProject/JMSOut">
+        
+    <import namespace="http://enterprise.netbeans.org/bpel/TroubleTicketWrapper" location="ScalabilityTest1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://java.sun.com/products/oss/xml/TroubleTicket/wsdl" location="TroubleTicket.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/SubBPWSDL" location="SubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://java.sun.com/products/oss/xml/TroubleTicket" location="XmlTroubleTicketSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/PM/Util" location="XmlQosPmUtilSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/PM/Threshold" location="XmlQosPmThresholdSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>    
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/PM/Measurement" location="XmlQosPmMeasurementSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>    
+    <import namespace="http://java.sun.com/products/oss/xml/QualityOfService/FM/Monitor" location="XmlQosFmMonitorSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>    
+    <import namespace="http://java.sun.com/products/oss/xml/Common/Util" location="XmlCommonUtilSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>    
+    <import namespace="http://java.sun.com/products/oss/xml/Common" location="XmlCommonSchema.xsd" importType="http://www.w3.org/2001/XMLSchema"></import>
+    <import namespace="http://localhost/BPELProject/JMSOut" location="JMSOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ClientPartnerLink2" partnerLinkType="ns1:correlatedMessagePartnerlinktype" myRole="correlatedMessageRole"/>
+        <partnerLink name="StartPartnerLink1" partnerLinkType="ns4:StartJMSOutLinkType" partnerRole="Start_PLT"/>
+        <partnerLink name="FinishPartnerLink1" partnerLinkType="ns4:FinishJMSOutLinkType" partnerRole="Finish_PLT"/>
+        <partnerLink name="SubBPPartnerLink1" partnerLinkType="ns3:SubBPWSDLRIT14201" partnerRole="SubBPWSDLPortTypeRole"/>
+        <partnerLink name="ClientPartnerLink1" partnerLinkType="ns1:createTTPartnerLinkType" myRole="createTroubleTicketPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ScalabilityTest1OperationIn1" messageType="ns1:CorrelatedRequestMessage"/>
+        <variable name="ScalabilityTest1OperationIn" messageType="ns1:ResponseMessage"/>
+        <variable name="JMSOutOperationIn2" messageType="ns4:message_JMSOut"/>
+        <variable name="Operation_JMSOutIn" messageType="ns4:message_JMSOut"/>
+        <variable name="maintServiceChargeVariable1" type="xsd:boolean"/>
+        <variable name="lastUpdateTimeVariable1" type="xsd:dateTime"/>
+        <variable name="baseInitiatingModeVariable1" element="ns0:baseInitiatingMode"/>
+        <variable name="escalationListVariable1" type="ns0:EscalationList"/>
+        <variable name="dialogVariable1" type="xsd:string"/>
+        <variable name="customerTroubleNumVariable1" type="xsd:string"/>
+        <variable name="customerRoleAssignmentListVariable1" type="ns0:ArrayOfCustomerRoleAssignment"/>
+        <variable name="customerVariable1" type="ns0:PersonReach"/>
+        <variable name="commitmentTimeRequestedVariable1" type="xsd:dateTime"/>
+        <variable name="commitmentTimeVariable1" type="xsd:dateTime"/>
+        <variable name="baseCloseOutVerificationVariable1" element="ns0:baseCloseOutVerification"/>
+        <variable name="closeOutNarrVariable1" type="xsd:string"/>
+        <variable name="clearancePersonVariable1" type="ns0:PersonReach"/>
+        <variable name="cancelRequestedByCustomerVariable1" type="xsd:boolean"/>
+        <variable name="authorizationListVariable1" type="ns0:ArrayOfAuthorization"/>
+        <variable name="afterHoursRepairAuthorityVariable1" type="xsd:boolean"/>
+        <variable name="additionalTroubleInfoListVariable1" type="comm:ArrayOfString"/>
+        <variable name="activityDurationListVariable1" type="ns0:ActivityDurationList"/>
+        <variable name="accountOwnerVariable1" type="ns0:PersonReach"/>
+        <variable name="troubleTicketKeyVariable1" type="ns0:TroubleTicketKey"/>
+        <variable name="ScalabilityTestReply" messageType="ns1:ResponseMessage"/>
+        <variable name="ScalabilityTestInput" messageType="ns1:RequesetMessage"/>
+        <variable name="SubBPWSDLOperationOut" messageType="ns3:SubBPWSDLOperationReply"/>
+        <variable name="SubBPWSDLOperationIn" messageType="ns3:SubBPWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ClientPartnerLink1" operation="createTTOperation" portType="ns1:createTroubleTicketPortType" variable="ScalabilityTestInput">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="TimestampRequest">
+            <copy>
+                <from>current-dateTime()</from>
+                <to part="timestamp" variable="Operation_JMSOutIn"/>
+            </copy>
+            <copy>
+                <from>$ScalabilityTestInput.part1/testOptions/messageId</from>
+                <to variable="Operation_JMSOutIn" part="IdProperty"/>
+            </copy>
+            <copy>
+                <from>$ScalabilityTestInput.part1/testOptions</from>
+                <to>$ScalabilityTestReply.part1/testOptions</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke3" partnerLink="StartPartnerLink1" operation="operation_JMSOut" portType="ns4:ReceivedPortType" inputVariable="Operation_JMSOutIn"/>
+        <if name="If1">
+            <condition>                            ( 'SMALL' = $ScalabilityTestInput.part1/testOptions/assignActivityLoad )                            </condition>
+            <sequence name="Sequence1">
+                <assign name="Assign1">
+                    <copy>
+                        <from>$ScalabilityTestInput.part1/testOptions</from>
+                        <to>$ScalabilityTestReply.part1/testOptions</to>
+                    </copy>
+                </assign>
+            </sequence>
+            <else>
+                 <sequence name="Sequence2">
+                     <assign name="Assign2">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:applicationContext/comm:factoryClass</from>
+                                     <to>$troubleTicketKeyVariable1/comm:applicationContext/comm:factoryClass</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:applicationContext/comm:url</from>
+                                     <to>$troubleTicketKeyVariable1/comm:applicationContext/comm:url</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:applicationContext/comm:systemProperties/comm:property/comm:name</from>
+                                     <to>$troubleTicketKeyVariable1/comm:applicationContext/comm:systemProperties/comm:property/comm:name</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:applicationContext/comm:systemProperties/comm:property/comm:value</from>
+                                     <to>$troubleTicketKeyVariable1/comm:applicationContext/comm:systemProperties/comm:property/comm:value</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:applicationDN</from>
+                                     <to>$troubleTicketKeyVariable1/comm:applicationDN</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/comm:type</from>
+                                     <to>$troubleTicketKeyVariable1/comm:type</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey/ns0:primaryKey</from>
+                                     <to>$troubleTicketKeyVariable1/ns0:primaryKey</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign3">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:email</from>
+                                     <to>$accountOwnerVariable1/ns0:email</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:fax</from>
+                                     <to>$accountOwnerVariable1/ns0:fax</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:location</from>
+                                     <to>$accountOwnerVariable1/ns0:location</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:sMSAddress</from>
+                                     <to>$accountOwnerVariable1/ns0:sMSAddress</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:responsible</from>
+                                     <to>$accountOwnerVariable1/ns0:responsible</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:phone</from>
+                                     <to>$accountOwnerVariable1/ns0:phone</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:organizationName</from>
+                                     <to>$accountOwnerVariable1/ns0:organizationName</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:number</from>
+                                     <to>$accountOwnerVariable1/ns0:number</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner/ns0:name</from>
+                                     <to>$accountOwnerVariable1/ns0:name</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign4">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:activityDurationList/comm:modifier</from>
+                                     <to>$activityDurationListVariable1/comm:modifier</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:activityDurationList/ns0:activityDurations</from>
+                                     <to>$activityDurationListVariable1/ns0:activityDurations</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign5">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:additionalTroubleInfoList/comm:item</from>
+                                     <to>$additionalTroubleInfoListVariable1/comm:item</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign6">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:afterHoursRepairAuthority</from>
+                                     <to variable="afterHoursRepairAuthorityVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign8">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:authorizationList/ns0:item/ns0:baseActivityType</from>
+                                     <to>$authorizationListVariable1/ns0:item/ns0:baseActivityType</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:authorizationList/ns0:item/ns0:authPerson</from>
+                                     <to>$authorizationListVariable1/ns0:item/ns0:authPerson</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:authorizationList/ns0:item/ns0:authTime</from>
+                                     <to>$authorizationListVariable1/ns0:item/ns0:authTime</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:authorizationList/ns0:item/ns0:requestState</from>
+                                     <to>$authorizationListVariable1/ns0:item/ns0:requestState</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign9">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:cancelRequestedByCustomer</from>
+                                     <to variable="cancelRequestedByCustomerVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign10">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:email</from>
+                                     <to>$clearancePersonVariable1/ns0:email</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:fax</from>
+                                     <to>$clearancePersonVariable1/ns0:fax</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:location</from>
+                                     <to>$clearancePersonVariable1/ns0:location</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:name</from>
+                                     <to>$clearancePersonVariable1/ns0:name</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:number</from>
+                                     <to>$clearancePersonVariable1/ns0:number</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:organizationName</from>
+                                     <to>$clearancePersonVariable1/ns0:organizationName</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:phone</from>
+                                     <to>$clearancePersonVariable1/ns0:phone</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:responsible</from>
+                                     <to>$clearancePersonVariable1/ns0:responsible</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson/ns0:sMSAddress</from>
+                                     <to>$clearancePersonVariable1/ns0:sMSAddress</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign11">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:closeOutNarr</from>
+                                     <to variable="closeOutNarrVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign12">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:baseCloseOutVerification</from>
+                                     <to variable="baseCloseOutVerificationVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign13">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:commitmentTime</from>
+                                     <to variable="commitmentTimeVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign14">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:commitmentTimeRequested</from>
+                                     <to variable="commitmentTimeRequestedVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign15">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:email</from>
+                                     <to>$customerVariable1/ns0:email</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:fax</from>
+                                     <to>$customerVariable1/ns0:fax</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:location</from>
+                                     <to>$customerVariable1/ns0:location</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:name</from>
+                                     <to>$customerVariable1/ns0:name</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:number</from>
+                                     <to>$customerVariable1/ns0:number</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:organizationName</from>
+                                     <to>$customerVariable1/ns0:organizationName</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:phone</from>
+                                     <to>$customerVariable1/ns0:phone</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:responsible</from>
+                                     <to>$customerVariable1/ns0:responsible</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer/ns0:sMSAddress</from>
+                                     <to>$customerVariable1/ns0:sMSAddress</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign16">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customerRoleAssignmentList/ns0:item/ns0:baseRole</from>
+                                     <to>$customerRoleAssignmentListVariable1/ns0:item/ns0:baseRole</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customerRoleAssignmentList/ns0:item/ns0:contactPerson</from>
+                                     <to>$customerRoleAssignmentListVariable1/ns0:item/ns0:contactPerson</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign17">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customerTroubleNum</from>
+                                     <to variable="customerTroubleNumVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign18">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:dialog</from>
+                                     <to variable="dialogVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign19">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:escalationList/comm:modifier</from>
+                                     <to>$escalationListVariable1/comm:modifier</to>
+                             </copy>
+                             <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:escalationList/ns0:escalations/ns0:item</from>
+                                     <to>$escalationListVariable1/ns0:escalations/ns0:item</to>
+                             </copy>
+                     </assign>
+                     <assign name="Assign20">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:baseInitiatingMode</from>
+                                     <to variable="baseInitiatingModeVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign21">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:lastUpdateTime</from>
+                                     <to variable="lastUpdateTimeVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign22">
+                         <copy>
+                                 <from>$ScalabilityTestInput.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:maintServiceCharge</from>
+                                     <to variable="maintServiceChargeVariable1"/>
+                             </copy>
+                     </assign>
+                     <assign name="Assign23">
+                         <copy>
+                                 <from variable="maintServiceChargeVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:maintServiceCharge</to>
+                             </copy>
+                             <copy>
+                                 <from variable="baseInitiatingModeVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:baseInitiatingMode</to>
+                             </copy>
+                             <copy>
+                                 <from variable="escalationListVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:escalationList</to>
+                             </copy>
+                             <copy>
+                                 <from variable="dialogVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:dialog</to>
+                             </copy>
+                             <copy>
+                                 <from variable="customerVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customer</to>
+                             </copy>
+                             <copy>
+                                 <from variable="baseCloseOutVerificationVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:baseCloseOutVerification</to>
+                             </copy>
+                             <copy>
+                                 <from variable="closeOutNarrVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:closeOutNarr</to>
+                             </copy>
+                             <copy>
+                                 <from variable="clearancePersonVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:clearancePerson</to>
+                             </copy>
+                             <copy>
+                                 <from variable="cancelRequestedByCustomerVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:cancelRequestedByCustomer</to>
+                             </copy>
+                             <copy>
+                                 <from variable="authorizationListVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:authorizationList</to>
+                             </copy>
+                             <copy>
+                                 <from variable="additionalTroubleInfoListVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:additionalTroubleInfoList</to>
+                             </copy>
+                             <copy>
+                                 <from variable="activityDurationListVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:activityDurationList</to>
+                             </copy>
+                             <copy>
+                                 <from variable="accountOwnerVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:accountOwner</to>
+                             </copy>
+                             <copy>
+                                 <from variable="troubleTicketKeyVariable1"/>
+                                     <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:troubleTicketKey</to>
+                             </copy>
+                         <copy>
+                             <from variable="customerTroubleNumVariable1"/>
+                             <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customerTroubleNum</to>
+                         </copy>
+                         <copy>
+                             <from variable="customerRoleAssignmentListVariable1"/>
+                             <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:customerRoleAssignmentList</to>
+                         </copy>
+                         <copy>
+                             <from variable="afterHoursRepairAuthorityVariable1"/>
+                             <to>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue/ns0:afterHoursRepairAuthority</to>
+                         </copy>
+                     </assign>
+                     <if name="If2">
+                         <condition>              ( 'LARGE' = $ScalabilityTestInput.part1/testOptions/assignActivityLoad )              </condition>
+                         <sequence name="Sequence3">
+                             <empty name="pending"/>
+                             <wait name="Wait1">
+                                 <for>$ScalabilityTestInput.part1/testOptions/bpelWaitDuration</for>
+                             </wait>
+                         </sequence>
+                     </if>
+                </sequence>
+            </else>
+        </if>
+        <assign name="assignSubBPDuration">
+            <copy>
+                <from>$ScalabilityTestInput.part1/testOptions/partnerWaitDuration</from>
+                <to variable="SubBPWSDLOperationIn" part="part1"/>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="SubBPPartnerLink1" operation="SubBPWSDLOperation" portType="ns3:SubBPWSDLPortType" inputVariable="SubBPWSDLOperationIn" outputVariable="SubBPWSDLOperationOut"/>
+        <receive name="Receive2" createInstance="no" partnerLink="ClientPartnerLink2" operation="ScalabilityTest1Operation" portType="ns1:CorrelatedMessagePortType" variable="ScalabilityTest1OperationIn1">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="assignTestOptions">
+            <copy>
+                <from>current-dateTime()</from>
+                <to part="timestamp" variable="JMSOutOperationIn2"/>
+            </copy>
+            <copy>
+                <from>$ScalabilityTestReply.part1/testOptions/messageId</from>
+                <to variable="JMSOutOperationIn2" part="IdProperty"/>
+            </copy>
+        </assign>
+        <if name="If3">
+            <condition>$ScalabilityTestInput.part1/testOptions/outputReplyMessage</condition>
+            <assign name="copyReplyMessage">
+                <copy>
+                    <from>$ScalabilityTestReply.part1/ns0:createTroubleTicketByValueRequest/ns0:troubleTicketValue</from>
+                    <to>$JMSOutOperationIn2.part_JMSOut/ns0:troubleTicketValue</to>
+                </copy>
+            </assign>
+        </if>
+        <invoke name="Invoke2" partnerLink="FinishPartnerLink1" operation="JMSOutOperation" portType="ns4:ProcessedPortType" inputVariable="JMSOutOperationIn2"/>
+    </sequence>
+</process>

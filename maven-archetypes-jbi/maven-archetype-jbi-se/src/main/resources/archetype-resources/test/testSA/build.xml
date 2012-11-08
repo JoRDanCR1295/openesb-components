@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<project name="testSA" default="default" basedir="."> 
+    
+    <target name="default" depends="package" description="compiles and packages the project."/>
+    
+    <target name="-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the build.xml file. -->
+    </target>
+    
+    <target name="-init-user" depends="-pre-init" >
+        <echo message="loading user properties from ${user.properties.file} for testSA" />
+        <property file="${user.properties.file}"/>
+    </target>
+    
+    <target name="-init-project" depends="-pre-init, -init-user" >
+        <echo level="debug" message="loading build.properties" />
+        <property file="build.properties"/>
+    </target>
+    
+    <target name="-do-init" depends="-pre-init, -init-user, -init-project" >
+        <echo level="debug" message="Nothing to -do-init" />
+    </target>
+        
+    <target name="-init-check" depends="-pre-init, -init-user, -init-project,-do-init">
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="dist.dir">Must set dist.dir</fail>
+        <fail unless="dist.zip">Must set dist.zip</fail>
+    </target>
+    
+    <!-- Init project -->
+    <target name="init" 
+        depends="-pre-init, -init-user, -init-project,-do-init"
+        description="initilizes the build settings">
+    </target>
+    
+    <!--
+    ===================
+    COMPILATION SECTION
+    ===================
+    -->    
+    <target name="deps-package" depends="init" unless="no.deps">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.sa.dir}"/>        
+        <!-- for each testSU  package -->
+        <ant target="package" inheritall="false" antfile="${project.testSU}/build.xml">
+            <property name="build.dir" location="${project.testSU.build.dir}" />
+            <property name="dist.dir" location="${project.testSU.dist.dir}" />
+        </ant>
+        <echo level="debug" message ="Copying SU to SA build dir" />
+        <copy file="${reference.testSU.zip}" todir="${build.sa.dir}" overwrite="true" />        
+    </target>
+        
+    <!-- SA Compile target -->
+    <target  name="compile" depends="init, deps-package" description="Compile Service Assembly">
+        <echo level="debug" message ="Compiling Service Assembly" />
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.sa.dir}"/>
+        <copy file="${src.dir}/META-INF/jbi.xml" todir="${build.sa.dir}/META-INF" overwrite="true" />
+    </target>
+
+    <!--
+    ===================
+    PACKAGING SECTION
+    ===================
+    -->       
+    <target  name="-pre-package" depends="init, deps-package" 
+    description="Copy the deps su to the build dir">
+    </target>
+               
+    <!-- SA Package target -->
+    <target  name="package" depends="init, compile, -pre-package" 
+    description="Package the Service Assembly">
+        <echo level="debug" message ="Packaging Service Assembly" />
+        <mkdir dir="${dist.dir}"/>
+        <zip destfile="${dist.zip}" basedir="${build.sa.dir}" />
+    </target>
+        
+    <!--
+    ===============
+    CLEANUP SECTION
+    ===============
+    -->
+    <target name="deps-clean" depends="init" unless="no.deps">
+        <!-- call testSU  package -->
+        <ant target="clean" inheritall="false" antfile="${project.testSU}/build.xml">
+            <property name="build.dir" location="${project.testSU.build.dir}" />
+            <property name="dist.dir" location="${project.testSU.dist.dir}" />
+        </ant>
+    </target>
+        
+    <!-- Clean target -->
+    <target  name="clean" depends="init, deps-clean" 
+    description="Clean the Service Assembly" >       
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/> 
+        <echo level="debug" message ="Cleaned Service Assembly" />       
+    </target>    
+            
+    <!-- Help target -->
+    <target  name="help" depends="init" description="Display Help on Service Assembly">
+        <echo message ="Builds  Service Assembly ${dist.zip}" />
+    </target>
+    
+    
+</project>

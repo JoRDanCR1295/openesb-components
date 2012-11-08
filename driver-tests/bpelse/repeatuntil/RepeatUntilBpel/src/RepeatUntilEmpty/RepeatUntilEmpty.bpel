@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="RepeatUntilEmpty" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepeatUntilEmpty"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepeatUntilEmpty" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepeatUntilEmpty">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepeatUntilEmpty" location="RepeatUntilEmpty.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:partnerlinktype1" myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="RepeatUntilEmptyOut1" messageType="ns1:RptMessage"/>
+        <variable name="RepeatUntilEmptyIn1" messageType="ns1:RptMessage"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="RepeatUntilEmpty" portType="ns1:MyPortType1" variable="RepeatUntilEmptyIn1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>round($RepeatUntilEmptyIn1.part3)</from><to part="part2" variable="RepeatUntilEmptyIn1"/>
+            </copy>
+        </assign>
+        <repeatUntil name="RepeatUntil1">
+            <sequence name="Sequence1">
+                <assign name="Assign2">
+                    <copy>
+                    <from>concat($RepeatUntilEmptyIn1.part1, '    before empty   ')</from><to part="part1" variable="RepeatUntilEmptyIn1"/>
+                    </copy>
+                </assign>
+                <empty name="Empty1"/>
+                <assign name="Assign3">
+                    <copy>
+                    <from>concat($RepeatUntilEmptyIn1.part1, '  After Empty  ', $RepeatUntilEmptyIn1.part2)</from><to part="part1" variable="RepeatUntilEmptyIn1"/>
+                    </copy>
+                    <copy>
+                    <from> ( $RepeatUntilEmptyIn1.part2 - 1 ) </from><to part="part2" variable="RepeatUntilEmptyIn1"/>
+                    </copy>
+                </assign>
+            </sequence>
+            <condition> ( $RepeatUntilEmptyIn1.part2 &lt;= 992 ) </condition>
+        </repeatUntil>
+        <assign name="Assign4">
+            <copy>
+            <from variable="RepeatUntilEmptyIn1" part="part1"/><to variable="RepeatUntilEmptyOut1" part="part1"/>
+            </copy>
+            <copy>
+            <from variable="RepeatUntilEmptyIn1" part="part2"/><to variable="RepeatUntilEmptyOut1" part="part2"/>
+            </copy>
+            <copy>
+            <from variable="RepeatUntilEmptyIn1" part="part3"/><to variable="RepeatUntilEmptyOut1" part="part3"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="RepeatUntilEmpty" portType="ns1:MyPortType1" variable="RepeatUntilEmptyOut1"/>
+    </sequence>
+   
+</process>

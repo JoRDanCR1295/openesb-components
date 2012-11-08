@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="JMSInTestCC"
+         targetNamespace="http://www.seebeyond.com/eInsight/JMSInTestCC"
+         xmlns:tns="http://www.seebeyond.com/eInsight/JMSInTestCC"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://localhost/bpel/JMSInTestCC"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://localhost/bpel/JMSInTestCC"
+            location="JMSInTestCC.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="JMInTestHttpReqReplyPartner"
+                     partnerLinkType="ns0:JMSInTestCCRequestReplyLnkType"
+                     myRole="roleJMSInTestCCTrigger"/>
+        <partnerLink name="JMSInTestCCSendPartner"
+                     partnerLinkType="ns0:JMSInTestCCOutLnkType"
+                     partnerRole="roleJMSInTestCCSender"/>
+        <partnerLink name="JMSInTestCCReceivePartner"
+                     partnerLinkType="ns0:JMSInTestCCInLnkType"
+                     myRole="roleJMSInTestCCReceiver"/>
+    </partnerLinks>
+    <variables>
+        <variable name="operationRequestReply_Output"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationRequestReply_Input"
+                  messageType="ns0:messageRequestReply"></variable>
+        <variable name="operationOneWayOut_Input"
+                  messageType="ns0:messageOneWayOut"></variable>
+        <variable name="operationOneWayIn_Output"
+                  messageType="ns0:messageOneWayIn"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSetJMSInTestCC"
+                        properties="ns0:propJMSHeadersName1 "/>
+    </correlationSets>
+    <sequence>
+        <receive name="operationRequestReply"
+                 partnerLink="JMInTestHttpReqReplyPartner"
+                 portType="ns0:portTypeRequestReply"
+                 operation="operationRequestReply"
+                 variable="operationRequestReply_Output"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="cSetJMSInTestCC"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign">
+            <copy>
+                <from>$operationRequestReply_Output.partReqReply/string</from>
+                <to variable="operationOneWayOut_Input"
+                    part="partBody"/>
+            </copy>
+        </assign>
+        <invoke name="operationOneWayOut"
+                partnerLink="JMSInTestCCSendPartner"
+                portType="ns0:portTypeOneWayOut"
+                operation="operationOneWayOut"
+                inputVariable="operationOneWayOut_Input"></invoke>
+        <receive name="operationOneWayIn"
+                 partnerLink="JMSInTestCCReceivePartner"
+                 portType="ns0:portTypeOneWayIn"
+                 operation="operationOneWayIn"
+                 variable="operationOneWayIn_Output"
+                 createInstance="no">
+            <correlations>
+                <correlation set="cSetJMSInTestCC"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from>concat(&apos;Got message from JMS BC Inbound: &apos;, $operationOneWayIn_Output.partBody)</from>
+                <to>$operationRequestReply_Input.partReqReply/string</to>
+            </copy>
+        </assign>
+        <reply name="operationRequestReply.Reply"
+               partnerLink="JMInTestHttpReqReplyPartner"
+               portType="ns0:portTypeRequestReply"
+               operation="operationRequestReply"
+               variable="operationRequestReply_Input"></reply>
+    </sequence>
+</process>

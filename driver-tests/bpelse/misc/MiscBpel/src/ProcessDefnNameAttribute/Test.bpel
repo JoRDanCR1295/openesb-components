@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="NameInfo"
+         targetNamespace="urn:/Test.bpel"
+         xmlns:name="urn:/NameInfo.wsdl" 
+         xmlns:ns0="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension" 
+         ns0:ignoreMissingFromData="yes" 
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="urn:/Test.bpel"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+         xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+         xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <documentation>Test for bug https://open-esb.dev.java.net/issues/show_bug.cgi?id=1354</documentation>
+    <import location="NameInfo.wsdl"
+            namespace="urn:/NameInfo.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/" />
+
+    <partnerLinks>
+        <partnerLink name="namePartnerLink"
+                partnerLinkType="name:NamePartnerLinkType"
+                myRole="Provider" />
+	
+    </partnerLinks>
+	
+    <variables>
+        <variable name="request"   messageType="name:NameRequest"/>
+        <variable name="response"  messageType="name:NameResponse"/>
+    </variables>
+
+    <sequence>
+        <receive
+                name="start"
+                partnerLink="namePartnerLink"
+                portType="name:NamePortType"
+                operation="GetInfo"
+                variable="request"
+                createInstance="yes">
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($request.body/name:text, ' :Test Succesfully deployed and run:')</from>
+                <to>$response.body/name:text</to>
+            </copy>
+        </assign>
+        <reply name="end"
+               partnerLink="namePartnerLink"
+               portType="name:NamePortType"
+               operation="GetInfo"
+               variable="response">
+        </reply>
+    </sequence>
+</process>

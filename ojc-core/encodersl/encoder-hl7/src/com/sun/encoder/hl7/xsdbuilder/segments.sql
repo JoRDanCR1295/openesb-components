@@ -1,0 +1,1 @@
+SELECT HL7Segments.seg_code FROM HL7Versions INNER JOIN HL7Segments ON HL7Versions.version_id = HL7Segments.version_id WHERE (((HL7Versions.hl7_version) = ? )) and seg_code not in ('[', ']', '{', '}', '|', '<', '>') ORDER BY HL7Segments.seg_code

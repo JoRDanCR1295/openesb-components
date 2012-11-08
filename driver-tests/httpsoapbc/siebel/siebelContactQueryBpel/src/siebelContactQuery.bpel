@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="siebelContactQuery" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/siebelContactQuery"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelContactQuery" xmlns:ns1="http://siebel.com/asi/" xmlns:ns2="http://stc.com/echo" xmlns:ns0="http://www.siebel.com/xml/Contact%20Interface">
+    <import namespace="http://siebel.com/asi/" location="SiebelContact.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="siebelPartnerLink" partnerLinkType="ns1:partnerlinktype1" partnerRole="partnerlinktyperole1"/>
+        <partnerLink name="echoPartnerLink" partnerLinkType="ns2:SLT" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SiebelContactQueryByIdOut2" messageType="ns1:Siebel_spcContact_SiebelContactQueryById_Output"/>
+        <variable name="SiebelContactQueryByIdIn2" messageType="ns1:Siebel_spcContact_SiebelContactQueryById_Input"/>
+        <variable name="EchoOut1" messageType="ns2:echo"/>
+        <variable name="SiebelContactQueryByIdOut1" messageType="ns1:Siebel_spcContact_SiebelContactQueryById_Output"/>
+        <variable name="SiebelContactQueryByIdIn1" messageType="ns1:Siebel_spcContact_SiebelContactQueryById_Input"/>
+        <variable name="EchoIn1" messageType="ns2:echo"/>
+    </variables>
+    <sequence>
+        <receive name="echoReceive" createInstance="yes" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoIn1"/>
+        <assign name="setContactID">
+            <copy>
+                <from>$EchoIn1.part/ns2:value</from>
+                <to variable="SiebelContactQueryByIdIn1" part="PrimaryRowId"/>
+            </copy>
+        </assign>
+        <invoke name="InvokeSiebelContactQuery" partnerLink="siebelPartnerLink" operation="SiebelContactQueryById" portType="ns1:Default" inputVariable="SiebelContactQueryByIdIn2" outputVariable="SiebelContactQueryByIdOut2"/>
+        <assign name="getContactInfo">
+            <copy>
+                <from>$SiebelContactQueryByIdOut2.SiebelMessage/ns0:ListOfContactInterface/ns0:Contact[1]/ns0:LastName</from>
+                <to>$EchoOut1.part/ns2:value</to>
+            </copy>
+        </assign>
+        <reply name="echoReply" partnerLink="echoPartnerLink" operation="echo" portType="ns2:echo" variable="EchoOut1"/>
+   </sequence>
+   
+</process>

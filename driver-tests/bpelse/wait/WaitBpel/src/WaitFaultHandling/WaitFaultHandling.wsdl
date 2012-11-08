@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="WaitFaultHandling" targetNamespace="http://localhost/WaitBpel/WaitFaultHandling" xmlns:tns="http://localhost/WaitBpel/WaitFaultHandling" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <message name="message1">
+        <part name="inputstring" type="xsd:string"/>
+        <part name="duration" type="xsd:duration"/>
+    </message>
+    <portType name="WaitFaultHandlingPortType1">
+        <operation name="WaitFaultHandlingOperation1">
+            <input name="input1" message="tns:message1"/>
+            <output name="output1" message="tns:message1"/>
+            <fault name="fault1" message="tns:message1"/>
+        </operation>
+    </portType>
+    <binding name="WaitFaultHandlingBinding1" type="tns:WaitFaultHandlingPortType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="WaitFaultHandlingOperation1">
+        
+        <input name="input1">
+          <soap:body/>
+        </input><output name="output1">
+    <soap:body/>
+</output><fault name="fault1">
+    <soap:fault name="soapFault" use="literal"/>
+</fault>
+        </operation>
+    </binding>
+    <service name="WaitFaultHandlingService1">
+        <port name="WaitFaultHandlingPort1" binding="tns:WaitFaultHandlingBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/WaitFaultHandling"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="WaitFaultHandlingPartnerlinktype1">
+        <plink:role name="WaitFaultHandlingPartnerlinktyperole1" portType="tns:WaitFaultHandlingPortType1"/>
+    </plink:partnerLinkType>
+</definitions>

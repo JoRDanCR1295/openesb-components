@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="fhw3g4"
+    targetNamespace="http://www.seebeyond.com/eInsight/fhw3xG"
+    sbynpxp:end_YLoc="248.0"
+    sbynpxp:start_YLoc="-62.0"
+    sbynpxp:linkStyle="angular"
+    sbynpxp:start_XLoc="9.0"
+    sbynpxp:end_XLoc="957.0"
+    xmlns:tns="http://stc.com/FaultTestw3xG"         
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+    xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+    xmlns:ns0="http://stc.com/FaultTestw3xG"
+    xmlns:ns1="urn:FaultService/FHW_FaultsFromInvoke"
+    xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+    xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/FaultTestw3xG" location="FaultTestw3xG.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="urn:FaultService/FHW_FaultsFromInvoke" location="../faulttest/FHW_FaultsFromInvoke.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="faulttestLink"        
+        partnerLinkType="ns0:flinkc"
+        myRole="server"/>
+        <partnerLink name="FHW_FaultServiceLink1" partnerLinkType="ns1:FHW_FaultServiceLT" partnerRole="FHW_FaultServiceProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="w3xG_Output"
+        messageType="ns0:FaultTestw3xG"></variable>                     
+        <variable name="w3xG_Input"
+        messageType="ns0:FaultTestw3xG"></variable>
+        <variable name="extw3xG_Output" messageType="ns0:extFaultTest"/>
+        <variable name="extw3xG_Input" messageType="ns0:extFaultTest"/>
+        <variable name="FaultOperation_Input"
+        messageType="ns1:FaultServiceRequest"></variable>        
+        <variable name="FaultOperation_Output"
+        messageType="ns1:FaultServiceResponse"></variable>
+        <variable name="FaultOperation_Fault1"
+        messageType="ns1:FaultServiceFaultResponse1"></variable>
+        <variable name="FaultOperation_Fault2"
+        messageType="ns1:FaultServiceFaultResponse2"></variable>
+        <variable name="FaultOperation_Fault3"
+        messageType="ns1:FaultServiceFaultResponse3"></variable>                                 
+    </variables>
+    <faultHandlers>
+        <catch faultName="tns:FaultName"                                   
+            sbynpxp:XLoc="899.0"
+            sbynpxp:YLoc="-75.0"
+            sbynpxp:isExpanded="false">                                
+            <sequence>
+                <assign name="Assign1"
+                    sbynpxp:XLoc="849.0"
+                    sbynpxp:YLoc="444.0">
+                    <copy>
+                        <from>&apos;Scenario Caught By Process FaultName Handler&apos;</from>
+                        <to>$w3xG_Input.part/retString</to>
+                    </copy>
+                </assign>
+                <reply
+                    partnerLink="faulttestLink"
+                    portType="tns:FaultTestw3xG"
+                    operation="w3g4"
+                    variable="w3xG_Input"
+                    sbynpxp:XLoc="841.0"
+                sbynpxp:YLoc="229.0"></reply>
+            </sequence>
+        </catch>
+                <catch faultName="ns1:Fault_SimpleType">            
+            <sequence>
+                <assign>
+                    <copy>
+                        <from>'Fault_Element'</from>
+                        <to>$w3xG_Input.part/retString</to>
+                    </copy>
+                </assign>
+                <reply name="Reply2" partnerLink="faulttestLink" portType="ns0:FaultTestw3xG" operation="w3g4" variable="w3xG_Input" sbynpxp:XLoc="841.0" sbynpxp:YLoc="229.0"/>
+            </sequence>
+       </catch>
+       <catchAll>
+            <sequence>
+                <assign name="Assign2" sbynpxp:XLoc="849.0" sbynpxp:YLoc="444.0">
+                    <copy>
+                        <from>&apos;Scenario Caught By Process CatchAll Handler&apos;</from>
+                        <to>$w3xG_Input.part/retString</to>
+                    </copy>
+                </assign>
+                <reply name="Reply3" partnerLink="faulttestLink" portType="ns0:FaultTestw3xG" operation="w3g4" variable="w3xG_Input" sbynpxp:XLoc="841.0" sbynpxp:YLoc="229.0"/>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="w3G4"
+            partnerLink="faulttestLink"
+            portType="tns:FaultTestw3xG"                           
+            operation="w3g4"
+            variable="w3xG_Output"
+            createInstance="yes"
+            sbynpxp:XLoc="122.0"
+            sbynpxp:YLoc="-60.0">
+        </receive>        
+        <scope
+            sbynpxp:XLoc="323.0"
+            sbynpxp:YLoc="-115.0"
+            sbynpxp:isExpanded="false">               
+            <sequence>
+                <assign name="Assign3" sbynpxp:XLoc="849.0" sbynpxp:YLoc="444.0">
+                    <copy>
+                        <from>'Fault_SimpleType'</from>
+                        <to variable="FaultOperation_Input" part="parameters"></to>
+                    </copy>
+                </assign>
+                <invoke name="FHW_FaultOperation"
+                partnerLink="FHW_FaultServiceLink1"
+                portType="ns1:FaultPortType"
+                operation="FHW_FaultOperation"
+                inputVariable="FaultOperation_Input"
+            outputVariable="FaultOperation_Output"/>      
+            </sequence>
+        </scope>
+    </sequence>                     
+</process>

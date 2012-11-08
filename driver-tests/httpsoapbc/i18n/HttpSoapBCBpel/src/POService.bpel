@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="POService"
+         targetNamespace="urn:BpelFaults/StringFaultDetailResponse/bpel/POService"
+         sbynpxp:end_YLoc="120.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="898.0"
+         xmlns:tns="urn:BpelFaults/StringFaultDetailResponse/bpel/POService"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:pos="urn:BpelFaults/StringFaultDetailResponse/POService"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="urn:BpelFaults/StringFaultDetailResponse/POService"
+            location="POService.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="POServicePLink"
+                     partnerLinkType="pos:purchasingLT"
+                     myRole="purchaseService"/>
+    </partnerLinks>
+    <variables>
+        <variable name="purchaseOrderRequest"
+                  messageType="pos:POMessage"></variable>
+        <variable name="purchaseOrderReply"
+                  messageType="pos:POMessage"></variable>
+        <variable name="purchaseOrderFault"
+                  messageType="pos:orderFaultType"></variable>
+    </variables>
+    <faultHandlers sbynpxp:XLoc="147.0"
+                   sbynpxp:YLoc="380.0">
+        <catch faultName="pos:cannotCompleteOrder"
+               sbynpxp:XLoc="457.0"
+               sbynpxp:YLoc="544.0"
+               sbynpxp:isExpanded="true">
+            <sequence>
+                <reply name="sendPurchaseOrder.Fault"
+                       partnerLink="POServicePLink"
+                       portType="pos:purchaseOrderPT"
+                       operation="sendPurchaseOrder"
+                       variable="purchaseOrderFault"
+                       faultName="pos:cannotCompleteOrder"
+                       sbynpxp:XLoc="517.0"
+                       sbynpxp:YLoc="574.0"></reply>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="sendPurchaseOrder"
+                 partnerLink="POServicePLink"
+                 portType="pos:purchaseOrderPT"
+                 operation="sendPurchaseOrder"
+                 variable="purchaseOrderRequest"
+                 createInstance="yes"
+                 sbynpxp:XLoc="114.0"
+                 sbynpxp:YLoc="113.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="569.0"
+                sbynpxp:YLoc="169.0">
+            <copy>
+                <from>&apos;throwing purchase order fault&apos;</from>
+                <to variable="purchaseOrderFault"
+                    part="faultInfo"/>
+            </copy>
+        </assign>
+        <throw name="Throw"
+               faultName="pos:cannotCompleteOrder"
+               faultVariable="purchaseOrderFault"
+               sbynpxp:XLoc="688.0"
+               sbynpxp:YLoc="175.0"></throw>
+    </sequence>
+</process>

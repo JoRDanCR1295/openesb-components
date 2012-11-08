@@ -1,0 +1,1 @@
+deploy the HelloWS.war before running the test

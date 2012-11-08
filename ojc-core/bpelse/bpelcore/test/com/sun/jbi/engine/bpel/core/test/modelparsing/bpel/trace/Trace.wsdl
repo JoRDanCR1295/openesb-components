@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Trace" targetNamespace="http://j2ee.netbeans.org/wsdl/bpelse/test/modelTrace"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="http://xml.netbeans.org/schema/bpelse/test/model/trace" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://j2ee.netbeans.org/wsdl/bpelse/test/modelTrace" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/bpelse/test/modelTrace">
+            <xsd:import namespace="http://xml.netbeans.org/schema/bpelse/test/model/trace" schemaLocation="Trace.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="TraceOperationRequest">
+        <part name="Input" element="ns:Message"/>
+    </message>
+    <message name="TraceOperationReply">
+        <part name="Output" element="ns:Message"/>
+    </message>
+    <portType name="TracePortType">
+        <wsdl:operation name="TraceOperation">
+            <wsdl:input name="input1" message="tns:TraceOperationRequest"/>
+            <wsdl:output name="output1" message="tns:TraceOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="InvokePortType">
+        <wsdl:operation name="InvokeOperation">
+            <wsdl:input name="input1" message="tns:TraceOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="OnMessagePortType">
+        <wsdl:operation name="OnMessageOperation">
+            <wsdl:input name="input1" message="tns:TraceOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="TraceBinding" type="tns:TracePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="TraceOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="InvokeOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <binding name="OnMessageBinding" type="tns:OnMessagePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="OnMessageOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="TraceService">
+        <wsdl:port name="TracePort" binding="tns:TraceBinding">
+            <soap:address location="http://localhost:18181/TraceService/TracePort"/>
+        </wsdl:port>
+    </service>
+    <service name="InvokeService">
+        <wsdl:port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:18181/JMSInput/Trace/InvokePort"/>
+        </wsdl:port>
+    </service>
+    <service name="OnMessageService">
+        <wsdl:port name="OnMessagePort" binding="tns:OnMessageBinding">
+            <soap:address location="http://localhost:18181/JMSInput/Trace/OnMessagePort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="Trace1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="TracePortTypeRole" portType="tns:TracePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Trace2">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="InvokePortTypeRole" portType="tns:InvokePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Trace12">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="OnMessagePortTypeRole" portType="tns:OnMessagePortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="corr" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:corr" messageType="tns:TraceOperationRequest" part="Input">
+        <vprop:query>/Message/ns:Data</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:corr" messageType="tns:TraceOperationReply" part="Output">
+        <vprop:query>/Message/ns:Data</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

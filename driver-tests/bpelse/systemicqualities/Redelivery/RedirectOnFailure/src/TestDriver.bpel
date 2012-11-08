@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TestDriver"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RedirectOnFailure/TestDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/RedirectOnFailure/TestDriver" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/RedirectOnFailure">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RedirectOnFailure" 
+            location="RedirectOnFailure.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="RedirectReturn" partnerLinkType="ns0:ConfirmRedirectPLT" myRole="ConfirmRedirectPTRole"/>
+        <partnerLink name="ActualPartner" partnerLinkType="ns0:ActualPLT" partnerRole="ActualPartnerPTRole"/>
+        <partnerLink name="TestDriver" partnerLinkType="ns0:TestMsgPLT" myRole="TestMsgPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ConfirmRedirectOperIn" messageType="ns0:TestMsg"/>
+        <variable name="ActualPartnerOperIn" messageType="ns0:TestMsg"/>
+        <variable name="TestMsgOperOut" messageType="ns0:TestMsg"/>
+        <variable name="TestMsgOperIn" messageType="ns0:TestMsg"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="redirectCorrSet" properties="ns0:redirectId"/>
+    </correlationSets>
+    <sequence>
+        <receive name="TestIn" createInstance="yes" partnerLink="TestDriver" 
+                 operation="TestMsgOper" portType="ns0:TestMsgPT" 
+                 variable="TestMsgOperIn">
+            <correlations>
+                <correlation set="redirectCorrSet" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from variable="TestMsgOperIn"/>
+                <to variable="ActualPartnerOperIn"/>
+            </copy>
+        </assign>
+        <invoke name="RedeliverInv" partnerLink="ActualPartner" 
+                operation="ActualPartnerOper" portType="ns0:ActualPartnerPT" 
+                inputVariable="ActualPartnerOperIn"/>
+        <receive name="RedirectRec" createInstance="no" 
+                 partnerLink="RedirectReturn" operation="ConfirmRedirectOper" 
+                 portType="ns0:ConfirmRedirectPT" variable="ConfirmRedirectOperIn">
+            <correlations>
+                <correlation set="redirectCorrSet" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2">
+            <copy>
+                <from variable="ConfirmRedirectOperIn"/>
+                <to variable="TestMsgOperOut"/>
+            </copy>
+        </assign>
+        <reply name="TestOut" partnerLink="TestDriver" operation="TestMsgOper" 
+               portType="ns0:TestMsgPT" variable="TestMsgOperOut"/>
+    </sequence>
+</process>

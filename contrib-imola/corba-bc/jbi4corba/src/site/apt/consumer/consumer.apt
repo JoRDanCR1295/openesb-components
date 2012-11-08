@@ -1,0 +1,228 @@
+											---
+											Supported XML schema data types
+											---
+											Mirco Casoni, Giancarlo Valeri, Marco Piraccini
+											---
+											23/02/2009
+
+Consumer endpoints 
+
+	The component now supports two ways of defining Jbi4Corba endpoints:
+
+  	[[1]] <<IDL-first>>
+  
+  	[[1]] <<WSDL-first>>
+
+	In both cases, the endpoint is configured from a WSDL. However, since in the <<IDL-first>> case 
+	the WSDL is generated from the IDL (using theNetbeans plugin), in the "WSDL-first" case we
+	don't  know the IDL (at least at design time) and the endpoint is dynamically generated from the
+	WSDL. 
+	
+	The types and the limitations in the <<IDL-first>> case are the same as the provider case (see {{{idl2wsdl.html}idl2wsdl}})
+	See below for the WSDL supported data types for the <<WSDL-first>> case. 
+	
+* {WSDL first: Supported XML schema data types}
+
+  The jbi4corba component supports some of the data types
+  defined in the XML schema specification.
+
+
+  <<Supported Built-in Data Types>>
+
+*---------------------+----------------------------+--------------------------+
+| <XML Schema types>  | <Java Types>               | <IDL Types>              |
+*---------------------+----------------------------+--------------------------+
+| anySimpleType       | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| boolean             | boolean                    | boolean                  |
+*---------------------+----------------------------+--------------------------+
+| float               | float                      | float                    |
+*---------------------+----------------------------+--------------------------+
+| double              | double                     | double                   |
+*---------------------+----------------------------+--------------------------+
+| long                | long                       | long long                |
+*---------------------+----------------------------+--------------------------+
+| int                 | int                        | long                     |
+*---------------------+----------------------------+--------------------------+
+| unsignedInt         | long                       | long long                |
+*---------------------+----------------------------+--------------------------+
+| unsignedShort       | int                        | long                     |
+*---------------------+----------------------------+--------------------------+
+| unsignedByte        | short                      | short                    |
+*---------------------+----------------------------+--------------------------+
+| anyURI              | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| string              | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| normalizedString    | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| token               | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| language            | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| Name                | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| NMTOKEN             | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| NCName              | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| ID                  | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| ENTITY              | String                     | wstring                  |
+*---------------------+----------------------------+--------------------------+
+| short               | short                       | short                   |
+*---------------------+----------------------------+--------------------------+
+| byte                | byte                       | octet                    |
+*---------------------+----------------------------+--------------------------+
+
+
+
+  <<Unsupported Built-in Data Types>>
+
+*---------------------+-----------------------------------------+--------------------------+
+| <XML Schema types>  | <Java Types>                            | <IDL Types>              |
+*---------------------+-----------------------------------------+--------------------------+
+| anyType             | Object                                  |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| duration            | javax.xml.datatype.Duration             |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| dateTime            | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| time                | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| date                | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| gYearMonth          | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| gYear               | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| gMonthDay           | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| gDay                | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| gMonth              | javax.xml.datatype.XMLGregorianCalendar |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| base64Binary        | array of byte                           |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| hexBinary           | array of byte                           |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| QName               | javax.xml.namespace.QName               |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| NOTATION            |                                         |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| decimal             | BigDecimal                              |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| integer             | BigInteger                              |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| nonPositiveInteger  | java.lang.Number                        |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| nonNegativeInteger  | java.lang.Number                        |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| negativeInteger     | java.lang.Number                        |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| positiveInteger     | java.lang.Number                        |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| unsignedLong        | java.lang.Number                        |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| NMTOKENS            | java.util.List                          |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| IDREF               | Object                                  |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| IDREFS              | java.util.List                          |                          |
+*---------------------+-----------------------------------------+--------------------------+
+| ENTITIES            | java.util.List                          |                          |
+*---------------------+-----------------------------------------+--------------------------+
+
+
+
+  <<simpleType>>
+
+  The XML Schema specification defines a tag called 'simpleType' used to define
+  a new type from a built-in data type.
+  This tag has some features but the only one supported by jbi4corba
+  is the 'restriction'.
+
++------------------------------------------+
+  <xsd:element name="simpleStringRequest">
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string"/>
+    </xsd:simpleType>
+  </xsd:element>
++------------------------------------------+
+
+
+  <<complexType>>
+
+  The XML schema definition defines a tag called 'complexType' used to define
+  new types with an advanced structure.
+  A complexType has many features and jbi4corba support many of them.
+  (For a detailed discussion about the 'complexType' please visit the web site
+  of the {{{http://www.w3.org/TR/xmlschema-1/#Complex_Type_Definitions}w3c.org}})
+
+  [[1]] group
+
++------------------------------------------+
+  <xsd:group name="MyGroup">
+    <xsd:all>
+      <xsd:element name="user" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="pass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+    </xsd:all>
+  </xsd:group>
+    
+  <xsd:element name="TReqGroup">
+    <xsd:complexType>
+      <xsd:group ref="tns:MyGroup"/>
+    </xsd:complexType>
+  </xsd:element>
++------------------------------------------+
+
+
+  [[1]] all
+
++------------------------------------------+
+  <xsd:element name="TReqAll">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element name="user" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="pass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="TResAll">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element name="user" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="pass" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
++------------------------------------------+
+
+
+  [[1]] sequence
+
+    A complexType that contains a sequence is allowed but there are some limitation:
+
+    [[a]] The 'nillable' attribute must be 'false'
+
+    [[b]] The 'minOccurs' attribute must be 0 or 1.
+
+    [[c]] The 'maxOccurs' attribute must be 0 or 1.
+
+
++------------------------------------------+
+  <xsd:element name="TResSeq">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="dataString"  type="xsd:string"  nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataBoolean" type="xsd:boolean" nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataFloat"   type="xsd:float"   nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataDouble"  type="xsd:double"  nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataAnyURI"  type="xsd:anyURI"  nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataLong"    type="xsd:long"    nillable="false" minOccurs="1" maxOccurs="1"/>
+        <xsd:element name="dataInt"     type="xsd:int"     nillable="false" minOccurs="1" maxOccurs="1"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
++------------------------------------------+

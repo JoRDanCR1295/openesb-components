@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="urn:correlationOnMesgTargetNamespace"
+             name="correlationOnMesgDefinition"
+             xmlns:bpws="http://schemas.xmlsoap.org/ws/2004/03/business-process/"
+             xmlns:tns="urn:correlationOnMesgTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+    <plnk:partnerLinkType name="correlationOnMesgServiceLinkType"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="dummyServerRole"
+                   portType="tns:dummyPortType"></plnk:role>
+        <plnk:role name="correlationOnMesgServerRole"
+                   portType="tns:correlationOnMesgPortType"></plnk:role>
+        
+    </plnk:partnerLinkType>
+    
+    <plnk:partnerLinkType name="correlationOnMesgServiceLinkType1"
+                          xmlns:plnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+        <plnk:role name="correlationOnMesgServerRole1"
+                   portType="tns:correlationOnMesgPortType1"></plnk:role>
+   </plnk:partnerLinkType>
+    <bpws:property name="propertyName1"
+                   type="xsd:string"/>
+    <bpws:propertyAlias propertyName="tns:propertyName1"
+                        messageType="tns:correlationOnMesgMessage"
+                        part="correlationOnMesgPart">
+                	<bpws:query>string</bpws:query>
+                        </bpws:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:correlationOnMesgTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:correlationOnMesgTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:correlationOnMesgTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2004/03/partner-link/">
+
+                    
+                    
+                    <xsd:complexType name="correlationOnMesgType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="correlationOnMesgMessage">
+        <part name="correlationOnMesgPart"
+              type="tns:correlationOnMesgType"></part>
+    </message>
+    <portType name="correlationOnMesgPortType">
+        <operation name="correlationOnMesgOperation">
+            <input message="tns:correlationOnMesgMessage"></input>
+            <output message="tns:correlationOnMesgMessage"></output>
+        </operation>
+    </portType>
+    <portType name="correlationOnMesgPortType1">
+        <operation name="correlationOnMesgOperation1">
+            <input message="tns:correlationOnMesgMessage"></input>
+        </operation>
+    </portType>
+    <portType name="dummyPortType">
+        <operation name="dummyOper">
+            <input message="tns:correlationOnMesgMessage"></input>
+        </operation>
+    </portType>
+    <binding name="correlationOnMesgBinding"
+             type="tns:correlationOnMesgPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="correlationOnMesgOperation">
+            <soap:operation soapAction="correlationOnMesgOperation"/>
+            <input>
+                <soap:body parts="correlationOnMesgPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="correlationOnMesgPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="correlationOnMesgBinding1"
+             type="tns:correlationOnMesgPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="correlationOnMesgOperation1">
+            <soap:operation soapAction="correlationOnMesgOperation1"/>
+            <input>
+                <soap:body parts="correlationOnMesgPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="dummyOnMesgBinding1"
+             type="tns:dummyPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="dummyOper">
+            <soap:operation soapAction="correlationOnMesgOperation1"/>
+            <input>
+                <soap:body parts="correlationOnMesgPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="correlationOnMesgService">
+        <port name="correlationOnMesgPort"
+              binding="tns:correlationOnMesgBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/correlationOnMesgPort"/>
+        </port>
+        <port name="correlationOnMesgPort1"
+              binding="tns:correlationOnMesgBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/correlationOnMesgPort1"/>
+        </port>
+        <port name="dummyPort1"
+              binding="tns:dummyOnMesgBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/dummyOnMesgPort1"/>
+        </port>
+    </service>
+</definitions>

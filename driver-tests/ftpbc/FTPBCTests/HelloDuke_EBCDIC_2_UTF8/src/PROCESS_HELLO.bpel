@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="PROCESS_HELLO"
+    targetNamespace="http://enterprise.netbeans.org/bpel/HelloDuke_EBCDIC_2_UTF8/PROCESS_HELLO"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:sxat="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Attachment"
+    xmlns:sxeh="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/ErrorHandling"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/HelloDuke_EBCDIC_2_UTF8/PROCESS_HELLO">
+    <import namespace="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" location="FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" partnerLinkType="tns:FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" myRole="InboundRequestResponseMessagingPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InboundRequestResponseMessagingOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" messageType="tns:InboundRequestResponseMessagingOperationResponse"/>
+        <variable name="InboundRequestResponseMessagingOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" messageType="tns:InboundRequestResponseMessagingOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="InboundRequestResponseMessagingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" portType="tns:InboundRequestResponseMessagingPortType" variable="InboundRequestResponseMessagingOperationIn"/>
+        <if name="If1">
+            <condition>starts-with($InboundRequestResponseMessagingOperationIn.part1, 'Hello Duke, this is ')</condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>concat('Hello ', substring-after($InboundRequestResponseMessagingOperationIn.part1, 'Hello Duke, this is '), ', this is Duke')</from>
+                    <to variable="InboundRequestResponseMessagingOperationOut" part="part1"/>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                    <copy>
+                        <from>'What was that?'</from>
+                        <to variable="InboundRequestResponseMessagingOperationOut" part="part1"/>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="InboundRequestResponseMessagingOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/HelloDuke_EBCDIC_2_UTF8/FTP_PROCESS_EBCDIC_HELLO_REPLY_UTF8" portType="tns:InboundRequestResponseMessagingPortType" variable="InboundRequestResponseMessagingOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://j2ee.netbeans.org/wsdl/stockQuote" xmlns:ns2="http://localhost/SynchronousSample/SynchronousSample" xmlns:ns3="http://enterprise.netbeans.org/bpel/SyncSampleEPRLiteral/StockQuote" xmlns:ns4="http://enterprise.netbeans.org/bpel/SynchronousSample/SynchronousSample_1" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="stockQuotePort" interface-name="ns1:stockQuotePortType" name="endpoint1" service-name="ns1:stockQuoteService"/>
+        <endpoint endpoint-name="port1" interface-name="ns2:portType1" name="endpoint2" service-name="ns2:service1"/>
+        <endpoint display-name="PartnerLink1" endpoint-name="stockQuotePortTypeRole_myRole" file-path="StockQuote.bpel" interface-name="ns1:stockQuotePortType" name="endpoint3" process-name="StockQuote" service-name="ns3:PartnerLink1"/>
+        <endpoint display-name="SynchronousSample" endpoint-name="partnerlinktyperole1_myRole" file-path="SynchronousSample.bpel" interface-name="ns2:portType1" name="endpoint4" process-name="SynchronousSample" service-name="ns4:SynchronousSample"/>
+        <endpoint display-name="plStockQuote" endpoint-name="stockQuotePortTypeRole_partnerRole" file-path="SynchronousSample.bpel" interface-name="ns1:stockQuotePortType" name="endpoint5" process-name="SynchronousSample" service-name="ns4:plStockQuote"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="SyncSampleEPRLiteral.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="SyncSampleEPRLiteralJBI-SyncSampleEPRLiteral" unit-name="SyncSampleEPRLiteral" unknown="false" x="161" y="71">
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="SyncSampleEPRLiteralJBI-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="118" y="269">
+                    <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/stockQuote.wsdl#xpointer(/definitions/service[@name='stockQuoteService']/port[@name='stockQuotePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="118" y="39">
+                    <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/SynchronousSample.wsdl#xpointer(/definitions/service[@name='service1']/port[@name='port1'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint1" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint2" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint1" state="new"/>
+        <connection consumer="endpoint5" provider="endpoint3" state="deleted"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/stockQuote.wsdl#xpointer(/definitions/portType[@name='stockQuotePortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/SynchronousSample.wsdl#xpointer(/definitions/portType[@name='portType1'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/stockQuote.wsdl#xpointer(/definitions/binding[@name='stockQuoteBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/SynchronousSample.wsdl#xpointer(/definitions/binding[@name='binding1'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/stockQuote.wsdl#xpointer(/definitions/service[@name='stockQuoteService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/SyncSampleEPRLiteral/SynchronousSample.wsdl#xpointer(/definitions/service[@name='service1'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="200"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Trace"
+    targetNamespace="http://enterprise.netbeans.org/bpel/test/model/Trace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sunext="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/test/model/Trace" xmlns:ns1="http://j2ee.netbeans.org/wsdl/bpelse/test/modelTrace" xmlns:ns0="http://xml.netbeans.org/schema/bpelse/test/model/trace" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/bpelse/test/modelTrace" location="Trace.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/bpelse/test/model/trace" location="Trace.xsd" importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+        <ns2:partnerLink name="PartnerLink3" partnerLinkType="ns1:Trace12" myRole="OnMessagePortTypeRole"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns1:Trace2" partnerRole="InvokePortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:Trace1" myRole="TracePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="count" type="xsd:int"/>
+        <variable name="TraceOperationOut" messageType="ns1:TraceOperationReply"/>
+        <variable name="TraceOperationIn" messageType="ns1:TraceOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <ns2:correlationSet name="CorrelationSet" properties="ns1:corr"/>
+    </correlationSets>
+    <sequence>
+        <sunext:trace>
+            <sunext:log level="info" location="onComplete">
+                <from>
+                    <literal>This is the message for the log</literal>
+                </from>
+            </sunext:log>
+            <sunext:alert level="minor" location="onComplete">
+                <from>
+                    <literal>This is the message for the alert</literal>
+                </from>
+            </sunext:alert>
+        </sunext:trace>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="TraceOperation" portType="ns1:TracePortType" variable="TraceOperationIn">
+            <sunext:trace>
+                <sunext:log level="info" location="onComplete">
+                    <from>
+                        <literal>This is the message for the log</literal>
+                    </from>
+                </sunext:log>
+                <sunext:alert level="minor" location="onComplete">
+                    <from>
+                        <literal>This is the message for the alert</literal>
+                    </from>
+                </sunext:alert>
+            </sunext:trace>
+            <ns2:correlations>
+                <ns2:correlation set="CorrelationSet" initiate="yes"/>
+            </ns2:correlations>
+        </receive>
+        <scope name="Scope1">
+            <sunext:trace>
+                <sunext:log level="info" location="onComplete">
+                    <from>
+                        <literal>This is the message for the log</literal>
+                    </from>
+                </sunext:log>
+                <sunext:alert level="minor" location="onComplete">
+                    <from>
+                        <literal>This is the message for the alert</literal>
+                    </from>
+                </sunext:alert>
+            </sunext:trace>
+            <faultHandlers>
+                <catch faultName="ns2:selectionFailure">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>This is the message for the log</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:alert level="minor" location="onComplete">
+                            <from>
+                                <literal>This is the message for the alert</literal>
+                            </from>
+                        </sunext:alert>
+                    </sunext:trace>
+                    <empty name="Empty1">
+                        <sunext:trace>
+                            <sunext:log level="info" location="onComplete">
+                                <from>
+                                    <literal>This is the message for the log</literal>
+                                </from>
+                            </sunext:log>
+                            <sunext:alert level="minor" location="onComplete">
+                                <from>
+                                    <literal>This is the message for the alert</literal>
+                                </from>
+                            </sunext:alert>
+                        </sunext:trace>
+                    </empty>
+                </catch>
+                <catchAll>
+                    <sunext:trace>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>This is the message for the log</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:alert level="minor" location="onComplete">
+                            <from>
+                                <literal>This is the message for the alert</literal>
+                            </from>
+                        </sunext:alert>
+                    </sunext:trace>
+                    <exit name="Exit1">
+                        <sunext:trace>
+                            <sunext:log level="info" location="onComplete">
+                                <from>
+                                    <literal>This is the message for the log</literal>
+                                </from>
+                            </sunext:log>
+                            <sunext:alert level="minor" location="onComplete">
+                                <from>
+                                    <literal>This is the message for the alert</literal>
+                                </from>
+                            </sunext:alert>
+                        </sunext:trace>
+                    </exit>
+                </catchAll>
+            </faultHandlers>
+            <sequence name="Sequence1">
+                <invoke name="Invoke1" partnerLink="PartnerLink2" operation="InvokeOperation" portType="ns1:InvokePortType" inputVariable="TraceOperationIn">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>This is the message for the log</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:alert level="minor" location="onComplete">
+                            <from>
+                                <literal>This is the message for the alert</literal>
+                            </from>
+                        </sunext:alert>
+                    </sunext:trace>
+                </invoke>
+                <assign name="Assign1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>This is the message for the log</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:alert level="minor" location="onComplete">
+                            <from>
+                                <literal>This is the message for the alert</literal>
+                            </from>
+                        </sunext:alert>
+                    </sunext:trace>
+                    <copy>
+                        <from>$TraceOperationIn.Input/ns0:Id</from>
+                        <to>$TraceOperationOut.Output/ns0:Id</to>
+                    </copy>
+                    <copy>
+                        <from>$TraceOperationIn.Input/ns0:Data</from>
+                        <to>$TraceOperationOut.Output/ns0:Data</to>
+                    </copy>
+                    <copy>
+                        <from>0</from>
+                        <to variable="count"/>
+                    </copy>
+                </assign>
+                <pick name="Pick1">
+                    <sunext:trace>
+                        <sunext:log level="info" location="onComplete">
+                            <from>
+                                <literal>This is the message for the log</literal>
+                            </from>
+                        </sunext:log>
+                        <sunext:alert level="minor" location="onComplete">
+                            <from>
+                                <literal>This is the message for the alert</literal>
+                            </from>
+                        </sunext:alert>
+                    </sunext:trace>
+                    <ns2:onMessage partnerLink="PartnerLink3" operation="OnMessageOperation" portType="ns1:OnMessagePortType">
+                        <ns2:correlations>
+                            <ns2:correlation set="CorrelationSet" initiate="no"/>
+                        </ns2:correlations>
+                        <ns2:if name="If1">
+                            <sunext:trace>
+                                <sunext:log level="info" location="onComplete">
+                                    <from>
+                                        <literal>This is the message for the log</literal>
+                                    </from>
+                                </sunext:log>
+                                <sunext:alert level="minor" location="onComplete">
+                                    <from>
+                                        <literal>This is the message for the alert</literal>
+                                    </from>
+                                </sunext:alert>
+                            </sunext:trace>
+                            <ns2:condition>   ( $TraceOperationIn.Input/ns0:Data = 'do if' )   </ns2:condition>
+                            <ns2:sequence name="Sequence2">
+                                <ns2:throw name="Throw1" faultName="ns2:unsupportedReference">
+                                    <sunext:trace>
+                                        <sunext:log level="info" location="onComplete">
+                                            <from>
+                                                <literal>This is the message for the log</literal>
+                                            </from>
+                                        </sunext:log>
+                                        <sunext:alert level="minor" location="onComplete">
+                                            <from>
+                                                <literal>This is the message for the alert</literal>
+                                            </from>
+                                        </sunext:alert>
+                                    </sunext:trace>
+                                </ns2:throw>
+                            </ns2:sequence>
+                            <ns2:else>
+                                <ns2:flow name="Flow1">
+                                    <sunext:trace>
+                                        <sunext:log level="info" location="onComplete">
+                                            <from>
+                                                <literal>This is the message for the log</literal>
+                                            </from>
+                                        </sunext:log>
+                                        <sunext:alert level="minor" location="onComplete">
+                                            <from>
+                                                <literal>This is the message for the alert</literal>
+                                            </from>
+                                        </sunext:alert>
+                                    </sunext:trace>
+                                    <ns2:sequence name="Sequence3">
+                                        <ns2:while name="While1">
+                                            <sunext:trace>
+                                                <sunext:log level="info" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the log</literal>
+                                                    </from>
+                                                </sunext:log>
+                                                <sunext:alert level="minor" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the alert</literal>
+                                                    </from>
+                                                </sunext:alert>
+                                            </sunext:trace>
+                                            <ns2:condition>   ( $count &lt; 2 )   </ns2:condition>
+                                            <ns2:assign name="Assign2">
+                                                <ns2:copy>
+                                                    <ns2:from>   ( $count + 1 )   </ns2:from>
+                                                    <ns2:to variable="count"/>
+                                                </ns2:copy>
+                                            </ns2:assign>
+                                        </ns2:while>
+                                        <ns2:repeatUntil name="RepeatUntil1">
+                                            <sunext:trace>
+                                                <sunext:log level="info" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the log</literal>
+                                                    </from>
+                                                </sunext:log>
+                                                <sunext:alert level="minor" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the alert</literal>
+                                                    </from>
+                                                </sunext:alert>
+                                            </sunext:trace>
+                                            <ns2:sequence name="Sequence4">
+                                                <ns2:assign name="Assign3">
+                                                    <ns2:copy>
+                                                        <ns2:from>   ( $count - 1 )   </ns2:from>
+                                                        <ns2:to variable="count"/>
+                                                    </ns2:copy>
+                                                </ns2:assign>
+                                            </ns2:sequence>
+                                            <ns2:condition>   ( $count &lt; 0 )   </ns2:condition>
+                                        </ns2:repeatUntil>
+                                        <ns2:forEach name="ForEach1" parallel="no" counterName="counterVar">
+                                            <sunext:trace>
+                                                <sunext:log level="info" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the log</literal>
+                                                    </from>
+                                                </sunext:log>
+                                                <sunext:alert level="minor" location="onComplete">
+                                                    <from>
+                                                        <literal>This is the message for the alert</literal>
+                                                    </from>
+                                                </sunext:alert>
+                                            </sunext:trace>
+                                            <ns2:startCounterValue>1</ns2:startCounterValue>
+                                            <ns2:finalCounterValue>3</ns2:finalCounterValue>
+                                            <ns2:scope name="Scope2">
+                                                <ns2:empty name="Empty2"/>
+                                            </ns2:scope>
+                                        </ns2:forEach>
+                                        <ns2:wait name="Wait1">
+                                            <sunext:trace>
+                                                    <sunext:log level="info" location="onComplete">
+                                                            <ns2:from>
+                                                                <ns2:literal>This is the message for the log</ns2:literal>
+                                                            </ns2:from>
+                                                        </sunext:log>
+                                                        <sunext:alert level="minor" location="onComplete">
+                                                            <ns2:from>
+                                                                <ns2:literal>This is the message for the alert</ns2:literal>
+                                                            </ns2:from>
+                                                        </sunext:alert>
+                                                </sunext:trace>
+                                                <ns2:for>'P0Y0M0DT0H0M0S'</ns2:for>
+                                        </ns2:wait>
+                                    </ns2:sequence>
+                                </ns2:flow>
+                            </ns2:else>
+                        </ns2:if>
+                    </ns2:onMessage>
+                </pick>
+            </sequence>
+        </scope>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="TraceOperation" portType="ns1:TracePortType" variable="TraceOperationOut">
+            <sunext:trace>
+                <sunext:log level="info" location="onComplete">
+                    <from>
+                        <literal>This is the message for the log</literal>
+                    </from>
+                </sunext:log>
+                <sunext:alert level="minor" location="onComplete">
+                    <from>
+                        <literal>This is the message for the alert</literal>
+                    </from>
+                </sunext:alert>
+            </sunext:trace>
+        </reply>
+    </sequence>
+</process>

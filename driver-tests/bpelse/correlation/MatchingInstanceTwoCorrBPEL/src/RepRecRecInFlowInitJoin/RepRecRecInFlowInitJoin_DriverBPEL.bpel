@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RepRecRecInFlowInitJoin_DriverBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepRecRecInFlowInitJoin_DriverBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepRecRecInFlowInitJoin_DriverBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepRecRecInFlowInitJoin_DriverWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/RepRecRecInFlowInitJoin_ParentWSDL" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecRecInFlowInitJoin_DriverWSDL" location="RepRecRecInFlowInitJoin_DriverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecRecInFlowInitJoin_ParentWSDL" location="RepRecRecInFlowInitJoin_ParentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink3" partnerLinkType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPartner3" partnerRole="RepRecRecInFlowInitJoin_ParentWSDLPortType3Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink2" partnerLinkType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPartner2" partnerRole="RepRecRecInFlowInitJoin_ParentWSDLPortType2Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink1" partnerLinkType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPartner1" partnerRole="RepRecRecInFlowInitJoin_ParentWSDLPortType1Role"/>
+        <bpws:partnerLink name="ExternalPartnerLink" partnerLinkType="ns1:RepRecRecInFlowInitJoin_DriverWSDLPartner" myRole="RepRecRecInFlowInitJoin_DriverWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OutputVariable2" messageType="ns2:RepRecRecInFlowInitJoin_ParentWSDLOperationReply"/>
+        <bpws:variable name="OutputVariable1" messageType="ns2:RepRecRecInFlowInitJoin_ParentWSDLOperationReply"/>
+        <bpws:variable name="InputVariable1" messageType="ns2:RepRecRecInFlowInitJoin_ParentWSDLOperationRequest"/>
+        <bpws:variable name="RepRecRecInFlowInitJoin_DriverWSDLOperationOut" messageType="ns1:RepRecRecInFlowInitJoin_DriverWSDLOperationReply"/>
+        <bpws:variable name="RepRecRecInFlowInitJoin_DriverWSDLOperationIn" messageType="ns1:RepRecRecInFlowInitJoin_DriverWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ExternalPartnerLink" operation="RepRecRecInFlowInitJoin_DriverWSDLOperation" portType="ns1:RepRecRecInFlowInitJoin_DriverWSDLPortType" variable="RepRecRecInFlowInitJoin_DriverWSDLOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="RepRecRecInFlowInitJoin_DriverWSDLOperationIn" part="part1"/>
+                <bpws:to variable="InputVariable1" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="ParentBPEL_Invoke1" partnerLink="ParentBPEL_PartnerLink1" operation="RepRecRecInFlowInitJoin_ParentWSDLOperation1" portType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPortType1" inputVariable="InputVariable1" outputVariable="OutputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke2" partnerLink="ParentBPEL_PartnerLink2" operation="RepRecRecInFlowInitJoin_ParentWSDLOperation2" portType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPortType2" inputVariable="InputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke3" partnerLink="ParentBPEL_PartnerLink3" operation="RepRecRecInFlowInitJoin_ParentWSDLOperation3" portType="ns2:RepRecRecInFlowInitJoin_ParentWSDLPortType3" inputVariable="InputVariable1" outputVariable="OutputVariable2"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$OutputVariable2.part1/ns0:string</bpws:from>
+                <bpws:to>$RepRecRecInFlowInitJoin_DriverWSDLOperationOut.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ExternalPartnerLink" operation="RepRecRecInFlowInitJoin_DriverWSDLOperation" portType="ns1:RepRecRecInFlowInitJoin_DriverWSDLPortType" variable="RepRecRecInFlowInitJoin_DriverWSDLOperationOut"/>
+    </sequence>
+</process>

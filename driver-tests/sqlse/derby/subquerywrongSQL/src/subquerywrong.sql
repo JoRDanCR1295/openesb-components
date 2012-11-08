@@ -1,0 +1,1 @@
+select * from "COMPANY"."CUSTOMER" e where zip in (select min(credit_limit) from "COMPANY"."CUSTOMER" group by discount_code)

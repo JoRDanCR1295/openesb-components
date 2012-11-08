@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ConditionOnTypeBasedProperty"
+    targetNamespace="http://enterprise.netbeans.org/bpel/conditionProj/ConditionOnTypeBasedProperty"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/conditionProj/ConditionOnTypeBasedProperty" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/conditionsSchema" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/conditions"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/conditions" 
+    location="conditions.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="typeCondPL" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        partnerLinkType="tns:typeConditionPLT" myRole="typeConditionPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="typeBasedVar" type="ns0:msgType"/>
+        <variable name="TypeConditionOperationOut" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+        <variable name="TypeConditionOperationIn" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:intProp"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" 
+        partnerLink="typeCondPL" operation="typeConditionOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="tns:typeConditionPT" variable="TypeConditionOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$TypeConditionOperationIn.mesgPart/intElem</from>
+                <to>$typeBasedVar/intElem</to>
+            </copy>
+            <copy>
+                <from>$TypeConditionOperationIn.mesgPart/strElem</from>
+                <to>$typeBasedVar/strElem</to>
+            </copy>
+            <copy>
+                <from>$TypeConditionOperationIn.mesgPart/boolElem</from>
+                <to>$typeBasedVar/boolElem</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>ns2:getVariableProperty('typeBasedVar', 'ns1:booleanProp')</condition>
+            <assign name="Assign2">
+                <copy>
+                    <from>$TypeConditionOperationIn.mesgPart/intElem</from>
+                    <to>$TypeConditionOperationOut.mesgPart/intElem</to>
+                </copy>
+                <copy>
+                    <from>$TypeConditionOperationIn.mesgPart/boolElem</from>
+                    <to>$TypeConditionOperationOut.mesgPart/boolElem</to>
+                </copy>
+                <copy>
+                    <from>concat($TypeConditionOperationIn.mesgPart/strElem, ' If True: ')</from>
+                    <to>$TypeConditionOperationOut.mesgPart/strElem</to>
+                </copy>
+            </assign>
+            <else>
+            <assign name="Assign3">
+                <copy>
+                    <from>$TypeConditionOperationIn.mesgPart/intElem</from>
+                    <to>$TypeConditionOperationOut.mesgPart/intElem</to>
+                </copy>
+                <copy>
+                    <from>$TypeConditionOperationIn.mesgPart/boolElem</from>
+                    <to>$TypeConditionOperationOut.mesgPart/boolElem</to>
+                </copy>
+                <copy>
+                    <from>concat($TypeConditionOperationIn.mesgPart/strElem, ' If False: ')</from>
+                    <to>$TypeConditionOperationOut.mesgPart/strElem</to>
+                </copy>
+            </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="typeCondPL" 
+        operation="typeConditionOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="tns:typeConditionPT" variable="TypeConditionOperationOut"/>
+    </sequence>
+</process>

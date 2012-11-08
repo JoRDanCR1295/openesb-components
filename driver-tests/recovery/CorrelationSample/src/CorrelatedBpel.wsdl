@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CorrelatedBpel" targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/CorrelatedBpel" xmlns:ns="http://xml.netbeans.org/schema/CorrelationSample" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/CorrelatedBpel">
+            <xsd:import namespace="http://xml.netbeans.org/schema/CorrelationSample" schemaLocation="CorrelationSample.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="CallInOperationRequest">
+        <part name="InMessage" element="ns:CSInput"/>
+    </message>
+    <message name="CallBackOperationRequest">
+        <part name="OutMessage" element="ns:CSOutput"/>
+    </message>
+    <portType name="CallInPortType">
+        <operation name="CallInOperation">
+            <input name="InMessage" message="tns:CallInOperationRequest"/>
+        </operation>
+    </portType>
+    <portType name="CallBackPortType">
+        <operation name="CallBackOperation">
+            <input name="OutMessage" message="tns:CallBackOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="CallInBinding" type="tns:CallInPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CallInOperation">
+            <soap:operation/>
+            <input name="InMessage">
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="CallBackBinding" type="tns:CallBackPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CallBackOperation">
+            <soap:operation/>
+            <input name="OutMessage">
+                <soap:body/>
+            </input>
+        </operation>
+    </binding>
+    <service name="CallInService">
+        <port name="CallInBpelPort" binding="tns:CallInBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/CallInService/CallInBpelPort"/>
+        </port>
+    </service>
+    <service name="CallBackService">
+        <port name="CallBackBpelPort" binding="tns:CallBackBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/CorrelationSample/CorrelatedBpel/CallBackBpelPort"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="CorrelatedBpelPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="CallInPortTypeRole" portType="tns:CallInPortType"/>
+        <plink:role name="CallBackPortTypeRole" portType="tns:CallBackPortType"/>
+    </plink:partnerLinkType>
+</definitions>

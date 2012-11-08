@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="MultiOp_UserTestCase" 
+    targetNamespace="http://www.sun.com/httpsoapbctests/MultiOp_UserTestCase"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.sun.com/httpsoapbctests/MultiOp_UserTestCase" xmlns:ns1="http://service">
+    <import namespace="http://service" location="MultiOp_UserTestCase.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="MultiOp_UserTestCase" partnerLinkType="ns1:MultiOp_UserTestCasePartnerLinkType" myRole="MultiOp_UserTestCaseRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="DeleteInstanceOut1" messageType="ns1:deleteInstanceResponse"/>
+        <variable name="DeleteInstanceIn1" messageType="ns1:deleteInstanceRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="MultiOp_UserTestCase" operation="deleteInstance" portType="ns1:UseRepository" variable="DeleteInstanceIn1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>true()</from><to part="parameters" variable="DeleteInstanceOut1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="MultiOp_UserTestCase" operation="deleteInstance" portType="ns1:UseRepository" variable="DeleteInstanceOut1"/>
+    </sequence>
+   
+</process>

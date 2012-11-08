@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="testTrailingZeros" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/testTrailingZeros"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/testTrailingZeros" xmlns:ns1="http://j2ee.netbeans.org/wsdl/testTrailingZeros" xmlns:ns0="http://xml.netbeans.org/schema/testTrailingZeros">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/testTrailingZeros" location="testTrailingZeros.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:testTrailingZerosPartner" myRole="testTrailingZerosPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="var2" messageType="ns1:testTrailingZerosOperationReply"/>
+        <bpws:variable name="var1" messageType="ns1:testTrailingZerosOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="testTrailingZerosOperation" portType="ns1:testTrailingZerosPortType" variable="var1"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$var1.part1/ns0:number</bpws:from>
+                <bpws:to>$var2.part1/ns0:number</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$var1.part1/ns0:numberWithZeroFraction</bpws:from>
+                <bpws:to>$var2.part1/ns0:numberWithZeroFraction</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$var1.part1/ns0:numberWithFraction</bpws:from>
+                <bpws:to>$var2.part1/ns0:numberWithFraction</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from> ( $var1.part1/ns0:number + 1 ) </bpws:from>
+                <bpws:to>$var2.part1/ns0:numberAddition</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from> ( $var1.part1/ns0:numberWithZeroFraction + 1 ) </bpws:from>
+                <bpws:to>$var2.part1/ns0:numberWithZeroFractionAddition</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from> ( $var1.part1/ns0:numberWithFraction + 0.5 ) </bpws:from>
+                <bpws:to>$var2.part1/ns0:numberWithFractionAddition</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="testTrailingZerosOperation" portType="ns1:testTrailingZerosPortType" variable="var2"/>
+    </sequence>
+   
+</process>

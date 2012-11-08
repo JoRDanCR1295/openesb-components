@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="OraFindBpel"
+    targetNamespace="http://enterprise.netbeans.org/bpel/OraFindBpel"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/OraFindBpel" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SOAPFindOraTrigger" xmlns:ns2="http://j2ee.netbeans.org/wsdl/jdbcbc" xmlns:ns0="http://j2ee.netbeans.org/xsd/tableSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SOAPFindOraTrigger" location="SOAPFindOraTrigger.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/jdbcbc" location="JdbcFindOra.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:jdbcpartner" partnerRole="jdbcPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:SOAPFindOraTriggerPartner" myRole="SOAPFindOraTriggerPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SOAPFindOraTriggerOperationOut" messageType="ns1:SOAPFindOraTriggerOperationReply"/>
+      <bpws:variable name="FindOut" messageType="ns2:outputMsg"/>
+      <bpws:variable name="FindIn" messageType="ns2:inputMsg"/>
+      <bpws:variable name="SOAPFindOraTriggerOperationIn" messageType="ns1:SOAPFindOraTriggerOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="SOAPFindOraTriggerOperation" portType="ns1:SOAPFindOraTriggerPortType" variable="SOAPFindOraTriggerOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="SOAPFindOraTriggerOperationIn" part="part1"/>
+            <bpws:to>$FindIn.part/ns0:TestTable_Record/ns0:TestName</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="find" portType="ns2:jdbcPortType" inputVariable="FindIn" outputVariable="FindOut"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="FindOut" part="part"/>
+            <bpws:to variable="SOAPFindOraTriggerOperationOut" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="SOAPFindOraTriggerOperation" portType="ns1:SOAPFindOraTriggerPortType" variable="SOAPFindOraTriggerOperationOut"/>
+   </sequence>
+</process>

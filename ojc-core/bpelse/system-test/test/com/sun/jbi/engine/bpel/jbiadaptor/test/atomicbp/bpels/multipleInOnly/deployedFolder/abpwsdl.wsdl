@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<definitions name="abpwsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/abpwsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/abpwsdl" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="mainOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="mainPortType">
+        <operation name="mainOperation">
+            <input name="input1" message="tns:mainOperationRequest"/>
+        </operation>
+    </portType>
+    <portType name="secondReceivePortType">
+        <operation name="secondReceivelOperation">
+            <input name="input1" message="tns:mainOperationRequest"/>
+        </operation>
+    </portType>
+    <portType name="invokePortType">
+        <operation name="invokeOperation">
+            <input name="input1" message="tns:mainOperationRequest"/>
+        </operation>
+    </portType>
+    <portType name="secondInvokePortType">
+        <operation name="secondInvokeOperation">
+            <input name="input1" message="tns:mainOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="mainBinding" type="tns:mainPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="mainOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/abpwsdl"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="secondReceiveBinding" type="tns:secondReceivePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="secondReceivelOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="invokeBinding" type="tns:invokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="invokeOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="secondInvokeBinding" type="tns:secondInvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="secondInvokeOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body/>
+            </input>
+        </operation>
+    </binding>
+    <service name="mainService">
+        <port name="mainPort" binding="tns:mainBinding">
+            <soap:address location="http://localhost:18181/mainService/mainPort"/>
+        </port>
+        <port name="secondReceivePort" binding="tns:secondReceiveBinding">
+            <soap:address location="http://localhost:18181/AtomicBP/abpwsdl/secondReceivePort"/>
+        </port>
+    </service>
+    <service name="partnerService">
+        <port name="invokePort" binding="tns:invokeBinding">
+            <soap:address location="http://localhost:18181/AtomicBP/abpwsdl/invokePort"/>
+        </port>
+        <port name="secondInvokePort" binding="tns:secondInvokeBinding">
+            <soap:address location="http://localhost:18181/AtomicBP/abpwsdl/secondInvokePort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="main">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="mainPortTypeRole" portType="tns:mainPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="secondReceive">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SecondReceiveTypeRole" portType="tns:secondReceivePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="invoke">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="invokePortTypeRole" portType="tns:invokePortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="secondInvoke">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="secondInvokePortTypeRole" portType="tns:secondInvokePortType"/>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias messageType="tns:mainOperationRequest" part="part1" propertyName="tns:Correlation">
+        <vprop:query></vprop:query>
+    </vprop:propertyAlias>
+    <vprop:property name="Correlation" type="xsd:string"/>
+</definitions>

@@ -1,0 +1,36 @@
+<definitions name="fileQos" targetNamespace="http://j2ee.netbeans.org/wsdl/FileQos/fileQos"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:tns="http://j2ee.netbeans.org/wsdl/FileQos/fileQos" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <types/>
+    <message name="PollInputMessage">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="FileInboundPortType">
+        <operation name="poll">
+            <input name="input1" message="tns:PollInputMessage"/>
+        </operation>
+    </portType>
+    <binding name="FileInboundBinding" type="tns:FileInboundPortType">
+        <file:binding/>
+        <operation name="poll">
+            <file:operation verb="poll"/>
+            <input name="input1">
+                <file:message fileName="input.xml" pollingInterval="1000" use="literal" part="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="FileInboundService">
+        <port name="fileQos_InboundPort" binding="tns:FileInboundBinding">
+            <file:address fileDirectory="c:/temp" recursive="false"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="fileQos">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FileInboundPortTypeRole" portType="tns:FileInboundPortType"/>
+    </plnk:partnerLinkType>
+</definitions>
+

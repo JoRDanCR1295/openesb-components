@@ -1,0 +1,146 @@
+                     			---
+								WSDL Extensions
+								---
+								Marco Piraccini
+								---
+								29/07/2007
+
+	
+  
+
+
+
+{Jbi4Ejb WSDL Extensions}
+
+	The WSDL (1.1) can be generated from the EJB remote interface, using the {{{wsdlCommandLineTool.html} command-line tool}}
+	or the {{{netbeansplugin.html} Netbeans plug-in}}.
+	
+	Three WSDL extensions point has benn defined to correctly configure a Jbi4Ejb ServiceUnit: 
+	
+	* {{{wsdlExtensions.html#The Jbi4Ejb Address}The Jbi4Ejb Address}}
+	
+    * {{{wsdlExtensions.html#The Jbi4Ejb Binding}The Jbi4Ejb Binding}}
+    
+    * {{{wsdlExtensions.html#The Jbi4Ejb Types}The Jbi4Ejb Types}}
+  
+	Thid extensions are formally defined by the xml schema: 
+	
++-----------------------------------------------------------+
+	
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:imolaejb="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/" 
+	targetNamespace="uri://schemas.imola.it/jbi/wsdl-extensions/ejb/">
+
+
+<xsd:simpleType name="localizationChoice">
+	<xsd:restriction base="xsd:string">
+		<xsd:enumeration value="corbaname"/>			
+	</xsd:restriction>
+</xsd:simpleType>
+	
+<!-- types extensibility element -->
+<xsd:element name="types" type="imolaejb:typesType"/>
+	
+<xsd:complexType name="typesType">
+	<xsd:sequence>
+		<xsd:element ref="imolaejb:serialVersionUID" minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+</xsd:complexType>
+	
+<xsd:element name="serialVersionUID">
+	<xsd:complexType>
+		<xsd:attribute name="className"  type="xsd:string" use="required"/>
+		<xsd:attribute name="UID" type="xsd:string" use="required"/>
+	</xsd:complexType>
+</xsd:element>
+	
+
+<xsd:element name="property">
+	<xsd:complexType>
+		<xsd:attribute name="name"  type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+</xsd:element>
+
+<xsd:complexType name="orbProperties">
+	<xsd:sequence>
+		<xsd:element ref="imolaejb:property" minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="jndiProperties">
+	<xsd:sequence>
+		<xsd:element ref="imolaejb:property" minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="binding" type="imolaejb:bindingType"/>
+
+<xsd:complexType name="bindingType">
+	<xsd:sequence>
+		<xsd:element name="orb"  type="imolaejb:orbProperties"/>			
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="address" type="imolaejb:addressType"/>
+
+<xsd:complexType name="addressType">
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="localizationType" type="imolaejb:localizationChoice" use="required"/>
+	</xsd:complexType>
+</xsd:schema>
+
++-----------------------------------------------------------+
+	
+*{The Jbi4Ejb Address}
+				 
+	With the Jbi4Ejb address you can specify how to localize the stateless EJB:
+	
+		* localizationType: in the 0.1 release only corbaname is supported
+		* name: the used to lookup  		
+
+	For example:
+	
++-----------------------------------------------------------+		
+<port name="TestComplexSessionRemotePort" binding="tns:TestComplexSessionRemoteBinding"> 
+	<imolaejb:address 
+    	localizationType="corbaname" 
+    	name="corbaname:iiop:127.0.0.1:3700#ejb/TestComplexSessionBean"/>
+</port>       	
++-----------------------------------------------------------+
+	
+	To correctly lookup the EJB, an address is mandatory. 
+	
+*{The Jbi4Ejb Binding}
+
+	With the Jbi4Ejb binding, the ORB configuration is specified. You can put an arbitrary number or properties
+	between the orb element (all the properties needed to correctly initialize the orb).
+	For example: 
+	
++-----------------------------------------------------------+			
+<binding name="TestComplexSessionRemoteBinding" type="tns:TestComplexSessionRemote">      
+	<imolaejb:binding>
+    	<imolaejb:orb>
+        	<imolaejb:property name="org.omg.CORBA.ORBClass" value="com.sun.corba.ee.impl.orb.ORBImpl"/>
+		</imolaejb:orb>
+	</imolaejb:binding>
+(...)
+</binding>
++-----------------------------------------------------------+		      
+
+	To deploy the service unit, the binding is mandatory (otherwise no correct endpoint are recognized). 
+		
+*{The Jbi4Ejb Types}	
+
+	The optional imolaejb:types extensions at Definition level that can specify Serialization UIDs for the value objects, return types
+	and thrown exceptions.
+	
++-----------------------------------------------------------+			
+<imolaejb:types>
+	<imolaejb:serialVersionUID 
+		className="it.imolinfo.test14.complex.UserProfile" UID="8891581763048162223"/>	
+	<imolaejb:serialVersionUID 
+		className="it.imolinfo.test14.complex.UserProfileException" UID="-5706164759540452783"/>	
+</imolaejb:types>
++-----------------------------------------------------------+		
+		

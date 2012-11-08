@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://sun.com/JMSBCXATest/JMSBCXAInOnlyTest" xmlns:ns2="http://sun.com/JMSBCXATest/JMSBCXAInOnlyDriver" xmlns:ns3="http://www.seebeyond.com/eInsight/JMSBCXAInOnlyDriver" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint endpoint-name="portJMSInTestSend" interface-name="ns1:portTypeOneWayOut" name="endpoint1" service-name="ns1:JMSXAInOnlyTestService"/>
+        <endpoint endpoint-name="portJMSXAInOnlySend" interface-name="ns2:portTypeOneWayOut" name="endpoint2" service-name="ns2:service_0"/>
+        <endpoint endpoint-name="portJMSXAInOnlyRecv" interface-name="ns2:portTypeOneWayIn" name="endpoint3" service-name="ns2:service_0"/>
+        <endpoint endpoint-name="portJMSInTestRecv" interface-name="ns1:portTypeOneWayIn" name="endpoint4" service-name="ns1:JMSXAInOnlyTestService"/>
+        <endpoint endpoint-name="portJMSInOutTestTrigger" interface-name="ns2:portTypeRequestReply" name="endpoint5" service-name="ns2:service_0"/>
+        <endpoint display-name="JMSInTestInLnkType" endpoint-name="roleTransformReceive" file-path="Empl-Input2Output.xsl" interface-name="ns1:portTypeOneWayIn" name="endpoint6" process-name="JMSInTestInLnkType" service-name="ns1:JMSInTestInLnkType"/>
+        <endpoint endpoint-name="roleTransformSend" interface-name="ns1:portTypeOneWayOut" name="endpoint7" service-name="ns1:JMSInTestOutLnkType"/>
+        <endpoint display-name="JMSXAInOnlyTestHttpReqReplyPartner" endpoint-name="roleJMSXAInOnlyTestTrigger_myRole" file-path="JMSBCXAInOnlyDriver\JMSBCXAInOnlyDriver.bpel" interface-name="ns2:portTypeRequestReply" name="endpoint8" process-name="JMSBCXAInOnlyDriver" service-name="ns3:JMSXAInOnlyTestHttpReqReplyPartner"/>
+        <endpoint display-name="JMSXAInOnlyTestReceivePartner" endpoint-name="roleJMSXAInOnlyTestReceiver_myRole" file-path="JMSBCXAInOnlyDriver\JMSBCXAInOnlyDriver.bpel" interface-name="ns2:portTypeOneWayIn" name="endpoint9" process-name="JMSBCXAInOnlyDriver" service-name="ns3:JMSXAInOnlyTestReceivePartner"/>
+        <endpoint display-name="JMSXAInOnlyTestSendPartner" endpoint-name="roleJMSXAInOnlyTestSender_partnerRole" file-path="JMSBCXAInOnlyDriver\JMSBCXAInOnlyDriver.bpel" interface-name="ns2:portTypeOneWayOut" name="endpoint10" process-name="JMSBCXAInOnlyDriver" service-name="ns3:JMSXAInOnlyTestSendPartner"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="JMSBCXAXslt.jar" component-name="sun-xslt-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="JMSBCXAXsltJbi-JMSBCXAXslt" unit-name="JMSBCXAXslt" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint6"/>
+            <consumes endpoint="endpoint7"/>
+        </service-engine-service-unit>
+        <service-engine-service-unit artifacts-zip="JMSBCXAXsltDriverBpel.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="JMSBCXAXsltJbi-JMSBCXAXsltDriverBpel" unit-name="JMSBCXAXsltDriverBpel" unknown="false" x="-1" y="-1">
+            <provides endpoint="endpoint8"/>
+            <provides endpoint="endpoint9"/>
+            <consumes endpoint="endpoint10"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-jms-binding.jar" component-name="sun-jms-binding" description="Represents this Service Unit" name="JMSBCXAXsltJbi-sun-jms-binding" unit-name="sun-jms-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/service[@name='JMSXAInOnlyTestService']/port[@name='portJMSInTestSend'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint1"/>
+                    <provides endpoint="endpoint1"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/service[@name='JMSXAInOnlyTestService']/port[@name='portJMSInTestRecv'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/service[@name='service_0']/port[@name='portJMSXAInOnlySend'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint2"/>
+                    <provides endpoint="endpoint2"/>
+                </port>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/service[@name='service_0']/port[@name='portJMSXAInOnlyRecv'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint3"/>
+                    <provides endpoint="endpoint3"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="JMSBCXAXsltJbi-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="0" y="-1">
+                    <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/service[@name='service_0']/port[@name='portJMSInOutTestTrigger'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint7" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint9" state="unchanged"/>
+        <connection consumer="endpoint4" provider="endpoint6" state="unchanged"/>
+        <connection consumer="endpoint10" provider="endpoint2" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint8" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/portType[@name='portTypeOneWayIn'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/portType[@name='portTypeOneWayOut'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/portType[@name='portTypeRequestReply'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/portType[@name='portTypeOneWayOut'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/portType[@name='portTypeOneWayIn'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/binding[@name='bindingJMSOneWayIn'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/binding[@name='bindingJMSOneWayOut'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/binding[@name='bindingHttpRequestReply'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/binding[@name='bindingJMSOneWayOut'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/binding[@name='bindingJMSOneWayIn'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXslt/JMSBCXAInOnlyTest.wsdl#xpointer(/definitions/service[@name='JMSXAInOnlyTestService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/JMSBCXAXsltDriverBpel/JMSBCXAInOnlyDriver/JMSBCXAInOnlyDriver.wsdl#xpointer(/definitions/service[@name='service_0'])" xlink:type="simple"/>
+    </services>
+    <regions>
+        <region name="WSDL Endpoints" width="150"/>
+        <region name="JBI Modules" width="500"/>
+        <region name="External Modules" width="200"/>
+    </regions>
+</casa>

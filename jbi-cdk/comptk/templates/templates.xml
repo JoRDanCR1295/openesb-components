@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="comptk-cli-templates" default="generate-all" basedir=".">
+
+    <property name="proj.src.root" 
+              value="${proj.root}/${jbi.src.root}/${component.type}/${project.name}"/>
+    <property name="proj.src.parent" value="${proj.src.root}/.."/>
+    <property name="top.bld" value="../bld"/>
+	
+    <target name="generate-all"
+            depends="create-tokens,generate"/>
+    
+	<target name="create-tokens" unless="token.file">
+    	<!-- create local file containing replacement tokens -->
+        <java classname="${template.clz}" fork="true">
+            <arg value="${component.type}"/>
+            <arg file="${proj.root}"/>
+        	<arg file="token.properties"/>
+            <classpath>
+                <path refid="ojc.classpath"/>
+                <pathelement path="../${clz}"/>
+            </classpath>
+        </java>
+    </target>
+    	
+    <target name="generate" depends="check-generate,warn-generate" if="check.generate">
+    	<echo>${check.generate}</echo>
+    	<loadproperties srcfile="${top.bld}/${tkn.file}"/>
+
+    	<!-- copy templates -->
+        <copy todir="${proj.src.root}">
+            <fileset dir="${basedir}">
+            	<include name="**/*.java"/>
+            	<include name="**/msgs.properties"/>
+            	<exclude name="**/*.properties"/>
+            	<exclude name="**/project-root/**"/>
+            	<exclude name="${tkn.file}"/>
+                <exclude name="templates.xml"/>
+            	<exclude name="scrub-config.xml"/>
+            </fileset>
+        </copy>
+        <touch file="${proj.src.root}/msgs.properties"/>
+
+        <!-- rename templates to mark them as source -->
+    	<move todir="${proj.src.root}" includeemptydirs="false">
+    	    <fileset dir="${proj.src.root}">
+    	        <exclude name="*.properties"/>
+                <exclude name="I18n.java"/>
+    	    </fileset>
+    	    <mapper type="glob" from="*.java" to="${%CLASS_PREFIX%}*.java"/>
+    	</move>
+
+    	<!-- replace tokens in generated project files --> 
+    	<replace dir="${proj.root}" replacefilterfile="${top.bld}/${tkn.file}"
+    		     excludes="**/compile.xsl" summary="true"/>
+
+        <!-- rename templates to mark them as source -->
+        <move todir="${proj.src.parent}">
+            <fileset dir="${proj.src.parent}">
+            </fileset>
+            <mapper type="glob" from="${%PROJ_NAME%}" to="${%PROJ_SHORT_LC%}"/>
+        </move>
+    	
+    	<!-- scrub copied project files, not source but rather poms, descriptors, et al. -->
+    	<property name="scrub.profile" value="${%PROFILE%}"/>
+        <java classname="${template.clz}" fork="true">
+            <arg value="${component.type}"/>
+            <arg file="${proj.root}"/>
+            <arg file="${top.bld}/${tkn.file}"/>
+        	<arg file="scrub-config.xml"/>
+        	<arg value="${scrub.profile}"/>
+            <classpath>
+                <path refid="ojc.classpath"/>
+                <pathelement path="../${clz}"/>
+            </classpath>
+        </java>
+    </target>
+	
+    <target name="check-generate">
+        <condition property="tkn.file" 
+                   value="${token.file}"
+                   else="token.properties">
+            <isset property="token.file"/>
+        </condition>
+    	<available property="check.generate"
+    		       file="${top.bld}/${tkn.file}"
+                   value="Generating project source using tokens from: ${tkn.file}"/>
+    </target>
+
+    <target name="warn-generate" unless="check.generate">
+        <echo>***********************************************************</echo>
+        <echo>***                                                     ***</echo>
+        <echo>***              PROJECT GENERATION FAILED!             ***</echo>
+        <echo>***                                                     ***</echo>
+        <echo>***         The following property is required:         ***</echo>
+        <echo>***             'tkn.file'                              ***</echo>
+        <echo>***                                                     ***</echo>
+        <echo>***********************************************************</echo>
+    </target>
+
+</project>
+

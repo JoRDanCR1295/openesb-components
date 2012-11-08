@@ -1,0 +1,150 @@
+											---
+											WSDL to CORBA code generation
+											---
+											Mirco Casoni
+											---
+											21/03/2007
+
+
+WSDL to CORBA code generation
+
+  This component is based on this simple equation:
+  wsdl2java + java2idl = wsdl2idl 
+
+  The algorithm used is the following:
+
+  [[1]] <<retrieving the wsdl>>
+
+        The first step is retrieving the WSDL used in the code generation.
+
+
+  [[2]] <<copying ord.idl and ir.idl>>
+
+        When the WSDL is obtained we copy the 'orb.idl' and the 'ir.idl' in the
+        same directory where we have saved the WSDL.
+        These files are needed for corba type binding and are standard.
+
+  [[3]] <<preparing workspace>>
+
+        In this phase we create all the directory used during the code ganeration,
+        in particulare we create a directory for the java source files and for
+        the class files.
+
+  [[4]] <<wsdl to java>>
+
+        The WSDL to Java code generation is executed using CXF.
+        In CXF, the default mapping from wsdl to java data types is good, but
+        you should control which of these data types are supported from our
+        component.
+
+        In fact, we must convert every types defined in the WSDL in a IDL type
+        and not all of them are actually supported.
+
+  [[5]] <<javac>>
+
+        When the component has created the java source files we compile them
+        using the standard java compiler.
+
++------------------------------------------+
+  int result = com.sun.tools.javac.Main.compile(
+    params.toArray(new String[] {}), printstream);
++------------------------------------------+
+
+
+  [[6]] <<bytecode manipulation>>
+
+        One of classes generated has the suffix "PortType" and it represent the
+        interface (in WSDL language) that contains all the our operations.
+
+        The bytecode of this class must be manipulated to be used with rmic
+        compiler, so we add the interface 'java.rmi.Remote' to the class
+        and we add the 'java.rmi.RemoteException' to the exceptions thrown by
+        every method.
+
+
+  [[7]] <<rmic>>
+
+        When the "ServicePortType" class is ready we use the RMIC compiler to
+        produce the IDL files that represent the CORBA contract from client and
+        servant.
+
+        To compile this class we use the standard rmic provided with the JDK.
+
++------------------------------------------+
+  List<String> params = new ArrayList<String>(
+  Arrays.asList(new String [] {"-classpath",
+                           cp,
+                           "-d",
+                           classesDir,
+                           "-idl",
+                           "-always",
+                           "-iiop",
+                           "-nolocalstubs",
+                           "-verbose",
+                           className}));
+
+  sun.rmi.rmic.Main main = new sun.rmi.rmic.Main(printstream, "rmic");
+
+  boolean result = main.compile(params.toArray(new String[] {}));
++------------------------------------------+
+
+
+  [[8]] <<idlj>>
+
+
+        The IDLs previously generated are used to create the classes of the
+        corba servant.
+        This operation is performed using idlj twice:
+        the first time with the option '-fall'
+        and second one with the option '-fallTIE'.
+
+        This procedure is used to create stub and skeleton classes and the POA
+        class to comply the 'POA programming model'.
+
++------------------------------------------+
+  log.debug("Compile. 1) -fall");
+
+  com.sun.tools.corba.se.idl.toJavaPortable.Compile.main(
+      new String[] { "-fall",
+                 "-td",
+                 sourceDirName,
+                 "-v",
+                 "-i",
+                 wsdlDirName,
+                 "-emitAll",
+                 destIdlFileName });
+
+  log.debug("Compile. 2) -fallTIE");
+
+  com.sun.tools.corba.se.idl.toJavaPortable.Compile.main(
+      new String[] { "-fallTIE",
+                 "-td",
+                 sourceDirName,
+                 "-v",
+                 "-i",
+                 wsdlDirName,
+                 "-emitAll",
+                 destIdlFileName });
++------------------------------------------+
+
+
+  [[9]] <<bytecode manipulation>>
+
+        At this point we have almost finished our job, but the classes associated
+        with the value type are not ready to use in CORBA environment, so we must
+        manipulate them.
+
+        These classes must have 2 main characteristics:
+
+        1) They must implements the 'org.omg.CORBA.portable.ValueBase' interface.
+
+        2) Every value type implementation class must have the method 
+           '_truncatable_ids()' and it must return an array of String with
+           one element retrievied using the method 'String id()' in the helper
+           class associated to the current value type.
+
+
+  [[10]] <<javac>>
+
+        Now we can compile all the classes and the result is our corba servant.
+

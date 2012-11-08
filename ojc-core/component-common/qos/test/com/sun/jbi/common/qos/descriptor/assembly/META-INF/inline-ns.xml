@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" 
+		xmlns:ns1="http://j2ee.netbeans.org/wsdl/CandidateEvaluation" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+	<service-assembly>
+		<identification>
+			<name>EmployeeCA</name>
+			<description>Represents the Service Assembly of EmployeeCA</description>
+		</identification>
+		<service-unit>
+			<identification>
+				<name>EmployeeCA-EmployeeXslt</name>
+				<description>Represents this Service Unit</description>
+			</identification>
+			<target>
+				<artifacts-zip>EmployeeXslt.jar</artifacts-zip>
+				<component-name>sun-xslt-engine</component-name>
+			</target>
+		</service-unit>
+		<service-unit>
+			<identification>
+				<name>EmployeeCA-sun-http-binding</name>
+				<description>Represents this Service Unit</description>
+			</identification>
+			<target>
+				<artifacts-zip>sun-http-binding.jar</artifacts-zip>
+				<component-name>sun-http-binding</component-name>
+			</target>
+		</service-unit>
+		<connections>
+			<connection>
+				<consumer endpoint-name="CandidateEvaluationPort" service-name="ns1:CandidateEvaluationService"/>
+				<provider endpoint-name="evaluator" service-name="ns1:CandidateEvaluator"/>
+			</connection>
+		</connections>
+		<connections xmlns="http://www.sun.com/jbi/qos">
+			<connection>
+				<consumer endpoint-name="CandidateEvaluationPort" service-name="ns1:CandidateEvaluationService"/>
+				<provider endpoint-name="evaluator" service-name="ns1:CandidateEvaluator"/>
+				<redelivery xmlns="http://www.sun.com/jbi/qos/redelivery" maxAttempts="3" waitTime="600000">
+					<on-failure>
+						<redirect endpoint-name="DeadLetterQueue"
+								  service-name="ns1:DeadLetterService"
+								  operation="throwAway"/>
+					</on-failure>
+				</redelivery>
+				<throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="10"/>
+				<message-tracking xmlns="http://www.sun.com/jbi/qos/message-tracking" 
+                        tracking="true"    store-payload="true"    externalize-payload="false">
+                    <payload-query name="MyKPIField" xpath="/some/xpath/applied/against/payload" />
+                </message-tracking>
+			</connection>
+		</connections>
+	</service-assembly>
+</jbi>

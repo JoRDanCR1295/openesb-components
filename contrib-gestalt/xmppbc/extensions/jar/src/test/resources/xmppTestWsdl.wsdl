@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="xmppWsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/xmppWsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/xmppWsdl" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:xmpp="http://schemas.sun.com/jbi/wsdl-extensions/xmpp/">
+    <types/>
+    <message name="xmppWsdlOperationRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+        <part name="part3" type="xsd:string"/>
+    </message>
+    <message name="xmppWsdlOperationReply">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+        <part name="part3" type="xsd:string"/>
+    </message>
+    <portType name="xmppWsdlPortType">
+        <wsdl:operation name="xmppWsdlOperation">
+            <wsdl:input name="input1" message="tns:xmppWsdlOperationRequest"/>
+            <wsdl:output name="output1" message="tns:xmppWsdlOperationReply"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="xmppWsdlBinding" type="tns:xmppWsdlPortType">
+        <xmpp:binding/>
+        <wsdl:operation name="xmppWsdlOperation">
+            <xmpp:operation name="sendMessage"/>
+            <wsdl:input name="input1">
+                <xmpp:input jabberId="part1" packetId="part2" message="part3"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <xmpp:output jabberId="part1" packetId="part2" message="part3"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </binding>
+    <service name="xmppWsdlService">
+        <wsdl:port name="xmppWsdlPort" binding="tns:xmppWsdlBinding">
+            <xmpp:address domain="b-0498" username="bob" password="bob" resource="resource" port="5222" group="room@chat.bar.com"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="xmppWsdl1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="xmppWsdlPortTypeRole" portType="tns:xmppWsdlPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

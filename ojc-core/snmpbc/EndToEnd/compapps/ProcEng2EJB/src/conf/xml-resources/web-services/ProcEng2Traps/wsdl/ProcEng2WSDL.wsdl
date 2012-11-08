@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/ProcEng2WSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/ProcEng2WSDL" name="ProcEng2WSDL" xmlns:ns="sun.com/soabi/snmpbc/traps" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:snmp="http://schemas.sun.com/jbi/wsdl-extensions/snmp/">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/ProcEng2WSDL">
+            <xsd:import namespace="sun.com/soabi/snmpbc/traps" schemaLocation="Traps.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="ProcEng2WSDLOperationRequest">
+        <part name="part1" element="ns:Traps"/>
+    </message>
+    <portType name="ProcEng2WSDLPortType">
+        <wsdl:operation name="ProcEng2WSDLOperation">
+            <wsdl:input name="input1" message="tns:ProcEng2WSDLOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="ProcEng2WSDLBinding" type="tns:ProcEng2WSDLPortType">
+        <snmp:binding/>
+        <wsdl:operation name="ProcEng2WSDLOperation">
+            <snmp:operation type="adaptation" adaptationId="Adaptation2"/>
+            <wsdl:input name="input1">
+                <snmp:message trapPart="part1"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="ProcEng2WSDLService">
+        <wsdl:port name="ProcEng2WSDLPort" binding="tns:ProcEng2WSDLBinding">
+            <snmp:address port="0"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="ProcEng2WSDLPartner">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="ProcEng2WSDLPortTypeRole" portType="tns:ProcEng2WSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

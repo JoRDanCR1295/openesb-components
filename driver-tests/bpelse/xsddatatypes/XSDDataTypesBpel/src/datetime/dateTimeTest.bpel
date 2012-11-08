@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="dateTimeTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/XSDDataTypesBpel/dateTimeTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/XSDDataTypesBpel/dateTimeTest" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" xmlns:ns0="http://xml.netbeans.org/schema/xmlSchema">
+    <import namespace="http://j2ee.netbeans.org/wsdl/dateTimeTest" location="dateTimeTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/dateTimeSubBP" location="dateTimeSubBP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeSubBP" partnerLinkType="tns:dateTimeSubBP" partnerRole="dateTimeSubBPPortTypeRole"/>
+        <partnerLink name="PartnerLink1" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeTest" partnerLinkType="tns:dateTimeTest" myRole="dateTimeTestPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="DateTimeTestOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeTest" messageType="tns:dateTimeTestOperationResponse"/>
+        <variable name="DateTimeSubBPOperationOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeSubBP" messageType="tns:dateTimeSubBPOperationResponse"/>
+        <variable name="DateTimeSubBPOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeSubBP" messageType="tns:dateTimeSubBPOperationRequest"/>
+        <variable name="DateTimeTestOperationIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeTest" messageType="tns:dateTimeTestOperationRequest"/>
+        <variable name="TimeVariable" type="xsd:time"/>
+        <variable name="DateTimeVariable" type="xsd:dateTime"/>
+        <variable name="DateVariable" type="xsd:date"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="dateTimeTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeTest" portType="tns:dateTimeTestPortType" variable="DateTimeTestOperationIn"/>
+        <assign name="Assign1">
+            <copy>
+                    <from variable="DateTimeTestOperationIn" part="datePart"/>
+                        <to variable="DateVariable"/>
+                </copy>
+                <copy>
+                    <from variable="DateTimeTestOperationIn" part="dateTimePart"/>
+                        <to variable="DateTimeVariable"/>
+                </copy>
+                <copy>
+                    <from variable="DateTimeTestOperationIn" part="timePart"/>
+                        <to variable="TimeVariable"/>
+                </copy>
+        </assign>
+        <if name="If1">
+            <condition>false()</condition>
+            <sequence name="Sequence1">
+                <invoke name="Invoke1" partnerLink="PartnerLink2" operation="dateTimeSubBPOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeSubBP" portType="tns:dateTimeSubBPPortType" inputVariable="DateTimeSubBPOperationIn" outputVariable="DateTimeSubBPOperationOut"/>
+            </sequence>
+        </if>
+        <assign name="Assign2">
+            <copy>
+                <from variable="TimeVariable"/>
+                <to>$DateTimeTestOperationOut.testQueryExpressionPart/ns0:userTime</to>
+            </copy>
+            <copy>
+                <from variable="DateTimeVariable"/>
+                <to>$DateTimeTestOperationOut.testQueryExpressionPart/ns0:userDateTime</to>
+            </copy>
+            <copy>
+                <from variable="DateVariable"/>
+                <to>$DateTimeTestOperationOut.testQueryExpressionPart/ns0:userDate</to>
+            </copy>
+        </assign>
+        <assign name="Assign3">
+            <copy>
+                <from variable="TimeVariable"/>
+                <to variable="DateTimeTestOperationOut" part="timePart"/>
+            </copy>
+            <copy>
+                <from variable="DateTimeVariable"/>
+                <to variable="DateTimeTestOperationOut" part="dateTimePart"/>
+            </copy>
+            <copy>
+                <from variable="DateVariable"/>
+                <to variable="DateTimeTestOperationOut" part="datePart"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="dateTimeTestOperation" xmlns:tns="http://j2ee.netbeans.org/wsdl/dateTimeTest" portType="tns:dateTimeTestPortType" variable="DateTimeTestOperationOut"/>
+    </sequence>
+</process>

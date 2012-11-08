@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/BPToJava"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/BPToJava" name="BPToJava" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ns="http://xml.netbeans.org/schema/BPToJavaSchema" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/BPToJavaSchema" xmlns:tns1="http://xml.netbeans.org/schema/BPToJavaSchema">
+            <xsd:complexType name="MsgType">
+                <xsd:sequence>
+                    <xsd:element name="intElem" type="xsd:int"></xsd:element>
+                    <xsd:element name="strElem" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="MsgElem" type="tns1:MsgType"></xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="Message">
+        <wsdl:part name="Msg" element="ns:MsgElem"/>
+    </wsdl:message>
+    <wsdl:portType name="BPToJavaEEPT">
+        <wsdl:operation name="BPToJavaEEOper">
+            <wsdl:input name="input1" message="tns:Message"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="JavaEEToBPPT">
+        <wsdl:operation name="JavaEEToBPOper">
+            <wsdl:input name="input1" message="tns:Message"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="BPToMainBPPT">
+        <wsdl:operation name="BPToMainBPPT">
+            <wsdl:input name="input1" message="tns:Message"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BPToJavaEEBinding" type="tns:BPToJavaEEPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="BPToJavaEEOper">
+            <wsdl:input name="input1">
+                <soap:body parts="Msg" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="JavaEEToBPBinding" type="tns:JavaEEToBPPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="JavaEEToBPOper">
+            <wsdl:input name="input1">
+                <soap:body parts="Msg" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="BPToMainBPBinding" type="tns:BPToMainBPPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="BPToMainBPPT">
+            <wsdl:input name="input1">
+                <soap:body parts="Msg" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="BPToJavaEEService">
+        <wsdl:port name="BPToJavaEEPort" binding="tns:BPToJavaEEBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/JavaEEToBPProj/BPToJava/BPToJavaEEPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="JavaEEToBPService">
+        <wsdl:port name="JavaEEToBPPort" binding="tns:JavaEEToBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/JavaEEToBPProj/BPToJava/JavaEEToBPPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="BPToMainBPService">
+        <wsdl:port name="BPToMainBPPort" binding="tns:BPToMainBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/InOnlyMultiBP/BPToJava/BPToMainBPPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="BPToJavaEEPartnerLinkType">
+        <plnk:role name="BPToJavaEEPTRole" portType="tns:BPToJavaEEPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="JavaEEToBPPartnerLinkType">
+        <plnk:role name="JavaEEToBPPTRole" portType="tns:JavaEEToBPPT"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="bpjavaprop" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:bpjavaprop" messageType="tns:Message" part="Msg" >
+        <vprop:query>/MsgElem/intElem</vprop:query>
+    </vprop:propertyAlias>
+    <plnk:partnerLinkType name="BPToMainBPPartnerLinkType">
+        <plnk:role name="BPToMainBPPTRole" portType="tns:BPToMainBPPT"/>
+    </plnk:partnerLinkType>
+</definitions>

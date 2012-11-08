@@ -1,0 +1,1 @@
+delete from "COMPANY"."emp2" where eno=?

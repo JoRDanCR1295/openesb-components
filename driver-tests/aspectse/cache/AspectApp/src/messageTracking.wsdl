@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/messageTracking"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/messageTracking" name="messageTracking" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:ns="http://com.sun.jbi/etl/etlengine">
+    <wsdl:import location="hello_engine.wsdl" namespace="http://com.sun.jbi/etl/etlengine"/>
+    <wsdl:types/>
+    <wsdl:portType name="messageTrackingPortType">
+        <wsdl:operation name="messageTrackingOperation">
+            <wsdl:input name="input1" message="ns:input"/>
+            <wsdl:output name="output1" message="ns:output"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="messageTrackingBinding" type="tns:messageTrackingPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="messageTrackingOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/messageTracking"/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/messageTracking"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="messageTrackingService">
+        <wsdl:port name="messageTrackingPort" binding="tns:messageTrackingBinding">
+            <soap:address location="http://localhost:18181/messageTrackingService/messageTrackingPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="messageTrackingPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="messageTrackingPortTypeRole" portType="tns:messageTrackingPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

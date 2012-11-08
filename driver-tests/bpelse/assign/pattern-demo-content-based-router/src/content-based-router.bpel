@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="content-based-router"
+    targetNamespace="http://enterprise.netbeans.org/bpel/pattern-demo-content-based-router/content-based-router"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/pattern-demo-content-based-router/content-based-router" 
+    xmlns:ns0="http://j2ee.netbeans.org/wsdl/content-based-router" 
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor" 
+    xmlns:ns1="http://xml.netbeans.org/schema/content-based-router" 
+    xmlns:ns2="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" 
+    xmlns:ns3="http://xml.netbeans.org/schema/pattern-demo-ejb-customer" 
+    xmlns:ns4="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" 
+    xmlns:ns5="http://xml.netbeans.org/schema/pattern-demo-ejb-phone">
+    <import namespace="http://j2ee.netbeans.org/wsdl/content-based-router" location="content-based-router.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" location="pattern-demo-ejb-customer.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" location="pattern-demo-ejb-phone.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="customer" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" partnerLinkType="tns:pattern-demo-ejb-customer" partnerRole="pattern-demo-ejb-customerPortTypeRole"/>
+        <partnerLink name="phone" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" partnerLinkType="tns:pattern-demo-ejb-phone" partnerRole="pattern-demo-ejb-phonePortTypeRole"/>
+        <partnerLink name="content-based-router" xmlns:tns="http://j2ee.netbeans.org/wsdl/content-based-router" partnerLinkType="tns:content-based-router" myRole="content-based-routerPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="fault" messageType="ns0:get-dataFault"/>
+        <variable name="get-phone-request" messageType="ns4:get-phoneRequest"/>
+        <variable name="get-customer-request" messageType="ns2:get-customerRequest"/>
+        <variable name="phone" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" messageType="tns:get-phoneResponse"/>
+        <variable name="customer" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" messageType="tns:get-customerResponse"/>
+        <variable name="response" messageType="ns0:get-dataResponse"/>
+        <variable name="request" messageType="ns0:get-dataRequest"/>
+    </variables>
+    <faultHandlers>
+        <catch faultVariable="customer-fault" faultMessageType="ns2:get-customerFault">
+            <sequence name="Sequence4">
+                <assign name="Assign7">
+                    <copy>
+                        <from>$customer-fault.fault/ns3:message</from>
+                        <to>$fault.fault/ns1:message</to>
+                    </copy>
+                    <copy>
+                        <from>$customer-fault.fault/ns3:code</from>
+                        <to>$fault.fault/ns1:code</to>
+                    </copy>
+                </assign>
+                <reply name="Reply2" partnerLink="content-based-router" operation="get-data" portType="ns0:content-based-routerPortType" faultName="ns0:fault1" variable="fault"/>
+            </sequence>
+        </catch>
+        <catch faultVariable="phone-fault" faultMessageType="ns4:get-phoneFault">
+            <sequence name="Sequence5">
+                <assign name="Assign8">
+                    <copy>
+                        <from>$phone-fault.fault/ns5:message</from>
+                        <to>$fault.fault/ns1:message</to>
+                    </copy>
+                    <copy>
+                        <from>$phone-fault.fault/ns5:code</from>
+                        <to>$fault.fault/ns1:code</to>
+                    </copy>
+                </assign>
+                <reply name="Reply3" partnerLink="content-based-router" operation="get-data" portType="ns0:content-based-routerPortType" faultName="ns0:fault1" variable="fault"/>
+            </sequence>
+        </catch>
+    </faultHandlers>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="content-based-router" operation="get-data" xmlns:tns="http://j2ee.netbeans.org/wsdl/content-based-router" portType="tns:content-based-routerPortType" variable="request"/>
+        <if name="If1">
+            <condition>$request.part1/ns1:customer-id</condition>
+            <sequence name="Sequence1">
+                <assign name="Assign1">
+                    <copy>
+                        <from>$request.part1/ns1:customer-id</from>
+                        <to>$get-customer-request.part1/ns3:customer-id</to>
+                    </copy>
+                </assign>
+                <invoke name="Invoke1" partnerLink="customer" operation="get-customer" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-customer" portType="tns:pattern-demo-ejb-customerPortType" outputVariable="customer" inputVariable="get-customer-request"></invoke>
+                <assign name="Assign4">
+                    <copy>
+                        <from variable="customer" part="part1"/>
+                        <to>$response.part1/ns1:customer</to>
+                    </copy>
+                </assign>
+            </sequence>
+            <elseif>
+                <condition>$request.part1/ns1:phone-id</condition>
+                <sequence name="Sequence2">
+                    <assign name="Assign2">
+                        <copy>
+                            <from>$request.part1/ns1:phone-id</from>
+                            <to>$get-phone-request.part1/ns5:phone-id</to>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke2" partnerLink="phone" operation="get-phone" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" portType="tns:pattern-demo-ejb-phonePortType" outputVariable="phone" inputVariable="get-phone-request"/>
+                    <assign name="Assign5">
+                        <copy>
+                            <from variable="phone" part="part1"/>
+                            <to>$response.part1/ns1:phone</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            </elseif>
+            <elseif>
+                <condition>$request.part1/ns1:phone-number</condition>
+                <sequence name="Sequence3">
+                    <assign name="Assign3">
+                        <copy>
+                            <from>$request.part1/ns1:phone-number</from>
+                            <to>$get-phone-request.part1/ns5:phone-number</to>
+                        </copy>
+                    </assign>
+                    <invoke name="Invoke3" partnerLink="phone" operation="get-phone" xmlns:tns="http://j2ee.netbeans.org/wsdl/pattern-demo-ejb-phone" portType="tns:pattern-demo-ejb-phonePortType" outputVariable="phone" inputVariable="get-phone-request"/>
+                    <assign name="Assign6">
+                        <copy>
+                            <from variable="phone" part="part1"/>
+                            <to>$response.part1/ns1:phone</to>
+                        </copy>
+                    </assign>
+                </sequence>
+            </elseif>
+            <else>
+                <throw name="throw" faultName="ns0:fault1"/>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="content-based-router" operation="get-data" xmlns:tns="http://j2ee.netbeans.org/wsdl/content-based-router" portType="tns:content-based-routerPortType" variable="response"/>
+    </sequence>
+</process>

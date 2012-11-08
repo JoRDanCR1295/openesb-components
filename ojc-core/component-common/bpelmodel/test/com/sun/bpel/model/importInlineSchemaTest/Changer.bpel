@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Changer"
+    targetNamespace="http://shipping.condition/Changer"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://shipping.condition/Changer" xmlns:ns1="http://shipping.condition/ShipmentResourceWrapper" xmlns:ns2="http://shipping.tracking" xmlns:ns0="http://docs.oasis-open.org/wsrf/rp-2" xmlns:ns3="http://shipping.condition/ChangerInterface">
+    <import namespace="http://shipping.condition/ShipmentResourceWrapper" location="pn/SRWrapper.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://shipping.tracking" location="pn/SR.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://shipping.condition/ChangerInterface" location="Changer.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="StartPL" partnerLinkType="ns3:ChangerInterfaceLT" myRole="Invokee"/>
+        <partnerLink name="TrackerPL" partnerLinkType="ns1:ShipmentResourceLinkType" partnerRole="ShipmentResourceRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="StartIn" messageType="ns3:startRequest"/>
+        <variable name="SetResourcePropertiesOut" messageType="ns2:SetResourcePropertiesResponse"/>
+        <variable name="ShippingCondition" messageType="ns2:SetResourcePropertiesRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="StartPL" operation="start" portType="ns3:ChangerPortType" variable="StartIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>
+                    <literal>&lt;ns1:ShipmentCondition xmlns:ns1="http://shipping.tracking/"&gt;Boo!&lt;/ns1&gt;</literal>
+                </from>
+                <to>$ShippingCondition.SetResourcePropertiesRequest/ns0:Update</to>
+            </copy>
+        </assign>
+        <forEach name="ForEach1" parallel="no" counterName="iteration">
+            <startCounterValue>0</startCounterValue>
+            <finalCounterValue>4</finalCounterValue>
+            <scope name="Scope1">                
+                <sequence name="Sequence2">
+                    <wait name="Wait1">
+                        <for>'P0Y0M0DT0H0M10S'</for>
+                    </wait>
+                    <invoke name="Invoke1" partnerLink="TrackerPL" operation="SetResourceProperties" portType="ns2:ShipmentResourcePortType" inputVariable="ShippingCondition" outputVariable="SetResourcePropertiesOut"/>
+                </sequence>
+            </scope>
+        </forEach>
+    </sequence>
+</process>

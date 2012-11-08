@@ -1,0 +1,46 @@
+<process name="GlobalAndLocalAttributes"
+         targetNamespace="http://sun.com/bpel/GlobalAndLocalAttributesWsdl"
+         xmlns:tns="http://sun.com/bpel/GlobalAndLocalAttributesWsdl"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" 
+         xmlns:ns1="http://sun.com/bpel/GlobalAndLocalAttributesWsdl/types1" 
+	 xmlns:ns2="http://sun.com/bpel/GlobalAndLocalAttributesWsdl/types2"
+         xmlns:ns3="http://sun.com/bpel/GlobalAndLocalAttributesWsdl/types3" 
+	 xmlns:ns4="http://sun.com/bpel/GlobalAndLocalAttributesWsdl/types4">	 
+
+	<import namespace="http://sun.com/bpel/GlobalAndLocalAttributesWsdl"	location="GlobalAndLocalAttributes.wsdl" 
+		importType="http://schemas.xmlsoap.org/wsdl/"/>
+
+	<partnerLinks>
+		<partnerLink name="OperationLink" partnerLinkType="tns:GlobalAndLocalAttributesPLT" myRole="server"/>
+	</partnerLinks>
+    <variables>
+        <variable name="Variable1" messageType="tns:message1"/>
+        <variable name="Variable2" messageType="tns:message2"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="OperationLink" operation="operation1" portType="tns:GlobalAndLocalAttributesPortType" variable="Variable1" createInstance="yes"/>
+        <assign>
+            <copy>
+	            <from>$Variable1.parameters/@fname</from>
+	            <to>$Variable2.parameters/@ns2:firstname</to>
+            </copy>
+            <copy>
+	            <from>$Variable1.parameters/@ns1:lname</from>
+	            <to>$Variable2.parameters/@ns2:lastname</to>
+            </copy>
+            <copy>
+	            <from>$Variable1.parameters/@age</from>
+	            <to>$Variable2.parameters/@age</to>
+            </copy>            
+            <copy>
+	            <from>$Variable1.parameters/@ns1:sex</from>
+	            <to>$Variable2.parameters/@sex</to>
+            </copy>                        
+            <copy>
+	            <from>$Variable1.parameters/@ns3:ssn</from>
+	            <to>$Variable2.parameters/@ns4:socialSecurityNumber</to>
+            </copy>                                    
+        </assign>
+        <reply name="Reply1" partnerLink="OperationLink" operation="operation1" portType="tns:GlobalAndLocalAttributesPortType" variable="Variable2"/>
+    </sequence>
+</process>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project basedir=".">
+
+  <!-- Starts OpenESB and waits 30 sec for executing startup -->
+  <target name="startOpenESB">
+    <exec executable="${openesb.home}/bin/asadmin" spawn="true" vmlauncher="false">
+      <arg line="start-domain domain1"/>
+    </exec>
+    <sleep seconds="30"/>
+  </target>
+  
+  <!-- Installs the binding component in OpenESB, waits 30 sec and 
+       starts the binding component -->
+  <target name="installBCOpenESB">
+  	<echo message="deploying ${jbi.component.path}"/>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.install.file='${jbi.component.path}'  install-component"/>
+    </exec>
+    <sleep seconds="15"/>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.component.name=${jbi.component.name}  start-component"/>
+    </exec>
+  </target>
+  
+  <!-- Deploys the service assembly in OpenESB, waits 30 sec and starts 
+       the sa correspondent to the 'sa' argument. 
+       Called by  deploySAOpenESB, do not invoke directly.  -->
+  <target name="deploySA">
+  	<echo message="deploying ${jbi.service.assembly.path}"/>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.deploy.file='${jbi.service.assembly.path}' deploy-service-assembly"/>
+    </exec>
+    <sleep seconds="30"/>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.service.assembly.name=${jbi.service.assembly.name} start-service-assembly"/>
+    </exec>
+  </target>
+  
+  <!-- Undeploys in OpenESB the service assembly  correspondent 
+       to the 'sa' argument. 
+       Called by  undeploySAOpenESB, do not invoke directly. -->
+  <target name="undeploySA">
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.service.assembly.name=${jbi.service.assembly.name} stop-service-assembly"/>
+    </exec>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.service.assembly.name=${jbi.service.assembly.name} shut-down-service-assembly"/>
+    </exec>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.service.assembly.name=${jbi.service.assembly.name} undeploy-service-assembly"/>
+    </exec>
+  </target>
+  
+  <!-- Uninstalls the binding component in OpenESB -->
+  <target name="uninstallBCOpenESB">
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.component.name=${jbi.component.name}  stop-component"/>
+    </exec>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.component.name=${jbi.component.name}  shut-down-component"/>
+    </exec>
+    <exec executable="${openesb.home}/bin/asant" spawn="false" vmlauncher="false">
+        <arg line="-f ${openesb.home}/jbi/bin/jbi_admin.xml -Djbi.component.name=${jbi.component.name}  uninstall-component"/>
+    </exec>
+  </target>
+  
+  <!-- Stops OpenESB -->
+  <target name="stopOpenESB">
+    <exec executable="${openesb.home}/bin/asadmin" vmlauncher="false">
+      <arg line="stop-domain domain1"/>
+    </exec>
+  </target>
+   	  	
+</project>       

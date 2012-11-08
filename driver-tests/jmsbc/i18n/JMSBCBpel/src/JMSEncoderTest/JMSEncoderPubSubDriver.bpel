@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="JMSEncoderPubSubDriver" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/JMSEncoderPubSubDriver"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/JMSEncoderPubSubDriver" xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSubDriver" xmlns:ns2="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSub">
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSubDriver" location="JMSEncoderPubSubDriver.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/JMSEncoderPubSub" location="JMSEncoderPubSub.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink2" partnerLinkType="ns2:JMSEncoderPubSubPartner" partnerRole="JMSEncoderPubSubPortTypeRole"/>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:JMSEncoderPubSubDriverPartner" myRole="JMSEncoderPubSubDriverPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="JMSEncoderPubSubDriverOperationOut1" messageType="ns1:JMSEncoderPubSubDriverOperationReply"/>
+        <variable name="JMSEncoderOutput" messageType="ns2:JMSEncoderPubSubOperationReply"/>
+        <variable name="JMSEncoderInput" messageType="ns2:JMSEncoderPubSubOperationRequest"/>
+        <variable name="JMSEncoderPubSubDriverOperationIn1" messageType="ns1:JMSEncoderPubSubDriverOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="JMSEncoderPubSubDriverOperation" portType="ns1:JMSEncoderPubSubDriverPortType" variable="JMSEncoderPubSubDriverOperationIn1"/>
+        <assign name="Assign1">
+            <copy>
+                <from variable="JMSEncoderPubSubDriverOperationIn1" part="part2"/>
+                <to variable="JMSEncoderInput" part="part2"/>
+            </copy>
+            <copy>
+                <from>
+                    <literal>JavaMan</literal>
+                </from>
+                <to>$JMSEncoderInput.part1/noun</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal> say hello to </literal>
+                </from>
+                <to>$JMSEncoderInput.part1/verb</to>
+            </copy>
+            <copy>
+                <from variable="JMSEncoderPubSubDriverOperationIn1" part="part1"/>
+                <to>$JMSEncoderInput.part1/subj</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="PartnerLink2" operation="JMSEncoderPubSubOperation" portType="ns2:JMSEncoderPubSubPortType" inputVariable="JMSEncoderInput" outputVariable="JMSEncoderOutput"/>
+        <assign name="Assign2">
+            <copy>
+                <from>concat($JMSEncoderOutput.part1/subj, $JMSEncoderOutput.part1/verb, $JMSEncoderOutput.part1/noun)</from>
+                <to part="part1" variable="JMSEncoderPubSubDriverOperationOut1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="JMSEncoderPubSubDriverOperation" portType="ns1:JMSEncoderPubSubDriverPortType" variable="JMSEncoderPubSubDriverOperationOut1"/>
+    </sequence>
+   
+</process>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ComplaintProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ComplaintBpelModule/ComplaintProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ComplaintBpelModule/ComplaintProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ComplaintProcessWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL" xmlns:ns0="http:/sample.wlmse/schema/Complaints">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ComplaintProcessWSDL" location="ComplaintProcessWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/ComplaintTaskWSDL" location="ComplaintTaskWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ComplaintPartnerLink" partnerLinkType="ns2:ComplaintTaskWSDLRIT301" partnerRole="ComplaintTaskWSDLPortTypeRole"/>
+        <partnerLink name="ComplaintServerPartnerLink" partnerLinkType="ns1:ComplaintProcessWSDLRIT741" myRole="ComplaintProcessWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReplyVar" messageType="ns1:ComplaintProcessWSDLOperationReply"/>
+        <variable name="Severity" type="xsd:string"/>
+        <variable name="ComplaintPartnerOut" messageType="ns2:ComplaintTaskOperationReply"/>
+        <variable name="ComplaintPartnerIn" messageType="ns2:ComplaintTaskOperationRequest"/>
+        <variable name="ComplaintRequestIn" messageType="ns1:ComplaintProcessWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="ComplaintServerPartnerLink" operation="ComplaintProcessWSDLOperation" portType="ns1:ComplaintProcessWSDLPortType" variable="ComplaintRequestIn"/>
+        <assign name="Assign1">
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:plaintiff</from>
+                <to>$ComplaintPartnerIn.part1/ns0:complaintInput/ns0:plaintiff</to>
+            </copy>
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:incidentDate</from>
+                <to>$ComplaintPartnerIn.part1/ns0:complaintInput/ns0:incidentDate</to>
+            </copy>
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:incidentShortDesc</from>
+                <to>$ComplaintPartnerIn.part1/ns0:complaintInput/ns0:incidentShortDesc</to>
+            </copy>
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:incidentDetails</from>
+                <to>$ComplaintPartnerIn.part1/ns0:complaintInput/ns0:incidentDetails</to>
+            </copy>
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:severity</from>
+                <to>$ComplaintPartnerIn.part1/ns0:complaintInput/ns0:severity</to>
+            </copy>
+        </assign>
+        <assign name="Assign2">
+            <copy>
+                <from>$ComplaintRequestIn.part1/ns0:severity</from>
+                <to variable="Severity"/>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition> (  ( 'Life_threatening' = $Severity )  or  ( 'Severe' = $Severity )  ) </condition>
+            <assign name="Assign3">
+                <copy>
+                    <from>
+                        <literal>Manager</literal>
+                    </from>
+                    <to>$ComplaintPartnerIn.part1/ns0:assignee-group</to>
+                </copy>
+                <copy>
+                    <from>
+                        <literal>High</literal>
+                    </from>
+                    <to>$ComplaintPartnerIn.part1/ns0:priority</to>
+                </copy>
+            </assign>
+            <else>
+                <assign name="Assign4">
+                    <copy>
+                        <from>
+                            <literal>Medium</literal>
+                        </from>
+                        <to>$ComplaintPartnerIn.part1/ns0:priority</to>
+                    </copy>
+                    <copy>
+                        <from>
+                            <literal>CustomerServiceRep</literal>
+                        </from>
+                        <to>$ComplaintPartnerIn.part1/ns0:assignee-group</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <invoke name="Invoke1" partnerLink="ComplaintPartnerLink" operation="ComplaintTaskOperation" portType="ns2:ComplaintTaskWSDLPortType" inputVariable="ComplaintPartnerIn" outputVariable="ComplaintPartnerOut"/>
+        <assign name="Assign5">
+            <copy>
+                <from variable="ComplaintPartnerOut" part="part1"/>
+                <to variable="ReplyVar" part="part1"/>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="ComplaintServerPartnerLink" operation="ComplaintProcessWSDLOperation" portType="ns1:ComplaintProcessWSDLPortType" variable="ReplyVar"/>
+    </sequence>
+</process>

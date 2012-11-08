@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="SoapInMQPut" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/SoapInMQPut"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SoapInMQPut" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapIn" xmlns:ns2="http://j2ee.netbeans.org/wsdl/MQPutRecv" xmlns:ns0="http://xml.netbeans.org/schema/ExternalOrder" xmlns:ns3="http://xml.netbeans.org/schema/InterOrderXMLSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/SoapIn" location="SoapIn.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="http://j2ee.netbeans.org/wsdl/MQPutRecv" location="MQPutRecv.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLinkSoapInOut" partnerLinkType="ns1:partnerlinktypeSopaInOut" myRole="partnerlinktyperoleSoapInOut"/>
+      <partnerLink name="PartnerLink1MqPut" partnerLinkType="ns2:partnerlinktype1MqPut" partnerRole="partnerlinktyperole1MqPut"/>
+   </partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="SoapInOutOperationOut" messageType="ns1:messageSoapOutIntOrder"/>
+      <bpws:variable name="MQPutOperationIn" messageType="ns2:message1IntOrder"/>
+      <bpws:variable name="SoapInOutOperationIn" messageType="ns1:messageSoapInExtOrder"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkSoapInOut" operation="SoapInOutOperation" portType="ns1:SoapInPortType" variable="SoapInOutOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat($SoapInOutOperationIn.partXmlExtOrdrTextMsgBody/ns0:OrderInitiator, '    ', $SoapInOutOperationIn.partXmlExtOrdrTextMsgBody/ns0:OrderDescription)</bpws:from>
+            <bpws:to>$MQPutOperationIn.part1IntOrder/ns3:OrinigalExternalOrder</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>fixed</bpws:literal>
+            </bpws:from>
+            <bpws:to>$MQPutOperationIn.part1IntOrder/ns3:OrderResolution</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>msgid</bpws:literal>
+            </bpws:from>
+            <bpws:to part="part1MsgId" variable="MQPutOperationIn"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>corlId</bpws:literal>
+            </bpws:from>
+            <bpws:to part="part1CorlId" variable="MQPutOperationIn"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink1MqPut" operation="MQPutOperation" portType="ns2:MQPutPortType" inputVariable="MQPutOperationIn"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>concat($SoapInOutOperationIn.partXmlExtOrdrTextMsgBody/ns0:OrderInitiator, $SoapInOutOperationIn.partXmlExtOrdrTextMsgBody/ns0:OrderDescription, '')</bpws:from>
+            <bpws:to>$SoapInOutOperationOut.partXmlIntOrdrTextMsgBody2/ns3:OrinigalExternalOrder</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>
+               <bpws:literal>fixed:</bpws:literal>
+            </bpws:from>
+            <bpws:to>$SoapInOutOperationOut.partXmlIntOrdrTextMsgBody2/ns3:OrderResolution</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLinkSoapInOut" operation="SoapInOutOperation" portType="ns1:SoapInPortType" variable="SoapInOutOperationOut"/>
+   </sequence>
+   
+</process>

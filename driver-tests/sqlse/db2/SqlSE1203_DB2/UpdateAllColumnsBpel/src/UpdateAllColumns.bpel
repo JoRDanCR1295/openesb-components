@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="UpdateAllColumns"
+    targetNamespace="http://enterprise.netbeans.org/bpel/UpdateAllColumns"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/UpdateAllColumns" xmlns:ns1="http://j2ee.netbeans.org/wsdl/SoapWSDL" xmlns:ns2="http://com.sun.jbi/sqlse/sqlseengine">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/SoapWSDL" location="SoapWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://com.sun.jbi/sqlse/sqlseengine" location="UpdateAllColumnsSql.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="SqlPartnerLink" partnerLinkType="ns2:UpdateAllColumnsSql_sqlsePartnerLinkType" partnerRole="UpdateAllColumnsSql_myrole"/>
+        <bpws:partnerLink name="SoapPartnerLink" partnerLinkType="ns1:SoapWSDLPartner" myRole="SoapWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="UpdateAllColumnsOut" messageType="ns2:UpdateAllColumnsResponse"/>
+        <bpws:variable name="UpdateAllColumnsIn" messageType="ns2:UpdateAllColumnsRequest"/>
+        <bpws:variable name="SoapWSDLOperationOut" messageType="ns1:SoapWSDLOperationReply"/>
+        <bpws:variable name="SoapWSDLOperationIn" messageType="ns1:SoapWSDLOperationRequest"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="SoapWSDLOperationIn" part="part1"/>
+                <bpws:to variable="UpdateAllColumnsIn" part="UpdateAllColumnsRequestPart"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="SqlPartnerLink" operation="UpdateAllColumns" portType="ns2:UpdateAllColumnsSql_sqlsePortType" inputVariable="UpdateAllColumnsIn" outputVariable="UpdateAllColumnsOut"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="UpdateAllColumnsOut" part="UpdateAllColumnsResponsePart"/>
+                <bpws:to variable="SoapWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="SoapPartnerLink" operation="SoapWSDLOperation" portType="ns1:SoapWSDLPortType" variable="SoapWSDLOperationOut"/>
+    </sequence>
+</process>

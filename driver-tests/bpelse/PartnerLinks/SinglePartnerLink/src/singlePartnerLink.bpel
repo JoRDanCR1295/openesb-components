@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="singlePartnerLink"
+         targetNamespace="http://www.seebeyond.com/eInsight/singlePartnerLink"
+         xmlns:tns="http://www.seebeyond.com/eInsight/singlePartnerLink"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:singlePartnerLinkTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns1="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties">
+    <import namespace="urn:singlePartnerLinkTargetNamespace"
+            location="singlePartnerLink.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://enterprise.netbeans.org/bpel/WizardCorrelationProperties" location="WizardCorrelationProperties.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="plink"
+                     partnerLinkType="ns0:singlePartnerLinkServiceLinkType"
+                     myRole="singlePartnerLinkServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="singlePartnerLinkOperation_Output"
+                  messageType="ns0:singlePartnerLinkMessage"></variable>
+        <variable name="singlePartnerLinkOperation_Input"
+                  messageType="ns0:singlePartnerLinkMessage"></variable>
+        <variable name="singlePartnerLinkOperation1_Output"
+                  messageType="ns0:singlePartnerLinkMessage1"></variable>
+        <variable name="singlePartnerLinkOperation1_Input"
+                  messageType="ns0:singlePartnerLinkMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="wzrd_set_singlePartnerLinkOperation_singlePartnerLinkOperation1" properties="ns1:wzrd_prop_id_id"/>
+    </correlationSets>
+    <sequence>
+        <receive name="singlePartnerLinkOperation"
+                 partnerLink="plink"
+                 portType="ns0:singlePartnerLinkPortType"
+                 operation="singlePartnerLinkOperation"
+                 variable="singlePartnerLinkOperation_Output"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="wzrd_set_singlePartnerLinkOperation_singlePartnerLinkOperation1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$singlePartnerLinkOperation_Output.singlePartnerLinkPart/string</from>
+                <to>$singlePartnerLinkOperation_Input.singlePartnerLinkPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink"
+               portType="ns0:singlePartnerLinkPortType"
+               operation="singlePartnerLinkOperation"
+               variable="singlePartnerLinkOperation_Input"></reply>
+        <receive name="singlePartnerLinkOperation1"
+                 partnerLink="plink"
+                 portType="ns0:singlePartnerLinkPortType"
+                 operation="singlePartnerLinkOperation1"
+                 variable="singlePartnerLinkOperation1_Output">
+            <correlations>
+                <correlation set="wzrd_set_singlePartnerLinkOperation_singlePartnerLinkOperation1" initiate="no"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>concat($singlePartnerLinkOperation_Input.singlePartnerLinkPart/string, $singlePartnerLinkOperation1_Output.singlePartnerLinkPart1/string)</from>
+                <to>$singlePartnerLinkOperation1_Input.singlePartnerLinkPart1/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink"
+               portType="ns0:singlePartnerLinkPortType"
+               operation="singlePartnerLinkOperation1"
+               variable="singlePartnerLinkOperation1_Input"></reply>
+    </sequence>
+</process>

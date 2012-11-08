@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Header: /cvs/open-jbi-components/driver-tests/bpelse/blueprints/bp2/BluePrint2/src/InventoryService.wsdl,v 1.11 2010/02/04 06:06:48 fkieviet Exp $ -->
+<definitions targetNamespace="http://manufacturing.org/wsdl/inventory/bp2"
+             name="InventoryService"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="http://manufacturing.org/wsdl/inventory/bp2"
+             xmlns:inv="http://manufacturing.org/xsd/inventory"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:po="http://manufacturing.org/xsd/purchase"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <xsd:schema targetNamespace="http://manufacturing.org/wsdl/inventory/bp2">
+            <xsd:import schemaLocation="inventory.xsd" namespace="http://manufacturing.org/xsd/inventory"/>
+            <xsd:import schemaLocation="purchaseOrder.xsd" namespace="http://manufacturing.org/xsd/purchase"/>
+        </xsd:schema>
+    </types>
+    <message name="InventoryMessage">
+        <part name="inventoryPart"
+              element="inv:inventory"></part>
+    </message>
+    <message name="POMessage">
+        <part name="purchaseOrder"
+              element="po:purchaseOrder"></part>
+    </message>
+    <portType name="inventoryPortType">
+        <operation name="inventoryService">
+            <input name="purchaseOrder"
+                   message="tns:POMessage"></input>
+        </operation>
+    </portType>
+    <portType name="inventoryServiceCallbackPortType">
+        <operation name="inventoryServiceResponse">
+            <input name="inventoryResponse"
+                   message="tns:InventoryMessage"></input>
+        </operation>
+    </portType>
+    <binding name="inventoryBinding"
+             type="tns:inventoryPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="inventoryService">
+            <input name="purchaseOrder">
+                <soap:body parts="purchaseOrder"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="inventoryCallbackBinding"
+             type="tns:inventoryServiceCallbackPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="inventoryServiceResponse">
+            <input name="inventoryResponse">
+                <soap:body parts="inventoryPart" use="literal"/>
+            </input>
+        </operation>
+    </binding>    
+    <service name="inventoryCallbackService">
+        <port name="inventoryCallbackServicePort"
+              binding="tns:inventoryCallbackBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wsdl/inventory/inventoryCallbackServiceLocation/bp2"/>                  
+        </port>
+    </service>
+    <service name="inventoryService">
+        <port name="inventoryServicePort"
+              binding="tns:inventoryBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/wsdl/inventory/ServiceLocation/bp2"/>
+        </port>
+    </service>
+    
+    <vprop:property name="orderID"
+                   type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:orderID"
+                        messageType="tns:POMessage"
+                        part="purchaseOrder">
+        <vprop:query>/purchaseOrder/orderId</vprop:query>                        
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:orderID"
+                        messageType="tns:InventoryMessage"
+                        part="inventoryPart">
+        <vprop:query>/inventory/orderId</vprop:query>                            
+    </vprop:propertyAlias>    
+    <plink:partnerLinkType name="inventoryRequestingLT">
+        <plink:role portType="tns:inventoryPortType"
+                    name="inventoryService"></plink:role>
+        <plink:role portType="tns:inventoryServiceCallbackPortType"
+                    name="inventoryServiceRequester"></plink:role>
+    </plink:partnerLinkType>    
+</definitions>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="test-consumer-fault" resourceRoot="" soapui-version="2.5 beta2" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="ProjectSettings@projectRoot">D:\workspace\jbi4corba\proj\corba-bc\integration-test\test-consumer-fault\consumer-fault-integration-test\src\test\etc\soapui</con:setting></con:settings><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="EchoFaultCorbaBinding" type="wsdl" bindingName="{urn:jbi4corba/test-consumer-fault}EchoFaultCorbaBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8192/Service/test-consumer-fault/?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8192/Service/test-consumer-fault/?wsdl"><con:part><con:url>http://localhost:8192/Service/test-consumer-fault/?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="EchoFault" targetNamespace="urn:jbi4corba/test-consumer-fault" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:jbi4corba/test-consumer-fault" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://test_consumer_fault.jbi4corba/" xmlns:tns="http://test_consumer_fault.jbi4corba/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="echoSimpleException">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="reason" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="echoExceptionSimple">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="echoSimpleException" type="tns:echoSimpleException"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="echoStruct">
+        <xs:sequence>
+          <xs:element name="fieldBoolean" type="xs:boolean"/>
+          <xs:element name="fieldChar" type="xs:int"/>
+          <xs:element name="fieldLong" type="xs:int"/>
+          <xs:element minOccurs="0" name="fieldString" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="echoComplexException">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="reason" type="tns:echoStruct"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="echoExceptionComplex">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="echoComplexException" type="tns:echoComplexException"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jbi4corba/test-consumer-fault" xmlns:ns0="http://test_consumer_fault.jbi4corba/">
+      <xsd:import namespace="http://test_consumer_fault.jbi4corba/"/>
+      <xsd:element name="EchoExceptionSimpleEx" type="tns:EchoExceptionSimpleEx"/>
+      <xsd:complexType name="EchoExceptionSimpleEx">
+        <xsd:sequence>
+          <xsd:element name="value" nillable="true" type="ns0:echoExceptionSimple"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="EchoExceptionComplexEx" type="tns:EchoExceptionComplexEx"/>
+      <xsd:complexType name="EchoExceptionComplexEx">
+        <xsd:sequence>
+          <xsd:element name="value" nillable="true" type="ns0:echoExceptionComplex"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="echo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="arg0" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="echoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="EchoExceptionSimpleEx">
+    <wsdl:part name="EchoExceptionSimpleEx" element="tns:EchoExceptionSimpleEx"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoExceptionComplexEx">
+    <wsdl:part name="EchoExceptionComplexEx" element="tns:EchoExceptionComplexEx"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part name="parameters" element="tns:echoResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo">
+    <wsdl:part name="parameters" element="tns:echo"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="EchoFaultPortType">
+    <wsdl:operation name="echo">
+      <wsdl:input name="echo" message="tns:echo"></wsdl:input>
+      <wsdl:output name="echoResponse" message="tns:echoResponse"></wsdl:output>
+      <wsdl:fault name="EchoExceptionSimpleEx" message="tns:EchoExceptionSimpleEx"></wsdl:fault>
+      <wsdl:fault name="EchoExceptionComplexEx" message="tns:EchoExceptionComplexEx"></wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="EchoFaultCorbaBinding" type="tns:EchoFaultPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="echo">
+      <soap:operation/>
+      <wsdl:input name="echo">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="EchoExceptionSimpleEx">
+        <soap:fault name="EchoExceptionSimpleEx" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="EchoExceptionComplexEx">
+        <soap:fault name="EchoExceptionComplexEx" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="EchoFault">
+    <wsdl:port name="EchoFaultCorbaPort" binding="tns:EchoFaultCorbaBinding">
+      <soap:address location="http://AGUGULICA.ditech.ro:8192/Service/test-consumer-fault/"/>
+    </wsdl:port>
+  </wsdl:service>
+  <plnk:partnerLinkType name="EchoFault">
+    <plnk:role name="EchoFaultPortTypeRole" portType="tns:EchoFaultPortType"/>
+  </plnk:partnerLinkType>
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8192/Service/test-consumer-fault/</con:endpoint></con:endpoints><con:operation isOneWay="false" action="" name="echo" bindingOperationName="echo" type="Request-Response" outputName="echoResponse" inputName="echo" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8192/Service/test-consumer-fault/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="urn:jbi4corba/test-consumer-fault">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <test:echo>
+         <!--Optional:-->
+         <test:arg0>gero et</test:arg0>
+      </test:echo>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:jbi4corba/test-consumer-fault/EchoFaultPortType/echo"/></con:call></con:operation></con:interface><con:testSuite name="EchoFaultCorbaBinding TestSuite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="EchoFaultCorbaBinding TestSuite" searchProperties="true"><con:settings/><con:testStep type="request" name="echo"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EchoFaultCorbaBinding</con:interface><con:operation>echo</con:operation><con:request name="echo"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8192/Service/test-consumer-fault/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="urn:jbi4corba/test-consumer-fault">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <test:echo>
+         <!--Optional:-->
+         <test:arg0>gero et</test:arg0>
+      </test:echo>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig action="urn:jbi4corba/test-consumer-fault/EchoFaultPortType/echo" mustUnderstand="NONE" version="200508"/></con:request></con:config></con:testStep><con:testStep type="request" name="testSimple"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>EchoFaultCorbaBinding</con:interface><con:operation>echo</con:operation><con:request name="testSimple"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8192/Service/test-consumer-fault/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="urn:jbi4corba/test-consumer-fault">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <test:echo>
+         <!--Optional:-->
+         <test:arg0>SIMPLE</test:arg0>
+      </test:echo>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Schema Compliance"><con:configuration/></con:assertion><con:assertion type="Not SOAP Fault Assertion"/><con:assertion type="Simple Contains"><con:configuration><token>SIMPLE</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Simple Contains"><con:configuration><token>EchoExceptionSimple</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/></con:soapui-project>

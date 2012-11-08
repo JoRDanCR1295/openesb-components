@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="HelloworldWithAttachment"
+    xmlns:types="http://example.org/mime/data"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="http://example.org/mime"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    targetNamespace="http://example.org/mime">
+
+	<wsdl:types>
+		<schema 
+			xmlns="http://www.w3.org/2001/XMLSchema" 
+			targetNamespace="http://example.org/mime/data"
+            xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+			elementFormDefault="qualified"
+            xmlns:ref="http://ws-i.org/profiles/basic/1.1/xsd">
+        <import namespace="http://ws-i.org/profiles/basic/1.1/xsd" schemaLocation="http://ws-i.org/profiles/basic/1.1/swaref.xsd"/>
+      
+        <element name="body" type="string"/>
+		</schema>
+
+	</wsdl:types>
+
+    <wsdl:message name="echoDataIn">
+        <wsdl:part name="body" element="types:body"/>
+        <wsdl:part name="picture" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+    <wsdl:message name="echoDataOut">
+        <wsdl:part name="replyBody" element="types:body"/>
+        <wsdl:part name="image" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+	<wsdl:portType name="Hello">
+        <!-- wsdl mime test with enableMTOMContent disabled(default) -->
+        <wsdl:operation name="echoData">
+			<wsdl:input message="tns:echoDataIn"/>
+			<wsdl:output message="tns:echoDataOut"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="HelloBinding" type="tns:Hello">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="echoData">
+			<soap:operation soapAction=""/>
+	    <wsdl:input>
+          <mime:multipartRelated>
+                    <mime:part> 
+                      <soap:body parts="body" use="literal"/>
+                  </mime:part>
+                    <mime:part>
+                      <mime:content part="picture" type="image/jpeg"/>
+                    </mime:part>
+                </mime:multipartRelated> 
+			</wsdl:input>
+			<wsdl:output>
+                <mime:multipartRelated>
+                    <mime:part> 
+                      <soap:body parts="replyBody" use="literal"/>
+                  </mime:part>
+                  <mime:part>
+                      <mime:content part="image" type="image/jpeg"/>
+                    </mime:part>
+                </mime:multipartRelated> 
+			</wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="HelloService">
+  		<wsdl:port name="HelloPort" binding="tns:HelloBinding">
+    			<soap:address location="http://localhost:${HttpDefaultPort}/hellowithAttachment"/>
+  		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>	

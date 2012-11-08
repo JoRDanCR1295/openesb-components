@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Reply_EvntHandler_InitNo_Parent_BPEL"
+         targetNamespace="Reply_EvntHandler_InitNo_Parent_BPEL_TNS"
+         xmlns:tns="Reply_EvntHandler_InitNo_Parent_BPEL_TNS"
+         xmlns:parentWSDLns="Reply_EvntHandler_InitNo_Parent_WSDL_TNS"                               
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="Reply_EvntHandler_InitNo_Parent_WSDL_TNS"
+            location="Parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="ParentServiceLink"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="ParentServiceLink1"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MyRole_ParentOperation_Output"
+                  messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="MyRole_ParentOperation_Input"
+                  messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="ParentOperation1_Output"
+                  messageType="parentWSDLns:ParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet"
+                        properties="parentWSDLns:property"/>
+    </correlationSets>
+    
+    <sequence>
+        <receive name="MyRole.ParentOperation.Receive"
+                 partnerLink="ParentServiceLink"
+                 portType="parentWSDLns:ParentPortType"
+                 operation="ParentOperation"
+                 variable="MyRole_ParentOperation_Input"
+                 createInstance="yes">
+        </receive>
+        <assign  name="Assign1">                    
+            <copy>
+                <from>concat('Main Process Branch Execution :', $MyRole_ParentOperation_Input.ParentPart/string)</from>
+                <to>$MyRole_ParentOperation_Input.ParentPart/string</to>
+            </copy>
+        </assign>  
+        <assign  name="Assign2">                    
+            <copy>
+                <from>$MyRole_ParentOperation_Input.ParentPart</from>
+                <to>$MyRole_ParentOperation_Output.ParentPart</to>
+            </copy>
+        </assign>                
+        <reply name="MyRole.ParentOperation.Reply"
+               partnerLink="ParentServiceLink"
+               portType="parentWSDLns:ParentPortType"
+               operation="ParentOperation"
+               variable="MyRole_ParentOperation_Output">
+            <correlations>
+                <correlation set="cSet" initiate="yes"/>
+            </correlations>
+        </reply>
+        <scope name="Scope1">
+            <eventHandlers>
+                <onEvent partnerLink="ParentServiceLink1" 
+                         portType="parentWSDLns:ParentPortType1"
+                         operation="ParentOperation1" 
+                         messageType="parentWSDLns:ParentMessage1" 
+                         variable="OnEventVariable">
+                    <correlations>
+                        <correlation set="cSet" initiate="no"/>
+                    </correlations>
+                    
+                    <scope name="onEvent1Scope">            		
+                        <sequence>
+                            <assign  name="Assign3">                    
+                                <copy>
+                                    <from>concat('OnEvent Branch Execution :', $OnEventVariable.ParentPart/string)</from>
+                                    <to>$OnEventVariable.ParentPart/string</to>
+                                </copy>
+                            </assign>
+                            <wait  name="Wait2">
+                                <for>'P0Y0DT0H0M1S'</for>
+                            </wait>
+                            <reply name="MyRole.OnEventonProcess1.Reply"
+                                   partnerLink="ParentServiceLink1"
+                                   portType="parentWSDLns:ParentPortType1"
+                                   operation="ParentOperation1"
+                                   variable="OnEventVariable"></reply>
+                        </sequence>
+                    </scope>
+                </onEvent>
+            </eventHandlers>
+            <sequence name="Sequence1">
+                
+                <wait name="Wait1">
+                    <for>'P0Y0M0DT0H0M5S'</for>
+                </wait>
+                
+            </sequence>
+        </scope>
+    </sequence>
+</process>

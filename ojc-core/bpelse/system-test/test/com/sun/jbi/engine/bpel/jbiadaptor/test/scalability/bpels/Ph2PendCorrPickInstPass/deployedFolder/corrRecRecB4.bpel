@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrRecRecB4"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrRecRecB4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrRecRecTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:corrRecRecTargetNamespace"
+            location="corrRecRecB4.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="InvokeClientPartnerLink" partnerLinkType="ns0:corrInvokePartnerlinktype" partnerRole="corrInvokeClientRole"/>
+        <partnerLink name="CorrRec2PartnerLink" partnerLinkType="ns0:corrRecRecServiceLinkType2" myRole="corrRecRecServerRole2"/>
+        <partnerLink name="CorrRec1PartnerLink" partnerLinkType="ns0:corrRecRecServiceLinkType1" myRole="corrRecRecServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="corrRecRecOperation_Input1"
+                  messageType="ns0:corrRecRecMessage"></variable>
+        <variable name="corrRecRecOperation_Input2"
+                  messageType="ns0:corrRecRecMessage"></variable>
+        <variable name="corrInvokeOperation_Output"
+                  messageType="ns0:corrRecRecMessage"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corSet1"
+                        properties="ns0:propertyName1 "/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="CorrRec1PartnerLink" operation="corrRecRecOperation1" portType="ns0:corrRecRecPortType1" variable="corrRecRecOperation_Input1">
+            <correlations>
+                <correlation set="corSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <bpws:pick name="Pick2">
+            <bpws:onMessage partnerLink="CorrRec2PartnerLink" operation="corrRecRecOperation2" portType="ns0:corrRecRecPortType2" variable="corrRecRecOperation_Input2">
+                <bpws:correlations>
+                    <bpws:correlation set="corSet1" initiate="no"/>
+                </bpws:correlations>
+                <assign name="Assign1">
+	            	<copy>
+	                	<from>'On Event Branch'</from>
+	                	<to>$corrInvokeOperation_Output.corrRecRecPart/ns0:string</to>
+	            	</copy>
+        		</assign>
+            </bpws:onMessage>
+            <bpws:onAlarm>
+                <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+                <assign name="Assign2">
+	            	<copy>
+	                	<from>'On Alarm Branch'</from>
+	                	<to>$corrInvokeOperation_Output.corrRecRecPart/ns0:string</to>
+	            	</copy>
+        		</assign>
+            </bpws:onAlarm>
+        </bpws:pick>
+        <invoke name="Invoke1" partnerLink="InvokeClientPartnerLink" portType="ns0:corrInvokePortType"
+                operation="corrInvokeB4Operation" inputVariable="corrInvokeOperation_Output"/>
+    </sequence>
+</process>

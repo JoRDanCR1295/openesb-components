@@ -1,0 +1,1 @@
+the datafile need to be large to test the largeblob inserts. The test case ignores everything below 10k.

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process
+    name="ActivateBilling_with_ICMSMessage"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ActivateBilling_Simple/ActivateBilling_with_ICMSMessage"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ActivateBilling_Simple/ActivateBilling_with_ICMSMessage" 
+    xmlns:ns1="http://www.telecom.co.nz/EAI/V1_3_0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <import namespace="http://www.telecom.co.nz/EAI/V1_3_0" location="BPEL_EAI_V1_3_0_new1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="ActivateBilling" partnerLinkType="ns1:activateBilling" myRole="activateBillingProvider"/>
+    </partnerLinks>
+    <variables>
+        <variable name="icmsMessage" type="ns1:ICMSMessage"/>
+        <variable name="activateBillingSoapIn" messageType="ns1:activateBillingSoapIn"/>
+        <variable name="activateBillingSoapOut" messageType="ns1:activateBillingSoapOut"/>
+    </variables>
+    <sequence>
+        <receive name="receiveActivateBillingRequest" createInstance="yes" partnerLink="ActivateBilling" operation="activateBilling" portType="ns1:V1_3_0ActivateBillingPortType" variable="activateBillingSoapIn"/>
+        <assign name="Populate_ProviderMessage_Element">
+            <copy>
+                <from>
+                    <literal>172619029</literal>
+                </from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:customerBillingOrder/ns1:customerAccounts/ns1:customerAccount[1]/ns1:customerAccountKey/ns1:primaryKey</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>ICMS0028</literal>
+                </from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:providerMessageId</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>"'Invalid Billing Flag"</literal>
+                </from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:description</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>ICMS</literal>
+                </from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:system</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>BUSINESS</literal>
+                </from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:type</to>
+            </copy>
+        </assign>
+        <assign name="ICMSMessage_Init">
+            <copy>
+                <from>
+                    <literal>OM10</literal>
+                </from>
+                <to>$icmsMessage/ns1:id</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>Invalid Billing Flag in ICMS</literal>
+                </from>
+                <to>$icmsMessage/ns1:msg</to>
+            </copy>
+            <copy>
+                <from>
+                    <literal>System</literal>
+                </from>
+                <to>$icmsMessage/ns1:sev</to>
+            </copy>
+        </assign>
+        <assign name="insert_ICMSMessage_into_response">
+            <copy>
+                <from variable="icmsMessage"/>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]</to>
+            </copy>
+            <copy>
+                <from><literal>ns1:ICMSMessage</literal></from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]/@xsi:type</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition> ( $activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]/ns1:id = 'OM10' ) </condition>
+            <assign name="Assign1">
+                <copy>
+                    <from>
+                        <literal>OM11</literal>
+                    </from>
+                    <to>$icmsMessage/ns1:id</to>
+                </copy>
+                <copy>
+                    <from variable="icmsMessage"/>
+                    <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]</to>
+                </copy>
+            <copy>
+                <from><literal>ns1:ICMSMessage</literal></from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]/@xsi:type</to>
+            </copy>
+            </assign>
+            <else>
+                <assign name="Assign2">
+                  <copy>
+                    <from>
+                        <literal>OM12</literal>
+                    </from>
+                    <to>$icmsMessage/ns1:id</to>
+                </copy>
+                <copy>
+                    <from variable="icmsMessage"/>
+                    <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]</to>
+                </copy>
+            <copy>
+                <from><literal>ns1:ICMSMessage</literal></from>
+                <to>$activateBillingSoapOut.activateBillingResult/ns1:messages/ns1:providerMessage[1]/ns1:messages/ns1:message[1]/@xsi:type</to>
+            </copy>
+            </assign>
+            </else>
+        </if>
+        <reply name="replyActivateBillingResponse" partnerLink="ActivateBilling" operation="activateBilling" portType="ns1:V1_3_0ActivateBillingPortType" variable="activateBillingSoapOut"/>
+    </sequence>
+</process>

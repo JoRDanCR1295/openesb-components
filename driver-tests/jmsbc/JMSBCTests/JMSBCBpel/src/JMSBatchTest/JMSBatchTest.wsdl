@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="JMSBatchTest" targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBatchTest"
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/JMSBatchTest"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/JMSBatchTest/types"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+
+  <!-- Type definitions -->
+  <types>
+    <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/JMSBatchTest/types">
+    <!-- TODO: type XML schema elements and types here, e.g.: -->
+      <!--
+      <xsd:element name="id" type="xsd:string"/>
+      <xsd:element name="item" type="ns1:ItemType"/>
+      <xsd:complexType name="ItemType">
+        <xsd:sequence>
+          <xsd:element ref="ns1:id"/>
+          <xsd:element name="productName" type="xsd:string"/>
+          <xsd:element name="price" type="xsd:double"/>
+          <xsd:element name="quantity" type="xsd:integer"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="error" type="xsd:string"/>
+      -->
+        <xsd:complexType name="MsgOnlyComplexType">
+            <xsd:sequence>
+                <xsd:element name="Msg" type="xsd:string"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+        <xsd:element name="MsgOnly" type="ns1:MsgOnlyComplexType"></xsd:element>
+        <xsd:complexType name="CountAndMsgComplexType">
+            <xsd:sequence>
+                <xsd:element name="MsgCount" type="xsd:int"></xsd:element>
+                <xsd:element name="Msg" type="xsd:string"></xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+        <xsd:element name="CountAndMsg" type="ns1:CountAndMsgComplexType"></xsd:element>
+    </xsd:schema>
+  </types>
+
+  <!-- Message definitions -->
+  <!-- TODO: write one or more messages here, e.g.: -->
+  <!--
+  <message name ="JMSBatchTestRequest">
+    <part name="id" element="ns1:id"/>
+  </message>
+
+  <message name ="JMSBatchTestResponse">
+    <part name="item" element="ns1:item"/>
+  </message>
+  
+  <message name ="JMSBatchTestError">
+    <part name="error" element="ns1:error"/>
+  </message>
+  -->
+
+  <!-- Port type definitions -->
+  <!-- TODO: write one or more port types here (usually just one), e.g.: -->
+  <!--
+  <portType name="JMSBatchTestPortType">
+    <operation name="JMSBatchTestOperation">
+      <input message="tns:JMSBatchTestRequest"/>
+      <output message="tns:JMSBatchTestResponse"/>
+      <fault message="tns:JMSBatchTestError" name="error"/>
+    </operation>
+  </portType>
+  -->
+
+  <!-- Binding definitions -->
+  <!-- TODO: write one or more bindings here (usually just one), e.g.: -->
+  <!--
+  <binding name="JMSBatchTestBinding" type="tns:JMSBatchTestPortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="JMSBatchTestOperation">
+      <soap:operation soapAction="REPLACE_WITH_ACTION_URL"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="error">
+        <soap:fault name="error" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  -->
+
+  <!-- Service and Port (network address) definitions -->
+  <!-- TODO: write one or more service elements here (usually just one), e.g.: -->
+  <!--
+  <service name="JMSBatchTestService">
+    <port name="JMSBatchTestPort" binding="tns:JMSBatchTestBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_WEB_SERVICE_URL"/>
+    </port>
+  </service>
+  -->
+    <message name="msgOnly">
+        <part name="part1" element="ns1:MsgOnly"/>
+    </message>
+    <message name="countAndMsg">
+        <part name="part1" element="ns1:CountAndMsg"/>
+    </message>
+    <message name="msg2Parts">
+        <part name="part1" element="ns1:CountAndMsg"/>
+        <part name="partMsgCount" type="xsd:int"/>
+    </message>
+    <portType name="ptDriverReqReply">
+        <operation name="operation1">
+            <input name="input1" message="tns:msgOnly"/>
+            <output name="output1" message="tns:countAndMsg"/>
+        </operation>
+    </portType>
+    <portType name="ptDriverOneway">
+        <operation name="operation1">
+            <input name="input1" message="tns:countAndMsg"/>
+        </operation>
+    </portType>
+    <portType name="ptOneway">
+        <operation name="operation1">
+            <input name="input1" message="tns:countAndMsg"/>
+        </operation>
+    </portType>
+    <portType name="ptDriverOneway2">
+        <operation name="operation1">
+            <input name="input1" message="tns:msg2Parts"/>
+        </operation>
+    </portType>
+    <portType name="ptOneway2">
+        <operation name="operation1">
+            <input name="input1" message="tns:msg2Parts"/>
+        </operation>
+    </portType>
+    <binding name="bindingHttpReqReply" type="tns:ptDriverReqReply">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="operation1">
+            <soap:operation style="document" soapAction="saTestJMSBatch"/>
+            <input name="input1">
+                <soap:body parts="part1" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="part1" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="bindingJMSDriverOut" type="tns:ptDriverOneway">
+        <jms:binding/>
+        <operation name="operation1">
+            <jms:operation destination="JMSBatchTestIn" destinationType="Queue" transaction="NoTransaction" />
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSBatchTestIn" type="tns:ptOneway">
+        <jms:binding/>
+        <operation name="operation1">
+            <jms:operation destination="JMSBatchTestIn" destinationType="Queue" transaction="NoTransaction" batchSize="20" >
+                <jms:options>
+                    <jms:option name="endpointPoolMaxSize" value="1"/>
+                </jms:options>
+            </jms:operation>
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSBatchTestOut" type="tns:ptOneway2">
+        <jms:binding/>
+        <operation name="operation1">
+            <jms:operation destination="JMSBatchTestOut" destinationType="Queue" transaction="NoTransaction" />
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1">
+                    <jms:properties>
+                        <jms:property name="MsgCount" part="partMsgCount" type="int"/>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <binding name="bindingJMSDriverIn" type="tns:ptDriverOneway2">
+        <jms:binding/>
+        <operation name="operation1">
+            <jms:operation destination="JMSBatchTestOut" destinationType="Queue" transaction="NoTransaction" messageSelector="MsgCount=20" />
+            <input name="input1">
+                <jms:message messageType="TextMessage" textPart="part1">
+                    <jms:properties>
+                        <jms:property name="MsgCount" part="partMsgCount" type="int"/>
+                    </jms:properties>
+                </jms:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="serviceJMSBatchTest">
+        <port name="portHttpTrigger" binding="tns:bindingHttpReqReply">
+            <soap:address location="http://localhost:18181/JMSBCBpel/JMSBatchTest/portHttpTrigger"/>
+        </port>
+        <port name="portJMSDriverOut" binding="tns:bindingJMSDriverOut">
+            <jms:address connectionURL="mq://localhost:7676" />
+        </port>
+        <port name="portJMSDriverIn" binding="tns:bindingJMSDriverIn">
+            <jms:address connectionURL="mq://localhost:7676" />
+        </port>
+        <port name="portJMSBatchTestIn" binding="tns:bindingJMSBatchTestIn">
+            <jms:address connectionURL="mq://localhost:7676" />
+        </port>
+        <port name="portJMSBatchTestOut" binding="tns:bindingJMSBatchTestOut">
+            <jms:address connectionURL="mq://localhost:7676" />
+        </port>
+    </service>
+    <plink:partnerLinkType name="pltTrigger">
+        <plink:role name="roleTrigger" portType="tns:ptDriverReqReply"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="pltJMSDriverPublisher">
+        <plink:role name="roleJMSDriverOut" portType="tns:ptDriverOneway"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="pltJMSBatchTestSubscriber">
+        <plink:role name="roleJMSBatchTestIn" portType="tns:ptOneway"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="pltJMSBatchTestPublisher">
+        <plink:role name="roleJMSBatchTestOut" portType="tns:ptOneway2"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="pltJMSDriverSubscriber">
+        <plink:role name="roleJMSDriverIn" portType="tns:ptDriverOneway2"/>
+    </plink:partnerLinkType>
+    <vprop:property name="prop1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:prop1" messageType="tns:msgOnly" part="part1">
+        <vprop:query>Msg</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:prop1" messageType="tns:msg2Parts" part="part1">
+        <vprop:query>Msg</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

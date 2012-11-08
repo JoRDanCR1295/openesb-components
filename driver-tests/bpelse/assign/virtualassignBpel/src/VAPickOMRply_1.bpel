@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="VAPickOMRply_1" 
+    targetNamespace="http://www.mycomp.org/VAPickOMRply/VAPickOMRply_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl">
+    <import namespace="http://www.mycomp.org/virtualAssignTest/virtualAssignTest_wsdl"
+            location="virtualAssignTest_1.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink_VAPickOMRply_1" partnerLinkType="wsdlNS:virtualAssignLinkType1_for_pick" myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  type="wsdlNS:simpleStringType"></variable>
+        <variable name="var2"
+		  type="wsdlNS:simpleStringType"></variable>
+    </variables>
+    <sequence>
+      <pick name="Pick1"
+            createInstance="yes">
+         <onMessage partnerLink="PartnerLink_VAPickOMRply_1"
+                    operation="virtualAssignOperation1"
+                    portType="wsdlNS:virtualAssignPortType1"
+                    variable="var1">
+                    <!-- fromPart part="simpleStringPart" toVariable="var1"/ -->
+                    <!-- fromPart part="simpleStringPart" toVariable="var2"/ -->
+            <sequence name="Sequence1">
+               <assign name="Assign1">
+                  <copy>
+                  <from variable="var1"/><to variable="var2"/>
+                  </copy>
+               </assign>
+               <reply name="Reply1"
+                      partnerLink="PartnerLink_VAPickOMRply_1"
+                      operation="virtualAssignOperation1"
+                      portType="wsdlNS:virtualAssignPortType1"
+                      variable="var2">
+                      <!-- toPart part="simpleStringPart" fromVariable="var2"/ -->
+               </reply>
+            </sequence>
+         </onMessage>
+      </pick>
+      <empty/>
+   </sequence>
+</process>
+

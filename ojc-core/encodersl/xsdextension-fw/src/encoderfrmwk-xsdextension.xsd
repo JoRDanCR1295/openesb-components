@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ # BEGIN_HEADER - DO NOT EDIT
+ # 
+ # The contents of this file are subject to the terms
+ # of the Common Development and Distribution License
+ # (the "License").  You may not use this file except
+ # in compliance with the License.
+ #
+ # You can obtain a copy of the license at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # See the License for the specific language governing
+ # permissions and limitations under the License.
+ #
+ # When distributing Covered Code, include this CDDL
+ # HEADER in each file and include the License file at
+ # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # If applicable add the following below this CDDL HEADER,
+ # with the fields enclosed by brackets "[]" replaced with
+ # your own identifying information: Portions Copyright
+ # [year] [name of copyright owner]
+-->
+<!-- 
+ # @(#)encoderfrmwk-xsdextension.xsd 
+ #
+ # Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ # 
+ # END_HEADER - DO NOT EDIT
+-->
+<!-- edited with XMLSpy v2006 sp1 U (http://www.altova.com) by Jun Xu (SeeBeyond Technology Corp.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:com.sun:encoder" targetNamespace="urn:com.sun:encoder" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="encodingMark">
+		<xs:annotation>
+			<xs:documentation>Complex type defines the customization mark used in the schema level annotation to indicate that an XSD has custom metadata, such as encoding settings.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="encoding">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:NCName" use="required">
+						<xs:annotation>
+							<xs:documentation>This is a name used for GUI components for display purpose. This name can be changed and the change should not affect the programming logic</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="namespace" type="xs:anyURI" use="required">
+						<xs:annotation>
+							<xs:documentation>Namespace URI represents the encoding style</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="style" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>The string that represents the encoding style at runtime.  This string cannot be changed without modifying code.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="createdBy" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="application" type="xs:string"/>
+						<xs:element name="version">
+							<xs:complexType>
+								<xs:attribute name="major" type="xs:int" use="required"/>
+								<xs:attribute name="minor" type="xs:int" use="required"/>
+								<xs:attribute name="revision" type="xs:string"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="source" type="xs:string" use="required" fixed="urn:com.sun:encoder">
+			<xs:annotation>
+				<xs:documentation>This attribute refers to the source attribute in XSD appinfo.  Basically to become a valid encoding mark, the appinfo must have a source attribute that has value "urn:com.sun:encoder"</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="top">
+		<xs:annotation>
+			<xs:documentation>Element used to indicate if a global element in an encoder definition is a top global element (which means it is a meaningful message element that is exposed to external partners or interfaces)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean">
+				<xs:pattern value="true|false"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="encodingBase">
+		<xs:annotation>
+			<xs:documentation>The base type of the encoding extension information</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="tns:top" minOccurs="0"/>
+			<xs:element ref="tns:preDecodeCharCoding" minOccurs="0"/>
+			<xs:element ref="tns:postEncodeCharCoding" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="source" type="xs:string" use="required" fixed="urn:com.sun:encoder">
+			<xs:annotation>
+				<xs:documentation>This attribute refers to the source attribute in XSD appinfo.  Basically to become a valid encoding mark, the appinfo must have a source attribute that has value "urn:com.sun:encoder"</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="preDecodeCharCoding" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>The character encoding that needs to be applied before a decoding process takes place. PreDecodeCharCoding is only needed when there is a discrepancy between the form of the input to be decoded and the data nature of the encoder type. For example, if the encoder type's data nature is BINARY while the input to be decoded is a character sequence, then PreDecodeCharCoding must be specified. So the character sequence can be converted to a byte sequence, which in turn is fed to the decoding process.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="postEncodeCharCoding" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>The character encoding that needs to be applied after an encoding process takes place. PostEncodeCharCoding is only needed when there is a discrepancy between the form of the output to be encoded to and the data nature of the encoder type. For example, if the encoder type's data nature is BINARY while the encoding output is expected to be a character sequence, then PostEncodeCharCoding must be specified. So the output in byte sequence form can be converted to a character sequence, which in turn is passed to the calling program.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

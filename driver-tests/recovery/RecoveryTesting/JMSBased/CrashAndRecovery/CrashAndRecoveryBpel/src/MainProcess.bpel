@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="MainProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/MainProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MainProcess" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MainProcess" xmlns:ns2="http://j2ee.netbeans.org/wsdl/MessageTypes" xmlns:ns3="http://j2ee.netbeans.org/wsdl/AsyncProcess1" xmlns:ns4="http://j2ee.netbeans.org/wsdl/AsyncProcess2" xmlns:ns5="http://j2ee.netbeans.org/wsdl/JavaService1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/MainProcess" location="MainProcess.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/MessageTypes" location="MessageTypes.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/AsyncProcess1" location="AsyncProcess1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/AsyncProcess2" location="AsyncProcess2.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/JavaService1" location="JavaService1.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="MainProcessXsltPL" partnerLinkType="ns1:MainProcessPLT1" myRole="provider"/>
+        <bpws:partnerLink name="JavaService1PL" partnerLinkType="ns5:JavaService1PLT" partnerRole="provider"/>
+        <bpws:partnerLink name="AsyncProcess2PLink" partnerLinkType="ns4:AsyncReqResProcessPLT" myRole="requestor" partnerRole="provider"/>
+        <bpws:partnerLink name="AsyncProcess1PLink" partnerLinkType="ns3:AsyncReqResProcessPLT" myRole="requestor" partnerRole="provider"/>
+        <bpws:partnerLink name="MainProcessJmsRequestResponsePLink" partnerLinkType="ns1:MainProcessJmsRequestResponsePLT" myRole="provider" partnerRole="requester"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="JavaService1OperationIn" messageType="ns5:message1"/>
+        <bpws:variable name="MainProcessJmsResponseOperationIn" messageType="ns1:MainProcessJmsReqRes"/>
+        <bpws:variable name="MainProcessJmsRequestOperationIn" messageType="ns1:MainProcessJmsReqRes"/>
+        <bpws:variable name="MessageElementVar1" messageType="ns2:message1"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CSet1" properties="ns2:Property1"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="JmsReceive" createInstance="yes" partnerLink="MainProcessJmsRequestResponsePLink" operation="MainProcessJmsRequestOperation" portType="ns1:MainProcessJmsRequestPortType" variable="MainProcessJmsRequestOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="MainProcessJmsRequestOperationIn" part="Counter"/>
+                <bpws:to>$MessageElementVar1.part1/Counter</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from variable="MainProcessJmsRequestOperationIn" part="Text"/>
+                <bpws:to>$MessageElementVar1.part1/Text</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <invoke name="AsyncProcess1Invoke" partnerLink="AsyncProcess1PLink" operation="AsyncProcess1RequestOperation" portType="ns3:AsyncProcess1RequestPortType" inputVariable="MessageElementVar1">
+            <bpws:correlations>
+                <bpws:correlation set="CSet1" initiate="yes"/>
+            </bpws:correlations>
+        </invoke>
+        <bpws:receive name="AsyncProcess1Receive" partnerLink="AsyncProcess1PLink" operation="AsyncProcess1ResponseOperation" portType="ns3:AsyncProcess1ResponsePortType" createInstance="no" variable="MessageElementVar1">
+            <bpws:correlations>
+                <bpws:correlation set="CSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:invoke name="AsyncProcess2Invoke" partnerLink="AsyncProcess2PLink" operation="AsyncProcess2RequestOperation" portType="ns4:AsyncProcess2RequestPortType" inputVariable="MessageElementVar1">
+            <bpws:correlations>
+                <bpws:correlation set="CSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:receive name="AsyncProcess2Receive" partnerLink="AsyncProcess2PLink" operation="AsyncProcess2ResponseOperation" portType="ns4:AsyncProcess2ResponsePortType" createInstance="no" variable="MessageElementVar1">
+            <bpws:correlations>
+                <bpws:correlation set="CSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from>$MessageElementVar1.part1/Counter</bpws:from>
+                <bpws:to>$JavaService1OperationIn.part1/Counter</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$MessageElementVar1.part1/Text</bpws:from>
+                <bpws:to>$JavaService1OperationIn.part1/Text</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="JavaInvoke1" partnerLink="JavaService1PL" operation="JavaService1Operation" portType="ns5:JavaService1PortType" inputVariable="JavaService1OperationIn"></bpws:invoke>
+        <bpws:receive name="Receive1" partnerLink="MainProcessXsltPL" operation="MainProcessOperation1" portType="ns1:MainProcessPortType1" createInstance="no" variable="MessageElementVar1">
+            <bpws:correlations>
+                <bpws:correlation set="CSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>$MessageElementVar1.part1/Counter</bpws:from>
+                <bpws:to variable="MainProcessJmsResponseOperationIn" part="Counter"/>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$MessageElementVar1.part1/Text</bpws:from>
+                <bpws:to variable="MainProcessJmsResponseOperationIn" part="Text"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="JmsInvoke" partnerLink="MainProcessJmsRequestResponsePLink" operation="MainProcessJmsResponseOperation" portType="ns1:MainProcessJmsResponsePortType" inputVariable="MainProcessJmsResponseOperationIn"/>
+    </sequence>
+</process>

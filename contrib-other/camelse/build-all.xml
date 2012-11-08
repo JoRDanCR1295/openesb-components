@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="build-camelse" default="package" basedir=".">
+    <target name ="init" >
+        <property name="dist.dir" location="dist" />
+        <property name="staging.dir" location="${dist.dir}/camelse" />
+        <property name="camelse-all.zip" location="${dist.dir}/camelse-all.zip" />
+        <property name="camelse.component" location="camel-jbi-se/dist/camel-jbi-se.zip" />
+        <property name="camelse.plugin" location="camel-jbi-se/deploy-plugin/build/org-openesb-components-camelse-nb-plugin.nbm" />
+        <property name="camelse.exampels.dir" location="examples" />
+        <property name="camelse.docs.dir" location="docs" />
+        <property name="camelse.readme.txt" location="README-INSTALL.txt" />
+        <property name="camelse.license.txt" location="LICENSE.txt" />
+        <property name="camel.license.txt" location="camel-jbi-se\camel-libs\LICENSE.txt" />
+        <property name="camel.notice.txt" location="camel-jbi-se\camel-libs\NOTICE.txt" />
+    </target>
+    <target name="package" depends="init">
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${staging.dir}" />
+        <copy file="${camelse.component}" todir="${staging.dir}" />
+        <copy file="${camelse.plugin}" todir="${staging.dir}" />
+        <copy file="${camelse.readme.txt}" tofile="${staging.dir}/README.txt"/>
+        <copy file="${camelse.license.txt}" tofile="${staging.dir}/LICENSE.txt"/>
+        <copy file="${camel.license.txt}" tofile="${staging.dir}/CAMEL-LICENSE.txt"/>
+        <copy file="${camel.notice.txt}" tofile="${staging.dir}/CAMEL-NOTICE.txt"/>
+        
+        <copy todir="${staging.dir}/docs" >
+            <fileset dir="${camelse.docs.dir}">
+            </fileset>
+        </copy>
+         <copy todir="${staging.dir}/examples" >
+            <fileset dir="${camelse.exampels.dir}">
+                <exclude name="**/build/**"/>
+                <exclude name="**/dist/**"/>
+            </fileset>
+        </copy>      
+        
+        <zip destfile="${camelse-all.zip}" >
+            <zipfileset dir="${staging.dir}" prefix="camelse"/>
+        </zip>
+        
+    </target>
+    <target name="clean" depends="init" >
+        <delete dir="${dist.dir}" />
+    </target>
+</project>

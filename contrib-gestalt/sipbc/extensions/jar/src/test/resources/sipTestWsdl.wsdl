@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="SipMovieListingBotWsdl" targetNamespace="http://j2ee.netbeans.org/wsdl/SipMovieListingBotWsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/SipMovieListingBotWsdl" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:sip="http://schemas.sun.com/jbi/wsdl-extensions/sip/">
+    <types/>
+    <message name="sipReceiveMessageRequest">
+        <part name="part1" type="xsd:string"/>
+        <part name="part2" type="xsd:string"/>
+        <part name="part3" type="xsd:string"/>
+    </message>
+    <portType name="SipMovieListingBotWsdlPortType">
+        <wsdl:operation name="sipReceiveMessage">
+            <wsdl:input name="input1" message="tns:sipReceiveMessageRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="SipMovieListingBotWsdlBinding" type="tns:SipMovieListingBotWsdlPortType">
+        <sip:binding/>
+        <wsdl:operation name="sipReceiveMessage">
+            <sip:operation name="sendRequest"/>
+            <wsdl:input name="input1">
+                <sip:input requestMethod="part1" content="part2" remoteUri="part3"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="SipMovieListingBotWsdlService">
+        <wsdl:port name="SipMovieListingBotWsdlPort" binding="tns:SipMovieListingBotWsdlBinding">
+            <sip:address proxyDomain="10.9.5.147" proxyPort="5060" proxyTimeout="5000" username="movielistingbot" password="pass"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="SipMovieListingBotWsdl1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SipMovieListingBotWsdlPortTypeRole" portType="tns:SipMovieListingBotWsdlPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

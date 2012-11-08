@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Assign_NoElementProcess"
+    targetNamespace="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/Assign_NoElementProcess"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/StandardFaultsBpel/Assign_NoElementProcess" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/Assign_NoElement" 
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" 
+    xmlns:ns0="http://xml.netbeans.org/schema/MessageType">
+   <import namespace="http://j2ee.netbeans.org/wsdl/Assign_NoElement" location="Assign_NoElement.wsdl" 
+           importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://xml.netbeans.org/schema/MessageType" location="MessageType.xsd" 
+            importType="http://www.w3.org/2001/XMLSchema"/>
+    <partnerLinks>
+      <partnerLink name="PlinkInOut" partnerLinkType="ns1:Assign_NoElementPlink" myRole="Assign_NoElementPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <variable name="Variable1" element="ns0:xsdMessage"/>
+      <variable name="outputString" type="xsd:string"/>
+      <variable name="Assign_NoElementOperationOut" messageType="ns1:Assign_NoElementOperationReply"/>
+      <variable name="Assign_NoElementOperationIn" messageType="ns1:Assign_NoElementOperationRequest"/>
+   </variables>
+    <faultHandlers>
+        <catchAll>
+<sequence name="Sequence3">
+                         <assign name="Assign3">
+                             <copy>
+                                 <from>
+                                     <literal>Reply from Catch All. This should not have executed. </literal>
+                                 </from>
+                                 <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                             </copy>
+                             <copy>
+                                 <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                                 <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                             </copy>
+                         </assign>
+                         <reply name="Reply3" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+                     </sequence>            
+            </catchAll>
+    </faultHandlers>
+    <sequence>
+      <receive name="Receive1" createInstance="yes" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationIn"/>
+      <assign name="Assign">
+         <copy>
+            <from>concat('1. Input is ', $Assign_NoElementOperationIn.InPart/ns0:Element1, ' and ', $Assign_NoElementOperationIn.InPart/ns0:Element2)</from>
+            <to variable="outputString"/>
+         </copy>
+      </assign>
+      <sequence name="Sequence">
+         <scope name="OuterScope">
+             <if name="If">
+               <condition>          ( $Assign_NoElementOperationIn.InPart/ns0:Element1 = 1 )          </condition>
+               <scope name="Scope1">
+                  <faultHandlers>
+                     <catch faultName="ns2:selectionFailure">
+                        <sequence name="Sequence1">
+                           <assign name="Assign1">
+                                 <copy>
+                                       <from>concat($outputString, ' \n 2. Caught SelectionFailure in FromSpec. Element MyOwnElement is invalid. Output sent from FH ')</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                                    </copy>
+                                    <copy>
+                                       <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                                    </copy>
+                              </assign>
+                              <reply name="Reply1" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+                        </sequence>
+                     </catch>
+                  </faultHandlers>
+                  <assign name="NoElement_FromSpec">
+                     <copy>
+                        <from>$Assign_NoElementOperationIn.InPart/ns0:MyOwnElement</from>
+                        <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                     </copy>
+                     <copy>
+                        <from>$Assign_NoElementOperationIn.InPart/ns0:Element2</from>
+                        <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                     </copy>
+                  </assign>
+               </scope>                      
+               <elseif>
+                  <condition>         ( $Assign_NoElementOperationIn.InPart/ns0:Element1 = 2 )         </condition>
+                  <scope name="Scope2">
+                     <faultHandlers>
+                        <catch faultName="ns2:invalidVariables">
+                        <sequence name="Sequence2">
+                           <assign name="Assign2">
+                                 <copy>
+                                       <from>concat($outputString, ' \n 2. Caught SelectionFailure in ToSpec. Prefix MyOwnNamespace is invalid. Output sent from FH ')</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                                    </copy>
+                                    <copy>
+                                       <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                                    </copy>
+                              </assign>
+                              <reply name="Reply2" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+                        </sequence>
+                        </catch>
+                     </faultHandlers>
+                     <assign name="NoElement_ToSpec_InValid_Prefix">
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/MyOwnNamespace:Element1</to>
+                        </copy>
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/ns0:Element2</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                        </copy>
+                     </assign>
+                  </scope>
+               </elseif>
+               <elseif>
+                  <condition>         ( $Assign_NoElementOperationIn.InPart/ns0:Element1 = 3 )         </condition>
+                  <scope name="Scope3">
+                     <faultHandlers>
+                        <catch faultName="ns2:invalidVariables">
+                        <sequence name="Sequence3">
+                           <assign name="Assign3">
+                                 <copy>
+                                       <from>concat($outputString, ' \n 2. Caught SelectionFailure in ToSpec. Element MyOwnElement is invalid . Output sent from FH ')</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                                    </copy>
+                                    <copy>
+                                       <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                                    </copy>
+                              </assign>
+                              <reply name="Reply3" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+                        </sequence>
+                        </catch>
+                     </faultHandlers>
+                     <assign name="NoElement_ToSpec_InValid_Element">
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/ns0:MyOwnElement</to>
+                        </copy>
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/ns0:Element2</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                        </copy>
+                     </assign>
+                  </scope>
+               </elseif>
+               <elseif>
+                  <condition>         ( $Assign_NoElementOperationIn.InPart/ns0:Element1 = 4 )         </condition>
+                  <scope name="Scope4">
+                     <faultHandlers>
+                        <catch faultName="ns2:selectionFailure">
+                        <sequence name="Sequence4">
+                           <assign name="Assign4">
+                                 <copy>
+                                       <from>concat($outputString, ' \n 2. Caught SelectionFailure in FromSpec. Namespace Prefix MyOwnNamespace is invalid . Output sent from FH ')</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                                    </copy>
+                                    <copy>
+                                       <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                                          <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                                    </copy>
+                              </assign>
+                              <reply name="Reply4" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+                        </sequence>
+                        </catch>
+                     </faultHandlers>
+                     <assign name="NoElement_FromSpec_InValid_Prefix">
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/MyOwnNamespace:Element1</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                        </copy>
+                        <copy>
+                           <from>$Assign_NoElementOperationIn.InPart/ns0:Element2</from>
+                           <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                        </copy>
+                     </assign>
+                  </scope>
+               </elseif>
+            </if>
+         </scope>
+            <assign name="Assign4">
+                <copy>
+                    <from>
+                        <literal>This assign should not have executed. </literal>
+                    </from>
+                    <to>$Assign_NoElementOperationOut.OutPart/ns0:Element2</to>
+                </copy>
+                <copy>
+                    <from>$Assign_NoElementOperationIn.InPart/ns0:Element1</from>
+                    <to>$Assign_NoElementOperationOut.OutPart/ns0:Element1</to>
+                </copy>
+            </assign>
+            <reply name="Reply4" partnerLink="PlinkInOut" operation="Assign_NoElementOperation" portType="ns1:Assign_NoElementPortType" variable="Assign_NoElementOperationOut"/>
+      </sequence>
+   </sequence>
+</process>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="http://localhost:12100/wsdl/purchase/PurchaseOrderStatus/bp4" xmlns:ns2="http://www.seebeyond.com/eInsight/POService/bp4" xmlns:ns3="http://manufacturing.org/wsdl/inventory/bp4" xmlns:ns4="http://www.seebeyond.com/eInsight/inventoryservice/bp4" xmlns:ns5="http://manufacturing.org/wsdl/purchase/bp4" version="1.0">
+    <service-assembly>
+        <identification>
+            <name>BluePrint4Application</name>
+            <description>Represents this Service Assembly</description>
+        </identification>
+        <connections>
+            <connection>
+                <consumer endpoint-name="POConfirmPort" service-name="ns1:POStatusService"/>
+                <provider endpoint-name="confirmPORole_myRole" service-name="ns2:POConfirmPLink"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="POCancelPort" service-name="ns1:POStatusService"/>
+                <provider endpoint-name="cancelPORole_myRole" service-name="ns2:POCancelPLink"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="inventoryServicePort" service-name="ns3:inventoryService"/>
+                <provider endpoint-name="inventoryService_myRole" service-name="ns4:inventorySevicePLink"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="inventoryService_partnerRole" service-name="ns2:requestInventoryPLink"/>
+                <provider endpoint-name="inventoryService_myRole" service-name="ns4:inventorySevicePLink"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="purchaseOrderPort" service-name="ns5:purchaseOrderService"/>
+                <provider endpoint-name="purchaseService_myRole" service-name="ns2:POServicePLink"/>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

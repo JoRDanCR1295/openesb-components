@@ -1,0 +1,183 @@
+<definitions targetNamespace="iepNotificationStream_iep"
+             xmlns:tns="iepNotificationStream_iep"
+             xmlns:typens="iepNotificationStream_iep"
+             xmlns:defns="iepNotificationStream_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="iepNotificationStream_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string"/>
+                    <xsd:element name="value" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamInput0Batch_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="StreamInput0_MsgObj" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="name" type="xsd:string"/>
+                                <xsd:element name="value" type="xsd:double"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamOutputPer7Sec_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="name" type="xsd:string"/>
+                   <xsd:element name="value" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamOutputPer12Sec_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="name" type="xsd:string"/>
+                   <xsd:element name="value" type="xsd:double"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamInput0Batch_Msg">
+    <part name="input" element="typens:StreamInput0Batch_MsgObj"/>
+</message>
+<message name="StreamOutputPer7Sec_Msg">
+    <part name="output" element="typens:StreamOutputPer7Sec_MsgObj"/>
+</message>
+<message name="StreamOutputPer12Sec_Msg">
+    <part name="output" element="typens:StreamOutputPer12Sec_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <input message="tns:StreamInput0Batch_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_StreamOutputPer7Sec">
+    <operation name="StreamOutputPer7Sec">
+        <input message="tns:StreamOutputPer7Sec_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_StreamOutputPer12Sec">
+    <operation name="StreamOutputPer12Sec">
+        <input message="tns:StreamOutputPer12Sec_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_StreamOutputPer7Sec" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_StreamOutputPer7Sec" portType="tns:OutputPt_StreamOutputPer7Sec"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_StreamOutputPer12Sec" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_StreamOutputPer12Sec" portType="tns:OutputPt_StreamOutputPer12Sec"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding" type="defns:InputPt">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="StreamInput0">
+        <soap:operation soapAction="StreamInput0"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+    <operation name="StreamInput0Batch">
+        <soap:operation soapAction="StreamInput0Batch"/>
+        <input>
+            <soap:body use="literal"/>
+        </input>
+    </operation>
+</binding>
+<!-- input service -->
+<service name="InputService">
+    <port name="InputPort" binding="tns:InputBinding">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/iepNotificationStream_iep"/>
+    </port>
+</service>
+
+<!-- http output binding and service
+<binding name="OutputBinding_StreamOutputPer7Sec" type="defns:OutputPt_StreamOutputPer7Sec">
+    <operation name="StreamOutputPer7Sec">
+        <soap:operation soapAction="StreamOutputPer7Sec"/>
+        <input>
+            <soap:body user="literal"/>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_StreamOutputPer12Sec" type="defns:OutputPt_StreamOutputPer12Sec">
+    <operation name="StreamOutputPer12Sec">
+        <soap:operation soapAction="StreamOutputPer12Sec"/>
+        <input>
+            <soap:body user="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutputPer7Sec">
+    <port name="OutputPort_StreamOutputPer7Sec" binding="tns:OutputBinding_StreamOutputPer7Sec">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/iepNotificationStream_iep_StreamOutputPer7Sec_callee"/>
+    </port>
+</service>
+<service name="OutputService_StreamOutputPer12Sec">
+    <port name="OutputPort_StreamOutputPer12Sec" binding="tns:OutputBinding_StreamOutputPer12Sec">
+        <soap:address location="http://localhost:${HttpDefaultPort}/service/iepNotificationStream_iep_StreamOutputPer12Sec_callee"/>
+    </port>
+</service>
+ end of http output binding and service -->
+
+<!-- file output binding and service -->
+<binding name="OutputBinding_StreamOutputPer7Sec" type="defns:OutputPt_StreamOutputPer7Sec">
+    <file:binding/>
+    <operation name="StreamOutputPer7Sec">
+        <file:operation/>
+        <input>
+            <file:message fileName="actual_7Sec.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<binding name="OutputBinding_StreamOutputPer12Sec" type="defns:OutputPt_StreamOutputPer12Sec">
+    <file:binding/>
+    <operation name="StreamOutputPer12Sec">
+        <file:operation/>
+        <input>
+            <file:message fileName="actual_12Sec.txt"
+                    fileNameIsPattern="false"
+                    addEOL="false"
+                    multipleRecordsPerFile="true"
+                    use="literal"/>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutputPer7Sec">
+    <port name="OutputPort_StreamOutputPer7Sec" binding="tns:OutputBinding_StreamOutputPer7Sec">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/tests/jbi/test/IepNotificationStream"/>
+    </port>
+</service>
+<service name="OutputService_StreamOutputPer12Sec">
+    <port name="OutputPort_StreamOutputPer12Sec" binding="tns:OutputBinding_StreamOutputPer12Sec">
+        <file:address fileDirectory="${ojc-root}/driver-tests/iepse/tests/jbi/test/IepNotificationStream"/>
+    </port>
+</service>
+<!-- end of file output binding and service -->
+</definitions>

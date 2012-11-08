@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="TwoWayErrorSubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/InOutInvokeError/TwoWayErrorSubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/InOutInvokeError/TwoWayErrorSubBP" xmlns:ns0="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/InvokeErrorME" location="InvokeErrorME.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="InvokeErrorSubPL" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" partnerLinkType="tns:TwoWayMEErrorPLT" myRole="TwoWayMEErrorPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="TwoWayMEErrorPTOperOut" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" messageType="tns:message1"/>
+        <variable name="TwoWayMEErrorPTOperIn" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" messageType="tns:message1"/>
+    </variables>
+    <sequence>
+        <receive name="subRec" createInstance="yes" partnerLink="InvokeErrorSubPL" operation="TwoWayMEErrorPTOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" portType="tns:TwoWayMEErrorPT" variable="TwoWayMEErrorPTOperIn"/>
+        <throw name="Throw1" faultName="ns0:invalidReply"/>
+        <reply name="subReply" partnerLink="InvokeErrorSubPL" operation="TwoWayMEErrorPTOper" xmlns:tns="http://j2ee.netbeans.org/wsdl/InvokeErrorME" portType="tns:TwoWayMEErrorPT" variable="TwoWayMEErrorPTOperOut"/>
+    </sequence>
+</process>

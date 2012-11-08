@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="MQRecvFileOut" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/MQRecvFileOut"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/MQRecvFileOut" xmlns:ns1="http://j2ee.netbeans.org/wsdl/MQPutRecv" xmlns:ns2="urn:OutPutFile" xmlns:ns0="http://xml.netbeans.org/schema/InterOrderXMLSchema">
+   <import namespace="http://j2ee.netbeans.org/wsdl/MQPutRecv" location="MQPutRecv.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <import namespace="urn:OutPutFile" location="OutputFileService.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <partnerLink name="PartnerLink1FileWrite" partnerLinkType="ns2:OutputFileServiceType" partnerRole="FileOutRole"/>
+      <partnerLink name="PartnerLink1MqRecv" partnerLinkType="ns1:partnerlinktype1MqRecv" myRole="partnerlinktyperole1MqRecv"/>
+   </partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="WriteIn" messageType="ns2:HelloIF_write"/>
+      <bpws:variable name="MQRecvOperationIn" messageType="ns1:message1IntOrder"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1MqRecv" operation="MQRecvOperation" portType="ns1:MQRecvPortType" variable="MQRecvOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat($MQRecvOperationIn.part1IntOrder/ns0:OrinigalExternalOrder, $MQRecvOperationIn.part1IntOrder/ns0:OrderResolution, $MQRecvOperationIn.part1CorlId, $MQRecvOperationIn.part1MsgId)</bpws:from>
+            <bpws:to>$WriteIn.body/ns2:string</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink1FileWrite" operation="write" portType="ns2:FileOut" inputVariable="WriteIn"/>
+   </sequence>
+   
+</process>

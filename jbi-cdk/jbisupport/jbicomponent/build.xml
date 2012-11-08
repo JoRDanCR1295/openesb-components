@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jbi-component-all" default="package" basedir=".">
+<description> 
+    This project is a top level project for jbi component common code, BC and SE projects
+    and generates the source code templates for the component required for the 
+    jbi component support project.
+</description>
+        
+    <!-- initilizes the build settings -->
+    <target name="init" >
+        <property name="build.dir" location="build" />
+        <property name="dist.dir" location="dist" />
+        
+        <property name="prj.comp.all" location="./" />
+        <property name="prj.comp.common" location="./component-common" />
+        <property name="prj.comp.binding" location="./JMXBinding" />
+        <property name="prj.comp.engine" location="./ProviderSE" />
+        
+        <property name="jbiadmin.build.scripts.zip" value="jbiadmin-build-scripts.zip" /> 
+        <property name="common.artifacts.zip" value="common-artifacts.zip" />        
+        <property name="binding.artifacts.zip" value="bc-artifacts.zip" />
+        <property name="engine.artifacts.zip" value="se-artifacts.zip" />
+
+        <property name="common.artifacts.build.dir" location="${build.dir}/common-artifacts" />        
+        <property name="binding.artifacts.build.dir" location="${build.dir}/binding-artifacts" />
+        <property name="engine.artifacts.build.dir" location="${build.dir}/engine-artifacts" />
+        
+        <property name="prj.comp.support" location="../jbicomponentsupport" />
+        
+        <property name="prj.comp.support.src.dir" 
+        location="${prj.comp.support}/src" />
+        
+        <property name="prj.comp.support.templates.dir" 
+        location="${prj.comp.support}/src/org/netbeans/modules/jbi/apisupport/resources/templates" />
+
+        <property name="prj.comp.support.maven.templates.dir" 
+        location="${prj.comp.support.templates.dir}/maven" />
+        
+        <property name="prj.comp.support.binding.templates.dir" 
+        location="${prj.comp.support.templates.dir}/binding" />
+        
+        <property name="prj.comp.support.engine.templates.dir" 
+        location="${prj.comp.support.templates.dir}/engine" />
+
+        <property name="prj.comp.support.project.resources.dir" 
+        location="${prj.comp.support}/src/org/netbeans/modules/jbi/apisupport/project/resources" />
+        
+    </target>  
+        
+    <target name="clean" depends="init" description="clean up" >
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>  
+    
+    <target name="init-filtersets" depends="init" >
+        
+        <filterset id="wsdlext_package_filterset" 
+                   begintoken="com.sun.jbi.sample." 
+                   endtoken=".wsdlext" 
+                   recurse="false" >
+            <filter token="binding" value="__WSDLEXT_PACKAGE__"/>
+        </filterset>
+        
+        <filterset id="se_sa_name_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="TestSA" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSA"/>
+        </filterset>
+        
+        <filterset id="se_subc_name_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="TestSUBC" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSUBC"/>
+        </filterset>
+
+        <filterset id="se_suse_name_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="TestSUSE" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSUSE"/>
+        </filterset>
+                        
+        <filterset id="se_target_filterset" 
+                   begintoken="component-name>" 
+                   endtoken="SE" 
+                   recurse="false" >
+            <filter token="Provider" value="component-name>__JBI_COMP_NAME__"/>
+        </filterset>
+
+        <filterset id="se_provider_port_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="JBIPort" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___JBIPort"/>
+        </filterset>
+        
+        <filterset id="soap_location_filterset" 
+                   begintoken="http://localhost:12010/" 
+                   endtoken="/greetings" 
+                   recurse="false" >
+            <filter token="ProviderSE" value="http://__HTTP_BC_HOST__:__HTTP_BC_PORT__/__JBI_COMP_NAME__/greetings"/>
+        </filterset>
+        
+        <filterset id="bc_target_filterset" 
+                   begintoken="component-name>" 
+                   endtoken="Binding" 
+                   recurse="false" >
+            <filter token="JMX" value="component-name>__JBI_COMP_NAME__"/>
+        </filterset>
+        
+        <filterset id="bc_se_target_filterset" 
+                   begintoken="component-name>" 
+                   endtoken="SE" 
+                   recurse="false" >
+            <filter token="Provider" value="component-name>__ENGINE_TARGET__"/>
+        </filterset>
+                
+        <filterset id="bc_provider_port_filterset" 
+                   begintoken="ProviderSE" 
+                   endtoken="JBIPort" 
+                   recurse="false" >
+            <filter token="_" value="__ENGINE_TARGET___JBIPort"/>
+        </filterset>
+        
+        <filterset id="bc_sa_name_filterset" 
+                   begintoken="JMXBinding" 
+                   endtoken="TestSA" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSA"/>
+        </filterset>
+        
+        <filterset id="bc_subc_name_filterset" 
+                   begintoken="JMXBinding" 
+                   endtoken="TestSUBC" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSUBC"/>
+        </filterset>
+
+        <filterset id="bc_suse_name_filterset" 
+                   begintoken="JMXBinding" 
+                   endtoken="TestSUSE" 
+                   recurse="false" >
+            <filter token="_" value="__JBI_COMP_NAME___TestSUSE"/>
+        </filterset>        
+        
+        <filterset id="jmx_mbean_filterset" 
+                   begintoken="com.sun.jbi.sample.jmxbc:jmxbc-ep-address=" 
+                   endtoken="/greetings" 
+                   recurse="false" >
+            <filter token="sample-service" value="com.sun.jbi.sample.jmxbc:jmxbc-ep-address=__JBI_COMP_NAME__/greetings"/>
+        </filterset>        
+
+        <filterset id="jmx_service_url_port_filterset" 
+                   begintoken="service:jmx:rmi:///jndi/rmi://localhost:" 
+                   endtoken="/jmxrmi" 
+                   recurse="false" >
+            <filter token="8686" value="service:jmx:rmi:///jndi/rmi://__JMX_HOST__:__JMX_PORT__/jmxrmi"/>
+        </filterset>        
+        
+        <filterset id="test_jmx_username_filterset" 
+                   begintoken="consumer.jmx.bc.ep.address.username" 
+                   endtoken="admin" 
+                   recurse="false" >
+            <filter token="=" value="consumer.jmx.bc.ep.address.username=__JMX_USERNAME__"/>
+        </filterset>        
+        
+        <filterset id="test_jmx_password_filterset" 
+                   begintoken="consumer.jmx.bc.ep.address.password" 
+                   endtoken="adminadmin" 
+                   recurse="false" >
+            <filter token="=" value="consumer.jmx.bc.ep.address.password=__JMX_PASSWORD__"/>
+        </filterset>        
+        
+        <filterset id="wsdl_jmx_username_filterset" 
+                   begintoken="username=" 
+                   endtoken="admin" 
+                   recurse="false" >
+            <filter token="&quot;" value="username=&quot;__JMX_USERNAME__"/>
+        </filterset>        
+        
+        <filterset id="wsdl_jmx_password_filterset" 
+                   begintoken="password=" 
+                   endtoken="adminadmin" 
+                   recurse="false" >
+            <filter token="&quot;" value="password=&quot;__JMX_PASSWORD__"/>
+        </filterset>        
+        
+        <filterset id="junit_filterset" 
+                   begintoken="//__" 
+                   endtoken="__" 
+                   recurse="false" >
+            <filter token="JUNIT" value="__JUNIT__"/>
+        </filterset>        
+        
+    </target>
+    
+    <target name="build-jbiadmin-artifacts" depends="init, init-filtersets" >
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <zip destfile="${dist.dir}/${jbiadmin.build.scripts.zip}" >
+            <zipfileset dir="." includes="jbi_admin.xml" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/jbi_admin.xml" />
+            <zipfileset dir="." includes="jbiadmin-impl.xml" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/jbiadmin-impl.xml" />
+            <!--     
+            <zipfileset dir="." includes="pom.xml" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/pom.xml" />
+                  
+            <zipfileset dir="." includes="m2nbbuild.xml" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/m2nbbuild.xml" />
+                  
+            <zipfileset dir="." includes="m2nbbuild-impl.xml" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/m2nbbuild-impl.xml" />
+                  
+            <zipfileset dir="." includes="m2nbbuild.properties" 
+                  fullpath="org/netbeans/modules/jbi/apisupport/project/resources/m2nbbuild.properties" />
+            -->
+        </zip>                
+    </target>
+    
+    <target name="build-common-artifacts" depends="init, init-filtersets" >
+        
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${common.artifacts.build.dir}"/>
+        <copy overwrite="true" todir="${common.artifacts.build.dir}/src" >
+            <fileset dir="${prj.comp.common}/src"  >
+            </fileset>
+        </copy>
+
+        <copy overwrite="true" todir="${common.artifacts.build.dir}/test" >
+            <fileset dir="${prj.comp.common}/test"  >
+            </fileset>
+        </copy>
+
+        <zip destfile="${dist.dir}/${common.artifacts.zip}" basedir="${common.artifacts.build.dir}" />
+        
+    </target>
+
+    <target name="build-binding-artifacts" depends="init, init-filtersets" >
+        
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${binding.artifacts.build.dir}"/>
+        
+        <copy overwrite="true" todir="${binding.artifacts.build.dir}/src" >
+            <fileset dir="${prj.comp.binding}/src"  >
+                <exclude name="conf/**/*" />
+            </fileset>
+        </copy>
+
+        <copy overwrite="true" todir="${binding.artifacts.build.dir}/test" >
+            <fileset dir="${prj.comp.binding}/test"  >
+            </fileset>
+            <filterset refid="bc_sa_name_filterset"/>
+            <filterset refid="bc_subc_name_filterset"/>
+            <filterset refid="bc_suse_name_filterset"/>
+            <filterset refid="bc_target_filterset"/>
+            <filterset refid="bc_se_target_filterset"/>
+            <filterset refid="bc_provider_port_filterset"/>
+            <filterset refid="jmx_service_url_port_filterset"/>
+            <filterset refid="test_jmx_username_filterset"/>
+            <filterset refid="test_jmx_password_filterset"/>
+            <filterset refid="jmx_mbean_filterset"/>
+            <filterset refid="wsdl_jmx_username_filterset"/>
+            <filterset refid="wsdl_jmx_password_filterset"/>            
+            <filterset refid="junit_filterset"/>
+        </copy>
+
+        <!-- insert tokens by overrides -->
+        <copy overwrite="true" todir="${binding.artifacts.build.dir}/src/java/com/sun/jbi/sample/binding" >
+            <fileset dir="${prj.comp.binding}/src/java/com/sun/jbi/sample/binding"  >
+                <include name="*.java" />                
+            </fileset>
+            <filterset refid="wsdlext_package_filterset"/>
+        </copy>
+        
+        
+        <zip destfile="${dist.dir}/${binding.artifacts.zip}" basedir="${binding.artifacts.build.dir}" />
+        
+    </target>
+    
+    <target name="build-engine-artifacts" depends="init, init-filtersets" >
+        
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${engine.artifacts.build.dir}"/>
+        
+        <copy overwrite="true" todir="${engine.artifacts.build.dir}/src" >
+            <fileset dir="${prj.comp.engine}/src"  >
+                <exclude name="conf/**/*" />
+            </fileset>
+        </copy>
+
+        <copy overwrite="true" todir="${engine.artifacts.build.dir}/test" >
+            <fileset dir="${prj.comp.engine}/test"  >
+            </fileset>
+            <filterset refid="se_sa_name_filterset"/>
+            <filterset refid="se_subc_name_filterset"/>
+            <filterset refid="se_suse_name_filterset"/>
+            <filterset refid="se_target_filterset"/>
+            <filterset refid="se_provider_port_filterset"/>
+            <filterset refid="soap_location_filterset"/>
+            <filterset refid="junit_filterset"/>
+        </copy>
+
+        <zip destfile="${dist.dir}/${engine.artifacts.zip}" basedir="${engine.artifacts.build.dir}" />
+        
+    </target>
+        
+    <target name="build-templates" depends="init, clean, init-filtersets, build-jbiadmin-artifacts, build-common-artifacts, build-binding-artifacts, build-engine-artifacts" description="builds the component source templates" >        
+    </target>
+    
+    <target name="copy-templates" depends="init, build-templates" >
+        <copy overwrite="true" file="${dist.dir}/${common.artifacts.zip}" 
+        todir="${prj.comp.support.templates.dir}" />
+        <copy overwrite="true" file="${dist.dir}/${binding.artifacts.zip}" 
+        todir="${prj.comp.support.binding.templates.dir}" />
+        <copy overwrite="true" file="${dist.dir}/${engine.artifacts.zip}" 
+        todir="${prj.comp.support.engine.templates.dir}" />       
+        <!--
+        <unzip src="${dist.dir}/${jbiadmin.build.scripts.zip}" 
+        dest="${prj.comp.support.src.dir}" overwrite="true" />
+        -->
+        <!-- copy jbi_admin.xml scripts to the project resources dir -->
+        <copy overwrite="true" file="${prj.comp.all}/jbi_admin.xml" 
+        todir="${prj.comp.support.project.resources.dir}" />
+
+        <copy overwrite="true" file="${prj.comp.all}/jbiadmin-impl.xml" 
+        todir="${prj.comp.support.project.resources.dir}" />
+        
+        <!-- copy maven artifacts to project templates.dir/maven -->
+        <copy overwrite="true" file="${prj.comp.all}/pom.xml" 
+        todir="${prj.comp.support.maven.templates.dir}" />
+        <copy overwrite="true" file="${prj.comp.all}/m2nbbuild.xml" 
+        todir="${prj.comp.support.maven.templates.dir}" />
+        <copy overwrite="true" file="${prj.comp.all}/m2nbbuild-impl.xml" 
+        todir="${prj.comp.support.maven.templates.dir}" />
+        <copy overwrite="true" file="${prj.comp.all}/m2nbbuild.properties" 
+        todir="${prj.comp.support.maven.templates.dir}" />
+        
+    </target>
+    
+</project>

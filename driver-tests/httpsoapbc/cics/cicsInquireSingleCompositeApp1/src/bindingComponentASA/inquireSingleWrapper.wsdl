@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://www.examplesApp.inquireSingle.com" xmlns:reqns="http://www.exampleApp.inquireSingleRequest.com" xmlns:tns="http://www.examplesApp.inquireSingle.com" xmlns:resns="http://www.exampleApp.inquireSingleResponse.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+  <types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.exampleApp.inquireSingleRequest.com" xmlns:tns="http://www.exampleApp.inquireSingleRequest.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:complexType abstract="false" block="#all" final="#all" mixed="false" name="ProgramInterface">
+				<xsd:annotation>
+					<xsd:documentation source="http://www.ibm.com">This schema was generated for use with CICS.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:sequence/>
+			</xsd:complexType>
+			<xsd:element name="inquireSingleRequest" nillable="false">
+				<xsd:complexType mixed="false">
+					<xsd:sequence>
+						<xsd:element name="itemRequiredReference" nillable="false">
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:unsignedShort">
+									<xsd:maxInclusive value="9999"/>
+									<xsd:minInclusive value="0"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.exampleApp.inquireSingleResponse.com" xmlns:tns="http://www.exampleApp.inquireSingleResponse.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:complexType abstract="false" block="#all" final="#all" mixed="false" name="InquireSingleResponseType">
+				<xsd:annotation>
+					<xsd:documentation source="http://www.ibm.com">This schema was generated for use with CICS.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:sequence>
+					<xsd:element name="returnCode" nillable="false">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:unsignedShort">
+								<xsd:maxInclusive value="99"/>
+								<xsd:minInclusive value="0"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="responseMessage" nillable="false">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:length value="79"/>
+								<xsd:whiteSpace value="preserve"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+					<xsd:element name="singleItem" nillable="false">
+						<xsd:complexType mixed="false">
+							<xsd:sequence>
+								<xsd:element name="itemReferenceNumber" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:unsignedShort">
+
+											<xsd:maxInclusive value="9999"/>
+
+											<xsd:minInclusive value="0"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="itemDescription" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:length value="40"/>
+											<xsd:whiteSpace value="preserve"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="department" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:unsignedShort">
+
+											<xsd:maxInclusive value="999"/>
+
+											<xsd:minInclusive value="0"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="unitCost" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:string">
+											<xsd:length value="6"/>
+											<xsd:whiteSpace value="preserve"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="inStock" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:unsignedShort">
+
+											<xsd:maxInclusive value="9999"/>
+
+											<xsd:minInclusive value="0"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+								<xsd:element name="onOrder" nillable="false">
+									<xsd:simpleType>
+										<xsd:restriction base="xsd:unsignedShort">
+
+											<xsd:maxInclusive value="999"/>
+
+											<xsd:minInclusive value="0"/>
+										</xsd:restriction>
+									</xsd:simpleType>
+								</xsd:element>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="inquireSingleResponse" nillable="false" type="tns:InquireSingleResponseType"/>
+		</xsd:schema>
+  </types>
+  <message name="inquireSingleRequest">
+    <part name="RequestPart" element="reqns:inquireSingleRequest"/>
+  </message>
+  <message name="inquireSingleResponse">
+    <part name="ResponsePart" element="resns:inquireSingleResponse"/>
+  </message>
+  <portType name="inquireSinglePort">
+    <operation name="inquireSingle">
+      <input name="inquireSingleRequest" message="tns:inquireSingleRequest"/>
+      <output name="inquireSingleResponse" message="tns:inquireSingleResponse"/>
+    </operation>
+  </portType>
+  <binding name="exampleAppInquireSingleSoapBinding" type="tns:inquireSinglePort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="inquireSingle">
+      <soap:operation soapAction="" style="document"/>
+      <input name="inquireSingleRequest">
+        <soap:body parts="RequestPart" use="literal"/>
+      </input>
+      <output name="inquireSingleResponse">
+        <soap:body parts="ResponsePart" use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <binding name="exampleAppInquireSingleHTTPSoapBinding" type="tns:inquireSinglePort">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="inquireSingle">
+      <soap:operation soapAction="" style="document"/>
+      <input name="inquireSingleRequest">
+        <soap:body parts="RequestPart" use="literal"/>
+      </input>
+      <output name="inquireSingleResponse">
+        <soap:body parts="ResponsePart" use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="inquireSingleService">
+    <port name="inquireSinglePort" binding="tns:exampleAppInquireSingleHTTPSoapBinding">
+      <soap:address location="http://lyssa:9080/exampleApp/inquireSingleWrapper"/>
+    </port>
+  </service>
+    <plink:partnerLinkType name="partnerlinktype1">
+        <plink:role name="partnerlinktyperole1" portType="tns:inquireSinglePort"/>
+    </plink:partnerLinkType>
+</definitions>

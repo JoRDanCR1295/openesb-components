@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrRecFlowF4"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrRecFlowF4"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrRecFlowF4"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrRecFlowF4TargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:corrRecFlowF4TargetNamespace"
+            location="corrRecFlowF4.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_recflow"
+                     partnerLinkType="ns0:corrRecFlowF4ServiceLinkType"
+                     myRole="corrRecFlowF4ServerRole"/>
+        <partnerLink name="plink_recflow1"
+                     partnerLinkType="ns0:corrRecFlowF4ServiceLinkType"
+                     myRole="corrRecFlowF4ServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="corrRecFlowF4Operation_Output"
+                  messageType="ns0:corrRecFlowF4Message"></variable>
+        <variable name="corrRecFlowF4Operation_Input"
+                  messageType="ns0:corrRecFlowF4Message"></variable>
+        <variable name="corrRecFlowF4Operation1_Output"
+                  messageType="ns0:corrRecFlowF4Message"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corSet1"
+                        properties="ns0:propertyName1 "/>
+    </correlationSets>
+    <sequence>
+        <receive partnerLink="plink_recflow"
+                 portType="ns0:corrRecFlowF4PortType"
+                 operation="corrRecFlowF4Operation"
+                 variable="corrRecFlowF4Operation_Output"
+                 createInstance="yes">
+            <correlations>
+                <correlation set="corSet1"
+                             initiate="yes"/>
+            </correlations>
+        </receive>
+        <flow>
+            <receive partnerLink="plink_recflow1"
+                     portType="ns0:corrRecFlowF4PortType1"
+                     operation="corrRecFlowF4Operation1"
+                     variable="corrRecFlowF4Operation1_Output">
+                <correlations>
+                    <correlation set="corSet1"/>
+                </correlations>
+            </receive>
+            <empty></empty>
+        </flow>
+        <assign>
+            <copy>
+                <from>concat($corrRecFlowF4Operation_Output.corrRecFlowF4Part/string, $corrRecFlowF4Operation1_Output.corrRecFlowF4Part/string)</from>
+                <to>$corrRecFlowF4Operation_Input.corrRecFlowF4Part/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_recflow"
+               portType="ns0:corrRecFlowF4PortType"
+               operation="corrRecFlowF4Operation"
+               variable="corrRecFlowF4Operation_Input"></reply>
+    </sequence>
+</process>

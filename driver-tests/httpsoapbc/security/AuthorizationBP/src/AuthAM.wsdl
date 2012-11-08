@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="AuthAM" targetNamespace="http://j2ee.netbeans.org/wsdl/AuthAM"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/AuthAM" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:mysp="http://sun.com/ws/httpbc/security/BasicauthSecurityPolicy"
+    xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+    <types/>
+    <message name="AuthAMOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="AuthAMOperationResponse">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="AuthAMPortType">
+        <operation name="AuthAMOperation">
+            <input name="input1" message="tns:AuthAMOperationRequest"/>
+            <output name="output1" message="tns:AuthAMOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="AuthAMBinding" type="tns:AuthAMPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AuthAMOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/AuthAM"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/AuthAM"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="AuthAMService">
+        <port name="AuthAMPort" binding="tns:AuthAMBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/AuthAMService/AuthAMPort"/>
+            <wsp:PolicyReference URI="#HttpAuthorizationBindingAMPolicy"/>
+        </port>
+    </service>
+    <wsp:Policy wsu:Id="HttpAuthorizationBindingAMPolicy">
+        <mysp:MustSupportBasicAuthentication on="true">
+            <!-- authenticationType is one of simple, am, or realm -->
+            <mysp:BasicAuthenticationDetail>
+                <mysp:AccessManager authorization="true"/>
+            </mysp:BasicAuthenticationDetail>
+        </mysp:MustSupportBasicAuthentication>
+    </wsp:Policy>
+    <plnk:partnerLinkType name="AuthAM">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="AuthAMPortTypeRole" portType="tns:AuthAMPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

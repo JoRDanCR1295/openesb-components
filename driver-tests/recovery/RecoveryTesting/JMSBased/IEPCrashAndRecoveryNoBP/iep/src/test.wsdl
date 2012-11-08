@@ -1,0 +1,106 @@
+<definitions targetNamespace="test_iep"
+             xmlns:tns="test_iep"
+             xmlns:typens="test_iep"
+             xmlns:defns="test_iep"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:jms="http://schemas.sun.com/jbi/wsdl-extensions/jms/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+<types>
+    <xsd:schema targetNamespace="test_iep" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <xsd:element name="StreamInput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="StreamOutput0_MsgObj">
+            <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="message" type="xsd:string"/>
+                   <xsd:element name="id" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+</types>
+
+<message name="StreamInput0_Msg">
+    <part name="input" element="typens:StreamInput0_MsgObj"/>
+</message>
+<message name="StreamOutput0_Msg">
+    <part name="output" element="typens:StreamOutput0_MsgObj"/>
+</message>
+
+<portType name="InputPt">
+    <operation name="StreamInput0">
+        <input message="tns:StreamInput0_Msg"/>
+    </operation>
+</portType>
+<portType name="OutputPt_StreamOutput0">
+    <operation name="StreamOutput0">
+        <input message="tns:StreamOutput0_Msg"/>
+    </operation>
+</portType>
+
+<plnk:partnerLinkType name="InputPlt" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "InputRn" portType="tns:InputPt"/>
+</plnk:partnerLinkType>
+<plnk:partnerLinkType name="OutputPlt_StreamOutput0" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:role name = "OutputRn_StreamOutput0" portType="tns:OutputPt_StreamOutput0"/>
+</plnk:partnerLinkType>
+<!-- input binding -->
+<binding name="InputBinding"
+         type="defns:InputPt">
+    <jms:binding></jms:binding>
+    <operation name="StreamInput0">
+        <jms:operation destinationType="Queue"
+                       maxConcurrentConsumers="32"
+                       destination="ext_client_publish_IEPCrashAndRecoveryNoBP" 
+                       transaction="XATransaction">
+        </jms:operation>
+        <input>
+            <jms:message textPart="input"
+                         messageType="TextMessage">
+            </jms:message>
+        </input>
+    </operation>
+</binding>
+<service name="InputService">
+    <port name="InputPort"
+          binding="tns:InputBinding">
+        <jms:address password="admin"
+                     username="admin"
+                     connectionURL="mq://localhost:7676" />
+    </port>
+</service>
+
+<!-- output binding and service -->
+<binding name="OutputBinding_StreamOutput0"
+         type="defns:OutputPt_StreamOutput0">
+    <jms:binding></jms:binding>
+    <operation name="StreamOutput0">
+        <jms:operation deliveryMode="PERSISTENT"
+                       disableMessageTimeStamp="true"
+                       disableMessageID="true"
+                       transaction="XATransaction"
+                       destinationType="Queue"
+                       destination="ext_client_consume_IEPCrashAndRecoveryNoBP">
+        </jms:operation>
+        <input>
+            <jms:message messageType="TextMessage"
+                         textPart="output">
+            </jms:message>
+        </input>
+    </operation>
+</binding>
+<service name="OutputService_StreamOutput0">
+    <port name="OutputPort_StreamOutput0"
+          binding="tns:OutputBinding_StreamOutput0">
+        <jms:address password="admin"
+                     username="admin"
+                     connectionURL="mq://localhost:7676" />
+    </port>
+</service>
+</definitions>

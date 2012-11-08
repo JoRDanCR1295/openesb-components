@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="PickAndOnAlarmTerminationInScope" 
+         targetNamespace="http://localhost/bpel/PickAndOnAlarmTerminationInScope"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="http://localhost/bpel/PickAndOnAlarmTerminationInScope"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:ns1="http://localhost/wsdl/PickAndOnAlarmTerminationInScope">
+    
+    <import namespace="http://localhost/wsdl/PickAndOnAlarmTerminationInScope" 
+            location="PickAndOnAlarmTerminationInScope.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+    <partnerLinks>
+        <partnerLink name="PickAndOnAlarmTerminationInScope" 
+                     partnerLinkType="ns1:partnerlinktype1" 
+                     myRole="partnerlinktyperole1"/>
+    </partnerLinks>
+    
+    <variables>
+        <variable name="outputVar" messageType="ns1:responseMessage"/>
+        <variable name="inputVar" messageType="ns1:requestMessage"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVar"/>
+    </correlationSets>
+    <sequence>
+        <receive name="start" 
+                 partnerLink="PickAndOnAlarmTerminationInScope" 
+                 operation="operation1" 
+                 portType="ns1:portType1" 
+                 variable="inputVar" 
+                 createInstance="yes">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <scope name="Scope1">
+            <faultHandlers>
+                <catchAll>
+                    <sequence name="Sequence3">
+                        <assign name="Assign2">
+                            <copy>
+                                <from>
+                                    <literal>replyFromCatchAll</literal>
+                                </from>
+                                <to>$outputVar.resultType/ns1:paramA</to>
+                            </copy>
+                        </assign>
+                        <reply name="replyFromFH" 
+                               partnerLink="PickAndOnAlarmTerminationInScope" 
+                               operation="operation1" 
+                               portType="ns1:portType1" 
+                               variable="outputVar"/>
+                    </sequence>
+                </catchAll>
+            </faultHandlers>
+            <flow name="Flow1">            
+                <sequence name="Sequence1">
+                    <pick name="Pick1">
+                        <onMessage partnerLink="PickAndOnAlarmTerminationInScope" operation="operation2" portType="ns1:portType1" variable="inputVar">
+                            <correlations>
+                                <correlation set="CorrelationSet1" initiate="no"/>
+                            </correlations>
+                            <assign name="Assign3">
+                                <copy>
+                                        <from>
+                                                <literal>replyFromBranch</literal>
+                                            </from>
+                                            <to>$outputVar.resultType/ns1:paramA</to>
+                                    </copy>
+                            </assign>
+                        </onMessage>
+                        <onAlarm>
+                            <for>'P0Y0M0DT0H0M30S'</for>
+                            <assign name="Assign1">
+                                <copy>
+                                        <from>
+                                                <literal>"'replyFromOnAlarm"</literal>
+                                            </from>
+                                            <to>$outputVar.resultType/ns1:paramA</to>
+                                    </copy>
+                            </assign>
+                        </onAlarm>
+                    </pick>
+                    <reply name="replyFromBranch" 
+                           partnerLink="PickAndOnAlarmTerminationInScope" 
+                           operation="operation1" 
+                           portType="ns1:portType1" 
+                           variable="outputVar"/>
+                </sequence>
+                <sequence name="Sequence2">
+                        <throw name="Throw1" faultName="tns:SomeFault"/>
+                </sequence>
+            </flow>
+        </scope>
+    </sequence>
+</process>

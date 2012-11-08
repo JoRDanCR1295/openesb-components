@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="StockQuote"
+    targetNamespace="http://enterprise.netbeans.org/bpel/SyncSampleEPRAssign/StockQuote"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/SyncSampleEPRAssign/StockQuote" xmlns:ns1="http://j2ee.netbeans.org/wsdl/stockQuote">
+   <import namespace="http://j2ee.netbeans.org/wsdl/stockQuote" location="stockQuote.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:stockQuote1" myRole="stockQuotePortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="StockQuoteOperationOut" messageType="ns1:stockQuoteOperationReply"/>
+      <bpws:variable name="StockQuoteOperationIn" messageType="ns1:stockQuoteOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="stockQuoteOperation" portType="ns1:stockQuotePortType" variable="StockQuoteOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat($StockQuoteOperationIn.part1, ' In Sub BP ')</bpws:from>
+            <bpws:to part="part1" variable="StockQuoteOperationOut"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="stockQuoteOperation" portType="ns1:stockQuotePortType" variable="StockQuoteOperationOut"/>
+   </sequence>
+</process>

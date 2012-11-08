@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://CosNotification/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://CosNotification/">
+<xs:complexType name="propertyErrorSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:propertyError"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="propertyError">
+<xs:sequence>
+<xs:element name="code" type="tns:qoSErrorCode"/>
+<xs:element name="name" type="xs:string"/>
+<xs:element name="available_range" type="tns:propertyRange"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="propertyRange">
+<xs:sequence>
+<xs:element name="low_val" type="xs:anyType"/>
+<xs:element name="high_val" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="eventType">
+<xs:sequence>
+<xs:element name="domain_name" type="xs:string"/>
+<xs:element name="type_name" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="filterableEventBody">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="property">
+<xs:sequence>
+<xs:element name="name" type="xs:string"/>
+<xs:element name="value" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="eventTypeSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:eventType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="qoSProperties">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="eventBatch">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:structuredEvent"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="structuredEvent">
+<xs:sequence>
+<xs:element name="header" type="tns:eventHeader"/>
+<xs:element maxOccurs="unbounded" name="filterable_data" type="tns:property"/>
+<xs:element name="remainder_of_body" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="eventHeader">
+<xs:sequence>
+<xs:element name="fixed_header" type="tns:fixedEventHeader"/>
+<xs:element maxOccurs="unbounded" name="variable_header" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="fixedEventHeader">
+<xs:sequence>
+<xs:element name="event_type" type="tns:eventType"/>
+<xs:element name="event_name" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="adminProperties">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="namedPropertyRangeSeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:namedPropertyRange"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="namedPropertyRange">
+<xs:sequence>
+<xs:element name="name" type="xs:string"/>
+<xs:element name="range" type="tns:propertyRange"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="propertyValue">
+<xs:sequence>
+<xs:element minOccurs="0" name="value" type="xs:anyType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="optionalHeaderFields">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType name="propertySeq">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" name="value" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="istring">
+<xs:restriction base="xs:string"/>
+</xs:simpleType>
+<xs:simpleType name="propertyName">
+<xs:restriction base="xs:string"/>
+</xs:simpleType>
+<xs:simpleType name="qoSErrorCode">
+<xs:restriction base="xs:string">
+<xs:enumeration value="UNSUPPORTED_PROPERTY"/>
+<xs:enumeration value="UNAVAILABLE_PROPERTY"/>
+<xs:enumeration value="UNSUPPORTED_VALUE"/>
+<xs:enumeration value="UNAVAILABLE_VALUE"/>
+<xs:enumeration value="BAD_PROPERTY"/>
+<xs:enumeration value="BAD_TYPE"/>
+<xs:enumeration value="BAD_VALUE"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:complexType final="#all" name="eventTypeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:eventType"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="filterableEventBodyArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:filterableEventBody"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="adminPropertiesArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:adminProperties"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyRangeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertyRange"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="structuredEventArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:structuredEvent"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="fixedEventHeaderArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:fixedEventHeader"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyValueArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertyValue"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="eventBatchArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:eventBatch"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyErrorArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertyError"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="optionalHeaderFieldsArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:optionalHeaderFields"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:property"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="eventHeaderArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:eventHeader"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="namedPropertyRangeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:namedPropertyRange"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="eventTypeSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:eventTypeSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="istringArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:istring"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="qoSErrorCodeArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:qoSErrorCode"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyNameArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertyName"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertySeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertySeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="namedPropertyRangeSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:namedPropertyRangeSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="propertyErrorSeqArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:propertyErrorSeq"/>
+</xs:sequence>
+</xs:complexType>
+<xs:complexType final="#all" name="qoSPropertiesArray">
+<xs:sequence>
+<xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="tns:qoSProperties"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/Corr-PickInSeq"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Corr-PickInSeq" name="Corr-PickInSeq" xmlns:ns="http://xml.netbeans.org/schema/Corr-PickTest-inlineSchema" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/Corr-PickTest-inlineSchema" 
+                    xmlns:tns1="http://xml.netbeans.org/schema/Corr-PickTest-inlineSchema">
+            <xsd:complexType name="Content">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:int"></xsd:element>
+                    <xsd:element name="name" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="type1">
+                <xsd:sequence>
+                    <xsd:element name="corrVal1" type="xsd:string"></xsd:element>
+                    <xsd:element name="exCorrVal1" type="xsd:string"></xsd:element>
+                    <xsd:element name="content1" type="tns1:Content"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="type2">
+                 <xsd:sequence>
+                    <xsd:element name="corrVal2" type="xsd:string"></xsd:element>
+                    <xsd:element name="exCorrVal2" type="xsd:string"></xsd:element>
+                    <xsd:element name="content2" type="tns1:Content"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="elem" type="tns1:type2"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="PickTestMsg1">
+        <part name="Msg1Part1" type="ns:type1"/>
+    </message>
+    <message name="PickTestMsg2">
+        <part name="Msg2Part1" element="ns:elem"/>
+    </message>
+    <portType name="PickTestPT1">
+        <operation name="PickTestOper1">
+            <input name="input1" message="tns:PickTestMsg1"/>
+            <output name="output1" message="tns:PickTestMsg1"/>
+        </operation>
+    </portType>
+    <portType name="PickTestPT2">
+        <operation name="PickTestOper2">
+            <input name="input1" message="tns:PickTestMsg2"/>
+        </operation>
+    </portType>
+    <wsdl:portType name="PickTestPT3">
+        <wsdl:operation name="PickTestOper3">
+            <wsdl:input name="input1" message="tns:PickTestMsg1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <binding name="PickTestBinding1" type="tns:PickTestPT1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="PickTestOper1">
+            <soap:operation soapAction="PickTestOper1" style="document"/>
+            <input name="input1">
+                <soap:body parts="Msg1Part1" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="Msg1Part1" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="PickTestBinding2" type="tns:PickTestPT2">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="PickTestOper2">
+            <soap:operation soapAction="PickTestOper2" style="document"/>
+            <input name="input1">
+                <soap:body parts="Msg2Part1" use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <wsdl:binding name="PickTestBinding3" type="tns:PickTestPT3">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="PickTestOper3">
+            <wsdl:input name="input1">
+                <soap:body parts="Msg1Part1" use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <service name="PickTestService1">
+        <port name="PickTestPT1" binding="tns:PickTestBinding1">
+            <soap:address location="http://localhost:18181/Corr-PickInSeq/PickTestPT1"/>
+        </port>
+    </service>
+    <service name="PickTestService2">
+        <port name="PickTestPT2" binding="tns:PickTestBinding2">
+            <soap:address location="http://localhost:18181/Corr-PickInSeq/PickTestPT2"/>
+        </port>
+    </service>
+    <wsdl:service name="PickTestService3">
+        <wsdl:port name="PickTestPT3" binding="tns:PickTestBinding3">
+            <soap:address location="http://localhost:18181/Corr-PickInSeq/PickTestPT3"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="PickTestServiceLinkType">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="PickTestPT1ServerRole" portType="tns:PickTestPT1"/>
+        <plink:role name="PickTestPT1ServerRole2" portType="tns:PickTestPT2"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="PickTestServiceLinkType2">
+        <plink:role name="PickTestPT3PartnerRole" portType="tns:PickTestPT3"/>
+    </plink:partnerLinkType>
+    <vprop:property name="property1" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:PickTestMsg1" part="Msg1Part1">
+        <vprop:query>corrVal1</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:property1" messageType="tns:PickTestMsg2" part="Msg2Part1">
+        <vprop:query>corrVal2</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:property name="property2" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:PickTestMsg1" part="Msg1Part1">
+        <vprop:query>exCorrVal1</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:PickTestMsg2" part="Msg2Part1">
+        <vprop:query>exCorrVal2</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

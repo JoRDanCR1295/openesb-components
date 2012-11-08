@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="BP1"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TwoBPs"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/PTwithTwoOperations">
+    <import namespace="http://j2ee.netbeans.org/wsdl/PTwithTwoOperations" location="PTwithTwoOperations.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:PTwithTwoOperations1" myRole="PTwithTwoOperationsPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="PTwithTwoOperationsOperation1Out" messageType="ns1:PTwithTwoOperationsOperationReply"/>
+        <bpws:variable name="PTwithTwoOperationsOperation1In" messageType="ns1:PTwithTwoOperationsOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation1" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation1In"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($PTwithTwoOperationsOperation1In.part1, 'BP1')</bpws:from>
+                <bpws:to part="part1" variable="PTwithTwoOperationsOperation1Out"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="PTwithTwoOperationsOperation1" portType="ns1:PTwithTwoOperationsPortType" variable="PTwithTwoOperationsOperation1Out"/>
+    </sequence>
+</process>

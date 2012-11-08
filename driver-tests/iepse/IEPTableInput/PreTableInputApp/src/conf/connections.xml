@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jbi xmlns="http://java.sun.com/xml/ns/jbi" xmlns:ns1="PreTableInputApp" xmlns:ns2="PreTableInput.TimeBasedAggregator.TimeBasedAggregator_iep" version="1.0">
+    <service-assembly>
+        <identification>
+            <name>PreTableInputApp</name>
+            <description>Represents the Service Assembly of PreTableInputApp</description>
+        </identification>
+        <connections>
+            <connection>
+                <consumer endpoint-name="casaPort1" service-name="ns1:casaService1"/>
+                <provider endpoint-name="InputRn" service-name="ns2:InputPl"/>
+            </connection>
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns2:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort2" service-name="ns1:casaService2"/>
+            </connection>
+        </connections>
+        <connections xmlns="http://www.sun.com/jbi/qos">
+            <connection>
+                <consumer endpoint-name="OutputRn_StreamOutput0" service-name="ns2:OutputPl_StreamOutput0"/>
+                <provider endpoint-name="casaPort2" service-name="ns1:casaService2"/>
+                <throttling xmlns="http://www.sun.com/jbi/qos/throttling" maximumConcurrencyLimit="1"/>
+            </connection>
+        </connections>
+    </service-assembly>
+</jbi>

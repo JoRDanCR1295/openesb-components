@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="subWS" targetNamespace="http://j2ee.netbeans.org/wsdl/subWS"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/subWS" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types/>
+    <message name="createInstanceRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="associateCorrelationWithInstance2">
+        <part name="part1" type="xsd:string"/>
+        <wsdl:part name="correlatingPart" type="xsd:string"/>
+    </message>
+    <message name="callWrongInstanceRequest">
+        <part name="part1" type="xsd:string"/>
+        <wsdl:part name="correlatingPart" type="xsd:string"/>
+    </message>
+    <message name="callWrongInstanceReply">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <message name="subWSOperationRequest">
+        <part name="part1" type="xsd:string"/>
+    </message>
+    <portType name="createInstance">
+        <wsdl:operation name="createInstance">
+            <wsdl:input name="input1" message="tns:createInstanceRequest"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="associateCorrelationWithInstance2">
+        <wsdl:operation name="associateCorrelationWithInstance2">
+            <wsdl:input name="input1" message="tns:associateCorrelationWithInstance2"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="callWrongInstance">
+        <wsdl:operation name="callWrongInstance">
+            <wsdl:input name="input1" message="tns:callWrongInstanceRequest"/>
+            <wsdl:output name="output1" message="tns:callWrongInstanceReply"/>
+        </wsdl:operation>
+    </portType>
+    <portType name="endSubBP">
+        <wsdl:operation name="endSubBP">
+            <wsdl:input name="input1" message="tns:subWSOperationRequest"/>
+        </wsdl:operation>
+    </portType>
+    <binding name="subWSBinding" type="tns:createInstance">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="createInstance">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/subWS"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </binding>
+    <service name="subWSService">
+        <wsdl:port name="subWSPort" binding="tns:subWSBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/subWSService/subWSPort"/>
+        </wsdl:port>
+    </service>
+    <plnk:partnerLinkType name="subWS1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="createInstanceRole" portType="tns:createInstance"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="subWS12">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="associateCorrelationWithInstance2Role" portType="tns:associateCorrelationWithInstance2"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="subWS13">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="callWrongInstanceRole" portType="tns:callWrongInstance"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="createInstanceProperty" type="xsd:string"/>
+    <vprop:property name="property2" type="xsd:string"/>
+    <plnk:partnerLinkType name="subWS14">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="endSubBPRole" portType="tns:endSubBP"/>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias propertyName="tns:createInstanceProperty" messageType="tns:createInstanceRequest" part="part1"/>
+    <vprop:propertyAlias propertyName="tns:createInstanceProperty" messageType="tns:associateCorrelationWithInstance2" part="correlatingPart"/>
+    <vprop:propertyAlias propertyName="tns:createInstanceProperty" messageType="tns:callWrongInstanceRequest" part="correlatingPart"/>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:associateCorrelationWithInstance2" part="part1"/>
+    <vprop:propertyAlias propertyName="tns:property2" messageType="tns:callWrongInstanceRequest" part="part1"/>
+    <vprop:propertyAlias propertyName="tns:createInstanceProperty" messageType="tns:subWSOperationRequest" part="part1"/>
+</definitions>

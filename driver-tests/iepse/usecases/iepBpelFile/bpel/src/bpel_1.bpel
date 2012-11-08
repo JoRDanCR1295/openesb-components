@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="bpel_1" 
+    targetNamespace="http://www.mycomp.org/bpel/bpel_1"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://www.mycomp.org/bpel/bpel_1" xmlns:ns1="FileOut"   xmlns:ns2="testIep_iep">
+    <import location="fileOut.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="FileOut"/>
+    <import location="testIep.wsdl" importType="http://schemas.xmlsoap.org/wsdl/" namespace="testIep_iep"/>
+    <partnerLinks>
+        <partnerLink name="p1"
+                     partnerLinkType="ns2:OutputPlt_StreamOutput0"
+                     myRole="OutputRn_StreamOutput0"/>
+        <partnerLink name="p2"
+                     partnerLinkType="ns1:OFServiceLink"
+                     partnerRole="OFRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OutputIn1" messageType="ns1:OF_Input"/>
+        <variable name="StreamOutput0In1" messageType="ns2:StreamOutput0_Msg"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="p1" operation="StreamOutput0" portType="ns2:OutputPt_StreamOutput0" variable="StreamOutput0In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>$StreamOutput0In1.output/B</from><to>$OutputIn1.body/int</to>
+            </copy>
+            <copy>
+            <from>$StreamOutput0In1.output/A</from><to>$OutputIn1.body/string</to>
+            </copy>
+        </assign>
+        <invoke name="Invoke1" partnerLink="p2" operation="Output" portType="ns1:OF" inputVariable="OutputIn1"/>
+    </sequence>
+</process>

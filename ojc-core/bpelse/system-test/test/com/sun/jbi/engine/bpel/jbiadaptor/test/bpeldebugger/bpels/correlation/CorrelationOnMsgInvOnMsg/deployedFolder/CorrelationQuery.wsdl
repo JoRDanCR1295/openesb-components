@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="CorrelationQuery" 
+             targetNamespace="http://enterprise.netbeans.org/wsdl/CorrelationQuery"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:mytype="urn:CorrQuerryTNS"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://enterprise.netbeans.org/wsdl/CorrelationQuery" 
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:ns0="urn:CorrQuerryTNS">
+
+	<vprop:property type="xsd:string" name="complexProperty"/>
+	<vprop:property type="xsd:string" name="simpleProperty1"/>
+	<vprop:property type="xsd:string" name="simpleProperty2"/>
+	<!-- complex type, nested query for 1st onmsg-->
+	<vprop:propertyAlias part="complexData" propertyName="tns:complexProperty" 
+						messageType="tns:CorrQueryInputMsg1">
+		<vprop:query>ns0:foo/ns0:bar/ns0:baz</vprop:query>
+	</vprop:propertyAlias>
+	<!-- complex type, null query for 2nd onmsg-->
+	<vprop:propertyAlias part="simpleData" propertyName="tns:complexProperty" 
+						messageType="tns:CorrQueryInputMsg2"/>
+	<!-- simple type, empty query for invoke msg -->
+	<vprop:propertyAlias part="data" propertyName="tns:simpleProperty1"
+						messageType="tns:CorrQueryInvokeMsg">
+		<vprop:query/>
+	</vprop:propertyAlias>
+	<!-- simple type, empty query for 2nd onmsg -->
+	<vprop:propertyAlias part="simpleData" propertyName="tns:simpleProperty1"
+						messageType="tns:CorrQueryInputMsg2">
+		<vprop:query/>
+	</vprop:propertyAlias>
+	<!-- simple type, null query for invoke msg -->
+	<vprop:propertyAlias part="data" propertyName="tns:simpleProperty2" 
+						messageType="tns:CorrQueryInvokeMsg"/>
+					
+	<types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+					xmlns:tns="urn:CorrQuerryTNS"
+                	targetNamespace="urn:CorrQuerryTNS"
+					attributeFormDefault="unqualified"
+					elementFormDefault="qualified">
+			<xsd:complexType name="CorrQueryComplexType">
+				<xsd:sequence>
+					<xsd:element name="foo">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="bar">
+									<xsd:complexType>
+										<xsd:sequence>
+											<xsd:element name="baz" type="xsd:string"/>
+										</xsd:sequence>
+									</xsd:complexType>
+								</xsd:element>
+								<xsd:element name="baz" type="xsd:string"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</types>
+
+    <message name="CorrQueryInputMsg1">
+        <part name="complexData" type="mytype:CorrQueryComplexType"/>
+    </message>
+	<message name="CorrQueryInvokeMsg">
+		<part name="data" type="xsd:string"/>
+		<part name="count" type="xsd:int"/>
+	</message>
+    <message name="CorrQueryInputMsg2">
+        <part name="simpleData" type="xsd:string"/>
+    </message>
+
+    <portType name="CorrQueryPortType1">
+        <operation name="CorrQueryOperation1">
+            <input name="input1" message="tns:CorrQueryInputMsg1"/>
+        </operation>
+    </portType>
+    <portType name="InvokePortType">
+        <operation name="CorrQueryInvokeOp">
+            <input name="input1" message="tns:CorrQueryInvokeMsg"/>
+        </operation>
+    </portType>
+    <portType name="CorrQueryPortType2">
+        <operation name="CorrQueryOperation2">
+        	<input name="input2" message="tns:CorrQueryInputMsg2"/>
+        </operation>
+    </portType>
+
+    <binding name="CorrQueryBinding1" type="tns:CorrQueryPortType1">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CorrQueryOperation1">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="InvokeBinding" type="tns:InvokePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CorrQueryInvokeOp">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <binding name="CorrQueryBinding2" type="tns:CorrQueryPortType2">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CorrQueryOperation2">
+            <input name="input2"><soap:body/></input>
+        </operation>
+    </binding>
+    <service name="CorrQueryService">
+        <port name="CorrQueryPort1" binding="tns:CorrQueryBinding1">
+            <soap:address location="http://localhost:20000/CorrQuery1"/>
+        </port>
+        <port name="InvokePort" binding="tns:InvokeBinding">
+            <soap:address location="http://localhost:20001/CorrQueryInvoke"/>
+        </port>
+        <port name="CorrQueryPort2" binding="tns:CorrQueryBinding2">
+            <soap:address location="http://localhost:20000/CorrQuery2"/>
+        </port>
+    </service>
+    <plink:partnerLinkType name="CorrQueryPartnerLinkType1">
+        <plink:role name="CorrQueryPLinkTypeRole1" portType="tns:CorrQueryPortType1"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="CorrQueryInvokePLT">
+        <plink:role name="CorrQueryInvokeRole" portType="tns:InvokePortType"/>
+    </plink:partnerLinkType>
+    <plink:partnerLinkType name="CorrQueryPartnerLinkType2">
+        <plink:role name="CorrQueryPLinkTypeRole2" portType="tns:CorrQueryPortType2"/>
+    </plink:partnerLinkType>
+</definitions>

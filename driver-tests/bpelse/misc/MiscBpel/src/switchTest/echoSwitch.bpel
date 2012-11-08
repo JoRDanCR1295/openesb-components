@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoSwitch"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoSwitch"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoSwitch"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/echoSwitch"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/echoSwitch"
+            location="echoSwitch.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_switch"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoSwitch_Output"
+                  messageType="ns0:echoSwitch"></variable>
+        <variable name="echoSwitch_Input"
+                  messageType="ns0:echoSwitch"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoSwitch"
+                 partnerLink="plink_switch"
+                 portType="ns0:echoSwitch"
+                 operation="echoSwitch"
+                 variable="echoSwitch_Output"
+                 createInstance="yes"></receive>
+        <if>
+            <condition>(&apos;CASE&apos; = $echoSwitch_Output.part/value)</condition>
+                <assign>
+                    <copy>
+                        <from>concat(&apos;CASE: &apos;, $echoSwitch_Output.part/value)</from>
+                        <to>$echoSwitch_Input.part/value</to>
+                    </copy>
+                </assign>
+            <else>
+                <assign>
+                    <copy>
+                        <from>concat(&apos;OTHERWISE: &apos;, $echoSwitch_Output.part/value)</from>
+                        <to>$echoSwitch_Input.part/value</to>
+                    </copy>
+                </assign>
+            </else>
+        </if>
+        <reply partnerLink="plink_switch"
+               portType="ns0:echoSwitch"
+               operation="echoSwitch"
+               variable="echoSwitch_Input"></reply>
+    </sequence>
+</process>

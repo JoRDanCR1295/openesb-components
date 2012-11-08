@@ -1,0 +1,1 @@
+create view "COMPANY"."v1" as select * from "COMPANY"."CUSTOMER"

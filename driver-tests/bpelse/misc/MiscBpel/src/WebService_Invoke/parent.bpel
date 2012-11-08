@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/parent"
+         sbynpxp:end_YLoc="447.0"
+         sbynpxp:start_YLoc="226.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="1080.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/ParentProcess"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns1="http://www.dataaccess.com/webservicesserver/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/ParentProcess"
+            location="ParentProcess.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://www.dataaccess.com/webservicesserver/"
+            location="Conversions.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="sa"
+                     partnerLinkType="ns0:SLT"
+                     myRole="SimpleObjectrole"/>
+        <partnerLink name="sd"
+                     partnerLinkType="ns1:Convert"
+                     partnerRole="converter"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SimpleOperation_Output"
+                  messageType="ns0:SimpleObjectInput"></variable>
+        <variable name="SimpleOperation_Input"
+                  messageType="ns0:SimpleObjectResponse"></variable>
+        <variable name="NumberToWords_Input"
+                  messageType="ns1:NumberToWordsSoapRequest"></variable>
+        <variable name="NumberToWords_Output"
+                  messageType="ns1:NumberToWordsSoapResponse"></variable>
+    </variables>
+    <faultHandlers sbynpxp:XLoc="204.0"
+                   sbynpxp:YLoc="52.0">
+        <catchAll sbynpxp:XLoc="281.0"
+                  sbynpxp:YLoc="62.0"
+                  sbynpxp:isExpanded="true">
+            <sequence>
+                <assign name="Assign1"
+                        sbynpxp:XLoc="341.0"
+                        sbynpxp:YLoc="92.0">
+                    <copy>
+                        <from>&apos;Caught in Catch All&apos;</from>
+                        <to>$SimpleOperation_Input.body/NumberToWordsResult</to>
+                    </copy>
+                </assign>
+                <reply name="Reply"
+                       partnerLink="sa"
+                       portType="ns0:SimpleObjectPortType"
+                       operation="SimpleOperation"
+                       variable="SimpleOperation_Input"
+                       sbynpxp:XLoc="588.0"
+                       sbynpxp:YLoc="172.0"></reply>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="SimpleOperation"
+                 partnerLink="sa"
+                 portType="ns0:SimpleObjectPortType"
+                 operation="SimpleOperation"
+                 variable="SimpleOperation_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="158.0"
+                 sbynpxp:YLoc="350.0"></receive>
+        <assign name="aAssign"
+                sbynpxp:XLoc="214.0"
+                sbynpxp:YLoc="267.0">
+            <copy>
+                <from>number($SimpleOperation_Output.body/number)</from>
+                <to>$NumberToWords_Input.parameters/ubiNum</to>
+            </copy>
+        </assign>
+        <invoke name="NumberToWords"
+                partnerLink="sd"
+                portType="ns1:ConversionsSoapType"
+                operation="NumberToWords"
+                inputVariable="NumberToWords_Input"
+                outputVariable="NumberToWords_Output"
+                sbynpxp:XLoc="499.0"
+                sbynpxp:YLoc="296.0"></invoke>
+        <assign name="Assign"
+                sbynpxp:XLoc="638.0"
+                sbynpxp:YLoc="320.0">
+            <copy>
+                <from>$NumberToWords_Output.parameters/NumberToWordsResult</from>
+                <to>$SimpleOperation_Input.body/NumberToWordsResult</to>
+            </copy>
+        </assign>
+        <reply name="SimpleOperation.Reply"
+               partnerLink="sa"
+               portType="ns0:SimpleObjectPortType"
+               operation="SimpleOperation"
+               variable="SimpleOperation_Input"
+               sbynpxp:XLoc="843.0"
+               sbynpxp:YLoc="343.0"></reply>
+    </sequence>
+</process>

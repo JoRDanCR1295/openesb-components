@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="EHonEventScopeTerminationInScope"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ScopeTerminationBpel/EHonEventScopeTerminationInScope"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/ScopeTerminationBpel/EHonEventScopeTerminationInScope" xmlns:ns1="http://j2ee.netbeans.org/wsdl/EHonEventScopeTerminationInScope" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/EHonEventScopeTerminationInScope1">
+    <import namespace="http://j2ee.netbeans.org/wsdl/EHonEventScopeTerminationInScope" location="EHonEventScopeTerminationInScope.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLinkOneWayIn" partnerLinkType="ns1:EHOneWayInPlink" myRole="EHOneWayInPortTypeRole"/>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:EHonEventScopeTerminationInScopePlink" myRole="EHonEventScopeTerminationInScopePortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="EHonEventScopeTerminationInScopeOperationIn" messageType="ns1:EHonEventScopeTerminationInScopeOperationRequest"/>
+        <variable name="EHonEventScopeTerminationInScopeOperationOut" messageType="ns1:EHonEventScopeTerminationInScopeOperationReply"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVar"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="EHonEventScopeTerminationInScopeOperation" portType="ns1:EHonEventScopeTerminationInScopePortType" variable="EHonEventScopeTerminationInScopeOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign">
+            <copy>
+                <from>concat('1. Input is -  ', $EHonEventScopeTerminationInScopeOperationIn.InputPart)</from>
+                <to part="OutputPart" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+            </copy>
+        </assign>
+        <ns2:scope name="GlobalScope">
+            <ns2:faultHandlers>
+                <ns2:catch faultName="ns2:someFault">
+                    <ns2:sequence name="FH_Sequence">
+                        <ns2:assign name="FH_Assign">
+                            <ns2:copy>
+                                <ns2:from>concat($EHonEventScopeTerminationInScopeOperationOut.OutputPart, ' \n 4. Sending Output from FH')</ns2:from>
+                                <ns2:to part="OutputPart" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                            </ns2:copy>                            
+                        </ns2:assign>
+                        <ns2:reply name="replyFromFH" partnerLink="PartnerLinkInOut" operation="EHonEventScopeTerminationInScopeOperation" portType="ns1:EHonEventScopeTerminationInScopePortType" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                    </ns2:sequence>
+                </ns2:catch>
+            </ns2:faultHandlers>
+            <ns2:sequence name="Sequence">
+                <ns2:flow name="Flow1">
+                            <ns2:scope name="RunningScope">                         
+                                <ns2:eventHandlers>
+                                    <ns2:onEvent partnerLink="PartnerLinkOneWayIn" operation="EHOneWayInOperation" portType="ns1:EHOneWayInPortType" variable="EHOneWayInOperationIn" messageType="ns1:EHonEventScopeTerminationInScopeOperationRequest">
+                                        <ns2:correlations>
+                                            <ns2:correlation set="CorrelationSet1" initiate="no"/>
+                                        </ns2:correlations>
+                                        <ns2:scope name="EventHandlerScope">
+                                            <ns2:sequence name="EH_Sequence">
+                                                <ns2:assign name="EH_Assign">
+                                                    <ns2:copy>
+                                                        <ns2:from>concat($EHonEventScopeTerminationInScopeOperationOut.OutputPart, ' \n 3. In EH_Assign ')</ns2:from>
+                                                        <ns2:to part="OutputPart" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                                                    </ns2:copy>
+                                                </ns2:assign>
+                                                <ns2:wait name="EH_Wait10Secs">
+                                                    <ns2:for>'P0Y0M0DT0H0M10S'</ns2:for>
+                                                </ns2:wait>
+                                                <ns2:reply name="replyFromFH" partnerLink="PartnerLinkInOut" operation="EHonEventScopeTerminationInScopeOperation" portType="ns1:EHonEventScopeTerminationInScopePortType" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                                            </ns2:sequence>
+                                        </ns2:scope>
+                                    </ns2:onEvent>
+                                </ns2:eventHandlers>
+                                <ns2:sequence name="RunningScope_Sequence">
+                                    <ns2:assign name="AssignInFlow">
+                                        <ns2:copy>
+                                            <ns2:from>concat($EHonEventScopeTerminationInScopeOperationOut.OutputPart, ' \n 2. In Running Scope')</ns2:from>
+                                            <ns2:to part="OutputPart" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                                        </ns2:copy>
+                                    </ns2:assign>
+                                    <ns2:wait name="Wait_50Secs">
+                                        <ns2:for>'P0Y0M0DT0H0M50S'</ns2:for>
+                                    </ns2:wait>
+                                </ns2:sequence>                                             
+                                </ns2:scope>
+                    <ns2:sequence name="Sequence6">
+                        <ns2:wait name="Wait_2Sec">
+                            <ns2:for>'P0Y0M0DT0H0M2S'</ns2:for>
+                        </ns2:wait>
+                        <ns2:throw name="Throw1" faultName="ns2:someFault"/>
+                    </ns2:sequence>
+                </ns2:flow>
+                <ns2:assign name="Assign_ShouldNotExecute">
+                    <ns2:copy>
+                        <ns2:from>concat($EHonEventScopeTerminationInScopeOperationOut.OutputPart, ' This assign should not have executed. ')</ns2:from>
+                        <ns2:to part="OutputPart" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+                    </ns2:copy>
+                </ns2:assign>
+                <ns2:reply name="replyFromProcess" partnerLink="PartnerLinkInOut" operation="EHonEventScopeTerminationInScopeOperation" portType="ns1:EHonEventScopeTerminationInScopePortType" variable="EHonEventScopeTerminationInScopeOperationOut"/>
+            </ns2:sequence>
+        </ns2:scope>
+    </sequence>
+</process>

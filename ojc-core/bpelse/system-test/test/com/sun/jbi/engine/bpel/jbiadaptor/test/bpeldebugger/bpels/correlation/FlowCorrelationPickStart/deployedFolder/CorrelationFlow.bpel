@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="CorrelationFlow" 
+         targetNamespace="http://enterprise.netbeans.org/bpel/CorrelationFlow"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:wsdlNS="http://enterprise.netbeans.org/wsdl/CorrelationFlow" xmlns:ns0="urn:CorrFlowTNS">
+    <import namespace="http://enterprise.netbeans.org/wsdl/CorrelationFlow" 
+            location="CorrelationFlow.wsdl" 
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="wsdlNS:CorrFlowPartnerLinkType1" 
+                     myRole="CorrFlowPLTRole1"/>
+        <partnerLink name="PartnerLink2" partnerLinkType="wsdlNS:CorrFlowPartnerLinkType2" 
+                     myRole="CorrFlowPLTRole2"/>
+        <partnerLink name="PartnerLink3" partnerLinkType="wsdlNS:CorrFlowPartnerLinkType3" 
+                     myRole="CorrFlowPLTRole3"/>
+        <partnerLink name="PartnerLink4a" partnerLinkType="wsdlNS:CorrFlowPartnerLinkType4a" 
+                     myRole="CorrFlowPLTRole4a"/>
+        <partnerLink name="PartnerLink4b" partnerLinkType="wsdlNS:CorrFlowPartnerLinkType4b" 
+                     myRole="CorrFlowPLTRole4b"/>
+        <partnerLink name="InvokePLT" partnerLinkType="wsdlNS:CorrFlowInvokePLT" 
+                     partnerRole="CorrFlowInvokeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CorrFlowInMessage1" messageType="wsdlNS:CorrFlowInputMsg1"/>
+        <variable name="CorrFlowInMessage2" messageType="wsdlNS:CorrFlowInputMsg2"/>
+        <variable name="CorrFlowInMessage3" messageType="wsdlNS:CorrFlowInputMsg3"/>
+        <variable name="CorrFlowInMessage4a" messageType="wsdlNS:CorrFlowInputMsg4"/>
+        <variable name="CorrFlowInMessage4b" messageType="wsdlNS:CorrFlowInputMsg4"/>
+        <variable name="CorrFlowOutMessage" messageType="wsdlNS:CorrFlowInvokeMsg"/>
+        <variable name="var1" type="xsd:string"/>
+        <variable name="var2" type="xsd:string"/>
+        <variable name="var3" type="xsd:string"/>
+        <variable name="var4" type="xsd:string"/>
+        <variable name="var5" type="xsd:string"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet01" properties="wsdlNS:property01"/>
+        <correlationSet name="cSet02" properties="wsdlNS:property02"/>
+        <correlationSet name="cSet03" properties="wsdlNS:property03"/>
+        <correlationSet name="cSet04" properties="wsdlNS:property04"/>
+        <correlationSet name="cSet05" properties="wsdlNS:property05"/>
+        <correlationSet name="cSet06" properties="wsdlNS:property06"/>
+        <correlationSet name="cSet07" properties="wsdlNS:property07"/>
+        <correlationSet name="cSet08" properties="wsdlNS:property08"/>
+        <correlationSet name="cSet09" properties="wsdlNS:property09"/>
+        <correlationSet name="cSet10" properties="wsdlNS:property10"/>
+        <correlationSet name="cSet11" properties="wsdlNS:property11"/>
+        <correlationSet name="cSet12" properties="wsdlNS:property12"/>
+    </correlationSets> 
+
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PartnerLink1" operation="CorrFlowOperation1" 
+                       portType="wsdlNS:CorrFlowPortType1" variable="CorrFlowInMessage1">
+            	<correlations>
+                    <correlation set="cSet03" initiate="yes"/>
+                    <correlation set="cSet06" initiate="yes"/>
+                    <correlation set="cSet08" initiate="yes"/>
+                    <correlation set="cSet12" initiate="yes"/>
+            	</correlations>
+            	<sequence>
+                    <assign name="Assign1">
+                        <copy><from>$CorrFlowInMessage1.flowData1/ns0:foo/ns0:bar/ns0:baz</from>
+                              <to variable="var1"/></copy>
+                        <copy><from>$CorrFlowInMessage1.flowData1/ns0:foo/ns0:abc</from>
+                              <to variable="var3"/></copy>
+                        <copy><from>$CorrFlowInMessage1.flowData1/ns0:foo/ns0:def</from>
+                              <to variable="var4"/></copy>
+                        <copy><from>$CorrFlowInMessage1.flowData1/ns0:foo/ns0:ghi</from>
+                              <to variable="var5"/></copy>
+                    </assign>
+                    <flow name="Flow1">
+                        <pick name="Pick2" createInstance="no">
+                            <onMessage partnerLink="PartnerLink2" operation="CorrFlowOperation2" 
+                                       portType="wsdlNS:CorrFlowPortType2" variable="CorrFlowInMessage2">
+                                <correlations>
+                                    <correlation set="cSet01" initiate="join"/>
+                                    <correlation set="cSet02" initiate="yes"/>
+                                    <correlation set="cSet03" initiate="no"/>
+                                    <correlation set="cSet04" initiate="join"/>
+                                    <correlation set="cSet08" initiate="join"/>
+				</correlations>
+                		<assign name="Assign2">
+                                    <copy><from>$CorrFlowInMessage2.flowData2/ns0:foo/ns0:bar/ns0:baz</from>
+                                          <to variable="var2"/></copy>
+                                </assign>
+                            </onMessage>
+	                </pick>
+                        <pick name="Pick3" createInstance="no">
+                            <onMessage partnerLink="PartnerLink3" operation="CorrFlowOperation3" 
+                                       portType="wsdlNS:CorrFlowPortType3" variable="CorrFlowInMessage3">
+                                <correlations>
+                                    <correlation set="cSet01" initiate="join"/>
+                                    <correlation set="cSet05" initiate="yes"/>
+                                    <correlation set="cSet06" initiate="no"/>
+                                    <correlation set="cSet07" initiate="join"/>
+                                    <correlation set="cSet08" initiate="join"/>
+				</correlations>
+                                <flow name="Flow2">
+                                    <pick name="Pick4a" createInstance="no">
+                                        <onMessage partnerLink="PartnerLink4a" operation="CorrFlowOperation4a"
+                                                   portType="wsdlNS:CorrFlowPortType4a" variable="CorrFlowInMessage4a">
+                                            <correlations>
+	                                            <correlation set="cSet03" initiate="no"/>
+                                                <correlation set="cSet09" initiate="join"/>
+                                                <correlation set="cSet10" initiate="join"/>
+                                                <correlation set="cSet12" initiate="join"/>
+                                            </correlations>
+                                            <empty/>
+                                        </onMessage>
+                                    </pick>
+                                    <pick name="Pick4b" createInstance="no">
+                                        <onMessage partnerLink="PartnerLink4b" operation="CorrFlowOperation4b"
+                                                   portType="wsdlNS:CorrFlowPortType4b" variable="CorrFlowInMessage4b">
+                                            <correlations>
+	                                            <correlation set="cSet03" initiate="no"/>
+                                                <correlation set="cSet09" initiate="join"/>
+                                                <correlation set="cSet11" initiate="join"/>
+                                                <correlation set="cSet12" initiate="join"/>
+                                            </correlations>
+                                            <empty/>
+                                        </onMessage>
+                                    </pick>
+                                </flow>
+                            </onMessage>
+	                </pick>
+                    </flow>
+                    <assign name="Assign3">
+                        <copy><from>$var1</from><to part="data1" variable="CorrFlowOutMessage"/></copy>
+                        <copy><from>$var2</from><to part="data2" variable="CorrFlowOutMessage"/></copy>
+                        <copy><from>$var3</from><to part="data3" variable="CorrFlowOutMessage"/></copy>
+                        <copy><from>$var4</from><to part="data4" variable="CorrFlowOutMessage"/></copy>
+                        <copy><from>$var5</from><to part="data5" variable="CorrFlowOutMessage"/></copy>
+                    </assign>
+	            <invoke name="Invoke1" partnerLink="InvokePLT" operation="CorrFlowInvokeOp" 
+                            portType="wsdlNS:InvokePortType" inputVariable="CorrFlowOutMessage">
+                        <correlations>
+                            <correlation set="cSet01" initiate="no" />
+                            <correlation set="cSet02" initiate="no" />
+                            <correlation set="cSet03" initiate="no" />
+                            <correlation set="cSet04" initiate="no" />
+                            <correlation set="cSet05" initiate="no" />
+                            <correlation set="cSet06" initiate="no" />
+                            <correlation set="cSet07" initiate="no" />
+                            <correlation set="cSet08" initiate="no" />
+                            <correlation set="cSet09" initiate="no" />
+                            <correlation set="cSet10" initiate="no" />
+                            <correlation set="cSet11" initiate="no" />
+                            <correlation set="cSet12" initiate="no" />
+                        </correlations>
+                    </invoke>
+               </sequence> 
+            </onMessage>
+        </pick>
+    </sequence>
+</process>

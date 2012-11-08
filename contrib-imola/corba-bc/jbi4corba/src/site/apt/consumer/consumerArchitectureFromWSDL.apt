@@ -1,0 +1,52 @@
+																			---
+																			Consumer From WSDL: Architecture
+																			---
+																			Mirco Casoni, Marco Piraccini
+																			---
+																			23/03/2007
+																			
+Consumer WSDL First - Architecture
+
+    Jbi4Corba, when run in <<consumer from WSDL>> mode, is based on this simple pseudo
+    equation: wsdl2java + java2idl = {{{wsdl2corba.html}wsdl2idl}}.
+
+	From the architectural point of view, we analyze two different phases: the 
+	<<deploy>> and the <<runtime>>.
+
+
+* {Deploy}
+
+  At deploy time the following sequence of events occurs:
+
+  [[1]] The component get the WSDL and {{{wsdl2corba.html}generate the corba servant classes}} and
+        the associated IDL files.
+        (For a more detailed discussion about the WSDL's features supported,
+        please visit the page {{{consumer.html}supported XML Schema data types}}).
+
+  [[2]] Generated java classes are compiled.
+
+  [[3]] One Jbi4Corba Endpoint is created for each PortType
+
+  [[4]] The endpoint is published
+
+  [[5]] A new instance of the servant is created and registered on the corba service name.
+  
+  []
+  
+  The following (unformal) sequence diagram shows this process:
+
+[../images/ConsumerDeployTime.jpg] The deploy time process.  
+
+* {Runtime}
+
+  [[1]] A corba client call a method on the corba servant.
+
+  [[2]] The corba servant call Jbi4CorbaEndpoint to handle the request.
+
+  [[3]] The Endpoint sends the MessageExchange on the bus to obtain the response.
+
+  []
+  
+  The following figure shows this process in an unformal sequence diagram:
+  
+[../images/ConsumerRunTime.jpg] The runtime process.
