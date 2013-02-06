@@ -418,6 +418,8 @@ public class ServiceUnitImpl implements ServiceUnit {
             endpointsCreated = false;
             // clean up all the cached endpoints 
             mEndpoints.clear();
+            // clean up all the modified WSDLs
+            mModifiedWSDLs.clear();
         }
         
     }
