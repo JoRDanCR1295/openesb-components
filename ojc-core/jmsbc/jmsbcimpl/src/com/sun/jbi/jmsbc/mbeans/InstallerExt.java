@@ -42,7 +42,10 @@ import com.sun.jbi.jmsbc.LogSupport;
  */
 public class InstallerExt implements InstallerExtMBean {
 
-    String mThreads;    
+    String mThreads;
+    String mForceConcurrencyMode;
+    int mForceMaxConcurrentConsumers;
+    String mDefaultRedeliveryHandling;
     
     private static final Messages mMessages =
         Messages.getMessages(InstallerExt.class);
@@ -82,5 +85,66 @@ public class InstallerExt implements InstallerExtMBean {
                         new Object[]{"Threads", oldVal, val});
         }        
     }
+
+    public void setForceConcurrencyMode(String val){
+        String oldVal = mForceConcurrencyMode;
+        mForceConcurrencyMode = val;
+        if (mLogger.isLoggable(Level.CONFIG)) {
+            mLogger.log(Level.CONFIG,
+                        "JMSBC-C0301.AttributeChanged",
+                        new Object[]{"ForceConcurrencyMode", oldVal, val});
+        
+        }
+    }
+
+    public String getForceConcurrencyMode() {
+        if (mLogger.isLoggable(LogSupport.LEVEL_DEBUG)) {
+            mLogger.log(LogSupport.LEVEL_DEBUG,
+                        "InstallerExt_GETFORCECONCURRENCYMODE_CALLED",
+                        new Object[]{mForceConcurrencyMode});
+        }
+        return mForceConcurrencyMode;
+    }
+
+    public int getForceMaxConcurrentConsumers(){
+        if (mLogger.isLoggable(LogSupport.LEVEL_DEBUG)) {
+            mLogger.log(LogSupport.LEVEL_DEBUG,
+                        "InstallerExt_GETFORCEMAXCONCURRENTCONSUMERS",
+                        new Object[]{mForceMaxConcurrentConsumers});
+        }
+        return mForceMaxConcurrentConsumers;
+        
+    }
+    public void setForceMaxConcurrentConsumers(int val){
+        int oldVal = mForceMaxConcurrentConsumers;
+        mForceMaxConcurrentConsumers = val;
+        if (mLogger.isLoggable(Level.CONFIG)) {
+            mLogger.log(Level.CONFIG,
+                        "JMSBC-C0301.AttributeChanged",
+                        new Object[]{"ForceMaxConcurrentConsumers", oldVal, val});
+
+        }
+    }
+
+    public String getDefaultRedeliveryHandling(){
+        if (mLogger.isLoggable(LogSupport.LEVEL_DEBUG)) {
+            mLogger.log(LogSupport.LEVEL_DEBUG,
+                        "InstallerExt_GETDEFAULTREDELIVERYHANDLING",
+                        new Object[]{mDefaultRedeliveryHandling});
+        }
+        return mDefaultRedeliveryHandling;
+    }
+    public void setDefaultRedeliveryHandling(String val){
+        String oldVal = mDefaultRedeliveryHandling;
+        mDefaultRedeliveryHandling = val;
+        if (mLogger.isLoggable(Level.CONFIG)) {
+            mLogger.log(Level.CONFIG,
+                        "JMSBC-C0301.AttributeChanged",
+                        new Object[]{"DefaultRedeliveryHandling", oldVal, val});
+
+        }
+    }
+
+
     
 }

@@ -67,5 +67,9 @@ public interface HL7Connector {
     void setHL7Connection(Connection conn) throws Exception;
     //  set back the assoaciated IOSession on the connector
     void setIoSession(Connection conn) throws Exception;
+    // get the protocol properties associated with the connector    
+    ProtocolInfo getProtocolInfo() throws Exception;
+    // get the ProtocalInfo to the connector
+    void setProtocolInfo(ProtocolInfo pInfo) throws Exception;
 
 }// end of the interface

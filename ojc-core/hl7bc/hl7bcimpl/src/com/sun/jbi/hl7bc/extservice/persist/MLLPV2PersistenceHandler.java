@@ -83,6 +83,7 @@ public class MLLPV2PersistenceHandler {
     public void updateHL7MessageLogStatus(String hl7Msg,
         boolean isAck) {
         DBConnection dbcon = null;
+		ResultSet rs = null;
 
         try {
 
@@ -92,7 +93,7 @@ public class MLLPV2PersistenceHandler {
             dbcon = getDBConnection();
             hl7MsgLogDbo.setOldStatus(STATUS_NEW_MSG_RECEIVED);
 
-            ResultSet rs = dbcon.getRowWithStatus(hl7MsgLogDbo);
+            rs = dbcon.getRowWithStatus(hl7MsgLogDbo);
 
             if (rs.next()) {
                 hl7MsgLogDbo.populateDBO(rs);
@@ -108,6 +109,14 @@ public class MLLPV2PersistenceHandler {
 				logger.fine(I18n.msg("Updated the HL7MessageLog status to : {0} ", STATUS_COMMIT_ACK_SENT));
 			}
         } catch (Exception ex) {
+			if(rs != null){
+				try{
+				 rs.close();
+				} catch (SQLException e) {
+                logger.log(Level.SEVERE,
+                        I18n.msg("E9335: Exception occurred while closing the result set"));
+				}
+			}
         	try {
 				dbcon.getUnderlyingConnection().rollback();
 			} catch (SQLException e) {
@@ -118,6 +127,14 @@ public class MLLPV2PersistenceHandler {
                 I18n.msg("E0303: Exception occurred while updating HL7MessageLog status "),
                 ex);
         } finally {
+			if(rs != null){
+				try{
+				 rs.close();
+				} catch (SQLException e) {
+                logger.log(Level.SEVERE,
+                        I18n.msg("E9335: Exception occurred while closing the result set"));
+				}
+			}
             if (dbcon != null) {
                 try {
                     dbcon.close();

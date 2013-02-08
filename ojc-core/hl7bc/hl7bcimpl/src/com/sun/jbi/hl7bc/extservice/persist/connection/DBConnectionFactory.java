@@ -86,16 +86,26 @@ public class DBConnectionFactory {
         if(datasourceJndiName == null || "".equals(datasourceJndiName.trim())){ 
         	meta = getAxionDBMetaData();
         }else {
-        	
+        	Connection conn = null;
 	        try {
 	            dataSourceInstance = (DataSource) initialContext.lookup(datasourceJndiName);
-	            Connection conn = dataSourceInstance.getConnection();
+	            conn = dataSourceInstance.getConnection();
 	            meta = conn.getMetaData();
 	        } catch (NamingException e) {
 	            mLogger.log(Level.WARNING,I18n.msg("W0128: Could not find a JDBC resource with the JNDI name : {0} . Will be using Local DB for persistence.", datasourceJndiName));
 	        }catch (SQLException e){
 	        	mLogger.log(Level.WARNING,I18n.msg("W0129: Could not get connection from Datasource : {0}. Will be using Local DB for persistence.", datasourceJndiName ));
-	        }
+	        } finally {
+
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+                      mLogger.log(Level.SEVERE, I18n.msg("E0311: Exception occured while closing a JDBC connection"), e);
+					}
+				}
+			
+			}
 	        
         }
         
@@ -130,9 +140,9 @@ public class DBConnectionFactory {
 
 	private DatabaseMetaData getAxionDBMetaData() throws HL7RuntimeException{
 		//AxionDBConnection axionConn = AxionDBConnectionPool.getInstance(this.installRoot).getConnection();
-		
+		DBConnection axionConn = null;
 		try {
-			DBConnection axionConn = createConnection();
+			axionConn = createConnection();
 			DatabaseMetaData dbMeta = axionConn.getMetaData();
 			return dbMeta;
 		} catch (SQLException e) {
@@ -140,6 +150,16 @@ public class DBConnectionFactory {
 			throw new HL7RuntimeException(I18n.msg("E0300: Could not get DatabaseMetaData from Axion DB ") ,e) ;
 		}catch (Exception e) {
 			throw new HL7RuntimeException(I18n.msg("E0300: Could not get DatabaseMetaData from Axion DB ") ,e);
+		}finally{
+
+				if (axionConn != null) {
+					try {
+						axionConn.getUnderlyingConnection().close();
+					} catch (SQLException e) {
+                      mLogger.log(Level.SEVERE, I18n.msg("E0311: Exception occured while closing a JDBC connection"), e);
+					}
+				}
+		
 		}
 	}
 

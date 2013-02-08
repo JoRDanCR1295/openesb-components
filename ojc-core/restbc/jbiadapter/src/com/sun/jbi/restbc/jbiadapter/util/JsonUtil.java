@@ -24,8 +24,8 @@ public class JsonUtil {
     private final static Logger logger = Logger.getLogger(JsonUtil.class.getName());
     
     private final static ObjectMapper mapper = new ObjectMapper();
-    private final static JavaType mapType = MapType.typed(HashMap.class, TypeFactory.fromClass(String.class), TypeFactory.fromClass(String.class));
-    private final static JavaType listType = CollectionType.typed(ArrayList.class, TypeFactory.fromClass(String.class));
+    private final static JavaType mapType = MapType.construct(HashMap.class, TypeFactory.defaultInstance().constructType(String.class), TypeFactory.defaultInstance().constructType(String.class));
+    private final static JavaType listType = CollectionType.construct(ArrayList.class, TypeFactory.defaultInstance().constructType(String.class));
     
     public static Map<String, String> parseJsonPairs(String s) {
         String input = s;

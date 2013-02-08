@@ -170,6 +170,12 @@ public final class HL7BCConnectionManager {
             if ( mLogger.isLoggable(Level.FINE)) 
                 mLogger.log(Level.FINE, "Connection with key=[" + key + "] obtained ... connection =" + conn);
             conn.stopTimer(); // max idle timer stop ticking
+			// and check whether the connection is active or not.
+			// if not active dischard the conn and return null.
+			if(!conn.getIOSessionObject().isConnected()){
+				conn.discard();
+				conn = null;
+			}
             
         }       
         
@@ -236,6 +242,31 @@ public final class HL7BCConnectionManager {
                     conn.discard();
                 }
             }
+        } finally {
+            mWL.unlock(); 
+        }
+    }
+
+	 public static final void closeConnectionIfNotAvailable(ConnectionInfo connInfo) throws Exception {
+        mWL.lock(); 
+        try { 
+            if(connInfo == null)
+            return;
+        if ( mConnectionPools.size() > 0 ) {
+            Set keys = mConnectionPools.keySet();
+            Iterator<ConnectionInfo> it = keys.iterator();
+            while ( it.hasNext() ) {
+                ConnectionInfo key = it.next();
+                if((connInfo.getHost().equals(key.getHost()) &&
+                        connInfo.getPort() == key.getPort() && connInfo.getEndpointName().equals(key.getEndpointName()))){                
+                    ConnectionPool pool = mConnectionPools.get(key);
+					 System.out.println("Found the pool "+pool);
+                    if ( pool != null ) {
+                        pool.cleanup();
+                    }
+                }
+            }
+        }
         } finally {
             mWL.unlock(); 
         }
