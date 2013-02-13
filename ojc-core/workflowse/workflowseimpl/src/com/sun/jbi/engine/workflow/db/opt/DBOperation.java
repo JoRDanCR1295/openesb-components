@@ -1615,7 +1615,7 @@ public class DBOperation {
                         .createCriteria("assignees", "a").add(userRestriction);
             }
             // before1 = System.currentTimeMillis();
-            Integer count = (Integer) criteriaA.uniqueResult();
+            Long count = (Long) criteriaA.uniqueResult();
             // after1 = System.currentTimeMillis();
 
             int total = count == null ? 0 : count.intValue();

@@ -45,6 +45,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.solr.analysis.TokenizerFactory;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.solr.common.SolrException;
 
 /**
@@ -99,7 +100,7 @@ public class PatternWhiteSpaceTokenizer implements TokenizerFactory{
    /**
     * Split the input using configured pattern
     */
-   public TokenStream create(Reader  input) {
+   public Tokenizer create(Reader  input) {
      try {
        // Read the input into a single string
        String str = IOUtils.toString( input );
@@ -110,7 +111,7 @@ public class PatternWhiteSpaceTokenizer implements TokenizerFactory{
          : group( matcher, str, group );
          
        final Iterator<Token> iter = tokens.iterator();
-       return new TokenStream() {
+       return new Tokenizer() {
          @Override
          public Token next() throws IOException {
            if( iter.hasNext() ) {
