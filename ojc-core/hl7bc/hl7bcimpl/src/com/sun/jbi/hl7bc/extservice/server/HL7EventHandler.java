@@ -293,6 +293,18 @@ public class HL7EventHandler extends IoHandlerAdapter {
         session.setAttribute(NAK_SENT_COUNTER, new Long(0));
         session.setAttribute(CANNED_NAK_SENT_COUNTER, new Long(0));
 	}
+
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		try{
+			 if (mLog.isLoggable(Level.INFO)) {
+				mLog.log(Level.INFO, I18n.msg("W9155: session exception caught :{0}", cause.getLocalizedMessage()));
+			}
+			 if (session != null ) {
+                CloseFuture future = session.close();
+            }
+		}catch(Exception e){} 
+	
+	}
     
     class DefaultHL7Callback implements HL7Callback {
 
@@ -303,7 +315,8 @@ public class HL7EventHandler extends IoHandlerAdapter {
         }
 
         public void onReply(String hl7MsgAck, boolean isAck) throws ApplicationException, Exception {
-            mSession.write(hl7MsgAck);
+			mSession.write(hl7MsgAck);
+			mLog.info(I18n.msg("I8787:ACK/NAK sent back to the Client : {0}:  Msg: {1}", mSession.getRemoteAddress().toString(), new String(hl7MsgAck)));
         }
 		
         public void sendPersistedACK(String ackMsg){        	

@@ -28,6 +28,7 @@ public class OutboundTcpServerHL7Connector implements HL7Connector {
 	private String hl7ResponseMsg;
 	private Endpoint mEndpoint;
     private OutboundTcpServerHL7ConnectorPool mOutboundServerPool;
+	private ProtocolInfo mProtocolInfo = null;
 
 	public OutboundTcpServerHL7Connector(OutboundTcpServerHL7ConnectorPool theOutboundServerPool) {
 		mLog.finer("Entering constructor");
@@ -71,6 +72,14 @@ public class OutboundTcpServerHL7Connector implements HL7Connector {
 	private String getHl7ResponseMsg() {
 		return hl7ResponseMsg;
 	}
+
+    public ProtocolInfo getProtocolInfo() throws Exception {
+       return  this.mProtocolInfo;
+    }
+    
+    public void setProtocolInfo(ProtocolInfo pInfo) throws Exception {
+        this.mProtocolInfo = pInfo;
+     }
 
 	public String recvHL7Message() throws Exception {
 		lock.lock();

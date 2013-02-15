@@ -210,7 +210,25 @@ public class DBSchemaCreation {
             }
             mLog.log(Level.WARNING, I18n.msg("E0312: Unable to create database tables, which are already created"));
             //throw new HL7RuntimeException(I18n.msg("E0312: Exception occured while trying to create database tables required by for persistence"), ex);
-        }
+        }finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    mLog.log(Level.SEVERE, I18n.msg("E0310: Exception occured while closing a JDBC statement"), e);
+                }
+            }
+
+            if (conn != null) {
+                try {
+                    //conn.rollback();
+                    conn.close();
+                } catch (SQLException e) {
+                    mLog.log(Level.SEVERE, I18n.msg("E0311: Exception occured while closing a JDBC connection"), e);
+                }
+            }
+		
+		}
     }
 
     /**
@@ -226,9 +244,10 @@ public class DBSchemaCreation {
         boolean allTablesPresent = false;
         DBConnection dbConn = null;
         ResultSet resultSet = null;
+		Connection conn = null;
         try {
             dbConn = connFac.createConnection();
-            Connection conn = dbConn.getUnderlyingConnection();
+            conn = dbConn.getUnderlyingConnection();
 
             int tableCount = TABLES_LIST.length;
             int numTablesFound = 0;
@@ -270,6 +289,22 @@ public class DBSchemaCreation {
             }
             throw new HL7RuntimeException(I18n.msg("E0313: Exception occured while verifying that all the tables required by HL7 BC are present in the schema {0}",
                     targetSchema ), ex);
-        }
+        }finally {
+            if (dbConn != null) {
+                try {
+                    dbConn.getUnderlyingConnection().close();
+                } catch (Exception e) {
+                    mLog.log(Level.SEVERE, I18n.msg("E0311: Exception occured while closing a JDBC connection"), e);
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    mLog.log(Level.SEVERE, I18n.msg("E0311: Exception occured while closing a JDBC connection"), e);
+                }
+            }
+		
+		}
     }
 }

@@ -376,13 +376,14 @@ public class HL7BCManagement implements HL7BCManagementMBean {
     public long getSequenceNumber(String serviceUnit) throws MBeanException {
         int seqNum = -1;
         DBConnection dbConnection = null;
+		ResultSet rs = null;
         try {
             dbConnection = getDBConnection();
             // queryKey is serviceUnitPath
 
             String queryKey = getServiceUnitPath(serviceUnit);
             SequenceNumDBO seqNoDBO = dbObjectFactory.createSequenceNumDBO(queryKey);
-            ResultSet rs = dbConnection.getRow(seqNoDBO);
+            rs = dbConnection.getRow(seqNoDBO);
             if (rs.next()) {
                 seqNoDBO.populateDBO(rs);
                 seqNum = seqNoDBO.getESN();
@@ -391,6 +392,9 @@ public class HL7BCManagement implements HL7BCManagementMBean {
             throw new MBeanException(e);
         } finally {
             try {
+				if(rs != null){
+					rs.close();
+				}
             if (dbConnection != null) {
                 dbConnection.close();
             }
