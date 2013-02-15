@@ -30,5 +30,5 @@ public class FtpTprops {
     //works (107s)      final static String FTP_TEST_HOST = FTP_TEST_HOST12;
     //64 failures:      final static String FTP_TEST_HOST = FTP_TEST_HOST13;
 
-    final static String FTP_TEST_HOST = FTP_TEST_HOST03;
+    final static String FTP_TEST_HOST = FTP_TEST_HOST09;
 }
