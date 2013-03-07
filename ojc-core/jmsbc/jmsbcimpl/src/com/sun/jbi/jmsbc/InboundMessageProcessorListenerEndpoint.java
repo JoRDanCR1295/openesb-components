@@ -1179,7 +1179,7 @@ public class InboundMessageProcessorListenerEndpoint
 		.getProperty(MESSAGEID), getSource(me), dc.createExchangeFactory(me.getEndpoint()));
 
         Properties props = new Properties();
-        props.put(MEXID, me.getProperty(MEXID));
+        props.setProperty(MEXID, me.getExchangeId());
         t.setPropExchange(props);
         
 	return t;
