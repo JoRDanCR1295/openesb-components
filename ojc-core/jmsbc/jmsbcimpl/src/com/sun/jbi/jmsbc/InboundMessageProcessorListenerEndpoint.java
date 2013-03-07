@@ -104,6 +104,7 @@ import com.sun.jbi.jmsbc.util.SynchronizedStateChange;
 import com.sun.jbi.jmsbc.util.AlertsUtil;
 import com.sun.jbi.jmsbc.JMSBindingComponent;
 import com.sun.jbi.alerter.NotificationEvent;
+import java.util.Properties;
 
 
 /**
@@ -1177,6 +1178,10 @@ public class InboundMessageProcessorListenerEndpoint
 	BaseExchangeTemplates t = new BaseExchangeTemplates(me.getEndpoint(), me.getOperation(), (me instanceof InOnly), (String) me.getProperty(GROUPID), (String) me
 		.getProperty(MESSAGEID), getSource(me), dc.createExchangeFactory(me.getEndpoint()));
 
+        Properties props = new Properties();
+        props.setProperty(MEXID, me.getExchangeId());
+        t.setPropExchange(props);
+        
 	return t;
     }
 
