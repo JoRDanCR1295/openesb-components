@@ -61,6 +61,7 @@ import com.sun.jbi.hl7bc.extensions.HL7Address;
 import com.sun.jbi.hl7bc.extensions.HL7Operation;
 import com.sun.jbi.hl7bc.extensions.HL7ProtocolProperties;
 import com.sun.jbi.hl7bc.configuration.RuntimeConfiguration;
+import com.sun.jbi.hl7bc.extservice.server.OutboundTcpServerHL7ConnectorPool;
 
 /**
  * @author S. Nageswara Rao, Raghunadh
@@ -78,6 +79,10 @@ public class ServiceUnitImplTest extends MockObjectTestCase {
     StatusProviderHelper statusHelper = null;
 
     InboundReceiver inboundReceiver = null;
+    
+    OutboundReceiver outboundReceiver = null;
+    
+    OutboundTcpServerHL7ConnectorPool outboundServerPool = null;
 
     Endpoint endpoint = null;
 
@@ -96,10 +101,14 @@ public class ServiceUnitImplTest extends MockObjectTestCase {
         endpoint.setServiceName(new QName("MySerivceName"));
         endpoint.setEndpointName("MyEndpointName");
         endpoints.add(endpoint);
+        componentContext.expects(atLeastOnce()).method("getNamingContext");
         inboundReceiver = new InboundReceiver((ComponentContext) componentContext.proxy(),
                 (MessagingChannel) messagingChannel.proxy(), new RuntimeConfiguration("test/com/sun/jbi/hl7bc/testDir"));
+        
+        
+        outboundReceiver = new OutboundReceiver((ComponentContext) componentContext.proxy(), (MessagingChannel) messagingChannel.proxy(), null, new RuntimeConfiguration("test/com/sun/jbi/hl7bc/testDir"), null);
         instance = new ServiceUnitImpl("TestId", "test/com/sun/jbi/hl7bc/packaging/descriptors",
-                (ComponentContext) componentContext.proxy(), new RuntimeConfiguration("test/com/sun/jbi/hl7bc/testDir"), statusHelper,  inboundReceiver);
+                (ComponentContext) componentContext.proxy(), new RuntimeConfiguration("test/com/sun/jbi/hl7bc/testDir"), statusHelper,  inboundReceiver,outboundReceiver);
     }
 
     protected void tearDown() throws Exception {
@@ -116,7 +125,6 @@ public class ServiceUnitImplTest extends MockObjectTestCase {
      */
     public void testGetServiceUnitId() {
         System.out.println("Testing getServiceUnitId");
-
         String result = instance.getServiceUnitId();
         assertEquals("TestId", result);
     }
@@ -126,7 +134,6 @@ public class ServiceUnitImplTest extends MockObjectTestCase {
      */
     public void testInit() throws Exception {
         System.out.println("Testing init");
-
         instance.setEndpoints(endpoints);
         //componentContext.expects(atLeastOnce()).method("getLogger").with(eq(DeploymentLookup.class.getName()), eq(null)).will(returnValue(Logger.getLogger(DeploymentLookup.class.getName(), null)));
        // componentContext.expects(atLeastOnce()).method("getMBeanServer").will(returnValue(mbServer.proxy()));

@@ -95,6 +95,7 @@ public class HL7BindingDeployerTest extends org.jmock.cglib.MockObjectTestCase {
         componentContext.expects(once()).method("getComponentName").will(returnValue("someComponentName"));
         lifeCycle.expects(atLeastOnce()).method("getStatusProviderHelper").will(returnValue(statusHelper));
         lifeCycle.expects(once()).method("getInboundReceiver").will(returnValue(inboundReceiver));
+        lifeCycle.expects(once()).method("getOutboundReceiver");
         lifeCycle.expects(once()).method("getRuntimeConfigurationMBean").will(returnValue(runtimeConfig));
         String result = instance.deploy("testSUId", "test/com/sun/jbi/hl7bc/packaging/descriptors");
         assertNotNull(result);
@@ -116,6 +117,7 @@ public class HL7BindingDeployerTest extends org.jmock.cglib.MockObjectTestCase {
         HashMap serviceUnits = new HashMap();
         lifeCycle.expects(once()).method("getStatusProviderHelper").will(returnValue(statusHelper));
         lifeCycle.expects(once()).method("getInboundReceiver").will(returnValue(inboundReceiver));
+        lifeCycle.expects(once()).method("getOutboundReceiver");
 		lifeCycle.expects(once()).method("getRuntimeConfigurationMBean").will(returnValue(runtimeConfig));
 
 		//componentContext.expects(atLeastOnce()).method("getLogger").with(eq(DeploymentLookup.class.getName()), eq(null)).will(returnValue(Logger.getLogger(DeploymentLookup.class.getName(), null)));
