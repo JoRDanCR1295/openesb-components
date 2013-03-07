@@ -172,6 +172,10 @@ public class JMSBCRuntimeConfiguration extends RuntimeConfiguration implements J
     	msgBuf.append(mConfig.getProperty(CONFIG_THREADS, DEFAULT_THREADS));
         msgBuf.append(", DefaultRedeliveryHandling=");
         msgBuf.append(mConfig.getProperty(CONFIG_DEFAULT_REDELIVERY, ""));
+        msgBuf.append(", ForceConcurrentMode=");
+        msgBuf.append(mConfig.getProperty(CONFIG_FORCE_CONCURRENCY_MODE, ""));
+        msgBuf.append(", ForceMaxConcurrentConsumers=");
+        msgBuf.append(mConfig.getProperty(CONFIG_FORCE_MAX_CONCURRENT_CONSUMERS, ""));
         msgBuf.append(" }\n");
         super.dump(msgBuf);
     }
@@ -271,6 +275,7 @@ public class JMSBCRuntimeConfiguration extends RuntimeConfiguration implements J
     }
 
     public void setForceConcurrencyMode(String val) throws InvalidAttributeValueException, MBeanException {
+        mLogger.finest("setting ForceConcurrencyMode");
         String attrName = CONFIG_FORCE_CONCURRENCY_MODE;
 
         String oldVal = getForceConcurrencyMode();
@@ -286,8 +291,9 @@ public class JMSBCRuntimeConfiguration extends RuntimeConfiguration implements J
         
         // Apply and save the changes
         mConfig.put(attrName, val);
+        mLogger.finest("persisting ForceConcurrencyMode");
         persistConfiguration();
-        
+        mLogger.finest("persisting of ForceConcurrencyMode completed");
         if (mLogger.isLoggable(Level.CONFIG)) {
             mLogger.log(Level.CONFIG, "JMSBC-C0301.AttributeChangedDetail",
                     new Object[] { attrName, oldVal, val });
@@ -306,6 +312,7 @@ public class JMSBCRuntimeConfiguration extends RuntimeConfiguration implements J
                                                 attrType, 
                                                 oldVal, 
                                                 val);
+        mLogger.finest("sending notification for ForceConcurrencyMode");
         broadcasterSupport.sendNotification(notif);
     }
 

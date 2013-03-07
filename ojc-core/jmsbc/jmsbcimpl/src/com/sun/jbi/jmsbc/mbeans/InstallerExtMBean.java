@@ -37,4 +37,13 @@ package com.sun.jbi.jmsbc.mbeans;
 public interface InstallerExtMBean {
     public String getThreads();
     public void setThreads(String val);
+
+    public String getForceConcurrencyMode();
+    public void setForceConcurrencyMode(String val);
+
+    public int getForceMaxConcurrentConsumers();
+    public void setForceMaxConcurrentConsumers(int val);
+
+    public String getDefaultRedeliveryHandling();
+    public void setDefaultRedeliveryHandling(String val);
 }

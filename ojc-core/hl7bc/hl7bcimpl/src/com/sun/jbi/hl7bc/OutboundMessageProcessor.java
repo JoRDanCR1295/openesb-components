@@ -527,7 +527,7 @@ public class OutboundMessageProcessor implements HL7Constants {
                 }
                 HL7ProtocolProperties hl7ProtocolProps = getHL7ProtocolProperties(normalizedMsg, endpoint);
                 // In case of acknowledgments, message validation should not be done
-                boolean msaFound = hasSegmentMSA(((DOMSource) src).getNode());
+                boolean msaFound = messageIsAck(((DOMSource) src).getNode());
                 boolean seqNoEnabled = hl7ProtocolProps.getSeqNumEnabled().booleanValue();
                 String ackMode = hl7ProtocolProps.getAckMode();
 				boolean journallingEnabled = hl7ProtocolProps.getJournallingEnabled().booleanValue();
@@ -803,7 +803,7 @@ public class OutboundMessageProcessor implements HL7Constants {
             }
             HL7ProtocolProperties hl7ProtocolProps = getHL7ProtocolProperties(normalizedMsg, destination);
             // In case of acknowledgments, message validation should not be done
-            boolean msaFound = hasSegmentMSA(((DOMSource) src).getNode());
+            boolean msaFound = messageIsAck(((DOMSource) src).getNode());
             boolean seqNoEnabled = hl7ProtocolProps.getSeqNumEnabled().booleanValue();
             String ackMode = hl7ProtocolProps.getAckMode();
             boolean journallingEnabled = hl7ProtocolProps.getJournallingEnabled().booleanValue();
@@ -1330,6 +1330,33 @@ public class OutboundMessageProcessor implements HL7Constants {
         return msaFound;
     }
 
+    private boolean messageIsAck(Node domMessage) {
+        boolean ackMsg = false;
+		Node mshNode = null;
+        NodeList segments = domMessage.getFirstChild().getFirstChild().getFirstChild().getChildNodes();
+        for (int i = 0; i < segments.getLength(); i++) {
+            Node segment = segments.item(i);
+            String name = segment.getLocalName();
+            if (name != null && name.contains("MSH")) {
+				mshNode = segment;
+				break;
+			}
+		}
+		if(mshNode != null){
+			NodeList list = mshNode.getChildNodes();
+			for(int j=0; j < list.getLength(); j++){
+				Node node = list.item(j);
+				String localName = node.getLocalName();
+				if(localName != null && localName.contains("MSH.9")){
+					String nodeValue = node.getFirstChild().getFirstChild().getNodeValue();
+					ackMsg = nodeValue.startsWith("ACK");
+					break;
+				}
+		   	}
+		}
+        return ackMsg;
+    }
+
     private Document getDocument(Source src) throws Exception {
         DOMResult result = transformToDOMResult(mTrans, src);
         Node node = result.getNode();
@@ -1363,6 +1390,14 @@ public class OutboundMessageProcessor implements HL7Constants {
             dbConnection.getUnderlyingConnection().commit();
         }
         seqNO = seqNoDBO.getESN();
+		if(rs != null){
+			try{
+				 rs.close();
+				} catch (SQLException e) {
+                mLog.log(Level.SEVERE,
+                        I18n.msg("E9335: Exception occurred while closing the result set"));
+				}
+		}
         return seqNO;
     }
 
@@ -1635,6 +1670,8 @@ public class OutboundMessageProcessor implements HL7Constants {
                 }                   
             }
 		}
+		// before return hl7connector , set the protocolInfo
+		hl7Connector.setProtocolInfo(protocolInfo);
         return hl7Connector;
     }
 
@@ -1913,7 +1950,19 @@ public class OutboundMessageProcessor implements HL7Constants {
                 HL7MMUtil.setCheckpoint(mChkptMsgId, "Connection-Established-To-ExternalSystem", endpoint );
             }
             // </checkpoint>
+			String hostName = protocolInfo.get(HL7Address.ATTR_HL7_SVR_LOCATION);
+			int port = Integer.parseInt(protocolInfo.get(HL7Address.ATTR_HL7_SVR_PORT));
+			mLog.log(Level.INFO, I18n.msg("I9789: HL7 Message sent to the external system, Address, Host:{0} , Port: {1}",
+                                hostName, Integer.toString(port)));
+			mLog.log(Level.INFO, I18n.msg("Message : {0} ",
+                                hl7PayLoad));
             String ackMsg = sendAndReceiveHL7Message(inOnly, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtocolProps);
+			if(ackMsg != null){				
+				mLog.log(Level.INFO, I18n.msg("I9790: ACK/NAK received from the external system, Address, Host:{0} , Port: {1}",
+                                hostName, Integer.toString(port)));
+				mLog.log(Level.INFO, I18n.msg("ACK/NAK Message : {0} ",
+                                ackMsg));
+			}
             // <checkpoint>
             if ( mMonitorEnabled ) {
                 HL7MMUtil.setCheckpoint(mChkptMsgId, "Message-Sent-And-ACK-Received-From-ExternalSystem", endpoint );
@@ -2017,7 +2066,7 @@ public class OutboundMessageProcessor implements HL7Constants {
 				hl7Connector.connect(protocolInfo, endpoint);
 			} else if (!mRuntimeConfig.isAlwaysCreatesNewConnEnabled()){
 				boolean isPooledConnector = true;
-				if((hl7Connector != null) && (mHL7ConnectorTakenFromPool) && (hl7Connector.getHL7Connection().isConnected())){
+				if((hl7Connector != null) && (mHL7ConnectorTakenFromPool) && (hl7Connector.getHL7Connection() != null)&&(hl7Connector.getHL7Connection().isConnected())){
 					hl7Connector.setIoSession(hl7Connector.getHL7Connection());
 				}else{
 					hl7Connector.connect(protocolInfo, endpoint);
@@ -2089,20 +2138,32 @@ public class OutboundMessageProcessor implements HL7Constants {
                 if (ackMsg == null) {
                     commCntrl = mHL7CommunicationControlsInfo.getMaxNoResponseCommControl();
                     // Max No Response communication control
+					boolean maxCountReached = false;
                     if (commCntrl != null && commCntrl.getEnabled().booleanValue()) {
-                        handleMaxNoResponse(hl7Connector, endpoint);
+                        maxCountReached = handleMaxNoResponse(hl7Connector, endpoint);
+						if(maxCountReached){
+							if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+								suspendRecourseAction("Suspend on max no response; max no response is " + commCntrl.getValue(),
+															hl7Connector, endpoint);
+							} else if (ACTION_RESET.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+								return resetRecourseAction("Reset on max no response; max no response is " + commCntrl.getValue(),
+												msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
+							}
+						}
                     }
                     if (ACTION_RESEND.equalsIgnoreCase(mHL7CommunicationControl.getRecourseAction())) {
+						 mLog.log(Level.INFO, I18n.msg("Resend on no response; no response count {0} ",mCountNoResponse));
                         return resendRecourseAction("Resend on no response; no response count  " + mCountNoResponse,
                                 msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
                     } else if (ACTION_SUSPEND.equalsIgnoreCase(mHL7CommunicationControl.getRecourseAction())) {
                         suspendRecourseAction("Suspend on no response", hl7Connector, endpoint);
                     } else if (defaultMode || ACTION_RESET.equalsIgnoreCase(mHL7CommunicationControl.getRecourseAction())) {
-                        resetRecourseAction("Reset on no response", hl7Connector);
+                        return resetRecourseAction("Reset on no response", msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
                     }
                 }
             } else {
                 ackMsg = hl7Connector.recvHL7Message();
+				mCountNoResponse = 0;
                 endpoint.setLastACKMsgReceivedTimeStamp(System.currentTimeMillis());
             }
             
@@ -2167,21 +2228,35 @@ public class OutboundMessageProcessor implements HL7Constants {
                     if (mLog.isLoggable(Level.FINE)) {
                         mLog.log(Level.FINE, I18n.msg("Nak Message Received"), ackMsg);
                     }
-                    boolean retry = true;
+                    boolean retry = false;
                     boolean archived = false;
                     commCntrl = mHL7CommunicationControlsInfo.getMaxNakReceivedCommControl();
                     // handle max nak recieved first
                     if (commCntrl != null && commCntrl.getEnabled().booleanValue()) {
                         retry = handleMaxNakReceived(hl7Connector, endpoint, hl7PayLoad, ackMsg, journallingEnabled, messageControlID);
+						if(retry){
+							if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+									suspendRecourseAction("Suspend on max NAK received; max NAK received is " + commCntrl.getValue(),
+																						hl7Connector, endpoint);
+							} else if (ACTION_RESET.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+									return resetRecourseAction("Reset on max NAK received; max NAK received is " + commCntrl.getValue(),
+																							msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
+							}else if(SKIPMESSAGE.equalsIgnoreCase(commCntrl.getRecourseAction())){
+									// ToDo: SKIP Message handling
+									skipMessageRecourseAction("Skip message on max NAK received; max NAK received is " +commCntrl.getValue(),
+															hl7Connector, endpoint, hl7PayLoad, ackMsg, journallingEnabled, messageControlID);
+									retry = true;
+							}// ToDo: SKIP Message handling
+						}
                     }
                     HL7CommunicationControl nakRecvCommCntrl = mHL7CommunicationControlsInfo.getNakReceivedCommControl();
-                    if (retry && nakRecvCommCntrl != null && nakRecvCommCntrl.getEnabled().booleanValue()) {
+                    if (!retry && nakRecvCommCntrl != null && nakRecvCommCntrl.getEnabled().booleanValue()) {
                         // take resend recourse action
                         if (ACTION_RESEND.equalsIgnoreCase(nakRecvCommCntrl.getRecourseAction())) {
                             return resendRecourseAction("Resend on NAK received; NAK receive count  "
                                     + mCountNakReceived, msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
                         } else if (ACTION_RESET.equalsIgnoreCase(nakRecvCommCntrl.getRecourseAction())) {
-                            resetRecourseAction("Reset on NAK received; NAK receive", hl7Connector);
+                            return resetRecourseAction("Reset on NAK received; NAK receive",msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
                         }else if(SKIPMESSAGE.equalsIgnoreCase(nakRecvCommCntrl.getRecourseAction())){
                             // ToDo: SKIP Message handling
                             skipMessageRecourseAction("Skip message on NAK received", hl7Connector, endpoint, hl7PayLoad, ackMsg,
@@ -2223,14 +2298,15 @@ public class OutboundMessageProcessor implements HL7Constants {
         if (mLog.isLoggable(Level.FINE)) {
             mLog.log(Level.FINE, I18n.msg("Entered handleMaxNakReceived() method"));
         }
-        boolean retry = true;
+        boolean maxNakCountReached = false;
         mCountNakReceived += 1;
         // handle max nak recourse action
         HL7CommunicationControl commCntrl = mHL7CommunicationControlsInfo.getMaxNakReceivedCommControl();
         if (mCountNakReceived > commCntrl.getValue()) {
             // max nak received will be handled, so reset count to 0
             mCountNakReceived = 0;
-            if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+			maxNakCountReached = true;
+            /*if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
                 suspendRecourseAction("Suspend on max NAK received; max NAK received is " + commCntrl.getValue(),
                         hl7Connector, endpoint);
             } else if (ACTION_RESET.equalsIgnoreCase(commCntrl.getRecourseAction())) {
@@ -2241,29 +2317,32 @@ public class OutboundMessageProcessor implements HL7Constants {
                 skipMessageRecourseAction("Skip message on max NAK received; max NAK received is " +commCntrl.getValue(),
                         hl7Connector, endpoint, hl7message, nakmessage, journallingEnabled, messageControlID);
                 retry = false;
-            }// ToDo: SKIP Message handling
+            }*/// ToDo: SKIP Message handling
         }
-        return retry;
+        return maxNakCountReached;
     }
 
-    private void handleMaxNoResponse(HL7Connector hl7Connector, Endpoint endpoint) throws Exception {
+    private boolean handleMaxNoResponse(HL7Connector hl7Connector, Endpoint endpoint) throws Exception {
         if (mLog.isLoggable(Level.FINE)) {
             mLog.log(Level.FINE, I18n.msg("Entered handleMaxNoResponse() method"));
         }
+		boolean maxCountReached = false;
         mCountNoResponse += 1;
         // handle max no response recourse action
         HL7CommunicationControl commCntrl = mHL7CommunicationControlsInfo.getMaxNoResponseCommControl();
         if (mCountNoResponse > commCntrl.getValue()) {
             // max no response will be handled, reset count to 0
             mCountNoResponse = 0;
-            if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
+			maxCountReached = true;
+           /* if (ACTION_SUSPEND.equalsIgnoreCase(commCntrl.getRecourseAction())) {
                 suspendRecourseAction("Suspend on max no response; max no response is " + commCntrl.getValue(),
                         hl7Connector, endpoint);
             } else if (ACTION_RESET.equalsIgnoreCase(commCntrl.getRecourseAction())) {
                 resetRecourseAction("Reset on max no response; max no response is " + commCntrl.getValue(),
                         hl7Connector);
-            }
+            }*/
         }
+		return maxCountReached;
     }
 
     private void skipMessageRecourseAction(String resoneCode, HL7Connector hl7Connector, Endpoint endpoint, String hl7message,
@@ -2543,16 +2622,24 @@ public class OutboundMessageProcessor implements HL7Constants {
         }
     }
 
-    private void resetRecourseAction(String resetReason, HL7Connector hl7Connector) throws Exception {
+    private String resetRecourseAction(String resetReason,
+                                        MessageExchange msgExchange,
+                                        String hl7PayLoad,
+                                        HL7Connector hl7Connector,
+                                        Endpoint endpoint,
+                                        HL7Message hl7message,
+                                        HL7ProtocolProperties hl7ProtoclProperties) throws Exception {
         try {
             if (mLog.isLoggable(Level.FINE)) {
                 mLog.log(Level.FINE, resetReason);
             }
-            // close the existing connection
+            // close the existing connection and recreate
             if (hl7Connector != null) {
                 hl7Connector.discardConnection();
             }
-            throw new Exception(resetReason);
+            //throw new Exception(resetReason);
+			establishConnectionToExtSys(hl7Connector, hl7Connector.getProtocolInfo(), endpoint);
+			return sendAndReceiveHL7Message(msgExchange, hl7PayLoad, hl7Connector, endpoint, hl7message, hl7ProtoclProperties);
         } catch (Exception ex) {
             mLog.log(Level.SEVERE, resetReason);
             throw new Exception(resetReason);

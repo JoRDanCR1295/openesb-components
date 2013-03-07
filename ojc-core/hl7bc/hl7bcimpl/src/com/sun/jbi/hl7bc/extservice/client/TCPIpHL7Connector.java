@@ -84,6 +84,7 @@ public class TCPIpHL7Connector extends IoHandlerAdapter implements HL7Connector 
     final Condition ackNotRecvd = lock.newCondition();
 
     private Connection mHl7Connection = null;
+	private ProtocolInfo mProtocolInfo = null;
     boolean useConnectionPool = false;;
     public TCPIpHL7Connector() {
     }
@@ -151,6 +152,13 @@ public class TCPIpHL7Connector extends IoHandlerAdapter implements HL7Connector 
     public void setHL7Connection(Connection conn) throws Exception {
         this.mHl7Connection = conn;
      }
+    public ProtocolInfo getProtocolInfo() throws Exception {
+       return  this.mProtocolInfo;
+    }
+    
+    public void setProtocolInfo(ProtocolInfo pInfo) throws Exception {
+        this.mProtocolInfo = pInfo;
+     }
     
     public void setIoSession(Connection conn) throws Exception{
         this.mHl7Connection = conn;
@@ -161,22 +169,26 @@ public class TCPIpHL7Connector extends IoHandlerAdapter implements HL7Connector 
             mSession = (IoSession)mHl7Connection.getIOSessionObject();  
         }else{
             // if the connection taken from the pool is closed, creating new connection
-            ConnectionHelper connHelper = new ConnectionHelper();
+           /* ConnectionHelper connHelper = new ConnectionHelper();
             future = connHelper.getConnection(connInfo.getHost(),connInfo.getPort(),mHl7Connection.getIoHandler(),connInfo.getIoServiceConfig(),connInfo.getRetryLogicString());
             future.join(); // Wait until the connection attempt is finished.
             mSession = future.getSession();
             mSession.setAttribute("currentInput", new ByteArrayOutputStream());
-            mSession.setAttribute("readBytes", new Long(0));
+            mSession.setAttribute("readBytes", new Long(0));*/
         }
     }
 
     public String recvHL7Message() throws Exception {
         lock.lock();
+		boolean timeOut = false;
         try {
             while (getHl7ResponseMsg() == null) {
-                ackNotRecvd.await(60, TimeUnit.SECONDS);
+                timeOut = ackNotRecvd.await(60, TimeUnit.SECONDS);
                 if (!mSession.isConnected()) {
                     throw new IOException();
+                }
+				if (!timeOut) {
+                    break;
                 }
             }
         } catch (Exception ex) {
@@ -261,4 +273,24 @@ public class TCPIpHL7Connector extends IoHandlerAdapter implements HL7Connector 
     public void setHl7ResponseMsg(String hl7ResponseMsg) {
         this.hl7ResponseMsg = hl7ResponseMsg;
     }
+
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+		try{
+			 if (log.isLoggable(Level.FINE)) {
+				log.log(Level.FINE, I18n.msg("W9155: session exception caught :{0}", cause.getLocalizedMessage()));
+			 }
+			 // if the external is forcesibly diconnection the connection in middle of the process
+			 // then cought this exception and should clean the pool.
+			 if (session != null) {				 
+                CloseFuture future = session.close();
+				if(useConnectionPool){
+					log.log(Level.INFO, I18n.msg("W9016: session exception caught :{0} , Hence cleaing up the pool", cause.getLocalizedMessage()));
+					HL7BCConnectionManager.closeConnectionIfNotAvailable(this.mHl7Connection.getKey());
+				}else{
+					future = session.close();
+				}
+            }
+		}catch(Exception e){} 
+	
+	}
 }// end of class

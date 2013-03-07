@@ -86,6 +86,7 @@ public class MLLPV1PersistenceHandler {
     public boolean checkDuplicateAndsendResponseFromLog(String hl7Msg) throws Exception {
         DBConnection dbcon = null;
         boolean found = false;
+		ResultSet rs = null;
 
         try {
             String messageId = digestMessage(hl7Msg);
@@ -95,7 +96,7 @@ public class MLLPV1PersistenceHandler {
             dbcon = getDBConnection();
             hl7MsgLogDbo.setOldStatus(STATUS_HL7_ACK_SENT);
 
-            ResultSet rs = dbcon.getRowWithStatus(hl7MsgLogDbo);
+            rs = dbcon.getRowWithStatus(hl7MsgLogDbo);
 
             while (rs.next()) {
                 hl7MsgLogDbo.populateDBO(rs);
@@ -109,6 +110,14 @@ public class MLLPV1PersistenceHandler {
                 }
             }
         } catch (Exception ex) {
+			if(rs != null){
+				try{
+				 rs.close();
+				} catch (SQLException e) {
+                logger.log(Level.SEVERE,
+                        I18n.msg("E9335: Exception occurred while closing the result set"));
+				}
+			}
             try {
                 dbcon.getUnderlyingConnection().rollback();
             } catch (SQLException e) {
@@ -119,6 +128,14 @@ public class MLLPV1PersistenceHandler {
                     I18n.msg("E0336: Exception occurred while checking duplicate message from HL7MessageLog "), ex);
             throw ex;
         } finally {
+			if(rs != null){
+				try{
+				 rs.close();
+				} catch (SQLException e) {
+                logger.log(Level.SEVERE,
+                        I18n.msg("E9335: Exception occurred while closing the result set"));
+				}
+			}
             if (dbcon != null) {
                 try {
                     dbcon.close();

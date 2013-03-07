@@ -81,6 +81,7 @@ import com.sun.jbi.common.qos.messaging.MessagingChannel;
 import com.sun.jbi.common.qos.messaging.SendFailureListener;
 import com.sun.jbi.hl7bc.extensions.HL7CommunicationControl;
 import com.sun.jbi.hl7bc.extensions.HL7Input;
+import com.sun.jbi.hl7bc.extensions.HL7Address;
 import com.sun.jbi.hl7bc.extensions.HL7Operation;
 import com.sun.jbi.hl7bc.extensions.HL7Output;
 import com.sun.jbi.hl7bc.extensions.HL7Message;
@@ -406,6 +407,13 @@ public class InboundMessageProcessor implements Callable<String>, MessageExchang
     private void processInboundAck() throws Exception {
         String use = mHL7Operation.getHL7OperationInput().getHL7Message().getUseType();
         Source src;
+		// here if ack message received in case of original mode
+		// should not process the message. and send the nack back to the sender.
+		if(mAckMode.equals(ACK_MODE_ORIGINAL)){
+            String nakMsg = generateCannedNakMessage("MessageType MSH.9 is ACK, hence rejecting the message processing");
+            mHL7Callback.onReply(nakMsg, false);
+			return;
+		}
         if (use.equals(HL7Message.ATTR_USE_TYPE_ENCODED)) {
             src = mEncoder.decodeFromString(mHL7Msg);
         } else {
@@ -492,6 +500,13 @@ public class InboundMessageProcessor implements Callable<String>, MessageExchang
             Probe normalizationMeasurement = Probe.info(getClass(), endPointID,
                     HL7BindingComponent.PERF_CAT_NORMALIZATION);
             try {
+				HL7Address adrs = mEndpoint.getHL7Address();
+                mLog.log(Level.INFO, I18n.msg(
+                         "I9124: Received HL7 message from the client address {0}  : on to the server port {1}. ",
+                              mHL7Callback.getClientInfo(), Integer.toString(adrs.getHL7ServerPort())));
+				mLog.log(Level.INFO, I18n.msg(
+                         "Msg: {0} ",
+                              mHL7Msg.toString()));
                 inMsg = mHL7Normalizer.normalize(mOperationName, mEndpoint, hl7Message, mHL7Msg);
             } catch (Exception exe) {
                 // Freeze further processing since message validation against xml schema failed
@@ -624,6 +639,7 @@ public class InboundMessageProcessor implements Callable<String>, MessageExchang
                       HL7MMUtil.getSolutionGroup(mEndpoint)});
             }
             // </checkpoint>
+			 mEndpoint.releaseThrottle();
 
         }
     }
@@ -748,10 +764,11 @@ public class InboundMessageProcessor implements Callable<String>, MessageExchang
     private int retrieveSequenceNumber(String queryKey) throws SQLException, Exception {
         int seqNO = -1;
         DBConnection dbConnection = null;
+		ResultSet rs = null;
         try {
             dbConnection = getDBConnection();
             SequenceNumDBO seqNoDBO = mDBObjectFactory.createSequenceNumDBO(queryKey);
-            ResultSet rs = dbConnection.getRow(seqNoDBO);
+            rs = dbConnection.getRow(seqNoDBO);
             if (rs.next()) {
                 seqNoDBO.populateDBO(rs);
             } else {
@@ -762,6 +779,9 @@ public class InboundMessageProcessor implements Callable<String>, MessageExchang
             }
             seqNO = seqNoDBO.getESN();
         } finally {
+			if(rs != null){
+				rs.close();
+			}
             if (dbConnection != null) {
                 dbConnection.close();
             }
