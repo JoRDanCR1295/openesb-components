@@ -79,7 +79,7 @@ public class AppConfigNameFieldTest extends TestCase {
         }
         
         // correctable error
-        data = " 1Hello~2~~World3";
+        data = " 1Hello 2  World3";
         correctData = "1Hello2World3";
         result = appConfigNameField.validate(data);
         if (result == null) {
@@ -99,7 +99,8 @@ public class AppConfigNameFieldTest extends TestCase {
         
         
         // correctable error
-        data = " !@##@%$^%#($*@ ";
+        //data = " !@##@%$^%#($*@ ";
+        data = "                ";
         correctData = "";
         result = appConfigNameField.validate(data);
         if (result == null) {
