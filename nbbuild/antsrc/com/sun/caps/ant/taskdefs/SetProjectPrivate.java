@@ -64,7 +64,7 @@ public class SetProjectPrivate extends Ant {
     private String   rootDir;
     private boolean  reset = false;
     private boolean  clean = false;
-    private String[] caps_build_properties = { "caps.alaska.root",
+    /*private String[] caps_build_properties = { "caps.alaska.root",
                                                "caps.netbeans.home",
                                                "caps.netbeans.user",
                                                "caps.appserver.home",
@@ -72,6 +72,15 @@ public class SetProjectPrivate extends Ant {
                                                "j2ee.platform.classpath",
                                                "j2ee.platform.wsimport.classpath",
                                                "j2ee.platform.wsgen.classpath"
+    };*/
+	
+	private String[] caps_build_properties = { "enterprise.module.install.dir",
+                                               "ide.module.install.dir",
+											   "netbeans.user",
+                                               "j2ee.server.instance",
+                                               "java.module.install.dir",
+                                               "soa.module.install.dir",
+                                               "xml.module.install.dir"
     };
 
     public SetProjectPrivate () {
@@ -227,7 +236,7 @@ public class SetProjectPrivate extends Ant {
                addSystemProperty(caps_build_properties[i], p);
             }
 
-            addUserProperty(userprop, p);
+            //addUserProperty(userprop, p);
 
             out = new BufferedOutputStream(new FileOutputStream(file));
             p.store(out,"");
