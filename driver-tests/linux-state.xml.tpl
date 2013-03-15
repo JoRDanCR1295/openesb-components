@@ -36,7 +36,7 @@
 --> 
 <state xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="state-file.xsd">
 <components>
-        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="nb-base" version="#OPENESB_IDE_VERSION#">
+        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="openesb-ide" version="#OPENESB_IDE_VERSION#">
             <properties>
                 <property name="installation.location.windows">$N{install}/netbeans</property>
                 <property name="minimum.jdk.version">1.5.0.6</property>
@@ -51,11 +51,6 @@
                 <property name="minimum.jdk.version.linux-ppc">1.5.0</property>
                 <property name="installation.location">/home/hudson/jobs/Driver-test/workspace/openesbv2.3/netbeans</property>
                 <property name="desktop.shortcut.location">current.user</property>
-            </properties>
-        </product>
-        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="nb-soa" version="#OPENESB_IDE_VERSION#">
-            <properties>
-                <property name="installation.location">/home/hudson/jobs/Driver-test/workspace/openesbv2.3/netbeans</property>
             </properties>
         </product>
         <product platform="linux" status="to-be-installed" uid="glassfish" version="#GLASSFISH_VERSION#">
@@ -80,12 +75,12 @@
                 <property name="vendor.jdk.allowed.pattern.macosx">Apple.*</property>
             </properties>
         </product>
-        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="openesb" version="#OPENESB_CORE_VERSION#">
+        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="openesb-core" version="#OPENESB_CORE_VERSION#">
             <properties>
                 <property name="installation.location">/home/hudson/jobs/Driver-test/workspace/openesbv2.3/glassfish/addons/jbi-components</property>
             </properties>
         </product>
-        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="jbicomponents" version="#OPENESB_COMPONENTS_VERSION#">
+        <product platform="windows linux solaris-sparc solaris-x86 macosx-ppc macosx-x86 aix" status="to-be-installed" uid="openesb-components" version="#OPENESB_COMPONENTS_VERSION#">
             <properties>
                 <property name="installation.location">/home/hudson/jobs/Driver-test/workspace/openesbv2.3/glassfish/addons/jbi-components</property>
             </properties>
