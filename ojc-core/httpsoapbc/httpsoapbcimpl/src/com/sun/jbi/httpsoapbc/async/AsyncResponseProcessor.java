@@ -96,15 +96,17 @@ public class AsyncResponseProcessor<T> implements Runnable {
                 context.getEndpoint().getEndpointStatus().incrementReceivedReplies();
                 replyHTTP((DataSource) result);
             } else {
-                final String err = Messages.getMessages(AsyncResponseProcessor.class).getString("HTTPBC-E1001");
-                logger.warning(err);
+                //final String err = Messages.getMessages(AsyncResponseProcessor.class).getString("HTTPBC-E1001");
+                suspendTransaction();
+                logger.warning("HTTPBC-E1001: Unsupported response media");
                 return;
             }
-            try {
+            try {                
+                suspendTransaction();
                 context.getChannel().send(context.getInout());
             } catch (MessagingException ex) {
-                final String err = Messages.getMessages(AsyncResponseProcessor.class).getString("HTTPBC-E1002");
-                logger.warning(err);
+                //final String err = Messages.getMessages(AsyncResponseProcessor.class).getString("HTTPBC-E1002");
+                logger.warning(new StringBuilder("HTTPBC-E1002: ").append(ex.getMessage()).toString());
             }
 
         } finally {
@@ -195,6 +197,7 @@ public class AsyncResponseProcessor<T> implements Runnable {
     }
 
     private void replyError(Throwable t) {
+        logger.warning("HTTPBC: Exchange fault for service URL: " + context.getEndpoint().getEndpointUrl() + " : " + t.getLocalizedMessage());
         setExchangeFaulty((Exception) t, CLIENT, "", t.getLocalizedMessage());
     }
 
@@ -271,7 +274,7 @@ public class AsyncResponseProcessor<T> implements Runnable {
     private void resumeTransaction() {
         javax.transaction.Transaction tx = (Transaction) context.getInout().getProperty(context.getInout().JTA_TRANSACTION_PROPERTY_NAME);
         if (tx != null) {
-            TransactionsUtil.resumeTransaction(tx);
+            txResumed = TransactionsUtil.resumeTransaction(tx);
         }
     }
 
@@ -279,6 +282,7 @@ public class AsyncResponseProcessor<T> implements Runnable {
         try {
             if (txResumed) {
                 TransactionsUtil.suspendTransaction();
+                txResumed = false;
             }
         } catch (SystemException ex) {/* I hope noone uses misterious XA*/
 
