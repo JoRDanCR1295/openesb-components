@@ -110,8 +110,8 @@
     </target>
 
    <target name="start-server-windows" depends="check-os" if="is-windows">
-        <echo>Starting server on Windows</echo>
         <property file="caps.build.properties"/>
+        <echo>Starting server on Windows at ${caps.appserver.home}</echo>
         <exec executable="cmd" spawn="true">
             <arg value="/c ${caps.appserver.home}/bin/asadmin start-domain domain1"/>
         </exec>
@@ -628,7 +628,8 @@
     </target>
 
     <target name="test-for-driver-test" depends="print-time, init, init-test, start-server">
-        <property file="${caps.build.properties}"/>
+        <!--<property file="${caps.build.properties}"/>-->
+		<property file="caps.build.properties"/>
         <for-each-driver-test logdir="${env.BUILD_OUTPUT_HOME}/drivertest/deploy" prefix="deploy" startdir=".." target="jbi-unit-test" locations="${caps.jbi.tests}" inheritAll="false"/>
     </target>
 
