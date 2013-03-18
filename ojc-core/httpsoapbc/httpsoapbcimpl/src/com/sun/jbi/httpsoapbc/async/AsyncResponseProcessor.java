@@ -195,6 +195,7 @@ public class AsyncResponseProcessor<T> implements Runnable {
     }
 
     private void replyError(Throwable t) {
+        logger.warning("HTTPBC: Exchange fault for service URL: " + context.getEndpoint().getEndpointUrl() + " : " + t.getLocalizedMessage());
         setExchangeFaulty((Exception) t, CLIENT, "", t.getLocalizedMessage());
     }
 
