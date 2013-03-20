@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="CorrInvRecW1C6_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/CorrInvRecW1C6_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/CorrInvRecW1C6_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CorrInvRecW1C6ChildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:CorrInvRecW1C6ChildTargetNamespace"
+            location="corrInvRecW1C6_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:CorrInvRecW1C6ChildServiceLinkType"
+                     myRole="CorrInvRecW1C6ChildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CorrInvRecW1C6ChildOperation_Output"
+                  messageType="ns0:CorrInvRecW1C6ChildMessage"></variable>
+        <variable name="CorrInvRecW1C6ChildOperation_Input"
+                  messageType="ns0:CorrInvRecW1C6ChildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="CorrInvRecW1C6ChildOperation"
+                 partnerLink="plink_child"
+                 portType="ns0:CorrInvRecW1C6ChildPortType"
+                 operation="CorrInvRecW1C6ChildOperation"
+                 variable="CorrInvRecW1C6ChildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>concat(&apos;CONCAT:&apos;, $CorrInvRecW1C6ChildOperation_Output.CorrInvRecW1C6ChildPart/string)</from>
+                <to>$CorrInvRecW1C6ChildOperation_Input.CorrInvRecW1C6ChildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_child"
+               portType="ns0:CorrInvRecW1C6ChildPortType"
+               operation="CorrInvRecW1C6ChildOperation"
+               variable="CorrInvRecW1C6ChildOperation_Input"></reply>
+    </sequence>
+</process>

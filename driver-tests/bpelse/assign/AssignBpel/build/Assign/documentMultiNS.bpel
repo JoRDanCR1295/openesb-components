@@ -1,0 +1,110 @@
+<process name="documentMultiNSBP"
+         targetNamespace="http://sun.com/bpel/documentMultiNSBP"
+         xmlns:tns="http://sun.com/bpel/documentMultiNSBP"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" 
+         xmlns:ns1="http://localhost/AssignBpel/documentMultiNS"
+         xmlns:ns2="http://xml.netbeans.org/examples/EmployeeNS"
+         xmlns:ns3="http://xml.netbeans.org/examples/EmployeeInfoNS" 
+         xmlns:ns4="http://xml.netbeans.org/examples/AddressNS" >
+    <import namespace="http://localhost/AssignBpel/documentMultiNS" location="documentMultiNS.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1" partnerLinkType="ns1:documentMultiNSService" myRole="myRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OperationOut1" messageType="ns1:outputMessageType"/>
+        <variable name="tmpVariable" messageType="ns1:outputMessageType"/>
+        <variable name="OperationIn1" messageType="ns1:inputMessageType"/>
+    </variables>
+    <sequence name="Sequence1">
+        <receive name="Receive1" partnerLink="PartnerLink1" operation="operation" portType="ns1:myPortType" variable="OperationIn1" createInstance="yes"/>
+        <assign name="Assign2">
+            <copy>
+            <from>'John Doe'</from><to>$tmpVariable.part/ns2:home/ns4:name</to>
+            </copy>
+            <copy>
+            <from>'123 street'</from><to>$tmpVariable.part/ns2:home/ns4:street</to>
+            </copy>
+            <copy>
+            <from>'Monrovia'</from><to>$tmpVariable.part/ns2:home/ns4:city</to>
+            </copy>
+            <copy>
+            <from>'CA'</from><to>$tmpVariable.part/ns2:home/ns4:state</to>
+            </copy>
+            <copy>
+            <from>'1234'</from><to>$tmpVariable.part/ns2:person/ns3:EmployeeNumber</to>
+            </copy>
+            <copy>
+            <from>'Doe'</from><to>$tmpVariable.part/ns2:person/ns3:LastName</to>
+            </copy>
+            <copy>
+            <from>'Sr Engineer'</from><to>$tmpVariable.part/ns2:person/ns3:JobTitle</to>
+            </copy>
+            <copy>
+            <from>'Development'</from><to>$tmpVariable.part/ns2:person/ns3:Department</to>
+            </copy>
+            <copy>
+            <from>'Yes'</from><to>$tmpVariable.part/ns2:person/ns3:Supervisor</to>
+            </copy>
+            <copy>
+            <from>'91016'</from><to>$tmpVariable.part/ns2:home/ns4:zip</to>
+            </copy>
+            <copy>
+            <from>'John Does summer address'</from><to>$tmpVariable.part/ns2:home/ns4:note</to>
+            </copy>
+            <copy>
+            <from>'US'</from><to>$tmpVariable.part/ns2:home/@country</to>
+            </copy>
+        </assign>
+        <assign name="Assign1">
+            <copy>
+            <from>$tmpVariable.part/@department</from><to>$OperationOut1.part/@department</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:FirstName</from><to>$OperationOut1.part/ns2:person/ns3:FirstName</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:EmployeeNumber</from><to>$OperationOut1.part/ns2:person/ns3:EmployeeNumber</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:LastName</from><to>$OperationOut1.part/ns2:person/ns3:LastName</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:JobTitle</from><to>$OperationOut1.part/ns2:person/ns3:JobTitle</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:Department</from><to>$OperationOut1.part/ns2:person/ns3:Department</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:person/ns3:Supervisor</from><to>$OperationOut1.part/ns2:person/ns3:Supervisor</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:work</from><to>$OperationOut1.part/ns2:work</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:name</from><to>$OperationOut1.part/ns2:home/ns4:name</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:street</from><to>$OperationOut1.part/ns2:home/ns4:street</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:city</from><to>$OperationOut1.part/ns2:home/ns4:city</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:state</from><to>$OperationOut1.part/ns2:home/ns4:state</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:zip</from><to>$OperationOut1.part/ns2:home/ns4:zip</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:note[2]</from><to>$OperationOut1.part/ns2:home/ns4:note[2]</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/ns4:note[1]</from><to>$OperationOut1.part/ns2:home/ns4:note[1]</to>
+            </copy>
+            <copy>
+            <from>$tmpVariable.part/ns2:home/@country</from><to>$OperationOut1.part/ns2:home/@country</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="PartnerLink1" operation="operation" portType="ns1:myPortType" variable="OperationOut1"/>
+    </sequence>
+</process>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoGetCurrentTime" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoGetCurrentTime" targetNamespace="http://stc.com/echoGetCurrentTime">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoGetCurrentTime">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoGetCurrentTime">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoGetCurrentTime">
+        <operation name="echoGetCurrentTime">
+            <input message="tns:echoGetCurrentTime"/>
+            <output message="tns:echoGetCurrentTime"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoGetCurrentTime">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoGetCurrentTime">
+            <soap:operation soapAction="echoGetCurrentTime"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoGetCurrentTimeService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoGetCurrentTime"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoGetCurrentTime"/>
+    </plnk:partnerLinkType>
+</definitions>

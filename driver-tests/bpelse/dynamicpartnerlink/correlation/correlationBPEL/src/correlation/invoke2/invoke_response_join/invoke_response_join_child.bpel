@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="invoke_response_join_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/invoke_response_join_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/invoke_response_join_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:invoke_response_joinChildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:invoke_response_joinChildTargetNamespace"
+            location="invoke_response_join_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:invoke_response_joinChildServiceLinkType"
+                     myRole="invoke_response_joinChildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="invoke_response_joinChildOperation_Output"
+                  messageType="ns0:invoke_response_joinChildMessage"></variable>
+        <variable name="invoke_response_joinChildOperation_Input"
+                  messageType="ns0:invoke_response_joinChildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="invoke_response_joinChildOperation"
+                 partnerLink="plink_child"
+                 portType="ns0:invoke_response_joinChildPortType"
+                 operation="invoke_response_joinChildOperation"
+                 variable="invoke_response_joinChildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>concat(&apos;invoke_response_join:&apos;, $invoke_response_joinChildOperation_Output.invoke_response_joinChildPart/string)</from>
+                <to>$invoke_response_joinChildOperation_Input.invoke_response_joinChildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_child"
+               portType="ns0:invoke_response_joinChildPortType"
+               operation="invoke_response_joinChildOperation"
+               variable="invoke_response_joinChildOperation_Input"></reply>
+    </sequence>
+</process>

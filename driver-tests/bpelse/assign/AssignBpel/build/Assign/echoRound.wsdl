@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoRound" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoRound" targetNamespace="http://stc.com/echoRound">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoRound">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:decimal"  minOccurs="0"/>
+                        <xsd:element name="value1" type="xsd:long"  minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoRound">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoRound">
+        <operation name="echoRound">
+            <input message="tns:echoRound"/>
+            <output message="tns:echoRound"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoRound">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoRound">
+            <soap:operation soapAction="echoRound"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoRoundService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoRound"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoRound"/>
+    </plnk:partnerLinkType>
+</definitions>

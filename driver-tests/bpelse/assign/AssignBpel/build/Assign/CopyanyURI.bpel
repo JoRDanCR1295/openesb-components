@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="CopyanyURI" targetNamespace="http://www.seebeyond.com/eInsight/CopyTest" xmlns:tns="http://www.seebeyond.com/eInsight/CopyTest" xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="urn:CopyDataTypeTNS" xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/" xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/">
+	<import namespace="urn:CopyDataTypeTNS" location="CopyDataType.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+	<partnerLinks>
+		<partnerLink name="copyTestPLink" partnerLinkType="ns0:CopyDataTypePLT" myRole="server"/>
+	</partnerLinks>
+	<variables>
+		<variable name="anyURIOperation_Output" messageType="ns0:anyURIMessage"/>
+		<variable name="anyURIOperation_Input" messageType="ns0:anyURIMessage"/>
+	</variables>
+	<sequence>
+		<receive name="anyURIOperation" partnerLink="copyTestPLink" portType="ns0:CopyDataTypePortType" operation="anyURIOperation" variable="anyURIOperation_Output" createInstance="yes"/>
+		<assign>
+			<copy>
+				<from>$anyURIOperation_Output.anyURIPart/repeat_anyURI</from>
+				<to>$anyURIOperation_Input.anyURIPart/repeat_anyURI</to>
+			</copy>
+			<copy>
+				<from>$anyURIOperation_Output.anyURIPart/optional_anyURI</from>
+				<to>$anyURIOperation_Input.anyURIPart/optional_anyURI</to>
+			</copy>
+			<copy>
+				<from>$anyURIOperation_Output.anyURIPart/xsd_anyURI</from>
+				<to>$anyURIOperation_Input.anyURIPart/xsd_anyURI</to>
+			</copy>
+		</assign>
+		<reply partnerLink="copyTestPLink" portType="ns0:CopyDataTypePortType" operation="anyURIOperation" variable="anyURIOperation_Input"/>
+	</sequence>
+</process>

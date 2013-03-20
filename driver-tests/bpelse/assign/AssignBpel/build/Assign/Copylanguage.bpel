@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Copylanguage"
+         targetNamespace="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:tns="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CopyDataTypeTNS"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/">
+    <import namespace="urn:CopyDataTypeTNS"
+            location="CopyDataType.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="copyTestPLink"
+                     partnerLinkType="ns0:CopyDataTypePLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="languageOperation_Output"
+                  messageType="ns0:languageMessage"></variable>
+        <variable name="languageOperation_Input"
+                  messageType="ns0:languageMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="languageOperation"
+                 partnerLink="copyTestPLink"
+                 portType="ns0:CopyDataTypePortType"
+                 operation="languageOperation"
+                 variable="languageOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$languageOperation_Output.languagePart/repeat_language</from>
+                <to>$languageOperation_Input.languagePart/repeat_language</to>
+            </copy>
+            <copy>
+                <from>$languageOperation_Output.languagePart/optional_language</from>
+                <to>$languageOperation_Input.languagePart/optional_language</to>
+            </copy>
+            <copy>
+                <from>$languageOperation_Output.languagePart/xsd_language</from>
+                <to>$languageOperation_Input.languagePart/xsd_language</to>
+            </copy>
+        </assign>
+        <reply partnerLink="copyTestPLink"
+               portType="ns0:CopyDataTypePortType"
+               operation="languageOperation"
+               variable="languageOperation_Input"></reply>
+    </sequence>
+</process>

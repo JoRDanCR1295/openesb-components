@@ -1,0 +1,130 @@
+<definitions targetNamespace="urn:oneway_persist"
+             name="OneWayService"
+             xmlns:tns="urn:oneway_persist"
+             xmlns:tns0="urn:oneway_persist"
+              xmlns:ns1="http://www.webserviceX.NET/"
+              xmlns:ns2="http://lab201:8080/heraldws/services/LodeStar"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+              xmlns="http://schemas.xmlsoap.org/wsdl/"
+               xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+              xmlns:s="http://www.w3.org/2001/XMLSchema"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link">
+  
+  
+    <plink:partnerLinkType name="OneWayLinkType">
+        <plink:role name="InputOnlyRole"
+                    portType="tns:oneway_persistInput"></plink:role>
+    </plink:partnerLinkType>
+    
+                
+    <types>
+        <xsd:schema targetNamespace="urn:oneway_persist"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                     xmlns:tns="urn:oneway_persist"
+                    xmlns:tns0="urn:oneway_persist"
+                    xmlns:s="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+            
+                    
+            
+                    
+            
+                    <xsd:element type="tns0:helloObjType"
+                         name="helloObj"></xsd:element>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                    <xsd:element type="xsd:nonNegativeInteger"
+                                 name="nonNegativeInteger"></xsd:element>
+                    <xsd:element type="xsd:byte"
+                                 name="byte"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                    <xsd:element type="xsd:negativeInteger"
+                                 name="negativeInteger"></xsd:element>
+                    <xsd:element type="xsd:dateTime"
+                                 name="dateTime"></xsd:element>
+                    <xsd:element type="xsd:nonPositiveInteger"
+                                 name="nonPositiveInteger"></xsd:element>
+                    <xsd:element type="xsd:duration"
+                                 name="duration"></xsd:element>
+                    <xsd:element type="xsd:ENTITIES"
+                                 name="ENTITIES"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="double"></xsd:element>
+                    <xsd:element type="xsd:ENTITY"
+                                 name="ENTITY"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="HelloIF_sayHello">
+        <part name="body"
+              element="tns:helloObj"></part>
+    </message>
+    <message name="HelloIF_sayHelloResponse">
+        <part name="result"
+              element="tns:helloObj"></part>
+    </message>
+    <portType name="OneWayInput">
+        <operation name="sayHello">
+            <input message="tns:HelloIF_sayHello"></input>
+            <output message="tns:HelloIF_sayHelloResponse"></output>
+        </operation>
+    </portType>
+    <portType name="oneway_persistInput">
+        <operation name="sayHello">
+            <input message="tns:HelloIF_sayHello"></input>
+        </operation>
+    </portType>
+    <binding name="HelloDocElem2DocElemIFBinding"
+             type="tns:OneWayInput">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="result"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="oneway_persistInputBinding"
+             type="tns:oneway_persistInput">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="oneway_InputService">
+        <port name="oneway_persistInputPort"
+              binding="tns:oneway_persistInputBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/oneway_Input"/>
+        </port>
+    </service>
+</definitions>

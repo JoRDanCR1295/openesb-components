@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Receive_Receive_InitEmpty_Parent_BPEL"
+                 targetNamespace="Receive_Receive_InitEmpty_Parent_BPEL_TNS"
+                 xmlns:tns="Receive_Receive_InitEmpty_Parent_BPEL_TNS"
+                 xmlns:parentWSDLns="Receive_Receive_InitEmpty_Parent_WSDL_TNS"                               
+                 xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="Receive_Receive_InitEmpty_Parent_WSDL_TNS"
+                    location="Parent.wsdl"
+                    importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="ParentServiceLink"
+                             partnerLinkType="parentWSDLns:ParentServiceLinkType"
+                             myRole="Server"/>
+        <partnerLink name="ParentServiceLink1"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MyRole_ParentOperation_Output"
+                          messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="MyRole_ParentOperation_Input"
+                          messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="MyRole_ParentOperation1_Input"
+                  messageType="parentWSDLns:ParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet" properties="parentWSDLns:property parentWSDLns:property1"/>
+    </correlationSets>
+    <sequence>
+        <receive name="MyRole.ParentOperation.Receive"
+                         partnerLink="ParentServiceLink"
+                         portType="parentWSDLns:ParentPortType"
+                         operation="ParentOperation"
+                         variable="MyRole_ParentOperation_Input"
+                         createInstance="yes">
+            <correlations>
+                <correlation set="cSet" initiate="yes"/>
+            </correlations>
+        </receive>
+        <receive name="ParentOperation1"
+                 partnerLink="ParentServiceLink1"
+                 portType="parentWSDLns:ParentPortType1"
+                 operation="ParentOperation1"
+                 variable="MyRole_ParentOperation1_Input" createInstance="no">
+            <correlations>
+                <correlation set="cSet"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat($MyRole_ParentOperation_Input.ParentPart/ns0:string, $MyRole_ParentOperation1_Input.ParentPart/ns0:string)</from>
+                <to>$MyRole_ParentOperation_Output.ParentPart/ns0:string</to>
+            </copy>
+            <copy>
+                <from> ( $MyRole_ParentOperation_Input.ParentPart/ns0:int + $MyRole_ParentOperation1_Input.ParentPart/ns0:int ) </from>
+                <to>$MyRole_ParentOperation_Output.ParentPart/ns0:int</to>
+            </copy>
+        </assign>
+        <reply name="MyRole.ParentOperation.Reply"
+                       partnerLink="ParentServiceLink"
+                       portType="parentWSDLns:ParentPortType"
+                       operation="ParentOperation"
+                       variable="MyRole_ParentOperation_Output">
+                  </reply>
+    </sequence>
+</process>

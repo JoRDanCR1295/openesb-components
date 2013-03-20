@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoSubstring"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoSubstring"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoSubstring"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:echoAssignTNS"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:echoAssignTNS"
+            location="echoAssign.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="echoLink"
+                     partnerLinkType="ns0:echoAssignPLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoAssignOperation_Output"
+                  messageType="ns0:echoAssignMessage"></variable>
+        <variable name="echoAssignOperation_Input"
+                  messageType="ns0:echoAssignMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoAssignOperation"
+                 partnerLink="echoLink"
+                 portType="ns0:echoAssignPortType"
+                 operation="echoAssignOperation"
+                 variable="echoAssignOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>substring($echoAssignOperation_Output.echoAssignPart/value, $echoAssignOperation_Output.echoAssignPart/num1, $echoAssignOperation_Output.echoAssignPart/num2)</from>
+                <to>$echoAssignOperation_Input.echoAssignPart/value</to>
+            </copy>
+            <copy>
+                <from>$echoAssignOperation_Output.echoAssignPart/num1</from>
+                <to>$echoAssignOperation_Input.echoAssignPart/num1</to>
+            </copy>
+            <copy>
+                <from>$echoAssignOperation_Output.echoAssignPart/num2</from>
+                <to>$echoAssignOperation_Input.echoAssignPart/num2</to>
+            </copy>
+        </assign>
+        <reply partnerLink="echoLink"
+               portType="ns0:echoAssignPortType"
+               operation="echoAssignOperation"
+               variable="echoAssignOperation_Input"></reply>
+    </sequence>
+</process>

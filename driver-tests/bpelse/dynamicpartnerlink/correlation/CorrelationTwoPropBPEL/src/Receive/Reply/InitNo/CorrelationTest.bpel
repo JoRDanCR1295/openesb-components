@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CorrelationTest"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Receive_Reply_InitNo/src/CorrelationTest"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Receive_Reply_InitNo/src/CorrelationTest" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Receive_Reply_InitNo/src/CorrelationTest" xmlns:ns0="http://xml.netbeans.org/schema/Receive_Reply_InitNo/src/Message">
+   <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/Receive_Reply_InitNo/src/CorrelationTest" location="CorrelationTest.wsdl"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:CorrelationTestPartner" myRole="CorrelationTestPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="InitiateProcessOperationOut" messageType="ns1:CorrMessage"/>
+      <bpws:variable name="InitiateProcessOperationIn" messageType="ns1:Message"/>
+   </bpws:variables>
+   <bpws:correlationSets>
+      <bpws:correlationSet name="CorrelationSet" properties="ns1:CorrelationId1 ns1:CorrelationId2"/>
+   </bpws:correlationSets>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:CorrelationTestPortType" variable="InitiateProcessOperationIn">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet" initiate="yes"/>
+         </bpws:correlations>
+      </bpws:receive>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat($InitiateProcessOperationIn.Data/ns0:Content, 'Received Message.')</bpws:from>
+            <bpws:to>$InitiateProcessOperationOut.Data/ns0:Content</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InitiateProcessOperationIn.Data/ns0:CorrelationVal1/ns0:Id</bpws:from>
+            <bpws:to>$InitiateProcessOperationOut.Data/ns0:Id1</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$InitiateProcessOperationIn.Data/ns0:CorrelationVal2/ns0:Id</bpws:from>
+            <bpws:to>$InitiateProcessOperationOut.Data/ns0:Id2</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLinkA" operation="InitiateProcessOperation" portType="ns1:CorrelationTestPortType" variable="InitiateProcessOperationOut">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet" initiate="no"/>
+         </bpws:correlations>
+      </bpws:reply>
+   </sequence>
+</process>

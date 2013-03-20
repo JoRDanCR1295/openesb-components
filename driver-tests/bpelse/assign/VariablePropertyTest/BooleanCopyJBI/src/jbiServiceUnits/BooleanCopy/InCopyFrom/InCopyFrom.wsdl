@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="InCopyFrom" targetNamespace="http://j2ee.netbeans.org/wsdl/InCopyFrom"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/InCopyFrom" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:ns0="http://xml.netbeans.org/schema/simple" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/InCopyFrom">
+            <xsd:import schemaLocation="../simple.xsd" namespace="http://xml.netbeans.org/schema/simple"/>
+        </xsd:schema>
+    </types>
+    <message name="InCopyFromOperationRequest">
+        <part name="inputPart" element="ns0:itemElem"/>
+    </message>
+    <message name="InCopyFromOperationResponse">
+        <part name="outputPart" type="xsd:string"/>
+    </message>
+    <portType name="InCopyFromPortType">
+        <operation name="InCopyFromOperation">
+            <input name="input1" message="tns:InCopyFromOperationRequest"/>
+            <output name="output1" message="tns:InCopyFromOperationResponse"/>
+        </operation>
+    </portType>
+    <binding name="InCopyFromBinding" type="tns:InCopyFromPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="InCopyFromOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/InCopyFrom"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" namespace="http://j2ee.netbeans.org/wsdl/InCopyFrom"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="InCopyFromService">
+        <port name="InCopyFromPort" binding="tns:InCopyFromBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/InCopyFromService/InCopyFromPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="InCopyFrom">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="InCopyFromPortTypeRole" portType="tns:InCopyFromPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="intProperty" type="xsd:int"/>
+    <vprop:property name="boolProperty" type="xsd:boolean"/>
+    <vprop:propertyAlias propertyName="tns:intProperty" messageType="tns:InCopyFromOperationRequest" 
+                         part="inputPart">
+        <vprop:query>/ns0:itemElem/price</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:boolProperty" messageType="tns:InCopyFromOperationRequest" 
+                         part="inputPart">
+        <vprop:query>/ns0:itemElem/itemAvailable</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:intProperty" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:boolProperty" type="xsd:boolean"/>
+</definitions>

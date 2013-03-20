@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="subBP"
+         targetNamespace="http://www.seebeyond.com/eInsight/subBP"
+         sbynpxp:end_YLoc="36.0"
+         sbynpxp:start_YLoc="23.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="18.0"
+         sbynpxp:end_XLoc="1055.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/subBP"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynpx="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://localhost/MultiDepBpel/benchMark"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://localhost/MultiDepBpel/benchMark"
+            location="benchMark.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="subBPPartnerLink"
+                     partnerLinkType="ns0:benchMarkSubBPLinkType"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  messageType="ns0:benchMarkMessage"></variable>
+        <variable name="respVar"
+                  messageType="ns0:benchMarkMessage"></variable>
+        <variable name="faultVar"
+                  messageType="ns0:benchMarkMessage"></variable>
+    </variables>
+    <faultHandlers sbynpxp:XLoc="344.0"
+                   sbynpxp:YLoc="249.0">
+        <catchAll sbynpxp:XLoc="498.0"
+                  sbynpxp:YLoc="330.0"
+                  sbynpxp:isExpanded="true">
+            <sequence>
+                <reply name="reply2"
+                       partnerLink="subBPPartnerLink"
+                       portType="ns0:benchMarkSubBPPortType"
+                       operation="benchMarkSubBPOperation1"
+                       variable="var1"
+                       sbynpxp:XLoc="558.0"
+                       sbynpxp:YLoc="360.0"></reply>
+            </sequence>
+        </catchAll>
+    </faultHandlers>
+    <sequence>
+        <receive name="receive"
+                 partnerLink="subBPPartnerLink"
+                 portType="ns0:benchMarkSubBPPortType"
+                 operation="benchMarkSubBPOperation1"
+                 variable="var1"
+                 createInstance="yes"
+                 sbynpxp:XLoc="82.0"
+                 sbynpxp:YLoc="17.0"></receive>
+        <wait name="wait"
+              sbynpxp:XLoc="156.0"
+              sbynpxp:YLoc="17.0"> <for>$var1.benchMarkPart/ns0:waitTime</for></wait>
+        <if name="switch">
+                <condition>contains($var1.benchMarkPart/ns0:string, 'Invoke2')</condition>
+                    <sequence>
+                        <assign name="Assign2"
+                                sbynpxp:XLoc="377.0"
+                                sbynpxp:YLoc="74.0">
+                            <copy>
+                                <from>'Fault'</from>
+                                <to>$faultVar.benchMarkPart/ns0:string</to>
+                            </copy>
+                        </assign>
+                        <throw name="throw"
+                               faultName="ns0:subBPFault"
+                               faultVariable="faultVar"
+                               sbynpxp:XLoc="474.0"
+                               sbynpxp:YLoc="146.0"></throw>
+                    </sequence>
+
+            <elseif sbynpx:lineLabel="Case 2">
+                <condition>not(contains($var1.benchMarkPart/ns0:string, 'Invoke2'))</condition>
+                <sequence>
+                    <assign name="Assign"
+                            sbynpxp:XLoc="358.0"
+                            sbynpxp:YLoc="-10.0">
+                        <copy>
+                            <from>'Response'</from>
+                            <to>$respVar.benchMarkPart/ns0:string</to>
+                        </copy>
+                    </assign>
+                    <reply name="reply"
+                           partnerLink="subBPPartnerLink"
+                           portType="ns0:benchMarkSubBPPortType"
+                           operation="benchMarkSubBPOperation1"
+                           variable="respVar"
+                           sbynpxp:XLoc="454.0"
+                           sbynpxp:YLoc="-4.0"></reply>
+                </sequence>
+            </elseif>
+        </if>
+    </sequence>
+</process>

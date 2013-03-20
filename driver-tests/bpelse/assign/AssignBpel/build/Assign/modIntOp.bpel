@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="modIntOp"
+         targetNamespace="http://www.seebeyond.com/eInsight/OperationTest"
+         sbynpxp:end_YLoc="341.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="840.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/modIntOp"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/Operation"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/Operation"
+            location="operation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="OperationLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ModIntOp_Output"
+                  messageType="ns0:Operation"></variable>
+        <variable name="ModIntOp_Input"
+                  messageType="ns0:Operation"></variable>
+    </variables>
+    <sequence>
+        <receive name="ModIntOp"
+                 partnerLink="OperationLink"
+                 portType="ns0:Operation"
+                 operation="ModIntOp"
+                 variable="ModIntOp_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="264.0"
+                 sbynpxp:YLoc="86.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="408.0"
+                sbynpxp:YLoc="202.0">
+            <copy>
+                <from>$ModIntOp_Output.part/Int0 mod $ModIntOp_Output.part/Int1</from>
+                <to>$ModIntOp_Input.part/retInt</to>
+            </copy>
+        </assign>
+        <reply name="ModIntOp.Reply"
+               partnerLink="OperationLink"
+               portType="ns0:Operation"
+               operation="ModIntOp"
+               variable="ModIntOp_Input"
+               sbynpxp:XLoc="573.0"
+               sbynpxp:YLoc="97.0"></reply>
+    </sequence>
+</process>

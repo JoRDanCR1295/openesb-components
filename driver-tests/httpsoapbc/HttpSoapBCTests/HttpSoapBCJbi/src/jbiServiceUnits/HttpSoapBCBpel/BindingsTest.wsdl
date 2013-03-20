@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:FooBar2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MyHelloService1" targetNamespace="urn:FooBar2">
+    <types>
+        <xsd:schema xmlns:ns1="urn:FooBar2" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:FooBar2">
+            <xsd:element name="helloObj" type="tns:helloObjType">
+            </xsd:element>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                    <xsd:element name="nonNegativeInteger" type="xsd:nonNegativeInteger"/>
+                    <xsd:element name="byte" type="xsd:byte"/>
+                    <xsd:element name="short" type="xsd:short"/>
+                    <xsd:element name="int" type="xsd:int"/>
+                    <xsd:element name="long" type="xsd:long"/>
+                    <xsd:element name="negativeInteger" type="xsd:negativeInteger"/>
+                    <xsd:element name="dateTime" type="xsd:dateTime"/>
+                    <xsd:element name="nonPositiveInteger" type="xsd:nonPositiveInteger"/>
+                    <xsd:element name="duration" type="xsd:duration"/>
+                    <xsd:element name="ENTITIES" type="xsd:ENTITIES"/>
+                    <xsd:element name="double" type="xsd:double"/>
+                    <xsd:element name="ENTITY" type="xsd:ENTITY"/>
+                    <xsd:element name="float" type="xsd:float"/>
+                    
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="HelloIF_sayHello">
+        <part element="tns:helloObj" name="body"/>
+    </message>
+    <message name="HelloIF_sayHelloResponse">
+        <part element="tns:helloObj" name="result"/>
+    </message>
+
+    <message name="HelloCTypeIF_sayHello">
+        <part name="helloObj" type="tns:helloObjType"/>
+    </message>
+    <message name="HelloCTypeIF_sayHelloResponse">
+        <part name="helloObj" type="tns:helloObjType"/>
+    </message>
+    <message name="HelloSTypeIF_sayHello">
+        <part name="string" type="xsd:string"/>
+    </message>    
+    <message name="HelloSTypeIF_sayHelloResponse">
+        <part name="string" type="xsd:string"/>
+    </message>
+    
+    <portType name="HelloIF">
+        <operation name="sayHello">
+            <input message="tns:HelloIF_sayHello"/>
+            <output message="tns:HelloIF_sayHelloResponse"/>
+        </operation>
+    </portType>
+    <portType name="HelloCTypeIF">
+        <operation name="sayHello">
+            <input message="tns:HelloCTypeIF_sayHello"/>
+            <output message="tns:HelloCTypeIF_sayHelloResponse"/>
+        </operation>
+    </portType>
+    <portType name="HelloSTypeIF">
+        <operation name="sayHello">
+            <input message="tns:HelloSTypeIF_sayHello"/>
+            <output message="tns:HelloSTypeIF_sayHelloResponse"/>
+        </operation>
+    </portType>
+    <binding name="HelloDocElem2DocElemIFBinding" type="tns:HelloIF">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="result" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="HelloRPCElem2RPCElemIFBinding" type="tns:HelloIF">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body parts="body" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="result" use="literal"/>
+            </output>
+        </operation>
+    </binding>    
+    <binding name="HelloDocCType2DocCTypeIFBinding" type="tns:HelloCTypeIF">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="HelloRPCCType2RPCCTypeIFBinding" type="tns:HelloCTypeIF">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>    
+    <binding name="HelloDocSType2DocSTypeIFBinding" type="tns:HelloSTypeIF">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="HelloRPCSType2RPCSTypeIFBinding" type="tns:HelloSTypeIF">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="sayHello">
+            <soap:operation soapAction="sayHello"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>    
+    <service name="BindingsTestService">
+        <port binding="tns:HelloDocElem2DocElemIFBinding" name="HelloDocElem2DocElemIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloDocElem2DocElem"/>
+        </port>
+        <port binding="tns:HelloRPCElem2RPCElemIFBinding" name="HelloRPCElem2RPCElemIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloRPCElem2RPCElem"/>
+        </port>        
+        <port binding="tns:HelloDocCType2DocCTypeIFBinding" name="HelloDocCType2DocCTypeIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloDocCType2DocCType"/>
+        </port>        
+        <port binding="tns:HelloRPCCType2RPCCTypeIFBinding" name="HelloRPCCType2RPCCTypeIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloRPCCType2RPCCType"/>
+        </port>                
+        <port binding="tns:HelloDocSType2DocSTypeIFBinding" name="HelloDocSType2DocSTypeIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloDocSType2DocSType"/>
+        </port>                
+        <port binding="tns:HelloRPCSType2RPCSTypeIFBinding" name="HelloRPCSType2RPCSTypeIFPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/HelloRPCSType2RPCSType"/>
+        </port>                        
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="HelloIFServiceLink">
+	<plnk:role name="HelloIFRole" portType="tns:HelloIF"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="HelloCTypeIFServiceLink">
+	<plnk:role name="HelloCTypeIFRole" portType="tns:HelloCTypeIF"/>        
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="HelloSTypeIFServiceLink">        
+	<plnk:role name="HelloSTypeIFRole" portType="tns:HelloSTypeIF"/>                
+    </plnk:partnerLinkType>
+    
+</definitions>

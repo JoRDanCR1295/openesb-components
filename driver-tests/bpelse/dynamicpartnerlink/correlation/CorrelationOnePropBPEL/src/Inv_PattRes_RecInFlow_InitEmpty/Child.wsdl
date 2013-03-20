@@ -1,0 +1,84 @@
+<definitions targetNamespace="Inv_PattRes_RecInFlow_InitEmpty_Child_WSDL_TNS"
+             name="Inv_PattRes_RecInFlow_InitEmpty_Child_WSDL"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="Inv_PattRes_RecInFlow_InitEmpty_Child_WSDL_TNS"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+             xmlns:parentWSDL="Inv_PattRes_RecInFlow_InitEmpty_Parent_WSDL_TNS" 
+             xmlns:ns="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <plnk:partnerLinkType name="ChildServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="ChildServerRole"
+                   portType="tns:ChildPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    
+    <vprop:property type="xsd:string" name="ChildProp"></vprop:property>
+                   
+    <vprop:propertyAlias  propertyName="tns:ChildProp"  messageType="tns:ChildMessage" part="ChildPart">
+        <vprop:query>/ns:helloObj/ns:string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:ChildProp" messageType="parentWSDL:ParentMessage1" part="ParentPart">
+            <vprop:query>/ns:helloObj/ns:string</vprop:query>
+    </vprop:propertyAlias>    
+    
+    <vprop:propertyAlias  propertyName="parentWSDL:property"  messageType="tns:ChildMessage" part="ChildPart">
+        <vprop:query>/ns:helloObj/ns:string</vprop:query>
+    </vprop:propertyAlias>    
+    
+    <vprop:propertyAlias propertyName="parentWSDL:property" messageType="parentWSDL:ParentMessage1" part="ParentPart">
+            <vprop:query>/ns:helloObj/ns:string</vprop:query>
+    </vprop:propertyAlias>
+    
+    <import location="Parent.wsdl" namespace="Inv_PattRes_RecInFlow_InitEmpty_Parent_WSDL_TNS"/>
+    <types>
+        <xsd:schema targetNamespace="urn:ChildTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:ChildTargetNamespace"
+                    xmlns:ns1="urn:ChildTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns="http://xml.netbeans.org/schema/dataTypes.xsd">
+            <xsd:import schemaLocation="../dataTypes.xsd" namespace="http://xml.netbeans.org/schema/dataTypes.xsd"/>
+            <xsd:complexType name="ChildType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="ChildMessage">
+        <part name="ChildPart" element="ns:helloObj"></part>
+    </message>
+    <portType name="ChildPortType">
+        <operation name="ChildOperation">
+            <input message="tns:ChildMessage"></input>
+            <output message="tns:ChildMessage"></output>
+        </operation>
+    </portType>
+    <binding name="ChildBinding"
+             type="tns:ChildPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ChildOperation">
+            <soap:operation soapAction="ChildOperation"/>
+            <input>
+                <soap:body parts="ChildPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="ChildPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ChildService">
+        <port name="ChildPort"
+              binding="tns:ChildBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/Inv_PattRes_RecInFlow_InitEmpty_Child_service"/>
+        </port>
+    </service>
+</definitions>

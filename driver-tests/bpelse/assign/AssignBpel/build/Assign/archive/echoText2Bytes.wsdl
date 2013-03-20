@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoText2Bytes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoText2Bytes" targetNamespace="http://stc.com/echoText2Bytes">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoText2Bytes">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoText2Bytes">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoText2Bytes">
+        <operation name="echoText2Bytes">
+            <input message="tns:echoText2Bytes"/>
+            <output message="tns:echoText2Bytes"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoText2Bytes">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoText2Bytes">
+            <soap:operation soapAction="echoText2Bytes"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoText2BytesService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoText2Bytes"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoText2Bytes"/>
+    </plnk:partnerLinkType>
+</definitions>

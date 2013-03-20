@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ConditionOnElementBasedProperty"
+    targetNamespace="http://enterprise.netbeans.org/bpel/conditionProj/ConditionOnElementBasedProperty"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" 
+    xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/conditionProj/ConditionOnElementBasedProperty" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/conditionsSchema" 
+    xmlns:ns1="http://j2ee.netbeans.org/wsdl/conditions"
+    xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://j2ee.netbeans.org/wsdl/conditions" 
+    location="conditions.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="elemCondPL" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        partnerLinkType="tns:elementConditionPLT" myRole="elementConditionPTRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="elementBasedVar" element="ns0:msgElem"/>
+        <variable name="ElementConditionOperationOut" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+        <variable name="ElementConditionOperationIn" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" messageType="tns:message"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:intProp"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="elemCondPL" 
+        operation="elementConditionOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="ns1:elementConditionPT" variable="ElementConditionOperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>$ElementConditionOperationIn.mesgPart/intElem</from>
+                <to>$elementBasedVar/intElem</to>
+            </copy>
+            <copy>
+                <from>$ElementConditionOperationIn.mesgPart/strElem</from>
+                <to>$elementBasedVar/strElem</to>
+            </copy>
+            <copy>
+                <from>$ElementConditionOperationIn.mesgPart/boolElem</from>
+                <to>$elementBasedVar/boolElem</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition>ns2:getVariableProperty('elementBasedVar', 'ns1:booleanProp') <!--or $elementBasedVar/boolElem--></condition>
+            <assign name="Assign2">
+                <copy>
+                    <from>$ElementConditionOperationIn.mesgPart/intElem</from>
+                    <to>$ElementConditionOperationOut.mesgPart/intElem</to>
+                </copy>
+                <copy>
+                    <from>$ElementConditionOperationIn.mesgPart/boolElem</from>
+                    <to>$ElementConditionOperationOut.mesgPart/boolElem</to>
+                </copy>
+                <copy>
+                    <from>concat($ElementConditionOperationIn.mesgPart/strElem, ' If True: ')</from>
+                    <to>$ElementConditionOperationOut.mesgPart/strElem</to>
+                </copy>
+            </assign>
+            <else>
+            <assign name="Assign3">
+                <copy>
+                    <from>$ElementConditionOperationIn.mesgPart/intElem</from>
+                    <to>$ElementConditionOperationOut.mesgPart/intElem</to>
+                </copy>
+                <copy>
+                    <from>$ElementConditionOperationIn.mesgPart/boolElem</from>
+                    <to>$ElementConditionOperationOut.mesgPart/boolElem</to>
+                </copy>
+                <copy>
+                    <from>concat($ElementConditionOperationIn.mesgPart/strElem, ' If False: ')</from>
+                    <to>$ElementConditionOperationOut.mesgPart/strElem</to>
+                </copy>
+            </assign>
+            </else>
+        </if>
+        <reply name="Reply1" partnerLink="elemCondPL" operation="elementConditionOperation" 
+        xmlns:tns="http://j2ee.netbeans.org/wsdl/conditions" 
+        portType="tns:elementConditionPT" variable="ElementConditionOperationOut"/>
+    </sequence>
+</process>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<definitions targetNamespace="urn:OutPutFile"
+             name="OutputFileService"
+             xmlns:tns="urn:OutPutFile"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+    <plink:partnerLinkType name="OutputFileServiceType">
+        <plink:role name="FileOutRole"
+                    portType="tns:FileOut"></plink:role>
+    </plink:partnerLinkType>
+    <types>
+        <xsd:schema targetNamespace="urn:OutPutFile"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:OutPutFile"
+                    xmlns:ns1="urn:OutPutFile"
+                    xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+                        
+            
+                    
+            
+            
+                    
+            
+            
+                    
+            
+            
+                    
+            
+            
+                    
+            
+            
+                    <xsd:element type="xsd:string"
+                         name="status"></xsd:element>
+            <xsd:element type="ns1:helloObjType"
+                         name="helloObj"></xsd:element>
+            <xsd:complexType name="helloObjType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                    <xsd:element type="xsd:nonNegativeInteger"
+                                 name="nonNegativeInteger"></xsd:element>
+                    <xsd:element type="xsd:byte"
+                                 name="byte"></xsd:element>
+                    <xsd:element type="xsd:short"
+                                 name="short"></xsd:element>
+                    <xsd:element type="xsd:int"
+                                 name="int"></xsd:element>
+                    <xsd:element type="xsd:long"
+                                 name="long"></xsd:element>
+                    <xsd:element type="xsd:negativeInteger"
+                                 name="negativeInteger"></xsd:element>
+                    <xsd:element type="xsd:dateTime"
+                                 name="dateTime"></xsd:element>
+                    <xsd:element type="xsd:nonPositiveInteger"
+                                 name="nonPositiveInteger"></xsd:element>
+                    <xsd:element type="xsd:duration"
+                                 name="duration"></xsd:element>
+                    <xsd:element type="xsd:ENTITIES"
+                                 name="ENTITIES"></xsd:element>
+                    <xsd:element type="xsd:double"
+                                 name="double"></xsd:element>
+                    <xsd:element type="xsd:ENTITY"
+                                 name="ENTITY"></xsd:element>
+                    <xsd:element type="xsd:float"
+                                 name="float"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="HelloIF_write">
+        <part name="body"
+              element="tns:helloObj"></part>
+    </message>
+    <message name="HelloIF_writeResponse">
+        <part name="result"
+              element="tns:status"></part>
+    </message>
+    <portType name="FileOut">
+        <operation name="write">
+            <input message="tns:HelloIF_write"></input>
+        </operation>
+    </portType>
+    <binding name="FileOutBinding"
+             type="tns:FileOut">
+        <file:binding></file:binding>
+        <operation name="write">
+            <file:operation></file:operation>
+            <input>
+                <file:message fileName="fileout.txt"
+                              fileNameIsPattern="false"
+                              addEOL="false"
+                              use="literal"
+                              multipleRecordsPerFile="false"></file:message>
+            </input>
+        </operation>
+    </binding>
+    <service name="MyFileService">
+        <port name="FileOut"
+              binding="tns:FileOutBinding">
+            <file:address fileDirectory="@tempdir@/"></file:address>
+        </port>
+    </service>
+</definitions>

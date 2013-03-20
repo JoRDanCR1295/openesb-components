@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions name="TaakService" targetNamespace="http://www.ardatis.com/ventouris/TaakService"
+	xmlns:tns="http://www.ardatis.com/ventouris/TaakService" xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:ns2="http://www.ardatis.com/ventouris/TaakService/type"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+	<!-- types -->
+	<types>
+		<schema targetNamespace="http://www.ardatis.com/ventouris/TaakService/type"
+			xmlns:tns="http://www.ardatis.com/ventouris/TaakService/type"
+			xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+			xmlns="http://www.w3.org/2001/XMLSchema">
+			<complexType name="createTaakRequest">
+				<sequence>
+					<element name="dossierId" type="string" nillable="true" />
+					<element name="taakType" type="string" nillable="true" />
+				</sequence>
+			</complexType>
+			<element name="VentourisWSException">
+				<complexType>
+					<sequence>
+						<element name="message" type="string" nillable="true" />
+					</sequence>
+				</complexType>
+			</element>
+			<element name="createTaakRequest" type="tns:createTaakRequest" />
+			<element name="createTaakResponse" type="string" />
+		</schema>
+	</types>
+	<!-- message -->
+	<message name="TaakServiceSEI_createTaakRequest">
+		<part name="parameters" element="ns2:createTaakRequest" />
+	</message>
+	<message name="TaakServiceSEI_createTaakResponse">
+		<part name="result" element="ns2:createTaakResponse" />
+	</message>
+	<message name="TaakServiceSEI_VentourisWSException">
+		<part name="VentourisWSException"
+			element="ns2:VentourisWSException" />
+	</message>
+	<!-- porttype -->
+	<portType name="TaakServiceSEI">
+		<operation name="createTaak">
+			<input message="tns:TaakServiceSEI_createTaakRequest" />
+			<output message="tns:TaakServiceSEI_createTaakResponse" />
+			<fault name="VentourisWSException"
+				message="tns:TaakServiceSEI_VentourisWSException" />
+		</operation>
+	</portType>
+	<!-- binding -->
+	<binding name="TaakServiceSEIBinding" type="tns:TaakServiceSEI">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+			style="document" />
+		<operation name="createTaak">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+			<fault name="VentourisWSException">
+				<soap:fault name="VentourisWSException" use="literal" />
+			</fault>
+		</operation>
+	</binding>
+	<!-- service -->
+	<service name="TaakService">
+		<port name="TaakServiceSEIPort"
+			binding="tns:TaakServiceSEIBinding">
+			<soap:address location="http://localhost:${HttpDefaultPort}/TaakService" />
+		</port>
+	</service>
+</definitions>

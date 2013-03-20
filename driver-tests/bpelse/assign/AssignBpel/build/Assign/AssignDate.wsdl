@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/AssignDateTNS" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AssignDateWsdl" targetNamespace="http://stc.com/AssignDateTNS">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/AssignDateTNS">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="xsd_string" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="AssignDateMessage">
+        <part element="tns:item" name="AssignDatePart"/>
+    </message>
+    <portType name="AssignDatePortType">
+        <operation name="AssignDateOperation">
+            <input message="tns:AssignDateMessage"/>
+            <output message="tns:AssignDateMessage"/>
+        </operation>
+    </portType>
+    <binding name="AssignDateBinding" type="tns:AssignDatePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AssignDateOperation">
+            <soap:operation soapAction="AssignDateOperation"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="AssignDateService">
+        <port binding="tns:AssignDateBinding" name="AssignDatePort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/AssignDate"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="AssignDatePLT">
+        <plnk:role name="server" portType="tns:AssignDatePortType"/>
+    </plnk:partnerLinkType>
+</definitions>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+		xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" 
+		xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+		name="SpecExampleWsdl" 
+		targetNamespace="http://sun.com/bpel/SpecExampleWsdl"
+		xmlns:tns="http://sun.com/bpel/SpecExampleWsdl" xmlns:ns0="http://localhost/person">
+    <types>
+        <xsd:schema targetNamespace="http://sun.com/bpel/SpecExampleWsdl">
+            <xsd:import namespace="http://localhost/person" schemaLocation="schema/person.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="message">
+        <part element="ns0:person" name="part"/>
+    </message>
+    <portType name="SpecExamplePortType">
+        <operation name="operation1">
+            <input message="tns:message"/>
+            <output message="tns:message"/>
+        </operation>
+    </portType>
+    <binding name="SpecExampleBinding" type="tns:SpecExamplePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="operation1">
+            <soap:operation soapAction="specExample"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="SpecExampleService">
+        <port binding="tns:SpecExampleBinding" name="SpecExamplePort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/SpecExample"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SpecExamplePLT">
+        <plnk:role name="server" portType="tns:SpecExamplePortType"/>
+    </plnk:partnerLinkType>
+</definitions>
