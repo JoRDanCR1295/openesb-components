@@ -5,7 +5,7 @@
     xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
-    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelAcctDeleteBpel" xmlns:ns1="http://siebel.com/asi/" xmlns:ns2="http://stc.com/echo" xmlns:ns0="http://www.siebel.com/xml/AccountInterface">
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/siebelAcctDeleteBpel" xmlns:ns1="http://siebel.com/asi/" xmlns:ns2="http://stc.com/echo" xmlns:ns0="http://www.siebel.com/xml/AccountInterface" xmlns:sxt="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Trace" xmlns:sxed="http://www.sun.com/wsbpel/2.0/process/executable/SUNExtension/Editor2" xmlns:ns3="http://www.siebel.com/xml/Account%20Interface">
     <import namespace="http://siebel.com/asi/" location="SiebelAccount.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <import namespace="http://stc.com/echo" location="echo.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
     <partnerLinks>
@@ -23,13 +23,13 @@
         <assign name="AssignAcctId">
             <copy>
                 <from>$EchoIn1.part/ns2:value</from>
-                <to>$SiebelAccountDeleteIn1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountId</to>
+                <to>$SiebelAccountDeleteIn1.SiebelMessage/ns3:ListOfAccountInterface/ns3:Account/ns3:AccountId</to>
             </copy>
         </assign>
         <invoke name="InvokeAcctDelete" partnerLink="siebelPartnerLink" operation="SiebelAccountDelete" portType="ns1:Default" inputVariable="SiebelAccountDeleteIn1" outputVariable="SiebelAccountDeleteOut1"/>
         <assign name="HarvestIdResponse">
             <copy>
-                <from>$SiebelAccountDeleteOut1.SiebelMessage/ns0:ListOfAccountInterface/ns0:Account[1]/ns0:AccountId</from>
+                <from>$SiebelAccountDeleteOut1.SiebelMessage/ns3:ListOfAccountInterface/ns3:Account/ns3:AccountId</from>
                 <to>$EchoOut1.part/ns2:value</to>
             </copy>
         </assign>

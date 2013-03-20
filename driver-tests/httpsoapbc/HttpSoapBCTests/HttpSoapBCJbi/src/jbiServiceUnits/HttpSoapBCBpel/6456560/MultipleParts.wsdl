@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/MultipleParts" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MultipleParts" targetNamespace="http://stc.com/MultipleParts">
+    <message name="MultipleParts">
+        <part type="xsd:string" name="part1"/>
+        <part type="xsd:string" name="part2"/>
+        <part type="xsd:string" name="part3"/>
+        <part type="xsd:string" name="part4"/>
+    </message>
+    <message name="MultiplePartsResponse">
+        <part type="xsd:string" name="part1"/>
+        <part type="xsd:string" name="part2"/>
+    </message>
+    <portType name="MultipleParts">
+        <operation name="MultipleParts">
+            <input message="tns:MultipleParts"/>
+            <output message="tns:MultiplePartsResponse"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:MultipleParts">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="MultipleParts">
+            <soap:operation soapAction="MultipleParts"/>
+            <input>
+                <soap:body use="literal" parts="part1 part4"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MultiplePartsService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/MultipleParts"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:MultipleParts"/>
+    </plnk:partnerLinkType>
+</definitions>
