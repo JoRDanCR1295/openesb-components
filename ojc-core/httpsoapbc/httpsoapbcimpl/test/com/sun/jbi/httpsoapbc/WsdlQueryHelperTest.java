@@ -23,7 +23,7 @@ import com.ibm.wsdl.extensions.schema.SchemaImpl;
  */
 public class WsdlQueryHelperTest extends TestCase {
 
-    private CoyoteRequest req = new DummyCoyoteRequest();
+    private CoyoteRequest req = new WsdlQueryHelperTest.DummyCoyoteRequest();
 
     
     @Override
@@ -50,7 +50,7 @@ public class WsdlQueryHelperTest extends TestCase {
 
 	System.out.println(new String(baos.toByteArray()));
 
-	WsdlQueryHelper helper = new WsdlQueryHelper(req, 9080, def, true);
+	WsdlQueryHelper helper = new WsdlQueryHelper(req, 9080, baos, true);
 	ByteBuffer buffer = helper.getServiceDescriptorAsByteBuffer();
 
 	System.out.println(new String(buffer.array()));
