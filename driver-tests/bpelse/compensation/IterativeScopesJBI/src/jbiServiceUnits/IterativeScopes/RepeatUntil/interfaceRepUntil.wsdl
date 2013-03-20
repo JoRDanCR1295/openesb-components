@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="interfaceRepUntil" targetNamespace="http://j2ee.netbeans.org/wsdl/interfaceRepUntil"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://j2ee.netbeans.org/wsdl/interfaceRepUntil"
+             xmlns:ns0="http://xml.netbeans.org/schema/repeatUntilSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="http://xml.netbeans.org/schema/repeatUntilSchema" 
+                    xmlns:tns1="http://xml.netbeans.org/schema/repeatUntilSchema">
+            <xsd:complexType name="RUntilType">
+                <xsd:sequence>
+                    <xsd:element name="Iter1State" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="Iter2State" type="xsd:string" minOccurs="0"></xsd:element>
+                    <xsd:element name="OutVar" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="inputType">
+                <xsd:sequence>
+                    <xsd:element name="iterCount" type="xsd:string"></xsd:element>
+                    <xsd:element name="input" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InMsg">
+        <part name="InPart" type="ns0:inputType"/>
+    </message>
+    <message name="ReplyMsg">
+        <part name="ReplyPart" type="ns0:RUntilType"/>
+    </message>
+    <portType name="RepUntilPT">
+        <operation name="RepUntilOper">
+            <input name="input1" message="tns:InMsg"/>
+            <output name="output1" message="tns:ReplyMsg"/>
+        </operation>
+    </portType>
+    <binding name="RepUntilBinding" type="tns:RepUntilPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="RepUntilOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="ReplyPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="RepUntilService">
+        <port name="RepUntilServPort" binding="tns:RepUntilBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/IterativeScopes/interfaceRepUntil/RepUntilServPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="RepUntilPLT">
+        <plnk:role name="RepUntilPTRole" portType="tns:RepUntilPT"/>
+    </plnk:partnerLinkType>
+</definitions>

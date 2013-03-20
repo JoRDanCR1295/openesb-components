@@ -1,0 +1,71 @@
+<definitions targetNamespace="urn:CorrInvRecChildTargetNamespace"
+             name="CorrInvRecChildDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:CorrInvRecChildTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:parentWSDL="CorrInvRecParent">
+    <plnk:partnerLinkType name="CorrInvRecChildServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="CorrInvRecChildServerRole"
+                   portType="tns:CorrInvRecChildPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:propertyAlias part="CorrInvRecChildPart"
+                        propertyName="parentWSDL:property"
+                        messageType="tns:CorrInvRecChildMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <import location="corrInvRec_parent.wsdl" namespace="CorrInvRecParent"/>
+    
+    <types>
+        <xsd:schema targetNamespace="urn:CorrInvRecChildTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:CorrInvRecChildTargetNamespace"
+                    xmlns:ns1="urn:CorrInvRecChildTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+            
+                    <xsd:complexType name="CorrInvRecChildType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="CorrInvRecChildMessage">
+        <part name="CorrInvRecChildPart"
+              type="tns:CorrInvRecChildType"></part>
+    </message>
+    <portType name="CorrInvRecChildPortType">
+        <operation name="CorrInvRecChildOperation">
+            <input message="tns:CorrInvRecChildMessage"></input>
+            <output message="tns:CorrInvRecChildMessage"></output>
+        </operation>
+    </portType>
+    <binding name="CorrInvRecChildBinding"
+             type="tns:CorrInvRecChildPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CorrInvRecChildOperation">
+            <soap:operation soapAction="CorrInvRecChildOperation"/>
+            <input>
+                <soap:body parts="CorrInvRecChildPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="CorrInvRecChildPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="CorrInvRecChildService">
+        <port name="CorrInvRecChildPort"
+              binding="tns:CorrInvRecChildBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/CorrInvRecChild"/>
+        </port>
+    </service>
+</definitions>

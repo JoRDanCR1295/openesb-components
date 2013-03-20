@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrPickInvokeInitNoResp_child"
+         targetNamespace="http://enterprise.netbeans.org/bpel/corrPickInvokeInitNoResp_child"
+         xmlns:tns="http://enterprise.netbeans.org/bpel/corrPickInvokeInitNoResp_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp_child"
+         xmlns:parent="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoResp_child"
+            location="PickInvokeInitNoResp_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PartnerLink1"
+                     partnerLinkType="ns0:corrPickInvokePLinkType"
+                     myRole="corrPickInvokePLinkRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="input" messageType="ns0:CorrelationChildMessage"/>
+        <variable name="output" messageType="ns0:CorrelationChildMessage"/>
+    </variables>
+    <sequence>
+        <bpws:pick name="Pick1" createInstance="yes">
+            <bpws:onMessage partnerLink="PartnerLink1" operation="CorrelationOperation" 
+                            portType="ns0:CorrelationPortType" variable="input">
+                <bpws:assign>
+                    <bpws:copy>
+                        <bpws:from>$input.data/string</bpws:from>
+                        <bpws:to>$output.data/string</bpws:to>
+                    </bpws:copy>
+                </bpws:assign>
+            </bpws:onMessage>
+        </bpws:pick>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="CorrelationOperation" 
+                    portType="ns0:CorrelationPortType" variable="output"/>
+    </sequence>
+</process>

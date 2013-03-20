@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrInvOnMsg_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrInvOnMsg_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrInvOnMsg_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CorrInvOnMsgChildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:CorrInvOnMsgChildTargetNamespace"
+            location="corrInvOnMsg_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:CorrInvOnMsgChildServiceLinkType"
+                     myRole="CorrInvOnMsgChildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="CorrInvOnMsgChildOperation_Output"
+                  messageType="ns0:CorrInvOnMsgChildMessage"></variable>
+        <variable name="CorrInvOnMsgChildOperation_Input"
+                  messageType="ns0:CorrInvOnMsgChildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="CorrInvOnMsgChildOperation"
+                 partnerLink="plink_child"
+                 portType="ns0:CorrInvOnMsgChildPortType"
+                 operation="CorrInvOnMsgChildOperation"
+                 variable="CorrInvOnMsgChildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>concat(&apos;CHILD:&apos;, $CorrInvOnMsgChildOperation_Output.CorrInvOnMsgChildPart/string)</from>
+                <to>$CorrInvOnMsgChildOperation_Input.CorrInvOnMsgChildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_child"
+               portType="ns0:CorrInvOnMsgChildPortType"
+               operation="CorrInvOnMsgChildOperation"
+               variable="CorrInvOnMsgChildOperation_Input"></reply>
+    </sequence>
+</process>

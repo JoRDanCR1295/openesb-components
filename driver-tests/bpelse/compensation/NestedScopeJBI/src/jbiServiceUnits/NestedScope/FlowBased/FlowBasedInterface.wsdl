@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="FlowBasedInterface" targetNamespace="http://j2ee.netbeans.org/wsdl/FlowBasedInterface"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FlowBasedInterface" xmlns:ns0="FlowBasedSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <types>
+        <xsd:schema targetNamespace="FlowBasedSchema" xmlns:tns1="FlowBasedSchema">
+            <xsd:complexType name="FlowType">
+                <xsd:sequence>
+                    <xsd:element name="Scope1Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope2Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="Scope3Var" type="xsd:string"></xsd:element>
+                    <xsd:element name="OutVar" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InMesg">
+        <part name="InPart" type="xsd:string"/>
+    </message>
+    <message name="RepMsg">
+        <part name="RepPart" type="ns0:FlowType"/>
+    </message>
+    <portType name="SimpleFlowPT">
+        <operation name="SimpleFlowOper">
+            <input name="input1" message="tns:InMesg"/>
+            <output name="output1" message="tns:RepMsg"/>
+        </operation>
+    </portType>
+    <portType name="CompensateInFlowPT">
+        <operation name="CompensateInFlowOper">
+            <input name="input1" message="tns:InMesg"/>
+            <output name="output1" message="tns:RepMsg"/>
+        </operation>
+    </portType>
+    <portType name="CompScopeInFlowPT">
+        <operation name="CompScopeInFlowOper">
+            <input name="input1" message="tns:InMesg"/>
+            <output name="output1" message="tns:RepMsg"/>
+        </operation>
+    </portType>
+    <portType name="combinedInFlowPT">
+        <operation name="combinedInFlowOper">
+            <input name="input1" message="tns:InMesg"/>
+            <output name="output1" message="tns:RepMsg"/>
+        </operation>
+    </portType>
+    <binding name="SimpleFlowBinding" type="tns:SimpleFlowPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="SimpleFlowOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="RepPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="compensateInFlowBinding" type="tns:CompensateInFlowPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CompensateInFlowOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="RepPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="compScopeInFlowBinding" type="tns:CompScopeInFlowPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="CompScopeInFlowOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="RepPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="combinedInFlowBinding" type="tns:combinedInFlowPT">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="combinedInFlowOper">
+            <input name="input1">
+                <soap:body parts="InPart" use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body parts="RepPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="SimpleFlowService">
+        <port name="SimpleFlowPort" binding="tns:SimpleFlowBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/FlowBasedInterface/SimpleFlowPort"/>
+        </port>
+    </service>
+    <service name="compensateInFlowService">
+        <port name="compensateInFlowServPort" binding="tns:compensateInFlowBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/FlowBasedInterface/compensateInFlowServPort"/>
+        </port>
+    </service>
+    <service name="compScopeInFlowService">
+        <port name="compScopeInFlowServPort" binding="tns:compScopeInFlowBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/FlowBasedInterface/compScopeInFlowServPort"/>
+        </port>
+    </service>
+    <service name="combinedInFlowService">
+        <port name="combinedInFlowServPort" binding="tns:combinedInFlowBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/NestedScope/FlowBasedInterface/combinedInFlowServPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="FlowBasedInterface1">
+        <plnk:role name="SimpleFlowPTRole" portType="tns:SimpleFlowPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="CompensateInFlowPLT">
+        <plnk:role name="CompensateInFlowPTRole" portType="tns:CompensateInFlowPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="CompScopeInFlowPLT">
+        <plnk:role name="CompScopeInFlowPTRole" portType="tns:CompScopeInFlowPT"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="combinedInFlowPLT">
+        <plnk:role name="combinedInFlowPTRole" portType="tns:combinedInFlowPT"/>
+    </plnk:partnerLinkType>
+</definitions>

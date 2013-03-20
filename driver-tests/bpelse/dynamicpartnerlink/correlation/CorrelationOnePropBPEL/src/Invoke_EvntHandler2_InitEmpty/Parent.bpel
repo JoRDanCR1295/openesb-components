@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="Invoke_EvntHandler2_InitEmpty_Parent_BPEL"
+         targetNamespace="Invoke_EvntHandler2_InitEmpty_Parent_BPEL_TNS"
+         xmlns:tns="Invoke_EvntHandler2_InitEmpty_Parent_BPEL_TNS"
+         xmlns:childWSDLns="Invoke_EvntHandler2_InitEmpty_Child_WSDL_TNS"
+         xmlns:parentWSDLns="Invoke_EvntHandler2_InitEmpty_Parent_WSDL_TNS"                               
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:bpel_20="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="Invoke_EvntHandler2_InitEmpty_Parent_WSDL_TNS"
+            location="Parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="Invoke_EvntHandler2_InitEmpty_Child_WSDL_TNS"
+            location="Child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="ParentServiceLink"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="ChildPartner"
+                     partnerLinkType="childWSDLns:ChildServiceLinkType"
+                     partnerRole="ChildServerRole"/>
+        <partnerLink name="ParentServiceLink1"
+                     partnerLinkType="parentWSDLns:ParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MyRole_ParentOperation_Output"
+                  messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="ChildContainer"
+                  messageType="childWSDLns:ChildMessage"></variable>
+        <variable name="MyRole_ParentOperation_Input"
+                  messageType="parentWSDLns:ParentMessage"></variable>
+        <variable name="ParentOperation1_Output"
+                  messageType="parentWSDLns:ParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="cSet"
+                        properties="childWSDLns:ChildProp"/>
+    </correlationSets>
+    
+    <sequence>
+        <receive name="MyRole.ParentOperation.Receive"
+                 partnerLink="ParentServiceLink"
+                 portType="parentWSDLns:ParentPortType"
+                 operation="ParentOperation"
+                 variable="MyRole_ParentOperation_Input"
+                 createInstance="yes">
+        </receive>
+        <assign name="Assign">
+            <copy>
+                <from>$MyRole_ParentOperation_Input.ParentPart/string</from>
+                <to>$ChildContainer.ChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke name="InvokeChildBP"
+                partnerLink="ChildPartner"
+                portType="childWSDLns:ChildPortType"
+                operation="ChildOperation"
+                inputVariable="ChildContainer"
+                outputVariable="ChildContainer">
+            <correlations>
+                <correlation set="cSet" initiate="yes" pattern="response"/>
+            </correlations>
+        </invoke>
+        <scope name="Scope1">
+            <eventHandlers>
+                <onEvent partnerLink="ParentServiceLink1" 
+                         portType="parentWSDLns:ParentPortType1"
+                         operation="ParentOperation1" 
+                         messageType="parentWSDLns:ParentMessage1" 
+                         variable="OnEventVariable">
+                    <correlations>
+                        <correlation set="cSet"/>
+                    </correlations>
+                    
+                    <scope name="onEvent1Scope">            		
+                        <sequence>
+                            <assign  name="Assign2">                    
+                                <copy>
+                                    <from>concat('OnEvent Branch Execution :', $OnEventVariable.ParentPart/string)</from>
+                                    <to>$OnEventVariable.ParentPart/string</to>
+                                </copy>
+                            </assign>
+                            <wait  name="Wait2">
+                                <for>'P0Y0DT0H0M1S'</for>
+                            </wait>
+                            <reply name="MyRole.OnEventonProcess1.Reply"
+                                   partnerLink="ParentServiceLink1"
+                                   portType="parentWSDLns:ParentPortType1"
+                                   operation="ParentOperation1"
+                                   variable="OnEventVariable"></reply>
+                        </sequence>
+                    </scope>
+                </onEvent>
+            </eventHandlers>
+            <bpel_20:sequence name="Sequence1">
+                <bpel_20:assign  name="Assign3">                    
+                    <bpel_20:copy>
+                        <bpel_20:from>concat('Main Process Branch Execution :', $MyRole_ParentOperation_Input.ParentPart/string)</bpel_20:from>
+                        <bpel_20:to>$MyRole_ParentOperation_Input.ParentPart/string</bpel_20:to>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+                <bpel_20:wait name="Wait1">
+                    <bpel_20:for>'P0Y0M0DT0H0M5S'</bpel_20:for>
+                </bpel_20:wait>
+                <bpel_20:assign  name="Assign4">                    
+                    <bpel_20:copy>
+                        <bpel_20:from>$MyRole_ParentOperation_Input.ParentPart</bpel_20:from>
+                        <bpel_20:to>$MyRole_ParentOperation_Output.ParentPart</bpel_20:to>
+                    </bpel_20:copy>
+                </bpel_20:assign>
+                <bpel_20:reply name="MyRole.ParentOperation.Reply"
+                               partnerLink="ParentServiceLink"
+                               portType="parentWSDLns:ParentPortType"
+                               operation="ParentOperation"
+                               variable="MyRole_ParentOperation_Output">
+                </bpel_20:reply>
+            </bpel_20:sequence>
+        </scope>
+    </sequence>
+</process>

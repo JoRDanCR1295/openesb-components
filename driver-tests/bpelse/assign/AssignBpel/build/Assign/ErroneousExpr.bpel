@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ErroneousExpr"
+    targetNamespace="http://enterprise.netbeans.org/bpel/ErroneousExpr"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/ErroneousExpr" xmlns:ns1="http://j2ee.netbeans.org/wsdl/ErroneousExpr" xmlns:ns0="http://xml.netbeans.org/examples/EmployeeNS" xmlns:ns2="http://xml.netbeans.org/examples/AddressNS" xmlns:ns3="http://xml.netbeans.org/examples/EmployeeInfoNS">
+    <import namespace="http://j2ee.netbeans.org/wsdl/ErroneousExpr" location="ErroneousExpr.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:ErroneousExpr1" myRole="ErroneousExprPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="output" messageType="ns1:ErroneousExprOperationReply"/>
+        <bpws:variable name="input" messageType="ns1:ErroneousExprOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="ErroneousExprOperation" portType="ns1:ErroneousExprPortType" variable="input"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$input.part1/ns0:person</bpws:from>
+                <bpws:to>$output.part1/ns0:person</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$input.part1/ns0:home</bpws:from>
+                <bpws:to>$output.part1/ns0:home</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:faultHandlers>
+                <bpws:catchAll>
+                    <bpws:assign name="Assign3">
+                        <bpws:copy>
+                            <bpws:from>
+                                <bpws:literal>456</bpws:literal>
+                            </bpws:from>
+                            <bpws:to>$output.part1/ns0:person/ns3:EmployeeNumber</bpws:to>
+                        </bpws:copy>
+                    </bpws:assign>
+                </bpws:catchAll>
+            </bpws:faultHandlers>
+            <bpws:assign name="Assign2">
+                <bpws:copy>
+                    <bpws:from>$input.part1/ns0:work/ns2:name</bpws:from>
+                    <bpws:to>$output.part1/ns0:work/ns2:name</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:scope>
+        <bpws:scope name="Scope3">
+            <bpws:faultHandlers>
+                <bpws:catchAll>
+                    <bpws:assign name="Assign7">
+                        <bpws:copy>
+                            <bpws:from>
+                                <bpws:literal>Code</bpws:literal>
+                            </bpws:from>
+                            <bpws:to>$output.part1/ns0:person/ns3:FirstName</bpws:to>
+                        </bpws:copy>
+                    </bpws:assign>
+                </bpws:catchAll>
+            </bpws:faultHandlers>
+            <bpws:assign name="Assign6">
+                <bpws:copy>
+                    <bpws:from>$input.part1/ns0:home/ns2:note[2]</bpws:from>
+                    <bpws:to>$output.part1/ns0:home/ns2:note</bpws:to>
+                </bpws:copy>
+            </bpws:assign>
+        </bpws:scope>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="ErroneousExprOperation" portType="ns1:ErroneousExprPortType" variable="output"/>
+    </sequence>
+</process>

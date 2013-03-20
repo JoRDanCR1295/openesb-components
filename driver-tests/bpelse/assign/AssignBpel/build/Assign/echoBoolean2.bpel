@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoBoolean2"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoBoolean2"
+         sbynpxp:end_YLoc="249.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="614.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoBoolean2"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/echoBoolean2"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/echoBoolean2"
+            location="echoBoolean2.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BPLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoBoolean2_Output"
+                  messageType="ns0:echoBoolean2"></variable>
+        <variable name="echoBoolean2_Input"
+                  messageType="ns0:echoBoolean2"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoBoolean2"
+                 partnerLink="Client2BPLink"
+                 portType="ns0:echoBoolean2"
+                 operation="echoBoolean2"
+                 variable="echoBoolean2_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="191.0"
+                 sbynpxp:YLoc="175.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="292.0"
+                sbynpxp:YLoc="127.0">
+            <copy>
+                <from>boolean(number($echoBoolean2_Output.part/value))</from>
+                <to>$echoBoolean2_Input.part/value</to>
+            </copy>
+        </assign>
+        <reply name="echoBoolean2.Reply"
+               partnerLink="Client2BPLink"
+               portType="ns0:echoBoolean2"
+               operation="echoBoolean2"
+               variable="echoBoolean2_Input"
+               sbynpxp:XLoc="388.0"
+               sbynpxp:YLoc="207.0"></reply>
+    </sequence>
+</process>

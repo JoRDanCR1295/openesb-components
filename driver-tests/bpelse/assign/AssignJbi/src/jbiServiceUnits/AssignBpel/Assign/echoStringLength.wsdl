@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoStringLength" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoStringLength" targetNamespace="http://stc.com/echoStringLength">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoStringLength">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoStringLength">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoStringLength">
+        <operation name="echoStringLength">
+            <input message="tns:echoStringLength"/>
+            <output message="tns:echoStringLength"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoStringLength">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoStringLength">
+            <soap:operation soapAction="echoStringLength"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoStringLengthService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoStringLength"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoStringLength"/>
+    </plnk:partnerLinkType>
+</definitions>

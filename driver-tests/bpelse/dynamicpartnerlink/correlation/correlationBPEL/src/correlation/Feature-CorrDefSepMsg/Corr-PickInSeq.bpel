@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="Corr-PickInSeq" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/Corr-PickInSeq"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Corr-PickInSeq" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Corr-PickInSeq">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Corr-PickInSeq" location="Corr-PickInSeq.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="PickTest-PL1" partnerLinkType="ns1:PickTestServiceLinkType" myRole="PickTestPT1ServerRole2"/>
+        <partnerLink name="PickTest-PL" partnerLinkType="ns1:PickTestServiceLinkType" myRole="PickTestPT1ServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="OnMsgVar2" messageType="ns1:PickTestMsg2"/>
+        <variable name="OnMsgReply1" messageType="ns1:PickTestMsg1"/>
+        <variable name="OnMsgVar1" messageType="ns1:PickTestMsg1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CSet2" properties="ns1:property2"/>
+        <correlationSet name="CSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <pick name="Pick1" createInstance="yes">
+            <onMessage partnerLink="PickTest-PL" operation="PickTestOper1" portType="ns1:PickTestPT1" variable="OnMsgVar1">
+                <correlations>
+                    <correlation set="CSet1" initiate="yes"/>
+                    <correlation set="CSet2" initiate="yes"/>
+                </correlations>
+                <empty name="Empty1"/>
+            </onMessage>
+        </pick>
+        <pick name="Pick2">
+            <onMessage partnerLink="PickTest-PL1" operation="PickTestOper2" portType="ns1:PickTestPT2" variable="OnMsgVar2">
+                <correlations>
+                    <correlation set="CSet1" initiate="no"/>
+                    <correlation set="CSet2" initiate="join"/>
+                </correlations>
+                <empty name="Empty2"/>
+            </onMessage>
+        </pick>
+        <assign name="Assign1">
+            <copy>
+                <from>$OnMsgVar1.Msg1Part1/corrVal1</from>
+                <to>$OnMsgReply1.Msg1Part1/corrVal1</to>
+            </copy>
+            <copy>
+                <from>$OnMsgVar1.Msg1Part1/exCorrVal1</from>
+                <to>$OnMsgReply1.Msg1Part1/exCorrVal1</to>
+            </copy>
+            <copy>
+                <from> ( $OnMsgVar1.Msg1Part1/content1/id + $OnMsgVar2.Msg2Part1/content2/id ) </from>
+                <to>$OnMsgReply1.Msg1Part1/content1/id</to>
+            </copy>
+            <copy>
+                <from>concat($OnMsgVar1.Msg1Part1/content1/name, $OnMsgVar2.Msg2Part1/content2/name)</from>
+                <to>$OnMsgReply1.Msg1Part1/content1/name</to>
+            </copy>
+        </assign>
+        <reply name="ReplyBack" partnerLink="PickTest-PL" operation="PickTestOper1" portType="ns1:PickTestPT1" variable="OnMsgReply1"/>
+    </sequence>
+   
+</process>

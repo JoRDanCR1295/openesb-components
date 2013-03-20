@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="CorrInvRecW1C6_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/CorrInvRecW1C6_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/CorrInvRecW1C6_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CorrInvRecW1C6ChildTargetNamespace"
+         xmlns:ns1="CorrInvRecW1C6Parent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:CorrInvRecW1C6ChildTargetNamespace"
+            location="corrInvRecW1C6_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="CorrInvRecW1C6Parent"
+            location="corrInvRecW1C6_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:CorrInvRecW1C6ChildServiceLinkType"
+                     partnerRole="CorrInvRecW1C6ChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:CorrInvRecW1C6ParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:CorrInvRecW1C6ParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childOperation"
+                  messageType="ns0:CorrInvRecW1C6ChildMessage"></variable>
+        <variable name="CorrInvRecW1C6ParentOperation_Output"
+                  messageType="ns1:CorrInvRecW1C6ParentMessage"></variable>
+        <variable name="CorrInvRecW1C6ParentOperation_Input"
+                  messageType="ns1:CorrInvRecW1C6ParentMessage"></variable>
+        <variable name="CorrInvRecW1C6ParentOperation1_Output"
+                  messageType="ns1:CorrInvRecW1C6ParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corProp1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="CorrInvRecW1C6ParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:CorrInvRecW1C6ParentPortType"
+                 operation="CorrInvRecW1C6ParentOperation"
+                 variable="CorrInvRecW1C6ParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$CorrInvRecW1C6ParentOperation_Output.CorrInvRecW1C6ParentPart/string</from>
+                <to>$childOperation.CorrInvRecW1C6ChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="plink_child"
+                portType="ns0:CorrInvRecW1C6ChildPortType"
+                operation="CorrInvRecW1C6ChildOperation"
+                inputVariable="childOperation"
+                outputVariable="childOperation">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </invoke>
+        <receive name="CorrInvRecW1C6ParentOperation1"
+                 partnerLink="plink_parent1"
+                 portType="ns1:CorrInvRecW1C6ParentPortType1"
+                 operation="CorrInvRecW1C6ParentOperation1"
+                 variable="CorrInvRecW1C6ParentOperation1_Output">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$CorrInvRecW1C6ParentOperation1_Output.CorrInvRecW1C6ParentPart/string</from>
+                <to>$CorrInvRecW1C6ParentOperation_Input.CorrInvRecW1C6ParentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parent"
+               portType="ns1:CorrInvRecW1C6ParentPortType"
+               operation="CorrInvRecW1C6ParentOperation"
+               variable="CorrInvRecW1C6ParentOperation_Input"></reply>
+    </sequence>
+</process>

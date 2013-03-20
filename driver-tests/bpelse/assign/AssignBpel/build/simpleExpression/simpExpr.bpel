@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="simpExpr"
+    targetNamespace="http://enterprise.netbeans.org/bpel/AssignBpel/simpExpr"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/AssignBpel/simpExpr" xmlns:ns1="http://j2ee.netbeans.org/wsdl/simpExpr">
+   <import namespace="http://j2ee.netbeans.org/wsdl/simpExpr" location="simpExpr.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <partnerLinks>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:simpExpr1" myRole="simpExprPortTypeRole"/>
+   </partnerLinks>
+   <variables>
+      <bpws:variable name="SimpExprOperationOut" messageType="ns1:simpExprOperationReply"/>
+      <bpws:variable name="SimpExprOperationIn" messageType="ns1:simpExprOperationRequest"/>
+   </variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="simpExprOperation" portType="ns1:simpExprPortType" variable="SimpExprOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from>concat('From expression with ', 'no variables', '')</bpws:from>
+            <bpws:to part="part1" variable="SimpExprOperationOut"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="simpExprOperation" portType="ns1:simpExprPortType" variable="SimpExprOperationOut"/>
+   </sequence>
+</process>

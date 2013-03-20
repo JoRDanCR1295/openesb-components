@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+xmlns:ares="http://www.sun.com/javaone/05/AirlineReservationService" 
+xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" 
+xmlns:hres="http://www.sun.com/javaone/05/HotelReservationService" 
+xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+xmlns:ota="http://www.opentravel.org/OTA/2003/05" 
+xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:tns="http://www.sun.com/javaone/05/TravelReservationService" 
+xmlns:tres="http://www.sun.com/javaone/05/TravelReservationService" 
+xmlns:vres="http://www.sun.com/javaone/05/VehicleReservationService" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://www.sun.com/javaone/05/TravelReservationService">
+
+	
+	<import location="HotelReservationService.wsdl" namespace="http://www.sun.com/javaone/05/HotelReservationService"/>
+	<import location="AirlineReservationService.wsdl" namespace="http://www.sun.com/javaone/05/AirlineReservationService"/>
+	<import location="VehicleReservationService.wsdl" namespace="http://www.sun.com/javaone/05/VehicleReservationService"/>	
+	
+	<types>
+		<xs:schema xmlns="http://www.opentravel.org/OTA/2003/05" xmlns:s="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.sun.com/javaone/05/TravelReservationService">
+			<xs:import namespace="http://www.opentravel.org/OTA/2003/05" schemaLocation="OTA_TravelItinerary.xsd"/>
+			<xs:element name="itineraryFault" type="xs:string"/>
+		</xs:schema>
+	</types>
+
+
+	<message name="ItineraryIn">
+		<part element="ota:TravelItinerary" name="itinerary"/>
+	</message>
+	<message name="ItineraryOut">
+		<part element="ota:TravelItinerary" name="itinerary"/>
+	</message>
+	<message name="ItineraryFault">
+		<part element="tns:itineraryFault" name="faultMessage"/>
+	</message>	
+	
+
+
+	<portType name="TravelReservationPortType">
+		<operation name="buildItinerary">
+			<input message="tns:ItineraryIn"/>
+			<output message="tns:ItineraryOut"/>
+			<fault message="tns:ItineraryFault" name="itineraryProblem"/>
+		</operation>
+	</portType>
+		
+	
+	<binding name="TravelReservationSoapBinding" type="tns:TravelReservationPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="buildItinerary">
+			<soap:operation/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="itineraryProblem">
+				<!--<soap:body use="literal"/>-->
+                                <soap:fault name="itineraryProblem" use="literal"/>
+			</fault>			
+		</operation>		
+	</binding>
+	
+	
+	<service name="TravelReservationSoapService">
+		<port binding="tns:TravelReservationSoapBinding" name="TravelReservationSoapHttpPort">
+			<soap:address location="http://localhost:${HttpDefaultPort}/pxe/soap/TravelReservation/buildItinerary"/>
+		</port>		
+		<port binding="ares:AirlineReservationCallbackSoapBinding" name="AirlineReservationCallbackSoapHttpPort">
+			<soap:address location="http://localhost:${HttpDefaultPort}/pxe/soap/TravelReservation/airlineReserved"/>
+		</port>		
+		<port binding="hres:HotelReservationCallbackSoapBinding" name="HotelReservationCallbackSoapHttpPort">
+			<soap:address location="http://localhost:${HttpDefaultPort}/pxe/soap/TravelReservation/hotelReserved"/>
+		</port>			
+		<port binding="vres:VehicleReservationCallbackSoapBinding" name="VehicleReservationCallbackSoapHttpPort">
+			<soap:address location="http://localhost:${HttpDefaultPort}/pxe/soap/TravelReservation/vehicleReserved"/>
+		</port>					
+	</service>
+	
+
+
+	   
+   <vprop:property name="ItineraryRefId" type="xs:string"/> 
+
+
+<vprop:propertyAlias messageType="tres:ItineraryIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>
+/TravelItinerary/ItineraryRef/UniqueID
+</vprop:query>
+</vprop:propertyAlias>
+
+<vprop:propertyAlias messageType="ares:AirlineReservedIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>
+/TravelItinerary/ItineraryRef/UniqueID
+</vprop:query>
+</vprop:propertyAlias>
+
+
+<vprop:propertyAlias messageType="ares:ReserveAirlineIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>
+/TravelItinerary/ItineraryRef/UniqueID
+</vprop:query>
+</vprop:propertyAlias>
+
+   <vprop:propertyAlias messageType="vres:VehicleReservedIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>/TravelItinerary/ItineraryRef/UniqueID</vprop:query>
+</vprop:propertyAlias>
+
+   <vprop:propertyAlias messageType="vres:ReserveVehicleIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>/TravelItinerary/ItineraryRef/UniqueID</vprop:query>
+</vprop:propertyAlias>
+      
+   <vprop:propertyAlias messageType="hres:HotelReservedIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>/TravelItinerary/ItineraryRef/UniqueID</vprop:query>
+</vprop:propertyAlias>
+
+
+   <vprop:propertyAlias messageType="hres:ReserveHotelIn" part="itinerary" propertyName="tres:ItineraryRefId">
+<vprop:query>/TravelItinerary/ItineraryRef/UniqueID</vprop:query>
+</vprop:propertyAlias>
+	
+	
+	<plnk:partnerLinkType name="TravelReservationPartnerLinkType">
+		<plnk:role name="TravelReservationServiceRole" portType="tres:TravelReservationPortType" />
+	</plnk:partnerLinkType>	
+	
+
+</definitions>

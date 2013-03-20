@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:MissingOperatorsTNS" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MissingOperators" targetNamespace="urn:MissingOperatorsTNS">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="urn:MissingOperatorsTNS">
+            <xsd:element name="dataPart">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="data" type="xsd:string"/>
+                        <xsd:element name="optional_data" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="start_counter" type="xsd:int"/>
+                        <xsd:element name="end_counter" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="namespace-uriMessage">
+        <part element="tns:dataPart" name="namespace-uriPart"/>
+    </message>
+    <message name="idMessage">
+        <part element="tns:dataPart" name="idPart"/>
+    </message>
+    <message name="lastMessage">
+        <part element="tns:dataPart" name="lastPart"/>
+    </message>
+    <message name="positionMessage">
+        <part element="tns:dataPart" name="positionPart"/>
+    </message>
+    <portType name="MissingOperatorsPortType">
+        <operation name="namespace-uriOperation">
+            <input message="tns:namespace-uriMessage"/>
+            <output message="tns:namespace-uriMessage"/>
+        </operation>
+        <operation name="idOperation">
+            <input message="tns:idMessage"/>
+            <output message="tns:idMessage"/>
+        </operation>
+        <operation name="lastOperation">
+            <input message="tns:lastMessage"/>
+            <output message="tns:lastMessage"/>
+        </operation>
+        <operation name="positionOperation">
+            <input message="tns:positionMessage"/>
+            <output message="tns:positionMessage"/>
+        </operation>
+    </portType>
+    <binding name="MissingOperatorsBinding" type="tns:MissingOperatorsPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="namespace-uriOperation">
+            <soap:operation soapAction="namespace-uriOperation"/>
+            <input>
+                <soap:body parts="namespace-uriPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="namespace-uriPart" use="literal"/>
+            </output>
+        </operation>
+        <operation name="idOperation">
+            <soap:operation soapAction="idOperation"/>
+            <input>
+                <soap:body parts="idPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="idPart" use="literal"/>
+            </output>
+        </operation>
+        <operation name="lastOperation">
+            <soap:operation soapAction="lastOperation"/>
+            <input>
+                <soap:body parts="lastPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="lastPart" use="literal"/>
+            </output>
+        </operation>
+        <operation name="positionOperation">
+            <soap:operation soapAction="positionOperation"/>
+            <input>
+                <soap:body parts="positionPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="positionPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MissingOperatorsService">
+        <port binding="tns:MissingOperatorsBinding" name="MissingOperatorsPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/MissingOperators"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="MissingOperatorsPLT">
+        <plnk:role name="server" portType="tns:MissingOperatorsPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

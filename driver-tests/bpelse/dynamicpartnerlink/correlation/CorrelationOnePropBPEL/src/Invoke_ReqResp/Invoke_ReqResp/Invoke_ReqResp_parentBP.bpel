@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Invoke_ReqResp_parentBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Invoke_ReqResp_parentBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Invoke_ReqResp_parentBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Invoke_ReqResp_parentBPWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Invoke_ReqRespsubBPWSDL">
+    <bpws:import importType="http://schemas.xmlsoap.org/wsdl/" namespace="http://j2ee.netbeans.org/wsdl/Invoke_ReqRespsubBPWSDL" location="../../Invoke_ReqResp/Invoke_ReqRespsubBPWSDL.wsdl"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Invoke_ReqResp_parentBPWSDL" location="Invoke_ReqResp_parentBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Invoke_ReqRespsubBPWSDL" location="../Invoke_ReqRespsubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns2:Invoke_ReqRespsubBPWSDLPartner" partnerRole="Invoke_ReqRespsubBPWSDLPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:Invoke_ReqResp_parentBPWSDLPartner" myRole="Invoke_ReqResp_parentBPWSDLPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationOut1" messageType="ns2:Invoke_ReqRespsubBPWSDLOperationReply"/>
+        <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationIn1" messageType="ns2:Invoke_ReqRespsubBPWSDLOperationRequest"/>
+        <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationOut" messageType="ns2:Invoke_ReqRespsubBPWSDLOperationReply"/>
+        <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationIn" messageType="ns2:Invoke_ReqRespsubBPWSDLOperationRequest"/>
+        <bpws:variable name="Invoke_ReqResp_parentBPWSDLOperationOut" messageType="ns1:Invoke_ReqResp_parentBPWSDLOperationReply"/>
+        <bpws:variable name="Invoke_ReqResp_parentBPWSDLOperationIn" messageType="ns1:Invoke_ReqResp_parentBPWSDLOperationRequest"/>
+    </bpws:variables>
+    <bpws:correlationSets>
+        <bpws:correlationSet name="CorrelationSet6" properties="ns1:property6"/>
+        <bpws:correlationSet name="CorrelationSet5" properties="ns1:property5"/>
+        <bpws:correlationSet name="CorrelationSet4" properties="ns1:property4"/>
+        <bpws:correlationSet name="CorrelationSet3" properties="ns1:property3"/>
+        <bpws:correlationSet name="CorrelationSet2" properties="ns1:property2"/>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+    </bpws:correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="Invoke_ReqResp_parentBPWSDLOperation" portType="ns1:Invoke_ReqResp_parentBPWSDLPortType" variable="Invoke_ReqResp_parentBPWSDLOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from variable="Invoke_ReqResp_parentBPWSDLOperationIn" part="part1"/>
+                <bpws:to variable="Invoke_ReqRespsubBPWSDLOperationIn" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="Invoke_ReqRespsubBPWSDLOperation" portType="ns2:Invoke_ReqRespsubBPWSDLPortType" inputVariable="Invoke_ReqRespsubBPWSDLOperationIn" outputVariable="Invoke_ReqRespsubBPWSDLOperationOut">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet2" initiate="yes" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet3" initiate="yes" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet4" initiate="yes" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet5" initiate="yes" pattern="request-response"/>        
+                <bpws:correlation set="CorrelationSet6" initiate="yes" pattern="request-response"/>        
+        </bpws:correlations>
+        </bpws:invoke>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="Invoke_ReqRespsubBPWSDLOperationOut" part="part1"/>
+                <bpws:to variable="Invoke_ReqRespsubBPWSDLOperationIn1" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke2" partnerLink="PartnerLink2" operation="Invoke_ReqRespsubBPWSDLOperation" portType="ns2:Invoke_ReqRespsubBPWSDLPortType" inputVariable="Invoke_ReqRespsubBPWSDLOperationIn1" outputVariable="Invoke_ReqRespsubBPWSDLOperationOut1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="no" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet2" initiate="no" pattern="request"/>
+                <bpws:correlation set="CorrelationSet3" initiate="no" pattern="response"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:invoke name="Invoke3" partnerLink="PartnerLink2" operation="Invoke_ReqRespsubBPWSDLOperation" portType="ns2:Invoke_ReqRespsubBPWSDLPortType" inputVariable="Invoke_ReqRespsubBPWSDLOperationIn1" outputVariable="Invoke_ReqRespsubBPWSDLOperationOut1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet2" pattern="request"/>
+                <bpws:correlation set="CorrelationSet3" pattern="response"/>
+            </bpws:correlations>
+        </bpws:invoke>        
+        <bpws:invoke name="Invoke4" partnerLink="PartnerLink2" operation="Invoke_ReqRespsubBPWSDLOperation" portType="ns2:Invoke_ReqRespsubBPWSDLPortType" inputVariable="Invoke_ReqRespsubBPWSDLOperationIn1" outputVariable="Invoke_ReqRespsubBPWSDLOperationOut1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="join" pattern="request-response"/>
+                <bpws:correlation set="CorrelationSet2" initiate="join" pattern="request"/>
+                <bpws:correlation set="CorrelationSet3" initiate="join" pattern="response"/>
+            </bpws:correlations>
+        </bpws:invoke>
+        <bpws:assign name="Assign3">
+            <bpws:copy>
+                <bpws:from variable="Invoke_ReqRespsubBPWSDLOperationOut1" part="part1"/>
+                <bpws:to variable="Invoke_ReqResp_parentBPWSDLOperationOut" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="Invoke_ReqResp_parentBPWSDLOperation" portType="ns1:Invoke_ReqResp_parentBPWSDLPortType" variable="Invoke_ReqResp_parentBPWSDLOperationOut">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet4" initiate="no"/>
+                <bpws:correlation set="CorrelationSet5"/>
+                <bpws:correlation set="CorrelationSet6" initiate="join"/>
+            </bpws:correlations>
+        </bpws:reply>
+    </sequence>
+</process>

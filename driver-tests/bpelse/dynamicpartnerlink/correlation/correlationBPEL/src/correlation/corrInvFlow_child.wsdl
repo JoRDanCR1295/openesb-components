@@ -1,0 +1,63 @@
+<definitions targetNamespace="urn:InvFlowchildTargetNamespace"
+             name="InvFlowchildDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:InvFlowchildTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="InvFlowchildServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="InvFlowchildServerRole"
+                   portType="tns:InvFlowchildPortType"></plnk:role>
+    </plnk:partnerLinkType>
+    <types>
+        <xsd:schema targetNamespace="urn:InvFlowchildTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:InvFlowchildTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+            
+                    <xsd:complexType name="InvFlowchildType">
+                <xsd:sequence>
+                    <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="InvFlowchildMessage">
+        <part name="InvFlowchildPart"
+              type="tns:InvFlowchildType"></part>
+    </message>
+    <portType name="InvFlowchildPortType">
+        <operation name="InvFlowchildOperation">
+            <input message="tns:InvFlowchildMessage"></input>
+            <output message="tns:InvFlowchildMessage"></output>
+        </operation>
+    </portType>
+    <binding name="InvFlowchildBinding"
+             type="tns:InvFlowchildPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="InvFlowchildOperation">
+            <soap:operation soapAction="InvFlowchildOperation"/>
+            <input>
+                <soap:body parts="InvFlowchildPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="InvFlowchildPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="InvFlowchildService">
+        <port name="InvFlowchildPort"
+              binding="tns:InvFlowchildBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/InvFlowchild"/>
+        </port>
+    </service>
+</definitions>

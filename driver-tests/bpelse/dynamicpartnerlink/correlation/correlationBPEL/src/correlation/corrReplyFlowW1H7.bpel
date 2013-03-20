@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrReplyFlowW1H7"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrReplyFlowW1H7"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrReplyFlowW1H7"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrReplyFlowW1H7TargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:corrReplyFlowW1H7TargetNamespace"
+            location="corrReplyFlowW1H7.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_role"
+                     partnerLinkType="ns0:corrReplyFlowW1H7ServiceLinkType"
+                     myRole="corrReplyFlowW1H7ServerRole"/>
+        <partnerLink name="plink_role1"
+                     partnerLinkType="ns0:corrReplyFlowW1H7ServiceLinkType"
+                     myRole="corrReplyFlowW1H7ServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="corrReplyFlowW1H7Operation_Output"
+                  messageType="ns0:corrReplyFlowW1H7Message"></variable>
+        <variable name="corrReplyFlowW1H7Operation_Input"
+                  messageType="ns0:corrReplyFlowW1H7Message"></variable>
+        <variable name="corrReplyFlowW1H7Operation1_Output"
+                  messageType="ns0:corrReplyFlowW1H7Message"></variable>
+        <variable name="corrReplyFlowW1H7Operation1_Input"
+                  messageType="ns0:corrReplyFlowW1H7Message"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corSet1"
+                        properties="ns0:propertyName1 "/>
+    </correlationSets>
+    <sequence>
+        <receive name="corrReplyFlowW1H7Operation"
+                 partnerLink="plink_role"
+                 portType="ns0:corrReplyFlowW1H7PortType"
+                 operation="corrReplyFlowW1H7Operation"
+                 variable="corrReplyFlowW1H7Operation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$corrReplyFlowW1H7Operation_Output.corrReplyFlowW1H7Part/string</from>
+                <to>$corrReplyFlowW1H7Operation_Input.corrReplyFlowW1H7Part/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_role"
+               portType="ns0:corrReplyFlowW1H7PortType"
+               operation="corrReplyFlowW1H7Operation"
+               variable="corrReplyFlowW1H7Operation_Input">
+            <correlations>
+                <correlation set="corSet1"
+                             initiate="join"/>
+            </correlations>
+        </reply>
+        <flow>
+            <sequence>
+                <receive name="corrReplyFlowW1H7Operation1"
+                         partnerLink="plink_role1"
+                         portType="ns0:corrReplyFlowW1H7PortType1"
+                         operation="corrReplyFlowW1H7Operation1"
+                         variable="corrReplyFlowW1H7Operation1_Output">
+                    <correlations>
+                        <correlation set="corSet1"
+                             initiate="join"/>
+                    </correlations>
+                </receive>
+                <assign>
+                    <copy>
+                        <from>concat($corrReplyFlowW1H7Operation_Output.corrReplyFlowW1H7Part/string, $corrReplyFlowW1H7Operation1_Output.corrReplyFlowW1H7Part/string)</from>
+                        <to>$corrReplyFlowW1H7Operation1_Input.corrReplyFlowW1H7Part/string</to>
+                    </copy>
+                </assign>
+            </sequence>
+            <empty></empty>
+        </flow>
+        <reply partnerLink="plink_role1"
+               portType="ns0:corrReplyFlowW1H7PortType1"
+               operation="corrReplyFlowW1H7Operation1"
+               variable="corrReplyFlowW1H7Operation1_Input"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="multByteOp"
+         targetNamespace="http://www.seebeyond.com/eInsight/OperationTest"
+         sbynpxp:end_YLoc="341.0"
+         sbynpxp:start_YLoc="128.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="54.0"
+         sbynpxp:end_XLoc="840.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/multByteOp"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/Operation"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/Operation"
+            location="operation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="OperationLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="MultBytesOp_Output"
+                  messageType="ns0:Operation"></variable>
+        <variable name="MultBytesOp_Input"
+                  messageType="ns0:Operation"></variable>
+    </variables>
+    <sequence>
+        <receive name="MultBytesOp"
+                 partnerLink="OperationLink"
+                 portType="ns0:Operation"
+                 operation="MultBytesOp"
+                 variable="MultBytesOp_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="316.0"
+                 sbynpxp:YLoc="170.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="380.0"
+                sbynpxp:YLoc="90.0">
+            <copy>
+                <from>$MultBytesOp_Output.part/byte0 * $MultBytesOp_Output.part/byte1</from>
+                <to>$MultBytesOp_Input.part/retByte</to>
+            </copy>
+        </assign>
+        <reply name="MultBytesOp.Reply"
+               partnerLink="OperationLink"
+               portType="ns0:Operation"
+               operation="MultBytesOp"
+               variable="MultBytesOp_Input"
+               sbynpxp:XLoc="558.0"
+               sbynpxp:YLoc="112.0"></reply>
+    </sequence>
+</process>

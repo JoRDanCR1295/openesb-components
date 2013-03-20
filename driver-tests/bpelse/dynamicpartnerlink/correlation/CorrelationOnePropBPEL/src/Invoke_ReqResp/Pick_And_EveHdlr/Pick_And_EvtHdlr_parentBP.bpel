@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="Pick_And_EvtHdlr_parentBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Pick_And_EvtHdlr_parentBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Pick_And_EvtHdlr_parentBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Pick_And_EvtHdlr_parentBPWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/Pick_And_EveHdlr" xmlns:ns3="http://j2ee.netbeans.org/wsdl/Invoke_ReqRespsubBPWSDL">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Pick_And_EvtHdlr_parentBPWSDL" location="Pick_And_EvtHdlr_parentBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Pick_And_EveHdlr" location="Pick_And_EveHdlr.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Invoke_ReqRespsubBPWSDL" location="../Invoke_ReqRespsubBPWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink5" partnerLinkType="ns2:Pick_And_EveHdlrPartner2" myRole="Pick_And_EveHdlrPortType2Role"/>
+      <bpws:partnerLink name="PartnerLink4" partnerLinkType="ns2:Pick_And_EveHdlrPartner1" myRole="Pick_And_EveHdlrPortType1Role"/>
+      <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:Pick_And_EveHdlrPartner" partnerRole="Pick_And_EveHdlrPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns3:Invoke_ReqRespsubBPWSDLPartner" partnerRole="Invoke_ReqRespsubBPWSDLPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:Pick_And_EvtHdlr_parentBPWSDLPartner" myRole="Pick_And_EvtHdlr_parentBPWSDLPortTypeRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="Pick_And_EveHdlrOperation1In" messageType="ns2:Pick_And_EveHdlrOperationRequest1"/>
+      <bpws:variable name="Pick_And_EveHdlrOperationIn" messageType="ns2:Pick_And_EveHdlrOperationRequest"/>
+      <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationOut" messageType="ns3:Invoke_ReqRespsubBPWSDLOperationReply"/>
+      <bpws:variable name="Invoke_ReqRespsubBPWSDLOperationIn" messageType="ns3:Invoke_ReqRespsubBPWSDLOperationRequest"/>
+      <bpws:variable name="Pick_And_EvtHdlr_parentBPWSDLOperationOut" messageType="ns1:Pick_And_EvtHdlr_parentBPWSDLOperationReply"/>
+      <bpws:variable name="Pick_And_EvtHdlr_parentBPWSDLOperationIn" messageType="ns1:Pick_And_EvtHdlr_parentBPWSDLOperationRequest"/>
+   </bpws:variables>
+   <bpws:correlationSets>
+      <bpws:correlationSet name="CorrelationSet3" properties="ns1:property3"/>
+      <bpws:correlationSet name="CorrelationSet2" properties="ns1:property2"/>
+      <bpws:correlationSet name="CorrelationSet1" properties="ns1:property1"/>
+   </bpws:correlationSets>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink1" operation="Pick_And_EvtHdlr_parentBPWSDLOperation" portType="ns1:Pick_And_EvtHdlr_parentBPWSDLPortType" variable="Pick_And_EvtHdlr_parentBPWSDLOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="Pick_And_EvtHdlr_parentBPWSDLOperationIn" part="part1"/>
+            <bpws:to variable="Invoke_ReqRespsubBPWSDLOperationIn" part="part1"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink2" operation="Invoke_ReqRespsubBPWSDLOperation" portType="ns3:Invoke_ReqRespsubBPWSDLPortType" inputVariable="Invoke_ReqRespsubBPWSDLOperationIn" outputVariable="Invoke_ReqRespsubBPWSDLOperationOut">
+         <bpws:correlations>
+            <bpws:correlation set="CorrelationSet1" initiate="yes" pattern="request-response"/>
+            <bpws:correlation set="CorrelationSet2" initiate="yes" pattern="request-response"/>
+            <bpws:correlation set="CorrelationSet3" initiate="yes" pattern="request-response"/>
+         </bpws:correlations>
+      </bpws:invoke>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from variable="Invoke_ReqRespsubBPWSDLOperationOut" part="part1"/>
+            <bpws:to variable="Pick_And_EveHdlrOperationIn" part="part"/>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:invoke name="Invoke2" partnerLink="PartnerLink3" operation="Pick_And_EveHdlrOperation" portType="ns2:Pick_And_EveHdlrPortType" inputVariable="Pick_And_EveHdlrOperationIn"/>
+      <bpws:pick name="Pick1">
+         <bpws:onMessage partnerLink="PartnerLink4" operation="Pick_And_EveHdlrOperation1" portType="ns2:Pick_And_EveHdlrPortType1" variable="Pick_And_EveHdlrOperation1In">
+            <bpws:correlations>
+               <bpws:correlation set="CorrelationSet1" initiate="no"/>
+               <bpws:correlation set="CorrelationSet2" initiate="join"/>
+               <bpws:correlation set="CorrelationSet3"/>
+            </bpws:correlations>
+            <bpws:scope name="Scope1">
+               <bpws:eventHandlers>
+                  <bpws:onEvent partnerLink="PartnerLink5" operation="Pick_And_EveHdlrOperation2" portType="ns2:Pick_And_EveHdlrPortType2" variable="Pick_And_EveHdlrOper2In" messageType="ns2:Pick_And_EveHdlrOperationRequest2">
+                     <bpws:correlations>
+                        <bpws:correlation set="CorrelationSet1" initiate="no"/>
+                        <bpws:correlation set="CorrelationSet2" initiate="join"/>
+                        <bpws:correlation set="CorrelationSet3"/>
+                     </bpws:correlations>
+                     <bpws:scope name="Scope2">
+                        <bpws:sequence name="Sequence1">
+                           <bpws:assign name="Assign3">
+                             <bpws:copy>
+                                <bpws:from variable="Pick_And_EveHdlrOperationIn" part="part"/>
+                                <bpws:to variable="Pick_And_EvtHdlr_parentBPWSDLOperationOut" part="part1"/>
+                             </bpws:copy>
+                          </bpws:assign>
+                           <bpws:reply name="Reply1" partnerLink="PartnerLink1" operation="Pick_And_EvtHdlr_parentBPWSDLOperation" portType="ns1:Pick_And_EvtHdlr_parentBPWSDLPortType" variable="Pick_And_EvtHdlr_parentBPWSDLOperationOut"/>
+                        </bpws:sequence>
+                     </bpws:scope>
+                  </bpws:onEvent>
+               </bpws:eventHandlers>
+               <bpws:wait name="Wait1">
+                  <bpws:for>'P0Y0M0DT0H0M10S'</bpws:for>
+               </bpws:wait>
+            </bpws:scope>
+         </bpws:onMessage>
+      </bpws:pick>
+   </sequence>
+</process>

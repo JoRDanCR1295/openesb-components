@@ -1,0 +1,97 @@
+<definitions targetNamespace="urn:corrRecRecTargetNamespace"
+             name="corrRecRecDefinition"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="urn:corrRecRecTargetNamespace"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <plnk:partnerLinkType name="corrRecRecServiceLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="corrRecRecServerRole"
+                   portType="tns:corrRecRecPortType"></plnk:role>
+        <plnk:role name="corrRecRecServerRole1"
+                   portType="tns:corrRecRecPortType1"></plnk:role>
+    </plnk:partnerLinkType>
+    <vprop:property type="xsd:string"
+                   name="propertyName1"></vprop:property>
+    <vprop:propertyAlias part="corrRecRecPart"
+                        propertyName="tns:propertyName1"
+                        messageType="tns:corrRecRecMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <types>
+        <xsd:schema targetNamespace="urn:corrRecRecTargetNamespace"
+                    attributeFormDefault="unqualified"
+                    elementFormDefault="qualified"
+                    xmlns:tns="urn:corrRecRecTargetNamespace"
+                    xmlns:bpws="http://schemas.xmlsoap.org/ws/2002/07/business-process/"
+                    xmlns:ns1="urn:corrRecRecTargetNamespace"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:ns="change this to valid namespace"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+
+                    <xsd:complexType name="corrRecRecType">
+                        <xsd:sequence>
+                        <xsd:element type="xsd:string"
+                                 name="string"></xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="corrRecRecMessage">
+        <part name="corrRecRecPart"
+              type="tns:corrRecRecType"></part>
+    </message>
+    <portType name="corrRecRecPortType">
+        <operation name="corrRecRecOperation">
+            <input message="tns:corrRecRecMessage"></input>
+            <output message="tns:corrRecRecMessage"></output>
+        </operation>
+    </portType>
+    <portType name="corrRecRecPortType1">
+        <operation name="corrRecRecOperation1">
+            <input message="tns:corrRecRecMessage"></input>
+        </operation>
+    </portType>
+    <binding name="corrRecRecBinding"
+             type="tns:corrRecRecPortType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrRecRecOperation">
+            <soap:operation soapAction="corrRecRecOperation"/>
+            <input>
+                <soap:body parts="corrRecRecPart"
+                           use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="corrRecRecPart"
+                           use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="corrRecRecBinding1"
+             type="tns:corrRecRecPortType1">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="corrRecRecOperation1">
+            <soap:operation soapAction="corrRecRecOperation1"/>
+            <input>
+                <soap:body parts="corrRecRecPart"
+                           use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="corrRecRecService">
+        <port name="corrRecRecPort"
+              binding="tns:corrRecRecBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrRecRecPort"/>
+        </port>
+        <port name="corrRecRecPort1"
+              binding="tns:corrRecRecBinding1">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrRecRecPort1"/>
+        </port>
+    </service>
+</definitions>

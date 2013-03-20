@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="corrInvRec_parent"
+         targetNamespace="http://www.seebeyond.com/eInsight/corrInvRec_parent"
+         xmlns:tns="http://www.seebeyond.com/eInsight/corrInvRec_parent"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CorrInvRecChildTargetNamespace"
+         xmlns:ns1="CorrInvRecParent"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:CorrInvRecChildTargetNamespace"
+            location="corrInvRec_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="CorrInvRecParent"
+            location="corrInvRec_parent.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:CorrInvRecChildServiceLinkType"
+                     partnerRole="CorrInvRecChildServerRole"/>
+        <partnerLink name="plink_parent"
+                     partnerLinkType="ns1:CorrInvRecParentServiceLinkType"
+                     myRole="Server"/>
+        <partnerLink name="plink_parent1"
+                     partnerLinkType="ns1:CorrInvRecParentServiceLinkType1"
+                     myRole="Server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="childOperation"
+                  messageType="ns0:CorrInvRecChildMessage"></variable>
+        <variable name="CorrInvRecParentOperation_Output"
+                  messageType="ns1:CorrInvRecParentMessage"></variable>
+        <variable name="CorrInvRecParentOperation_Input"
+                  messageType="ns1:CorrInvRecParentMessage"></variable>
+        <variable name="CorrInvRecParentOperation1_Output"
+                  messageType="ns1:CorrInvRecParentMessage1"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="corProp1"
+                        properties="ns1:property "/>
+    </correlationSets>
+    <sequence>
+        <receive name="CorrInvRecParentOperation"
+                 partnerLink="plink_parent"
+                 portType="ns1:CorrInvRecParentPortType"
+                 operation="CorrInvRecParentOperation"
+                 variable="CorrInvRecParentOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$CorrInvRecParentOperation_Output.CorrInvRecParentPart/string</from>
+                <to>$childOperation.CorrInvRecChildPart/string</to>
+            </copy>
+        </assign>
+        <invoke partnerLink="plink_child"
+                portType="ns0:CorrInvRecChildPortType"
+                operation="CorrInvRecChildOperation"
+                inputVariable="childOperation"
+                outputVariable="childOperation">
+            <correlations>
+                <correlation set="corProp1"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </invoke>
+        <receive name="CorrInvRecParentOperation1"
+                 partnerLink="plink_parent1"
+                 portType="ns1:CorrInvRecParentPortType1"
+                 operation="CorrInvRecParentOperation1"
+                 variable="CorrInvRecParentOperation1_Output">
+            <correlations>
+                <correlation set="corProp1"/>
+            </correlations>
+        </receive>
+        <assign>
+            <copy>
+                <from>$CorrInvRecParentOperation1_Output.CorrInvRecParentPart/string</from>
+                <to>$CorrInvRecParentOperation_Input.CorrInvRecParentPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_parent"
+               portType="ns1:CorrInvRecParentPortType"
+               operation="CorrInvRecParentOperation"
+               variable="CorrInvRecParentOperation_Input"></reply>
+    </sequence>
+</process>

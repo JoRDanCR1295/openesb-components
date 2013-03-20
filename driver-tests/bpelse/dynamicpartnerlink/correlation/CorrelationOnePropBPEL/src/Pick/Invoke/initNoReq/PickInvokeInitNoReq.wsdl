@@ -1,0 +1,68 @@
+<definitions targetNamespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoReq"
+             name="corrPickInvokeInitNoReq"
+             xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop"
+             xmlns:tns="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoReq"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:dataType="http://xml.netbeans.org/schema/dataTypes.xsd"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:slnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+             xmlns:child="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoReq_child">
+    <import location="PickInvokeInitNoReq_child.wsdl" 
+            namespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoReq_child"/>
+    <types>
+        <xsd:schema targetNamespace="http://enterprise.netbeans.org/wsdl/corrPickInvokeInitNoReq">
+            <xsd:import schemaLocation="../../../dataTypes.xsd" namespace="http://xml.netbeans.org/schema/dataTypes.xsd"/>
+        </xsd:schema>
+    </types>
+    <plnk:partnerLinkType name="corrPickInvokePLinkType"
+                          xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+        <plnk:role name="corrPickInvokePLinkRole" portType="tns:CorrelationPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property type="xsd:string" name="prop1"/>
+    <vprop:propertyAlias part="data"
+                         propertyName="tns:prop1"
+                         messageType="tns:CorrelationMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias part="data"
+                         propertyName="tns:prop1"
+                         messageType="child:CorrelationChildMessage">
+        <vprop:query>string</vprop:query>
+    </vprop:propertyAlias>
+    <message name="CorrelationMessage">
+        <part name="data" element="dataType:helloObj"/>
+    </message>
+    <portType name="CorrelationPortType">
+        <operation name="CorrelationOperation">
+            <input name="input1" message="tns:CorrelationMessage"></input>
+            <output name="output1" message="tns:CorrelationMessage"></output>
+        </operation>
+    </portType>
+    <portType name="CorrelationPortType2">
+        <operation name="CorrelationOperation2">
+            <input name="input1" message="tns:CorrelationMessage"/>
+        </operation>
+    </portType>
+    <binding name="CorrelationBinding" type="tns:CorrelationPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CorrelationOperation">
+            <input name="input1"><soap:body/></input>
+     	    <output name="output1"><soap:body/></output>
+        </operation>
+    </binding>
+    <binding name="CorrelationBinding2" type="tns:CorrelationPortType2">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CorrelationOperation2">
+            <input name="input1"><soap:body/></input>
+        </operation>
+    </binding>
+    <service name="CorrelationService">
+        <port name="CorrelationPort" binding="tns:CorrelationBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrPickInvokeInitNoReq"/>
+        </port>
+        <port name="CorrelationPort2" binding="tns:CorrelationBinding2">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/corrPickInvokeInitNoReq2"/>
+        </port>
+    </service>
+</definitions>

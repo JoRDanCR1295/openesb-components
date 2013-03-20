@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="echoGetGUID"
+         targetNamespace="http://www.seebeyond.com/eInsight/echoGetGUID"
+         sbynpxp:end_YLoc="249.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="614.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/echoGetGUID"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/echoGetGUID"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/echoGetGUID"
+            location="echoGetGUID.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="Client2BPLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="echoGetGUID_Output"
+                  messageType="ns0:echoGetGUID"></variable>
+        <variable name="echoGetGUID_Input"
+                  messageType="ns0:echoGetGUID"></variable>
+    </variables>
+    <sequence>
+        <receive name="echoGetGUID"
+                 partnerLink="Client2BPLink"
+                 portType="ns0:echoGetGUID"
+                 operation="echoGetGUID"
+                 variable="echoGetGUID_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="150.0"
+                 sbynpxp:YLoc="135.0"></receive>
+        <!-- Not supported                 
+        <assign name="Assign"
+                sbynpxp:XLoc="274.0"
+                sbynpxp:YLoc="127.0">
+            <copy>
+                <from>exists(getGUID())</from>
+                <to>$echoGetGUID_Input.part/value</to>
+            </copy>
+        </assign>
+				-->  
+        <assign name="Assign1"
+                sbynpxp:XLoc="274.0"
+                sbynpxp:YLoc="127.0">
+            <copy>
+                <from>'uid'</from>
+                <to>$echoGetGUID_Input.part/value</to>
+            </copy>
+        </assign>                                
+        <reply name="echoGetGUID.Reply"
+               partnerLink="Client2BPLink"
+               portType="ns0:echoGetGUID"
+               operation="echoGetGUID"
+               variable="echoGetGUID_Input"
+               sbynpxp:XLoc="419.0"
+               sbynpxp:YLoc="173.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="properties" targetNamespace="http://j2ee.netbeans.org/wsdl/properties"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://j2ee.netbeans.org/wsdl/properties" 
+    xmlns:ns0="http://j2ee.netbeans.org/schema/propertiesSchema" 
+    xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/schema/propertiesSchema" xmlns:tns="http://j2ee.netbeans.org/schema/propertiesSchema">
+            <xsd:complexType name="compType">
+                <xsd:sequence>
+                    <xsd:element name="item" type="xsd:string"></xsd:element>
+                    <xsd:element name="itemDetail" type="xsd:string" maxOccurs="3"></xsd:element>
+                    <xsd:element name="price" type="xsd:string"></xsd:element>
+                    <xsd:element name="itemNum" type="xsd:int"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="itemElem" type="tns:compType"></xsd:element>
+            <xsd:complexType name="concatType">
+                <xsd:sequence>
+                    <xsd:element name="str1" type="xsd:string"></xsd:element>
+                    <xsd:element name="str2" type="xsd:string"></xsd:element>
+                    <xsd:element name="str3" type="xsd:string"></xsd:element>
+                    <xsd:element name="concatedStr" type="xsd:string"></xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="concatElem" type="tns:concatType"></xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="orderMsg">
+        <part name="orderPart" element="ns0:itemElem"/>
+    </message>
+    <message name="concatMsg">
+        <part name="concatPart" element="ns0:concatElem"/>
+    </message>
+    <portType name="orderPortType">
+        <operation name="orderOperation">
+            <input name="input1" message="tns:orderMsg"/>
+            <output name="output1" message="tns:orderMsg"/>
+        </operation>
+    </portType>
+    <portType name="concatTestPT">
+        <operation name="concatTestOperation">
+            <input name="input1" message="tns:concatMsg"/>
+            <output name="output1" message="tns:concatMsg"/>
+        </operation>
+    </portType>
+    <binding name="orderPortTypeBinding" type="tns:orderPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="orderOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal" parts="orderPart"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal" parts="orderPart"/>
+            </output>
+        </operation>
+    </binding>
+    <binding name="concatTestPTBinding" type="tns:concatTestPT">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="concatTestOperation">
+            <soap:operation/>
+            <input name="input1">
+                <soap:body use="literal"/>
+            </input>
+            <output name="output1">
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="orderService">
+        <port name="orderPortTypeBindingPort" binding="tns:orderPortTypeBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/orderService/orderPortTypeBindingPort"/>
+        </port>
+    </service>
+    <service name="concatService">
+        <port name="concatTestPTBindingPort" binding="tns:concatTestPTBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/concatService/concatTestPTBindingPort"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="orderPLT">
+        <plnk:role name="orderPortTypeRole" portType="tns:orderPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="concatPLT">
+        <plnk:role name="concatTestPTRole" portType="tns:concatTestPT"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="intProp" type="xsd:int"/>
+    <vprop:property name="str1Prop" type="xsd:string"/>
+    <vprop:property name="str2Prop" type="xsd:string"/>
+    <vprop:property name="str3Prop" type="xsd:string"/>
+    <vprop:propertyAlias propertyName="tns:intProp" messageType="tns:orderMsg" part="orderPart">
+        <vprop:query>/ns0:itemElem/itemNum</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:intProp" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:str1Prop" messageType="tns:concatMsg" part="concatPart">
+        <vprop:query>/ns0:concatElem/str1</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:str2Prop" messageType="tns:concatMsg" part="concatPart">
+        <vprop:query>/ns0:concatElem/str2</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:str3Prop" messageType="tns:concatMsg" part="concatPart">
+        <vprop:query>/ns0:concatElem/str3</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

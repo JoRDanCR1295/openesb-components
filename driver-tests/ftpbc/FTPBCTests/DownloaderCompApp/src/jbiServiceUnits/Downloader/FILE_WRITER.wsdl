@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FILE_WRITER"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FILE_WRITER" name="FILE_WRITER" xmlns:plink="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/">
+    <wsdl:types/>
+    <wsdl:message name="FILE_WRITEROperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FILE_WRITERPortType">
+        <wsdl:operation name="FILE_WRITEROperation">
+            <wsdl:input name="input1" message="tns:FILE_WRITEROperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="FILE_WRITERBinding" type="tns:FILE_WRITERPortType">
+        <file:binding/>
+        <wsdl:operation name="FILE_WRITEROperation">
+            <file:operation/>
+            <wsdl:input name="input1">
+                <file:message use="literal" fileName="output%d.out" pollingInterval="1000" fileNameIsPattern="true"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="FILE_WRITERService">
+        <wsdl:port name="FILE_WRITERPort" binding="tns:FILE_WRITERBinding">
+            <file:address fileDirectory="${ojc-root}/driver-tests/ftpbc/FTPBCTests/DownloaderCompApp/test/DownloaderTest/in_out"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plink:partnerLinkType name="FILE_WRITERPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plink:role name="FILE_WRITERPortTypeRole" portType="tns:FILE_WRITERPortType"/>
+    </plink:partnerLinkType>
+</definitions>

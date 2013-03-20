@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="invoke_response_initiated_child"
+         targetNamespace="http://www.seebeyond.com/eInsight/invoke_response_initiated_child"
+         xmlns:tns="http://www.seebeyond.com/eInsight/invoke_response_initiated_child"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:invoke_response_initiatedChildTargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:invoke_response_initiatedChildTargetNamespace"
+            location="invoke_response_initiated_child.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="plink_child"
+                     partnerLinkType="ns0:invoke_response_initiatedChildServiceLinkType"
+                     myRole="invoke_response_initiatedChildServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="invoke_response_initiatedChildOperation_Output"
+                  messageType="ns0:invoke_response_initiatedChildMessage"></variable>
+        <variable name="invoke_response_initiatedChildOperation_Input"
+                  messageType="ns0:invoke_response_initiatedChildMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="invoke_response_initiatedChildOperation"
+                 partnerLink="plink_child"
+                 portType="ns0:invoke_response_initiatedChildPortType"
+                 operation="invoke_response_initiatedChildOperation"
+                 variable="invoke_response_initiatedChildOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>concat(&apos;invoke_response_initiated:&apos;, $invoke_response_initiatedChildOperation_Output.invoke_response_initiatedChildPart/string)</from>
+                <to>$invoke_response_initiatedChildOperation_Input.invoke_response_initiatedChildPart/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="plink_child"
+               portType="ns0:invoke_response_initiatedChildPortType"
+               operation="invoke_response_initiatedChildOperation"
+               variable="invoke_response_initiatedChildOperation_Input"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="CorrelationSubBP"
+    targetNamespace="http://enterprise.netbeans.org/bpel/Invoke_Receive_InitNo/src/CorrelationSubBP"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Invoke_Receive_InitNo/src/CorrelationSubBP" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Invoke_Receive_InitNo/src/CorrelationTest" xmlns:ns0="http://xml.netbeans.org/schema/Invoke_Receive_InitNo/src/Message">
+    <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Invoke_Receive_InitNo/src/CorrelationTest" location="CorrelationTest.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <bpws:partnerLinks>
+        <bpws:partnerLink name="PartnerLinkB" partnerLinkType="ns1:CorrelationTestPartner" partnerRole="CorrelationTestPortTypeRole"/>
+        <bpws:partnerLink name="PartnerLinkA" partnerLinkType="ns1:SubBPPartner" myRole="SubBPPortTypeRole"/>
+    </bpws:partnerLinks>
+    <bpws:variables>
+        <bpws:variable name="CorrelationTestOperationIn" messageType="ns1:CorrMessage"/>
+        <bpws:variable name="InvokeOperationIn" messageType="ns1:Message"/>
+    </bpws:variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkA" operation="InvokeOperation" portType="ns1:SubBPPortType" variable="InvokeOperationIn"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>concat($InvokeOperationIn.Data/ns0:Content, 'Received By SubBP.')</bpws:from>
+                <bpws:to>$InvokeOperationIn.Data/ns0:Content</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="PartnerLinkA" operation="InvokeOperation" portType="ns1:SubBPPortType" variable="InvokeOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>
+                    <bpws:literal>Correlating Message From SubBP.</bpws:literal>
+                </bpws:from>
+                <bpws:to>$CorrelationTestOperationIn.Data/ns0:Content</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InvokeOperationIn.Data/ns0:CorrelationVal1/ns0:Id</bpws:from>
+                <bpws:to>$CorrelationTestOperationIn.Data/ns0:Id1</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InvokeOperationIn.Data/ns0:CorrelationVal2/ns0:Id</bpws:from>
+                <bpws:to>$CorrelationTestOperationIn.Data/ns0:Id2</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="Invoke1" partnerLink="PartnerLinkB" operation="CorrelationTestOperation" portType="ns1:CorrelationTestPortType" inputVariable="CorrelationTestOperationIn"/>
+    </sequence>
+</process>

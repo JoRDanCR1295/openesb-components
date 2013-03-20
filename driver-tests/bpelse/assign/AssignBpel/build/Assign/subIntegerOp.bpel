@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="subIntegerOp"
+         targetNamespace="http://www.seebeyond.com/eInsight/OperationTest"
+         sbynpxp:end_YLoc="341.0"
+         sbynpxp:start_YLoc="120.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="50.0"
+         sbynpxp:end_XLoc="840.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/subIntegerOp"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/Operation"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/Operation"
+            location="operation.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="OperationLink"
+                     partnerLinkType="ns0:SLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="SubIntegerOp_Output"
+                  messageType="ns0:Operation"></variable>
+        <variable name="SubIntegerOp_Input"
+                  messageType="ns0:Operation"></variable>
+    </variables>
+    <sequence>
+        <receive name="SubIntegerOp"
+                 partnerLink="OperationLink"
+                 portType="ns0:Operation"
+                 operation="SubIntegerOp"
+                 variable="SubIntegerOp_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="268.0"
+                 sbynpxp:YLoc="158.0"></receive>
+        <assign name="Assign"
+                sbynpxp:XLoc="420.0"
+                sbynpxp:YLoc="119.0">
+            <copy>
+                <from>$SubIntegerOp_Output.part/Integer0 - $SubIntegerOp_Output.part/Integer1</from>
+                <to>$SubIntegerOp_Input.part/retInteger</to>
+            </copy>
+        </assign>
+        <reply name="SubIntegerOp.Reply"
+               partnerLink="OperationLink"
+               portType="ns0:Operation"
+               operation="SubIntegerOp"
+               variable="SubIntegerOp_Input"
+               sbynpxp:XLoc="532.0"
+               sbynpxp:YLoc="127.0"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/Invoke_Pick_InitNo/src/CorrelationTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/Invoke_Pick_InitNo/src/CorrelationTest" name="CorrelationTest" xmlns:ns1="http://xml.netbeans.org/schema/Invoke_Pick_InitNo/src/Message" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop">
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://j2ee.netbeans.org/wsdl/Invoke_Pick_InitNo/src/CorrelationTest" xmlns:ns1="http://xml.netbeans.org/schema/Invoke_Pick_InitNo/src/Message" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+            <xsd:import namespace="http://xml.netbeans.org/schema/Invoke_Pick_InitNo/src/Message" schemaLocation="Message.xsd"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="Message">
+        <wsdl:part name="Data" element="ns1:Message"/>
+    </wsdl:message>
+    <wsdl:message name="CorrMessage">
+        <wsdl:part name="Data" element="ns1:CorrMessage"/>
+    </wsdl:message>
+    <wsdl:portType name="CorrelationTestPortType">
+        <wsdl:operation name="CorrelationTestOperation">
+            <wsdl:input name="input2" message="tns:CorrMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="InitiateProcessOperation">
+            <wsdl:input name="input1" message="tns:Message"/>
+            <wsdl:output name="output1" message="tns:Message"/>
+            <wsdl:fault name="fault1" message="tns:Message"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="SubBPPortType">
+        <wsdl:operation name="InvokeOperation">
+            <wsdl:input name="input1" message="tns:Message"/>
+            <wsdl:output name="output1" message="tns:Message"/>
+            <wsdl:fault name="fault1" message="tns:Message"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CorrelationTestBinding" type="tns:CorrelationTestPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CorrelationTestOperation">
+            <soap:operation/>
+            <wsdl:input name="input2">
+                <soap:body/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="InitiateProcessOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="SubBPBinding" type="tns:SubBPPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="InvokeOperation">
+            <soap:operation/>
+            <wsdl:input name="input1">
+                <soap:body/>
+            </wsdl:input>
+            <wsdl:output name="output1">
+                <soap:body/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CorrelationTestService">
+        <wsdl:port name="CorrelationTestPort" binding="tns:CorrelationTestBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Invoke_Pick_InitNo/CorrelationTest/CorrelationTestPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:service name="SubBPService">
+        <wsdl:port name="SubBPPort" binding="tns:SubBPBinding">
+            <soap:address location="http://localhost:${HttpDefaultPort}/Invoke_Pick_InitNo/CorrelationTest/SubBPPort"/>
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="CorrelationTestPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="CorrelationTestPortTypeRole" portType="tns:CorrelationTestPortType"/>
+    </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="SubBPPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="SubBPPortTypeRole" portType="tns:SubBPPortType"/>
+    </plnk:partnerLinkType>
+    <vprop:property name="CorrelationId1" type="xsd:int"/>
+    <vprop:property name="CorrelationId2" type="xsd:int"/>
+    <vprop:propertyAlias propertyName="tns:CorrelationId1" messageType="tns:Message" part="Data">
+        <vprop:query>/Message/CorrelationVal1/Id</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:CorrelationId2" messageType="tns:Message" part="Data">
+        <vprop:query>/Message/CorrelationVal2/Id</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:CorrelationId1"  messageType="tns:CorrMessage" part="Data">
+        <vprop:query>/CorrMessage/Id1</vprop:query>
+    </vprop:propertyAlias>
+    <vprop:propertyAlias propertyName="tns:CorrelationId2"  messageType="tns:CorrMessage" part="Data">
+        <vprop:query>/CorrMessage/Id2</vprop:query>
+    </vprop:propertyAlias>
+</definitions>

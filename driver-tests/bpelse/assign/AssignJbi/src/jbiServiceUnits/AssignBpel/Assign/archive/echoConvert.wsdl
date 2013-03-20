@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoConvert" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoConvert" targetNamespace="http://stc.com/echoConvert">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoConvert"
+            xmlns:tns="http://stc.com/echoConvert"
+                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    xmlns="http://schemas.xmlsoap.org/wsdl/"
+                    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/">
+            
+            <xsd:element name="item" type="tns:GetIntValue"/>
+                <xsd:complexType name="GetIntValue">
+                   <xsd:sequence>
+                        <xsd:element name="inputIntValue" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+                               
+            
+            <xsd:element name="item1" type="tns:GetFloatValue"/>
+            <xsd:complexType name="GetFloatValue">
+    <xsd:sequence>
+        <xsd:element name="FloatValue" type="xsd:float"/>
+    </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+            </types>
+            
+    <message name="IntValue">
+        <part name="info" element="tns:item" />
+    </message>
+    <message name="FloatValue">
+        <part name="response" element="tns:item1" />
+    </message>
+    
+          <portType name="echoConvert">
+        <operation name="DataConversion">
+            <input name="input" message="tns:IntValue"/>
+            <output name="Outresponse" message="tns:FloatValue"/>
+      </operation>
+    </portType>
+    <binding name="ConvertBinding" type="tns:echoConvert">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="DataConversion">
+            <soap:operation soapAction="echoConvert"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoConvertService">
+        <port binding="tns:ConvertBinding" name="Convertport">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoConvertOperator"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="ConvertLink">
+        <plnk:role name="Convertserver" portType="tns:echoConvert"/>
+    </plnk:partnerLinkType>
+</definitions>

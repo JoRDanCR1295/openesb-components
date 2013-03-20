@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://j2ee.netbeans.org/wsdl/FTP_OUT"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://j2ee.netbeans.org/wsdl/FTP_OUT" name="FTP_OUT" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:ftp="http://schemas.sun.com/jbi/wsdl-extensions/ftp/">
+    <wsdl:types/>
+    <wsdl:message name="FTP_OUTOperationRequest">
+        <wsdl:part name="part1" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="FTP_OUTPortType">
+        <wsdl:operation name="FTP_OUTOperation">
+            <wsdl:input name="input1" message="tns:FTP_OUTOperationRequest"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="binding1" type="tns:FTP_OUTPortType">
+        <ftp:binding/>
+        <wsdl:operation name="FTP_OUTOperation">
+            <ftp:operation/>
+            <wsdl:input name="input1">
+                <ftp:message messageRepository="DOWNLOADER" use="literal" messageCorrelate="true" stage="true" protect="true"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="service1">
+        <wsdl:port name="port1" binding="tns:binding1">
+            <ftp:address url="ftp://${test_ftp_user}:${test_ftp_password}@${test_ftp_server_name}:${test_ftp_server_port}" useUserDefinedHeuristics="false" mode="BINARY"/> 
+        </wsdl:port>
+    </wsdl:service>
+    <plnk:partnerLinkType name="FTP_OUTPartner">
+        <!-- partnerLinkType are automatically generated when a new portType is added. partnerLinkType are used by BPEL processes.
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="FTP_OUTPortTypeRole" portType="tns:FTP_OUTPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

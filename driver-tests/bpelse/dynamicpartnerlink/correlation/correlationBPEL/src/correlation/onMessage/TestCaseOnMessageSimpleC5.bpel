@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="TestCaseOnMessageSimpleC5"
+         targetNamespace="http://www.seebeyond.com/eInsight/TestCaseOnMessageSimpleC5"
+         xmlns:tns="http://www.seebeyond.com/eInsight/TestCaseOnMessageSimpleC5"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:corrOnMsgSimpleC5TargetNamespace"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="urn:corrOnMsgSimpleC5TargetNamespace"
+            location="TestCaseOnMessageSimpleC5.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="pLink1"
+                     partnerLinkType="ns0:corrOnMsgSimpleC5ServiceLinkType"
+                     myRole="corrOnMsgSimpleC5ServerRole"/>
+        <partnerLink name="pLink2"
+                     partnerLinkType="ns0:corrOnMsgSimpleC5ServiceLinkType"
+                     myRole="corrOnMsgSimpleC5ServerRole1"/>
+    </partnerLinks>
+    <variables>
+        <variable name="var1"
+                  messageType="ns0:corrOnMsgSimpleC5Message"></variable>
+        <variable name="var2"
+                  messageType="ns0:corrOnMsgSimpleC5Message"></variable>
+        <variable name="var3"
+                  messageType="ns0:corrOnMsgSimpleC5Message"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="OnMsgCorr1"
+                        properties="ns0:propertyName1 "/>
+    </correlationSets>
+    <sequence>
+        <pick createInstance="yes">
+            <onMessage partnerLink="pLink1"
+                       portType="ns0:corrOnMsgSimpleC5PortType"
+                       operation="corrOnMsgSimpleC5Operation"
+                       variable="var1">
+                <correlations>
+                    <correlation set="OnMsgCorr1"
+                                 initiate="yes"/>
+                </correlations>
+                <assign>
+                    <copy>
+                        <from>$var1.corrOnMsgSimpleC5Part/string</from>
+                        <to>$var2.corrOnMsgSimpleC5Part/string</to>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <pick>
+            <onMessage partnerLink="pLink2"
+                       portType="ns0:corrOnMsgSimpleC5PortType1"
+                       operation="corrOnMsgSimpleC5Operation1"
+                       variable="var2">
+                <correlations>
+                    <correlation set="OnMsgCorr1"
+                                 initiate="no"/>
+                </correlations>
+                <assign>
+                    <copy>
+                        <from>$var1.corrOnMsgSimpleC5Part/string</from>
+                        <to>$var2.corrOnMsgSimpleC5Part/string</to>
+                    </copy>
+                </assign>
+            </onMessage>
+        </pick>
+        <assign>
+            <copy>
+                <from>$var1.corrOnMsgSimpleC5Part/string</from>
+                <to>$var3.corrOnMsgSimpleC5Part/string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="pLink1"
+               portType="ns0:corrOnMsgSimpleC5PortType"
+               operation="corrOnMsgSimpleC5Operation"
+               variable="var1"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="CopynormalizedString"
+         targetNamespace="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:tns="http://www.seebeyond.com/eInsight/CopyTest"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="urn:CopyDataTypeTNS"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynbpelex="http://sbynbpelextn.seebeyond.com/hawaii/5.0/SBYNBPELExtension/">
+    <import namespace="urn:CopyDataTypeTNS"
+            location="CopyDataType.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="copyTestPLink"
+                     partnerLinkType="ns0:CopyDataTypePLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="normalizedStringOperation_Output"
+                  messageType="ns0:normalizedStringMessage"></variable>
+        <variable name="normalizedStringOperation_Input"
+                  messageType="ns0:normalizedStringMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="normalizedStringOperation"
+                 partnerLink="copyTestPLink"
+                 portType="ns0:CopyDataTypePortType"
+                 operation="normalizedStringOperation"
+                 variable="normalizedStringOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>$normalizedStringOperation_Output.normalizedStringPart/repeat_normalizedString</from>
+                <to>$normalizedStringOperation_Input.normalizedStringPart/repeat_normalizedString</to>
+            </copy>
+            <copy>
+                <from>$normalizedStringOperation_Output.normalizedStringPart/optional_normalizedString</from>
+                <to>$normalizedStringOperation_Input.normalizedStringPart/optional_normalizedString</to>
+            </copy>
+            <copy>
+                <from>$normalizedStringOperation_Output.normalizedStringPart/xsd_normalizedString</from>
+                <to>$normalizedStringOperation_Input.normalizedStringPart/xsd_normalizedString</to>
+            </copy>
+        </assign>
+        <reply partnerLink="copyTestPLink"
+               portType="ns0:CopyDataTypePortType"
+               operation="normalizedStringOperation"
+               variable="normalizedStringOperation_Input"></reply>
+    </sequence>
+</process>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="durationBPEL"
+         targetNamespace="http://www.seebeyond.com/eInsight/durationBPEL"
+         xmlns:tns="http://www.seebeyond.com/eInsight/durationBPEL"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns0="http://stc.com/AssignDateTNS"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import namespace="http://stc.com/AssignDateTNS"
+            location="AssignDate.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="PartLink"
+                     partnerLinkType="ns0:AssignDatePLT"
+                     myRole="server"/>
+    </partnerLinks>
+    <variables>
+        <variable name="AssignDateOperation_Output"
+                  messageType="ns0:AssignDateMessage"></variable>
+        <variable name="AssignDateOperation_Input"
+                  messageType="ns0:AssignDateMessage"></variable>
+    </variables>
+    <sequence>
+        <receive name="AssignDateOperation"
+                 partnerLink="PartLink"
+                 portType="ns0:AssignDatePortType"
+                 operation="AssignDateOperation"
+                 variable="AssignDateOperation_Output"
+                 createInstance="yes"></receive>
+        <assign>
+            <copy>
+                <from>contains(&apos;P2006Y3M16DT13H10M30S&apos;, $AssignDateOperation_Output.AssignDatePart/xsd_string)</from>
+                <to>$AssignDateOperation_Input.AssignDatePart/xsd_string</to>
+            </copy>
+        </assign>
+        <reply partnerLink="PartLink"
+               portType="ns0:AssignDatePortType"
+               operation="AssignDateOperation"
+               variable="AssignDateOperation_Input"></reply>
+    </sequence>
+</process>

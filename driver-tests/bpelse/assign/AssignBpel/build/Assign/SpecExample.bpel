@@ -1,0 +1,125 @@
+<process name="SpecExample"
+         targetNamespace="http://sun.com/bpel/SpecExampleWsdl"
+         xmlns:tns="http://sun.com/bpel/SpecExampleWsdl"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+
+<import namespace="http://sun.com/bpel/SpecExampleWsdl" 
+location="SpecExample.wsdl" 
+importType="http://schemas.xmlsoap.org/wsdl/"/>
+
+	<partnerLinks>
+		<partnerLink name="OperationLink" partnerLinkType="tns:SpecExamplePLT" myRole="server"/>
+	</partnerLinks>
+    <variables>
+        <variable name="Variable2" messageType="tns:message"/>
+        <variable name="Operation1In1" messageType="tns:message"/>
+    </variables>
+    <sequence>
+        <receive name="Receive1" partnerLink="OperationLink" operation="operation1" portType="tns:SpecExamplePortType" variable="Operation1In1" createInstance="yes"/>
+        <assign name="Assign1">
+            <copy>
+            <from>'TestResult'</from><to>$Variable2.part/testType</to>
+            </copy>
+            <copy>
+            <from>'Feb'</from><to>$Variable2.part/birthdate/month</to>
+            </copy>
+            <copy>
+            <from>28</from><to>$Variable2.part/birthdate/day</to>
+            </copy>
+            <copy>
+            <from>1950</from><to>$Variable2.part/birthdate/year</to>
+            </copy>
+            <copy>
+            <from>'800 Royal Oaks Drive'</from><to>$Variable2.part/home/street</to>
+            </copy>
+            <copy>
+            <from>'Sun Micro'</from><to>$Variable2.part/home/name</to>
+            </copy>
+            <copy>
+            <from>'Monrovia'</from><to>$Variable2.part/home/city</to>
+            </copy>
+            <copy>
+            <from>'CA'</from><to>$Variable2.part/home/state</to>
+            </copy>
+            <copy>
+            <from>'91016'</from><to>$Variable2.part/home/zip</to>
+            </copy>
+            <copy>
+            <from>'SUN'</from><to>$Variable2.part/@name</to>
+            </copy>
+        </assign>
+        <if name="If1">
+            <condition> ( $Operation1In1.part/testType = 'ElementToElement' ) </condition>
+            <assign name="Assign2">
+                <copy>
+                <from>$Operation1In1.part/home</from><to>$Variable2.part/work</to>
+                </copy>
+            </assign>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'ElementToText' ) </condition>
+                <assign name="Assign3">
+                    <copy>
+                    <from>$Operation1In1.part/birthdate/month</from><to>$Variable2.part/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'ElementToAttribute' ) </condition>
+                <assign name="Assign4">
+                    <copy>
+                    <from>$Operation1In1.part/home/name</from><to>$Variable2.part/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'TextToElement' ) </condition>
+                <assign name="Assign5">
+                    <copy>
+                    <from>$Operation1In1.part/home/name/text()</from><to>$Variable2.part/home/note</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'TextToText' ) </condition>
+                <assign name="Assign6">
+                    <copy>
+                    <from>$Operation1In1.part/home/name/text()</from><to>$Variable2.part/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'TextToAttribute' ) </condition>
+                <assign name="Assign7">
+                    <copy>
+                    <from>$Operation1In1.part/home/name/text()</from><to>$Variable2.part/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'AttributeToElement' ) </condition>
+                <assign name="Assign8">
+                    <copy>
+                    <from>$Operation1In1.part/@name</from><to>$Variable2.part/home/note</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'AttributeToText' ) </condition>
+                <assign name="Assign9">
+                    <copy>
+                    <from>$Operation1In1.part/@name</from><to>$Variable2.part/home/note/text()</to>
+                    </copy>
+                </assign>
+            </elseif>
+            <elseif>
+                <condition> ( $Operation1In1.part/testType = 'AttributeToAttribute' ) </condition>
+                <assign name="Assign10">
+                    <copy>
+                    <from>$Operation1In1.part/@name</from><to>$Variable2.part/@name</to>
+                    </copy>
+                </assign>
+            </elseif>
+        </if>
+        <reply name="Reply1" partnerLink="OperationLink" operation="operation1" portType="tns:SpecExamplePortType" variable="Variable2"/>
+    </sequence>
+</process>

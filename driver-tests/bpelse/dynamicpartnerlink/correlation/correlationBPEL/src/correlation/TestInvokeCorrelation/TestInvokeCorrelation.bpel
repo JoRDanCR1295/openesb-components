@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process name="TestInvokeCorrelation"
+         targetNamespace="http://www.seebeyond.com/eInsight/TestInvokeCorrelation"
+         sbynpxp:end_YLoc="332.0"
+         sbynpxp:start_YLoc="255.0"
+         sbynpxp:linkStyle="angular"
+         sbynpxp:start_XLoc="46.0"
+         sbynpxp:end_XLoc="768.0"
+         xmlns:tns="http://www.seebeyond.com/eInsight/TestInvokeCorrelation"
+         xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbynruntime="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/runtime/"
+         xmlns:ns0="http://stc.com/ReceiveReply"
+         xmlns:ns1="http://lab201:8080/heraldws/services/LodeStarDocLiteral"
+         xmlns:sbynpxp="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/presentation/"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:sbyntracing="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/tracing/"
+         xmlns:ns2="http://stc.com/GetStockQuote"
+         xmlns:sbyninc="http://bpel.seebeyond.com/hawaii/5.0/privateExtension/incompleteModel">
+    <import namespace="http://stc.com/ReceiveReply"
+            location="ReceiveReply.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://lab201:8080/heraldws/services/LodeStarDocLiteral"
+            location="LodeStar.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <import namespace="http://stc.com/GetStockQuote"
+            location="stockquote2.wsdl"
+            importType="http://schemas.xmlsoap.org/wsdl/"></import>
+    <partnerLinks>
+        <partnerLink name="recvReplpl"
+                     partnerLinkType="ns0:ReceiveReply"
+                     myRole="server"/>
+        <partnerLink name="lodeStarpl"
+                     partnerLinkType="ns1:LodeStarPartnerLinkType"
+                     partnerRole="LodeStarPartnerLink"/>
+        <partnerLink name="stockpl"
+                     partnerLinkType="ns2:stockQuoteLinkType"
+                     myRole="stockquoteRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="ReceiveReply_Output"
+                  messageType="ns0:ReceiveReply"></variable>
+        <variable name="ReceiveReply_Input"
+                  messageType="ns0:ReceiveReply"></variable>
+        <variable name="validate_Input"
+                  messageType="ns1:validateRequest"></variable>
+        <variable name="validate_Output"
+                  messageType="ns1:validateResponse"></variable>
+        <variable name="GetQuote_Output"
+                  messageType="ns2:GetQuoteSoapIn"></variable>
+        <variable name="GetQuote_Input"
+                  messageType="ns2:GetQuoteSoapOut"></variable>
+    </variables>
+    <correlationSets>
+        <correlationSet name="set"
+                        properties="ns0:mycor"/>
+    </correlationSets>
+    <sequence>
+        <receive name="ReceiveReply"
+                 partnerLink="recvReplpl"
+                 portType="ns0:ReceiveReply"
+                 operation="ReceiveReply"
+                 variable="ReceiveReply_Output"
+                 createInstance="yes"
+                 sbynpxp:XLoc="111.0"
+                 sbynpxp:YLoc="256.0"></receive>
+        <assign name="Assign_Unique1"
+                sbynpxp:XLoc="190.0"
+                sbynpxp:YLoc="265.0">
+            <copy>
+                <from>$ReceiveReply_Output.part/value</from>
+                <to variable="validate_Input"
+                    part="message"/>
+            </copy>
+        </assign>
+        <invoke name="validate"
+                partnerLink="lodeStarpl"
+                portType="ns1:LodeStar"
+                operation="validate"
+                inputVariable="validate_Input"
+                outputVariable="validate_Output"
+                sbynpxp:XLoc="269.0"
+                sbynpxp:YLoc="213.0">
+            <correlations>
+                <correlation set="set"
+                             initiate="yes"
+                             pattern="request"/>
+            </correlations>
+        </invoke>
+        <assign name="Assign_Unique"
+                sbynpxp:XLoc="332.0"
+                sbynpxp:YLoc="264.0">
+            <copy>
+                <from variable="validate_Output"
+                      part="validateReturn"/>
+                <to>$GetQuote_Output.parameters/symbol</to>
+            </copy>
+        </assign>
+        <receive name="GetQuote"
+                 partnerLink="stockpl"
+                 portType="ns2:StockQuoteSoap"
+                 operation="GetQuote"
+                 variable="GetQuote_Output"
+                 createInstance="no"
+                 sbynpxp:XLoc="407.0"
+                 sbynpxp:YLoc="259.0">
+            <correlations>
+                <correlation set="set"
+                             initiate="no"/>
+            </correlations>
+        </receive>
+        <assign name="Assign2"
+                sbynpxp:XLoc="464.0"
+                sbynpxp:YLoc="255.0">
+            <copy>
+                <from>$GetQuote_Output.parameters/symbol</from>
+                <to>$GetQuote_Input.parameters/GetQuoteResult</to>
+            </copy>
+        </assign>
+        <reply name="GetQuote.Reply"
+               partnerLink="stockpl"
+               portType="ns2:StockQuoteSoap"
+               operation="GetQuote"
+               variable="GetQuote_Input"
+               sbynpxp:XLoc="520.0"
+               sbynpxp:YLoc="277.0"></reply>
+        <assign name="Assign"
+                sbynpxp:XLoc="596.0"
+                sbynpxp:YLoc="263.0">
+            <copy>
+                <from variable="validate_Output"
+                      part="validateReturn"/>
+                <to>$ReceiveReply_Output.part/value</to>
+            </copy>
+        </assign>
+        <reply name="ReceiveReply.Reply"
+               partnerLink="recvReplpl"
+               portType="ns0:ReceiveReply"
+               operation="ReceiveReply"
+               variable="ReceiveReply_Output"
+               sbynpxp:XLoc="645.0"
+               sbynpxp:YLoc="285.0"></reply>
+    </sequence>
+</process>

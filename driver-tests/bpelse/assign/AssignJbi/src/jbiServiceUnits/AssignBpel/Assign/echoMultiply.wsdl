@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:slnk="http://schemas.xmlsoap.org/ws/2002/07/service-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://stc.com/echoMultiply" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="echoMultiply" targetNamespace="http://stc.com/echoMultiply">
+    <types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://stc.com/echoMultiply">
+            <xsd:element name="item">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="value" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    <message name="echoMultiply">
+        <part element="tns:item" name="part"/>
+    </message>
+    <portType name="echoMultiply">
+        <operation name="echoMultiply">
+            <input message="tns:echoMultiply"/>
+            <output message="tns:echoMultiply"/>
+        </operation>
+    </portType>
+    <binding name="Binding" type="tns:echoMultiply">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoMultiply">
+            <soap:operation soapAction="echoMultiply"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="echoMultiplyService">
+        <port binding="tns:Binding" name="port">
+            <soap:address location="http://localhost:${HttpDefaultPort}/echoMultiply"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="SLT">
+        <plnk:role name="server" portType="tns:echoMultiply"/>
+    </plnk:partnerLinkType>
+</definitions>
