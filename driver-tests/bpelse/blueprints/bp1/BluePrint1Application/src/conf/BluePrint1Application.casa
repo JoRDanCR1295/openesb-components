@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://manufacturing.org/wsdl/purchase/bp1" xmlns:ns2="http://manufacturing.org/wsdl/inventory/bp1" xmlns:xlink="http://www.w3.org/2000/xlink">
-<endpoints>
-<endpoint endpoint-name="purchaseOrderPort" interface-name="ns1:purchaseOrderPT" name="endpoint1" service-name="ns1:purchaseOrderService"/>
-<endpoint endpoint-name="inventoryServicePort" interface-name="ns2:inventoryPortType" name="endpoint2" service-name="ns2:inventoryService"/>
-<endpoint endpoint-name="inventoryService_myRole" interface-name="ns2:inventoryPortType" name="endpoint3" service-name="ns2:inventorySevicePLink"/>
-<endpoint endpoint-name="purchaseService_myRole" interface-name="ns1:purchaseOrderPT" name="endpoint4" service-name="ns1:POServicePLink"/>
-<endpoint endpoint-name="inventoryService_partnerRole" interface-name="ns2:inventoryPortType" name="endpoint5" service-name="ns1:requestInventoryPLink"/>
-</endpoints>
-<service-units>
-<service-engine-service-unit artifacts-zip="BluePrint1.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="BluePrint1Application-BluePrint1" unit-name="BluePrint1" unknown="false" x="-1" y="-1">
-<provides endpoint="endpoint3"/>
-<provides endpoint="endpoint4"/>
-<consumes endpoint="endpoint5"/>
-</service-engine-service-unit>
-<binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="This represents the Application Service Unit" name="BluePrint1Application-sun-http-binding" unit-name="sun-http-binding">
-<ports>
-<port x="0" y="-1">
-<link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService']/port[@name='inventoryServicePort'])" xlink:type="simple"/>
-<consumes endpoint="endpoint2"/>
-<provides endpoint="endpoint2"/>
-</port>
-<port x="0" y="-1">
-<link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
-<consumes endpoint="endpoint1"/>
-<provides endpoint="endpoint1"/>
-</port>
-</ports>
-</binding-component-service-unit>
-</service-units>
-<connections>
-<connection consumer="endpoint1" provider="endpoint4" state="unchanged"/>
-<connection consumer="endpoint2" provider="endpoint3" state="unchanged"/>
-<connection consumer="endpoint5" provider="endpoint3" state="unchanged"/>
-</connections>
-<porttypes>
-<link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/portType[@name='inventoryPortType'])" xlink:type="simple"/>
-<link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/portType[@name='purchaseOrderPT'])" xlink:type="simple"/>
-</porttypes>
-<bindings>
-<link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/binding[@name='inventoryBinding'])" xlink:type="simple"/>
-<link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
-</bindings>
-<services>
-<link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService'])" xlink:type="simple"/>
-<link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
-</services>
-<regions>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://manufacturing.org/wsdl/inventory/bp1" xmlns:ns2="http://manufacturing.org/wsdl/purchase/bp1" xmlns:xlink="http://www.w3.org/2000/xlink">
+    <endpoints>
+        <endpoint display-name="inventorySevicePLink" endpoint-name="inventoryService_myRole" file-path="InventoryService.bpel" interface-name="ns1:inventoryPortType" name="endpoint1" process-name="InventoryService" service-name="ns1:inventorySevicePLink"/>
+        <endpoint display-name="POServicePLink" endpoint-name="purchaseService_myRole" file-path="POService.bpel" interface-name="ns2:purchaseOrderPT" name="endpoint2" process-name="POService" service-name="ns2:POServicePLink"/>
+        <endpoint display-name="requestInventoryPLink" endpoint-name="inventoryService_partnerRole" file-path="POService.bpel" interface-name="ns1:inventoryPortType" name="endpoint3" process-name="POService" service-name="ns2:requestInventoryPLink"/>
+        <endpoint endpoint-name="purchaseOrderPort" interface-name="ns2:purchaseOrderPT" name="endpoint4" service-name="ns2:purchaseOrderService"/>
+        <endpoint endpoint-name="inventoryServicePort" interface-name="ns1:inventoryPortType" name="endpoint5" service-name="ns1:inventoryService"/>
+    </endpoints>
+    <service-units>
+        <service-engine-service-unit artifacts-zip="BluePrint1.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="BluePrint1Application-BluePrint1" unit-name="BluePrint1" unknown="false" x="159" y="99">
+            <provides endpoint="endpoint1"/>
+            <provides endpoint="endpoint2"/>
+            <consumes endpoint="endpoint3"/>
+        </service-engine-service-unit>
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BluePrint1Application-sun-http-binding" unit-name="sun-http-binding">
+            <ports>
+                <port x="68" y="113">
+                    <link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService']/port[@name='inventoryServicePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint5"/>
+                    <provides endpoint="endpoint5"/>
+                </port>
+                <port x="68" y="39">
+                    <link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint4"/>
+                    <provides endpoint="endpoint4"/>
+                </port>
+            </ports>
+        </binding-component-service-unit>
+    </service-units>
+    <connections>
+        <connection consumer="endpoint4" provider="endpoint2" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint3" provider="endpoint1" state="unchanged"/>
+    </connections>
+    <porttypes>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/portType[@name='inventoryPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/portType[@name='purchaseOrderPT'])" xlink:type="simple"/>
+    </porttypes>
+    <bindings>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/binding[@name='inventoryBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
+    </bindings>
+    <services>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/BluePrint1/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
+    </services>
+    <regions>
         <region name="WSDL Endpoints" width="150"/>
         <region name="JBI Modules" width="500"/>
         <region name="External Modules" width="200"/>

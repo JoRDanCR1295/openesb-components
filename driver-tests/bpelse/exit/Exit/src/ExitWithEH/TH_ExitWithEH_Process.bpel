@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="ExitWithEH_Process"
+    targetNamespace="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitWithEH_Process"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://enterprise.netbeans.org/bpel/TerminationHandlerBpel/ExitWithEH_Process" xmlns:ns1="http://j2ee.netbeans.org/wsdl/IOWSDL12" xmlns:ns2="http://docs.oasis-open.org/wsbpel/2.0/process/executable" xmlns:ns3="http://j2ee.netbeans.org/wsdl/IOWSDL121" xmlns:ns4="http://j2ee.netbeans.org/wsdl/IOWSDL4">
+    <import namespace="http://j2ee.netbeans.org/wsdl/IOWSDL12" location="IOWSDL12.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="OneWayPartnerLink" partnerLinkType="ns1:MainBPOneWayPLink" myRole="MainBPOneWayWSDLPortTypeRole"/>
+        <partnerLink name="PartnerLinkInOut" partnerLinkType="ns1:MainBPIOPLink" myRole="IOWSDL12PortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="outputString" type="xsd:string"/>
+        <variable name="IOWSDL12OperationIn" messageType="ns1:IOWSDL12OperationRequest"/>
+        <variable name="IOWSDL12OperationOut" messageType="ns1:IOWSDL12OperationReply"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CorrelationSet1" properties="ns1:CorrelationVariable"/>
+    </correlationSets>
+    <sequence>
+        <receive name="Receive1" createInstance="yes" partnerLink="PartnerLinkInOut" operation="IOWSDL12Operation" portType="ns1:IOWSDL12PortType" variable="IOWSDL12OperationIn">
+            <correlations>
+                <correlation set="CorrelationSet1" initiate="yes"/>
+            </correlations>
+        </receive>
+        <assign name="Assign1">
+            <copy>
+                <from>concat('1. Input is -  ', $IOWSDL12OperationIn.InputPart)</from>
+                <to variable="outputString"/>
+            </copy>
+        </assign>
+        <scope name="GlobalScope">
+            <sequence name="Sequence1">
+                <flow name="MainFlow">
+                    <sequence name="Sequence3">
+                        <wait name="Wait3">
+                            <for>'P0Y0M0DT0H0M1S'</for>
+                        </wait>
+                        <assign name="Assign4">
+                            <copy>
+                                <from>concat($outputString, ' \n 4. In Branch1: Fault occurs here ')</from>
+                                <to variable="outputString"/>
+                            </copy>                            
+                        </assign>
+                        <exit/>
+                    </sequence>
+                    <scope name="InnerScope">
+                        <eventHandlers>
+                            <onEvent partnerLink="OneWayPartnerLink" operation="MainBPOneWayWSDLOperation" portType="ns1:MainBPOneWayWSDLPortType" variable="MainBPOneWayWSDLOperationIn" messageType="ns1:MainBPOneWayRequest">
+                                <correlations>
+                                    <correlation set="CorrelationSet1" initiate="no"/>
+                                </correlations>
+                                <scope name="EventHandler_OnEvent_Scope">
+                                    <sequence name="Sequence4">
+                                        <scope name="EH_InnerScope">
+                                            <assign name="Assign3">
+                                                <copy>
+                                                    <from>concat($outputString, ' \n 3. In EH Assign ')</from>
+                                                    <to variable="outputString"/>
+                                                </copy>
+                                            </assign>
+                                        </scope>
+                                        <wait name="Wait4">
+                                            <for>'P0Y0M0DT0H0M2S'</for>
+                                        </wait>
+                                        <reply name="ReplyFromEH" partnerLink="PartnerLinkInOut" operation="IOWSDL12Operation" portType="ns1:IOWSDL12PortType" variable="IOWSDL12OperationOut"/>                                        
+                                    </sequence>
+                                    <!--terminationHandler>
+                                        <sequence>
+                                            <assign name="Assign5">
+                                                <copy>
+                                                    <from>concat($outputString, " \n 5. In EH's TH ")</from>
+                                                    <to variable="outputString"/>
+                                                </copy>
+                                            </assign>
+                                            <reply name="ReplyFromEH-TH" partnerLink="PartnerLinkInOut" operation="IOWSDL12Operation" portType="ns1:IOWSDL12PortType" variable="IOWSDL12OperationOut"/>
+                                        </sequence>
+                                    </terminationHandler-->
+                                </scope>
+                            </onEvent>
+                        </eventHandlers>
+                        <sequence name="Sequence2">
+                            <assign name="Assign2">
+                                <copy>
+                                    <from>concat($outputString, ' \n 2. In Branch2 ')</from>
+                                    <to variable="outputString"/>
+                                </copy>
+                            </assign>
+                            <wait name="Wait2">
+                                <for>'P0Y0M0DT0H0M3S'</for>
+                            </wait>
+                        </sequence>
+                        <!--terminationHandler>
+                            <sequence>
+                                <assign name="Assign6">
+                                    <copy>
+                                        <from>concat($outputString, " \n 6. In InnerScope's TH ")</from>
+                                        <to variable="outputString"/>
+                                    </copy>
+                                </assign>
+                                <reply name="ReplyFromEH-THOfInnerScope" partnerLink="PartnerLinkInOut" operation="IOWSDL12Operation" portType="ns1:IOWSDL12PortType" variable="IOWSDL12OperationOut"/>                            
+                            </sequence>
+                        </terminationHandler-->
+                    </scope>
+                </flow>
+                <assign name="Assign8">
+                    <copy>
+                        <from variable="outputString"/>
+                        <to variable="IOWSDL12OperationOut" part="OutputPart"/>
+                    </copy>
+                </assign>
+                <reply name="Reply1" partnerLink="PartnerLinkInOut" operation="IOWSDL12Operation" portType="ns1:IOWSDL12PortType" variable="IOWSDL12OperationOut"/>
+            </sequence>
+        </scope>
+    </sequence>
+</process>

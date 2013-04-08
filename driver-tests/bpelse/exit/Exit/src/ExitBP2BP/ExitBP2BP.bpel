@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="ExitBP2BP" 
+    targetNamespace="http://www.mycomp.org/ExitBP2BP"
+    xmlns:wsdlNS="http://www.mycomp.org/ExitBP2BP"
+    xmlns:xs="http://www.mycomp.org/ExitBP2BPSchemaNamespace"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable">
+    <import location="ExitBP2BP.xsd" importType="http://www.w3.org/2001/XMLSchema" namespace="http://www.mycomp.org/ExitBP2BPSchemaNamespace"/>
+    <import namespace="http://www.mycomp.org/ExitBP2BP" location="ExitBP2BP.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    
+   <partnerLinks>
+      <partnerLink name="partnerLinkA" 
+         partnerLinkType="wsdlNS:AsyncPartnerLinkType" 
+         myRole="serviceProvider" 
+         partnerRole="serviceRequestor"/>
+   </partnerLinks>
+ 
+ 
+   <variables>
+     <variable name="inputVar" messageType="wsdlNS:requestMessage"/>
+     <variable name="outputVar" messageType="wsdlNS:responseMessage"/>
+   </variables>
+        
+
+   <sequence>   
+       <receive 
+          name="start"
+          partnerLink="partnerLinkA"
+          portType="wsdlNS:MyPortType"
+          operation="asyncOperation"
+          variable="inputVar"
+          createInstance="yes"/>
+      <if>
+         <condition>$inputVar.inputType/id = 18</condition>
+         <exit/>
+      </if>    
+      <assign name="assign">
+         <copy>
+            <from variable="inputVar" part="inputType"/>
+            <to variable="outputVar" part="resultType"/>
+         </copy>
+      </assign>  
+      <invoke name="end"  
+              partnerLink="partnerLinkA"
+              portType="wsdlNS:MyCallbackPortType" 
+              operation="onResult"
+              inputVariable="outputVar"/>
+
+   </sequence>
+</process>
+
+
+
+
+
+
+

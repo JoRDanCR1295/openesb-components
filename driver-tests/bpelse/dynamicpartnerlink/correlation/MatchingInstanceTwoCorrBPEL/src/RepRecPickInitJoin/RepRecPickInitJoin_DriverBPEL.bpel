@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RepRecPickInitJoin_DriverBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepRecPickInitJoin_DriverBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepRecPickInitJoin_DriverBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepRecPickInitJoin_DriverWSDL" xmlns:ns2="http://j2ee.netbeans.org/wsdl/RepRecPickInitJoin_ParentWSDL" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecPickInitJoin_DriverWSDL" location="RepRecPickInitJoin_DriverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecPickInitJoin_ParentWSDL" location="RepRecPickInitJoin_ParentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink3" partnerLinkType="ns2:RepRecPickInitJoin_ParentWSDLPartner3" partnerRole="RepRecPickInitJoin_ParentWSDLPortType3Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink2" partnerLinkType="ns2:RepRecPickInitJoin_ParentWSDLPartner2" partnerRole="RepRecPickInitJoin_ParentWSDLPortType2Role"/>
+        <bpws:partnerLink name="ParentBPEL_PartnerLink1" partnerLinkType="ns2:RepRecPickInitJoin_ParentWSDLPartner1" partnerRole="RepRecPickInitJoin_ParentWSDLPortType1Role"/>
+        <bpws:partnerLink name="ExternalPartnerLink" partnerLinkType="ns1:RepRecPickInitJoin_DriverWSDLPartner" myRole="RepRecPickInitJoin_DriverWSDLPortTypeRole"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="OutputVariable2" messageType="ns2:RepRecPickInitJoin_ParentWSDLOperationReply"/>
+        <bpws:variable name="OutputVariable1" messageType="ns2:RepRecPickInitJoin_ParentWSDLOperationReply"/>
+        <bpws:variable name="InputVariable1" messageType="ns2:RepRecPickInitJoin_ParentWSDLOperationRequest"/>
+        <bpws:variable name="RepRecPickInitJoin_DriverWSDLOperationOut" messageType="ns1:RepRecPickInitJoin_DriverWSDLOperationReply"/>
+        <bpws:variable name="RepRecPickInitJoin_DriverWSDLOperationIn" messageType="ns1:RepRecPickInitJoin_DriverWSDLOperationRequest"/>
+    </variables>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="ExternalPartnerLink" operation="RepRecPickInitJoin_DriverWSDLOperation" portType="ns1:RepRecPickInitJoin_DriverWSDLPortType" variable="RepRecPickInitJoin_DriverWSDLOperationIn"/>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from variable="RepRecPickInitJoin_DriverWSDLOperationIn" part="part1"/>
+                <bpws:to variable="InputVariable1" part="part1"/>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:invoke name="ParentBPEL_Invoke1" partnerLink="ParentBPEL_PartnerLink1" operation="RepRecPickInitJoin_ParentWSDLOperation1" portType="ns2:RepRecPickInitJoin_ParentWSDLPortType1" inputVariable="InputVariable1" outputVariable="OutputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke2" partnerLink="ParentBPEL_PartnerLink2" operation="RepRecPickInitJoin_ParentWSDLOperation2" portType="ns2:RepRecPickInitJoin_ParentWSDLPortType2" inputVariable="InputVariable1"/>
+        <bpws:invoke name="ParentBPEL_Invoke3" partnerLink="ParentBPEL_PartnerLink3" operation="RepRecPickInitJoin_ParentWSDLOperation3" portType="ns2:RepRecPickInitJoin_ParentWSDLPortType3" inputVariable="InputVariable1" outputVariable="OutputVariable2"/>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$OutputVariable2.part1/ns0:string</bpws:from>
+                <bpws:to>$RepRecPickInitJoin_DriverWSDLOperationOut.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="ExternalPartnerLink" operation="RepRecPickInitJoin_DriverWSDLOperation" portType="ns1:RepRecPickInitJoin_DriverWSDLPortType" variable="RepRecPickInitJoin_DriverWSDLOperationOut"/>
+    </sequence>
+</process>

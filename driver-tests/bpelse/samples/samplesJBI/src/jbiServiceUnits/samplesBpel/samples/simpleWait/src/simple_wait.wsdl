@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:simple_waitTargetNamespace" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="simple_waitDefinition" targetNamespace="urn:simple_waitTargetNamespace">
+    <types>
+        <xsd:schema xmlns:ns1="urn:simple_waitTargetNamespace" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:simple_waitTargetNamespace">
+            <xsd:complexType name="simple_waitType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="simple_waitMessage">
+        <part name="simple_waitPart" type="tns:simple_waitType"/>
+    </message>
+    <portType name="simple_waitPortType">
+        <operation name="simple_waitOperation">
+            <input message="tns:simple_waitMessage"/>
+            <output message="tns:simple_waitMessage"/>
+        </operation>
+    </portType>
+    <binding name="simple_waitBinding" type="tns:simple_waitPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="simple_waitOperation">
+            <soap:operation soapAction="simple_waitOperation"/>
+            <input>
+                <soap:body parts="simple_waitPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="simple_waitPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="simple_waitService">
+        <port binding="tns:simple_waitBinding" name="simple_waitPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/simple_wait/sample"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="simple_waitServiceLinkType">
+	<plnk:role name="simple_waitServerRole" portType="tns:simple_waitPortType"/>
+   </plnk:partnerLinkType>
+</definitions>

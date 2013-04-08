@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process 
+    name="Corr-FlowAsStartActivity" 
+    targetNamespace="http://enterprise.netbeans.org/bpel/Corr-FlowAsStartActivity"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/Corr-FlowAsStartActivity" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity">
+    <import namespace="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity" location="Corr-FlowAsStartActivity.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <partnerLink name="FlowTestPL2" partnerLinkType="ns1:FlowTestServiceLinkType2" myRole="FlowTestPT2ServerRole"/>
+        <partnerLink name="FlowTestPL1" partnerLinkType="ns1:FlowTestServiceLinkType1" myRole="FlowTestPT1ServerRole"/>
+    </partnerLinks>
+    <variables>
+        <variable name="InputRecVar2" messageType="ns1:FlowTestMsg2"/>
+        <variable name="ReplyVar" messageType="ns1:FlowTestMsg1"/>
+        <variable name="InputRecVar1" messageType="ns1:FlowTestMsg1"/>
+    </variables>
+    <correlationSets>
+        <correlationSet name="CSet2" properties="ns1:property2"/>
+        <correlationSet name="CSet1" properties="ns1:property1"/>
+    </correlationSets>
+    <sequence>
+        <flow name="Flow1">
+            <receive name="Receive1" createInstance="yes" partnerLink="FlowTestPL1" operation="FlowTestOper1" portType="ns1:FlowTestPT1" variable="InputRecVar1">
+                <correlations>
+                    <correlation set="CSet1" initiate="join"/>
+                    <correlation set="CSet2" initiate="join"/>
+                </correlations>
+            </receive>
+            <receive name="Receive2" createInstance="yes" partnerLink="FlowTestPL2" operation="FlowTestOper2" portType="ns1:FlowTestPT2" variable="InputRecVar2">
+                <correlations>
+                    <correlation set="CSet1" initiate="join"/>
+                    <correlation set="CSet2" initiate="join"/>
+                </correlations>
+            </receive>
+        </flow>
+        <assign name="Assign1">
+            <copy>
+                <from>$InputRecVar1.Msg1Part/corrVal1</from>
+                <to>$ReplyVar.Msg1Part/corrVal1</to>
+            </copy>
+            <copy>
+                <from>concat($InputRecVar1.Msg1Part/content1/data, $InputRecVar2.Msg2Part/content2/data)</from>
+                <to>$ReplyVar.Msg1Part/content1/data</to>
+            </copy>
+            <copy>
+                <from>$InputRecVar1.Msg1Part/content1/id</from>
+                <to>$ReplyVar.Msg1Part/content1/id</to>
+            </copy>
+        </assign>
+        <reply name="Reply1" partnerLink="FlowTestPL1" operation="FlowTestOper1" portType="ns1:FlowTestPT1" variable="ReplyVar"/>
+    </sequence>
+   
+</process>

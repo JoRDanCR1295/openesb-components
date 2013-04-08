@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="driverBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/driverBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/driverBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity" xmlns:ns2="http://j2ee.netbeans.org/wsdl/driverWSDL">
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/Corr-FlowAsStartActivity" location="Corr-FlowAsStartActivity.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:import namespace="http://j2ee.netbeans.org/wsdl/driverWSDL" location="driverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+   <bpws:partnerLinks>
+      <bpws:partnerLink name="PartnerLink3" partnerLinkType="ns2:driverWSDLPartner" myRole="driverWSDLPortTypeRole"/>
+      <bpws:partnerLink name="PartnerLink2" partnerLinkType="ns1:FlowTestServiceLinkType2" partnerRole="FlowTestPT2ServerRole"/>
+      <bpws:partnerLink name="PartnerLink1" partnerLinkType="ns1:FlowTestServiceLinkType1" partnerRole="FlowTestPT1ServerRole"/>
+   </bpws:partnerLinks>
+   <bpws:variables>
+      <bpws:variable name="DriverWSDLOperationOut" messageType="ns2:driverWSDLOperationReply"/>
+      <bpws:variable name="DriverWSDLOperationIn" messageType="ns2:driverWSDLOperationRequest"/>
+      <bpws:variable name="FlowTestOper2In" messageType="ns1:FlowTestMsg2"/>
+      <bpws:variable name="FlowTestOper1Out" messageType="ns1:FlowTestMsg1"/>
+      <bpws:variable name="FlowTestOper1In" messageType="ns1:FlowTestMsg1"/>
+   </bpws:variables>
+   <sequence>
+      <bpws:receive name="Receive1" createInstance="yes" partnerLink="PartnerLink3" operation="driverWSDLOperation" portType="ns2:driverWSDLPortType" variable="DriverWSDLOperationIn"/>
+      <bpws:assign name="Assign1">
+         <bpws:copy>
+            <bpws:from variable="DriverWSDLOperationIn" part="part1"/>
+            <bpws:to variable="FlowTestOper2In" part="Msg2Part"/>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$DriverWSDLOperationIn.part1/corrVal2</bpws:from>
+            <bpws:to>$FlowTestOper1In.Msg1Part/corrVal1</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$DriverWSDLOperationIn.part1/content2/id</bpws:from>
+            <bpws:to>$FlowTestOper1In.Msg1Part/content1/id</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$DriverWSDLOperationIn.part1/content2/data</bpws:from>
+            <bpws:to>$FlowTestOper1In.Msg1Part/content1/data</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <invoke name="Invoke2" partnerLink="PartnerLink2" operation="FlowTestOper2" portType="ns1:FlowTestPT2" inputVariable="FlowTestOper2In"/>
+      <bpws:invoke name="Invoke1" partnerLink="PartnerLink1" operation="FlowTestOper1" portType="ns1:FlowTestPT1" inputVariable="FlowTestOper1In" outputVariable="FlowTestOper1Out"/>
+      <bpws:assign name="Assign2">
+         <bpws:copy>
+            <bpws:from>$FlowTestOper1Out.Msg1Part/corrVal1</bpws:from>
+            <bpws:to>$DriverWSDLOperationOut.part1/corrVal2</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FlowTestOper1Out.Msg1Part/content1/id</bpws:from>
+            <bpws:to>$DriverWSDLOperationOut.part1/content2/id</bpws:to>
+         </bpws:copy>
+         <bpws:copy>
+            <bpws:from>$FlowTestOper1Out.Msg1Part/content1/data</bpws:from>
+            <bpws:to>$DriverWSDLOperationOut.part1/content2/data</bpws:to>
+         </bpws:copy>
+      </bpws:assign>
+      <bpws:reply name="Reply1" partnerLink="PartnerLink3" operation="driverWSDLOperation" portType="ns2:driverWSDLPortType" variable="DriverWSDLOperationOut"/>
+   </sequence>
+</process>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="Parent" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Parent" targetNamespace="Parent">
+    <types>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="Parent">
+            <xsd:element name="ParentElement" type="tns:ParentType">
+            </xsd:element>
+            <xsd:complexType name="ParentType">
+                <xsd:sequence>
+                    <xsd:element name="string" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+    <message name="ParentMessage">
+        <part element="tns:ParentElement" name="ParentPart"/>
+    </message>
+    <portType name="ParentPortType">
+        <operation name="ParentOperation">
+            <input message="tns:ParentMessage"/>
+            <output message="tns:ParentMessage"/>
+        </operation>
+    </portType>
+    <binding name="ParentBinding" type="tns:ParentPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="ParentOperation">
+            <soap:operation soapAction="ParentOperation"/>
+            <input>
+                <soap:body parts="ParentPart" use="literal"/>
+            </input>
+            <output>
+                <soap:body parts="ParentPart" use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ParentService">
+        <port binding="tns:ParentBinding" name="ParentPort">
+            <soap:address location="http://localhost:${HttpDefaultPort}/service/ParentService/samples"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" name="ParentServiceLinkType">
+	<plnk:role name="Server" portType="tns:ParentPortType"/>
+   </plnk:partnerLinkType>
+</definitions>

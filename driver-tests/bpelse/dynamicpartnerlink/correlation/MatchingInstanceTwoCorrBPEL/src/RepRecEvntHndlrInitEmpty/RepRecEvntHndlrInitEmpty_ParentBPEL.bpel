@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process
+    name="RepRecEvntHndlrInitEmpty_ParentBPEL"
+    targetNamespace="http://enterprise.netbeans.org/bpel/RepRecEvntHndlrInitEmpty_ParentBPEL"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:bpws="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:wsdlNS="http://enterprise.netbeans.org/bpel/RepRecEvntHndlrInitEmpty_ParentBPEL" xmlns:ns1="http://j2ee.netbeans.org/wsdl/RepRecEvntHndlrInitEmpty_ParentWSDL" xmlns:ns0="http://xml.netbeans.org/schema/dataTypes.xsd" xmlns:ns2="http://j2ee.netbeans.org/wsdl/RepRecEvntHndlrInitEmpty_DriverWSDL">
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecEvntHndlrInitEmpty_ParentWSDL" location="RepRecEvntHndlrInitEmpty_ParentWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <import namespace="http://j2ee.netbeans.org/wsdl/RepRecEvntHndlrInitEmpty_DriverWSDL" location="RepRecEvntHndlrInitEmpty_DriverWSDL.wsdl" importType="http://schemas.xmlsoap.org/wsdl/"/>
+    <partnerLinks>
+        <bpws:partnerLink name="Driver_PartnerLink3" partnerLinkType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPartner3" myRole="RepRecEvntHndlrInitEmpty_ParentWSDLPortType3Role"/>
+        <bpws:partnerLink name="Driver_PartnerLink2" partnerLinkType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPartner2" myRole="RepRecEvntHndlrInitEmpty_ParentWSDLPortType2Role"/>
+        <bpws:partnerLink name="Driver_PartnerLink1" partnerLinkType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPartner1" myRole="RepRecEvntHndlrInitEmpty_ParentWSDLPortType1Role"/>
+    </partnerLinks>
+    <variables>
+        <bpws:variable name="TempVariable" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationReply"/>
+        <bpws:variable name="OutputVariable2" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationReply"/>
+        <bpws:variable name="OutputVariable1" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationReply"/>
+        <bpws:variable name="InputVariable3" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationRequest"/>
+        <bpws:variable name="InputVariable2" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationRequest"/>
+        <bpws:variable name="InputVariable1" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationRequest"/>
+    </variables>
+    <correlationSets>
+        <bpws:correlationSet name="CorrelationSet2" properties="ns1:property"/>
+        <bpws:correlationSet name="CorrelationSet1" properties="ns1:property"/>
+    </correlationSets>
+    <sequence>
+        <bpws:receive name="Receive1" createInstance="yes" partnerLink="Driver_PartnerLink1" operation="RepRecEvntHndlrInitEmpty_ParentWSDLOperation1" portType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPortType1" variable="InputVariable1"></bpws:receive>
+        <bpws:assign name="Assign1">
+            <bpws:copy>
+                <bpws:from>$InputVariable1.part1/ns0:string</bpws:from>
+                <bpws:to>$OutputVariable1.part1/ns0:string</bpws:to>
+            </bpws:copy>
+            <bpws:copy>
+                <bpws:from>$InputVariable1.part1/ns0:string</bpws:from>
+                <bpws:to>$TempVariable.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:reply name="Reply1" partnerLink="Driver_PartnerLink1" operation="RepRecEvntHndlrInitEmpty_ParentWSDLOperation1" portType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPortType1" variable="OutputVariable1">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet1" initiate="yes"/>
+            </bpws:correlations>
+        </bpws:reply>
+        <bpws:receive name="Receive2" createInstance="no" partnerLink="Driver_PartnerLink2" operation="RepRecEvntHndlrInitEmpty_ParentWSDLOperation2" portType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPortType2" variable="InputVariable2">
+            <bpws:correlations>
+                <bpws:correlation set="CorrelationSet2" initiate="yes"/>
+                <bpws:correlation set="CorrelationSet1" initiate="no"/>
+            </bpws:correlations>
+        </bpws:receive>
+        <bpws:assign name="Assign2">
+            <bpws:copy>
+                <bpws:from>concat($TempVariable.part1/ns0:string, $InputVariable2.part1/ns0:string)</bpws:from>
+                <bpws:to>$TempVariable.part1/ns0:string</bpws:to>
+            </bpws:copy>
+        </bpws:assign>
+        <bpws:scope name="Scope1">
+            <bpws:eventHandlers>
+                <bpws:onEvent partnerLink="Driver_PartnerLink3" operation="RepRecEvntHndlrInitEmpty_ParentWSDLOperation3" portType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPortType3" variable="EvntHandle_Variable" messageType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLOperationRequest">
+                    <bpws:correlations>
+                        <bpws:correlation set="CorrelationSet2"/>
+                        <bpws:correlation set="CorrelationSet1"/>
+                    </bpws:correlations>
+                    <bpws:scope name="Scope2">
+                        <bpws:sequence name="Sequence2">
+                            <bpws:wait name="Wait2">
+                                <bpws:for>'P0Y0M0DT0H0M13S'</bpws:for>
+                            </bpws:wait>
+                            <bpws:assign name="Assign3">
+                                <bpws:copy>
+                                    <bpws:from>concat($TempVariable.part1/ns0:string, $EvntHandle_Variable.part1/ns0:string)</bpws:from>
+                                    <bpws:to>$TempVariable.part1/ns0:string</bpws:to>
+                                </bpws:copy>
+                            </bpws:assign>
+                            <bpws:assign name="Assign4">
+            <bpws:copy>
+                <bpws:from variable="TempVariable"/>
+                <bpws:to variable="OutputVariable2"/>
+            </bpws:copy>
+        </bpws:assign>
+                            <bpws:reply name="Reply2" partnerLink="Driver_PartnerLink3" operation="RepRecEvntHndlrInitEmpty_ParentWSDLOperation3" portType="ns1:RepRecEvntHndlrInitEmpty_ParentWSDLPortType3" variable="OutputVariable2"/>
+                        </bpws:sequence>
+                    </bpws:scope>
+                </bpws:onEvent>
+            </bpws:eventHandlers>
+            <bpws:sequence name="Sequence1">
+                <bpws:wait name="Wait1">
+                    <bpws:for>'P0Y0M0DT0H0M15S'</bpws:for>
+                </bpws:wait>
+            </bpws:sequence>
+        </bpws:scope>
+    </sequence>
+</process>

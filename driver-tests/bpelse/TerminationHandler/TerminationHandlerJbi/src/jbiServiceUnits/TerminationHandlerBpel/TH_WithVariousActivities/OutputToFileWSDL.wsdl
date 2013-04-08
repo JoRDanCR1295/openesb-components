@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="OutputToFileWSDL" targetNamespace="http://j2ee.netbeans.org/wsdl/OutputToFileWSDL"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:file="http://schemas.sun.com/jbi/wsdl-extensions/file/" xmlns:tns="http://j2ee.netbeans.org/wsdl/OutputToFileWSDL">
+    <types/>
+    <message name="OutputToFileWSDLOperationRequest">
+        <part name="InputPart" type="xsd:string"/>
+    </message>
+    <portType name="OutputToFileWSDLPortType">
+        <operation name="OutputToFileWSDLOperation">
+            <input name="input1" message="tns:OutputToFileWSDLOperationRequest"/>
+        </operation>
+    </portType>
+    <binding name="OutputToFileWSDLBinding" type="tns:OutputToFileWSDLPortType">
+        <file:binding/>
+        <operation name="OutputToFileWSDLOperation">
+            <file:operation/>
+            <input name="input1">
+                <file:message use="literal" fileName="Output.txt" pollingInterval="1000" addEOL="true" multipleRecordsPerFile="true" fileType="text" recordDelimiter="\n"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="OutputToFileWSDLService">
+        <port name="OutputToFileWSDLPort" binding="tns:OutputToFileWSDLBinding">
+            <file:address fileDirectory="C:\" lockName="TH_WithVariousActivity.lck" workArea="TH_WithVariousActivity_tmp" seqName="TH_WithVariousActivity.seq"/>
+        </port>
+    </service>
+    <plnk:partnerLinkType name="OutputToFileWSDL1">
+        <!-- A partner link type is automatically generated when a new port type is added. Partner link types are used by BPEL processes. 
+In a BPEL process, a partner link represents the interaction between the BPEL process and a partner service. Each partner link is associated with a partner link type.
+A partner link type characterizes the conversational relationship between two services. The partner link type can have one or two roles.-->
+        <plnk:role name="OutputToFileWSDLPortTypeRole" portType="tns:OutputToFileWSDLPortType"/>
+    </plnk:partnerLinkType>
+</definitions>

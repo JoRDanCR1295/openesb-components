@@ -1,72 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://localhost:12100/wsdl/purchase/PurchaseOrderStatus/bp4" xmlns:ns2="http://manufacturing.org/wsdl/inventory/bp4" xmlns:ns3="http://manufacturing.org/wsdl/purchase/bp4" xmlns:ns4="http://www.seebeyond.com/eInsight/inventoryservice/bp4" xmlns:ns5="http://www.seebeyond.com/eInsight/POService/bp4" xmlns:xlink="http://www.w3.org/2000/xlink">
+<casa xmlns="http://java.sun.com/xml/ns/casa" xmlns:ns1="http://www.seebeyond.com/eInsight/inventoryservice/bp4" xmlns:ns2="http://manufacturing.org/wsdl/inventory/bp4" xmlns:ns3="http://www.seebeyond.com/eInsight/POService/bp4" xmlns:ns4="http://manufacturing.org/wsdl/purchase/bp4" xmlns:ns5="http://localhost/wsdl/purchase/PurchaseOrderStatus/bp4" xmlns:xlink="http://www.w3.org/2000/xlink">
     <endpoints>
-        <endpoint endpoint-name="POConfirmPort" interface-name="ns1:POConfirmPortType" name="endpoint1" service-name="ns1:POStatusService"/>
-        <endpoint endpoint-name="POCancelPort" interface-name="ns1:POCancelPortType" name="endpoint2" service-name="ns1:POStatusService"/>
-        <endpoint endpoint-name="inventoryServicePort" interface-name="ns2:inventoryPortType" name="endpoint3" service-name="ns2:inventoryService"/>
-        <endpoint endpoint-name="purchaseOrderPort" interface-name="ns3:purchaseOrderPT" name="endpoint4" service-name="ns3:purchaseOrderService"/>
-        <endpoint endpoint-name="inventoryService_myRole" interface-name="ns2:inventoryPortType" name="endpoint5" service-name="ns4:inventorySevicePLink"/>
-        <endpoint endpoint-name="purchaseService_myRole" interface-name="ns3:purchaseOrderPT" name="endpoint6" service-name="ns5:POServicePLink"/>
-        <endpoint endpoint-name="confirmPORole_myRole" interface-name="ns1:POConfirmPortType" name="endpoint7" service-name="ns5:POConfirmPLink"/>
-        <endpoint endpoint-name="cancelPORole_myRole" interface-name="ns1:POCancelPortType" name="endpoint8" service-name="ns5:POCancelPLink"/>
-        <endpoint endpoint-name="inventoryService_partnerRole" interface-name="ns2:inventoryPortType" name="endpoint9" service-name="ns5:requestInventoryPLink"/>
+        <endpoint display-name="inventorySevicePLink" endpoint-name="inventoryService_myRole" file-path="InventoryService.bpel" interface-name="ns2:inventoryPortType" name="endpoint1" process-name="InventoryService" service-name="ns1:inventorySevicePLink"/>
+        <endpoint display-name="POServicePLink" endpoint-name="purchaseService_myRole" file-path="POService.bpel" interface-name="ns4:purchaseOrderPT" name="endpoint2" process-name="POService" service-name="ns3:POServicePLink"/>
+        <endpoint display-name="POConfirmPLink" endpoint-name="confirmPORole_myRole" file-path="POService.bpel" interface-name="ns5:POConfirmPortType" name="endpoint3" process-name="POService" service-name="ns3:POConfirmPLink"/>
+        <endpoint display-name="POCancelPLink" endpoint-name="cancelPORole_myRole" file-path="POService.bpel" interface-name="ns5:POCancelPortType" name="endpoint4" process-name="POService" service-name="ns3:POCancelPLink"/>
+        <endpoint display-name="requestInventoryPLink" endpoint-name="inventoryService_partnerRole" file-path="POService.bpel" interface-name="ns2:inventoryPortType" name="endpoint5" process-name="POService" service-name="ns3:requestInventoryPLink"/>
+        <endpoint endpoint-name="POCancelPort" interface-name="ns5:POCancelPortType" name="endpoint6" service-name="ns5:POStatusService"/>
+        <endpoint endpoint-name="POConfirmPort" interface-name="ns5:POConfirmPortType" name="endpoint7" service-name="ns5:POStatusService"/>
+        <endpoint endpoint-name="inventoryServicePort" interface-name="ns2:inventoryPortType" name="endpoint8" service-name="ns2:inventoryService"/>
+        <endpoint endpoint-name="purchaseOrderPort" interface-name="ns4:purchaseOrderPT" name="endpoint9" service-name="ns4:purchaseOrderService"/>
     </endpoints>
     <service-units>
-        <service-engine-service-unit artifacts-zip="BluePrint4.jar" component-name="sun-bpel-engine" defined="true" description="This represents the Application Sub-Assembly" internal="true" name="BluePrint4Application-BluePrint4" unit-name="BluePrint4" unknown="false" x="-1" y="-1">
-            <provides endpoint="endpoint5"/>
-            <provides endpoint="endpoint6"/>
-            <provides endpoint="endpoint7"/>
-            <provides endpoint="endpoint8"/>
-            <consumes endpoint="endpoint9"/>
+        <service-engine-service-unit artifacts-zip="Blueprint4.jar" component-name="sun-bpel-engine" defined="true" description="Represents this Service Unit" internal="true" name="Blueprint4Application-Blueprint4" unit-name="Blueprint4" unknown="false" x="159" y="99">
+            <provides endpoint="endpoint1"/>
+            <provides endpoint="endpoint2"/>
+            <provides endpoint="endpoint3"/>
+            <provides endpoint="endpoint4"/>
+            <consumes endpoint="endpoint5"/>
         </service-engine-service-unit>
-        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="BluePrint4Application-sun-http-binding" unit-name="sun-http-binding">
+        <binding-component-service-unit artifacts-zip="sun-http-binding.jar" component-name="sun-http-binding" description="Represents this Service Unit" name="Blueprint4Application-sun-http-binding" unit-name="sun-http-binding">
             <ports>
-                <port x="0" y="-1">
-                    <link xlink:href="../jbiServiceUnits/BluePrint4/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService']/port[@name='inventoryServicePort'])" xlink:type="simple"/>
-                    <consumes endpoint="endpoint3"/>
-                    <provides endpoint="endpoint3"/>
+                <port x="68" y="261">
+                    <link xlink:href="../jbiServiceUnits/Blueprint4/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService']/port[@name='inventoryServicePort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint8"/>
+                    <provides endpoint="endpoint8"/>
                 </port>
-                <port x="0" y="-1">
-                    <link xlink:href="../jbiServiceUnits/BluePrint4/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
-                    <consumes endpoint="endpoint4"/>
-                    <provides endpoint="endpoint4"/>
+                <port x="68" y="187">
+                    <link xlink:href="../jbiServiceUnits/Blueprint4/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService']/port[@name='purchaseOrderPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint9"/>
+                    <provides endpoint="endpoint9"/>
                 </port>
-                <port x="0" y="-1">
-                    <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService']/port[@name='POConfirmPort'])" xlink:type="simple"/>
-                    <consumes endpoint="endpoint1"/>
-                    <provides endpoint="endpoint1"/>
+                <port x="68" y="113">
+                    <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService']/port[@name='POConfirmPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint7"/>
+                    <provides endpoint="endpoint7"/>
                 </port>
-                <port x="0" y="-1">
-                    <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService']/port[@name='POCancelPort'])" xlink:type="simple"/>
-                    <consumes endpoint="endpoint2"/>
-                    <provides endpoint="endpoint2"/>
+                <port x="68" y="39">
+                    <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService']/port[@name='POCancelPort'])" xlink:type="simple"/>
+                    <consumes endpoint="endpoint6"/>
+                    <provides endpoint="endpoint6"/>
                 </port>
             </ports>
         </binding-component-service-unit>
     </service-units>
     <connections>
-        <connection consumer="endpoint1" provider="endpoint7" state="unchanged"/>
-        <connection consumer="endpoint2" provider="endpoint8" state="unchanged"/>
-        <connection consumer="endpoint3" provider="endpoint5" state="unchanged"/>
-        <connection consumer="endpoint9" provider="endpoint5" state="unchanged"/>
-        <connection consumer="endpoint4" provider="endpoint6" state="unchanged"/>
+        <connection consumer="endpoint6" provider="endpoint4" state="unchanged"/>
+        <connection consumer="endpoint7" provider="endpoint3" state="unchanged"/>
+        <connection consumer="endpoint8" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint5" provider="endpoint1" state="unchanged"/>
+        <connection consumer="endpoint9" provider="endpoint2" state="unchanged"/>
     </connections>
     <porttypes>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/InventoryService.wsdl#xpointer(/definitions/portType[@name='inventoryPortType'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POService.wsdl#xpointer(/definitions/portType[@name='purchaseOrderPT'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/portType[@name='POConfirmPortType'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/portType[@name='POCancelPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/InventoryService.wsdl#xpointer(/definitions/portType[@name='inventoryPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POService.wsdl#xpointer(/definitions/portType[@name='purchaseOrderPT'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/portType[@name='POConfirmPortType'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/portType[@name='POCancelPortType'])" xlink:type="simple"/>
     </porttypes>
     <bindings>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/InventoryService.wsdl#xpointer(/definitions/binding[@name='inventoryBinding'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POService.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/binding[@name='POConfirmBinding'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/binding[@name='POCancelBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/InventoryService.wsdl#xpointer(/definitions/binding[@name='inventoryBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POService.wsdl#xpointer(/definitions/binding[@name='purchaseOrderBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/binding[@name='POConfirmBinding'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/binding[@name='POCancelBinding'])" xlink:type="simple"/>
     </bindings>
     <services>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
-        <link xlink:href="../jbiServiceUnits/BluePrint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/InventoryService.wsdl#xpointer(/definitions/service[@name='inventoryService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POService.wsdl#xpointer(/definitions/service[@name='purchaseOrderService'])" xlink:type="simple"/>
+        <link xlink:href="../jbiServiceUnits/Blueprint4/POStatus.wsdl#xpointer(/definitions/service[@name='POStatusService'])" xlink:type="simple"/>
     </services>
     <regions>
         <region name="WSDL Endpoints" width="150"/>
