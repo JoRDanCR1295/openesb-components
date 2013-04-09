@@ -50,6 +50,7 @@ import com.sun.jbi.restbc.jbiadapter.util.PathUtil;
 import com.sun.jbi.restbc.jbiadapter.util.PropertiesUtil;
 import com.sun.jbi.restbc.jbiadapter.wsdl.RestOperation;
 import com.sun.jersey.api.uri.UriTemplate;
+import javax.jbi.messaging.Fault;
 
 /**
  * InboundDelegator.java
@@ -285,16 +286,31 @@ public class InboundDelegator {
         } else if (msgEx instanceof InOut) {
             InOut inout = (InOut) msgEx;
             if (inout.getStatus() == ExchangeStatus.ACTIVE) {
-                ResponseBuilder responseBuilder = Response.ok();
+                ResponseBuilder responseBuilder;
+                NormalizedMessage replyMsg;
                 
-                NormalizedMessage replyMsg = inout.getOutMessage();
+                // https://openesb.atlassian.net/browse/ESBCOMP-24
+                // When we have a fault, set the response using the status code
+                // and use the fault message to set the payload of the response
+                if (inout.getOutMessage() != null) {
+                    responseBuilder = Response.ok();
+                    replyMsg = inout.getOutMessage();
+                } else {
+                    // TODO: Be able to map fault with HTTP error code
+                    
+                    // By default, set HTTP error code to 500
+                    // Can be modified using status NM property
+                    responseBuilder = Response.serverError();
+                    replyMsg = inout.getFault();
+                }
+                
                 Object responsePayload = JbiMessageUtil.getPayloadFromWrappedMsg(replyMsg);
-                
                 boolean isContentTypeSet = false;
+                
                 if (responsePayload != null) { // NOI18N
                     if (responsePayload instanceof Source) {
                         Source xmlPayload = (Source) responsePayload;
-                        
+
                         List<MediaType> acceptableMediaTypes = headers.getAcceptableMediaTypes();
                         if (acceptableMediaTypes.size() == 0) {
                             // if accept header not present, return entity as XML
@@ -354,7 +370,7 @@ public class InboundDelegator {
                             responseBuilder.entity("");
                         }
                     }
-                    
+
                     if (!isContentTypeSet) {
                         String contentType = PropertiesUtil.safeGetProperty(replyMsg, NMProps.NM_RESPONSE_CONTENT_TYPE_PROP);
                         if (contentType.length() > 0) {
@@ -369,9 +385,9 @@ public class InboundDelegator {
                         }
                     }
                 }
-                
+
                 Map<String, String> responseHeaderMap = NMPropertiesUtil.getDynamicNMProperties(replyMsg, NMProps.NM_RESPONSE_HEADERS_PROP);
-                
+
                 // set the headers on the response
                 for (Map.Entry<String, String> header : responseHeaderMap.entrySet()) {
                     if (header.getKey().equalsIgnoreCase("Content-Type")) { // NOI18N
@@ -382,13 +398,13 @@ public class InboundDelegator {
                     }
                     responseBuilder.header(header.getKey(), header.getValue());
                 }
-                
+
                 // set the status if needed
                 String statusStr = PropertiesUtil.safeGetProperty(replyMsg, NMProps.NM_RESPONSE_STATUS_PROP);
                 if (statusStr.length() > 0) {
                     responseBuilder.status(Integer.parseInt(statusStr));
                 }
-                
+
                 // set location if needed
                 String locationStr = PropertiesUtil.safeGetProperty(replyMsg, NMProps.NM_RESPONSE_URL_PROP);
                 if (locationStr.length() > 0) {
