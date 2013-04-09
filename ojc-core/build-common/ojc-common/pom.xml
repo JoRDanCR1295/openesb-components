@@ -104,7 +104,7 @@
                             <artifactId>tools</artifactId>
                             <version>${java.version}</version>
                             <scope>system</scope>
-                            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+                            <systemPath>${toolsjar}</systemPath>
                         </dependency>
 	    
 		       <dependency>
@@ -601,6 +601,30 @@ java.lang.NoSuchMethodError: org.codehaus.plexus.util.cli.Commandline.createArg(
         <I18N_XML_TASK_CLASS>net.java.hulp.i18n.buildtools.I18nXmlTask</I18N_XML_TASK_CLASS>
         <I18NTASK_VERSION>2.1-SNAPSHOT</I18NTASK_VERSION>
         <I18NTASK_JAR>${maven.repo.local}/net/java/hulp/i18ntask/net.java.hulp.i18ntask/${I18NTASK_VERSION}/net.java.hulp.i18ntask-${I18NTASK_VERSION}.jar</I18NTASK_JAR>
-
     </properties>
+    
+    <profiles>
+        <profile>
+            <id>default-java-profile</id>
+            <activation>
+                <file>
+                    <exists>${java.home}/../lib/tools.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+            </properties>
+        </profile>
+        <profile>
+            <id>macos-java-profile</id>
+            <activation>
+                <file>
+                    <exists>${java.home}/../Classes/classes.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
+            </properties>
+        </profile>
+    </profiles>
 </project>
