@@ -111,7 +111,7 @@ public class PatternWhiteSpaceTokenizer implements TokenizerFactory{
          : group( matcher, str, group );
          
        final Iterator<Token> iter = tokens.iterator();
-       return new Tokenizer() {
+       return new Tokenizer(input) {
          @Override
          public Token next() throws IOException {
            if( iter.hasNext() ) {
