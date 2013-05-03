@@ -113,6 +113,14 @@ public class IEPAdminMBeanImplTest {
         Iterator iter = keys.iterator();
         
         String fKey = (String)iter.next();
+        assertEquals(fKey,"id");
+        assertEquals((String)map.get(fKey),"o1");
+        
+        fKey = (String)iter.next();
+        assertEquals(fKey,"name");
+        assertEquals((String)map.get(fKey),"AttributeBasedWindow0");
+        
+        fKey = (String)iter.next();
         assertEquals(fKey,"attribute");
         assertEquals((String)map.get(fKey),"value");
         
