@@ -81,6 +81,8 @@ public class JBITaskUtils {
             }
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setNamespaceAware(true);
+            
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             InputSource is = new InputSource(new StringReader(elementString));
             return documentBuilder.parse(is);
