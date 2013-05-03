@@ -331,7 +331,10 @@ public class NameMatcher {
         NameMatcher.patternList.add("%z%z%z%z%z==>%z%z%z%z");
         //NameMatcher.patternList.add("%z%z%z%z%z%z==>....+");
 
-        NameMatcher.patternList.add("%Z==>-[0-9]{4}");
+        // DBY : RFC822TimeZone:
+        //      Sign (- or +) TwoDigitHours Minutes
+        //      TwoDigitHours must be between 00 and 23
+        NameMatcher.patternList.add("%Z==>(-|\\\\+)[0-9]{4}");
         //NameMatcher.patternList.add("%Z repeats <n>1) times==>-[0-9]{4}");
         NameMatcher.patternList.add("%Z%Z==>%Z");
         //NameMatcher.patternList.add("%Z%Z%Z%Z%Z%Z==>-[0-9]{4}");
