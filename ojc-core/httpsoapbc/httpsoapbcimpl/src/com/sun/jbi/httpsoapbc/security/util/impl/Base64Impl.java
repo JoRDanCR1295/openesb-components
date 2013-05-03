@@ -35,10 +35,14 @@ import com.sun.jbi.httpsoapbc.security.util.api.Base64;
 public class Base64Impl implements Base64 {
 
     public String decode(String data) {
-        return getUTF8String(com.sun.org.apache.xerces.internal.impl.dv.util.Base64.decode(data));
+        return new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(data));
+        //return getUTF8String(com.sun.org.apache.xerces.internal.impl.dv.util.Base64.decode(data));
     }
 
     public String encode(String data) {
+        return javax.xml.bind.DatatypeConverter.printBase64Binary(getUTF8Bytes(data));
+        
+        /*
         String encoded = com.sun.org.apache.xerces.internal.impl.dv.util.Base64.encode(getUTF8Bytes(data));
         //This encoder adds a new line character at the end of the base64 encoded data, so
         //remove this character before returning.
@@ -46,7 +50,7 @@ public class Base64Impl implements Base64 {
             encoded = encoded.substring(0, encoded.length() - 1);
         }
         
-        return encoded;
+        return encoded;*/
     }
         
     public static byte[] getUTF8Bytes(String data) {
