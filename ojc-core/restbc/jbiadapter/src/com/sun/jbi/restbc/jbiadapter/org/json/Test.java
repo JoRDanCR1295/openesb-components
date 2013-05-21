@@ -75,7 +75,11 @@ public class Test {
         try {     
             j = XML.toJSONObject("<![CDATA[This is a collection of test patterns and examples for org.json.]]>  Ignore the stuff past the end.  ");
             System.out.println(j.toString());
-
+            
+            s = "<reponse xmlns=\"http://wishlist.xxx.fr/esb/services\"><out xmlns=\"\">045</out></reponse>";
+            j = XML.toJSONObject(s);
+            System.out.println(j.toString(4));
+            
             s = "{     \"list of lists\" : [         [1, 2, 3],         [4, 5, 6],     ] }";
             j = new JSONObject(s);
             System.out.println(j.toString(4));
