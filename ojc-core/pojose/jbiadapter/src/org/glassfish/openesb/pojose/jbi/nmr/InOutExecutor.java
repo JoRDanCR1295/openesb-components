@@ -69,7 +69,7 @@ public class InOutExecutor extends BasePojoExecutor {
             // Ctx Txn. Set the Transaction context.
             if (provME.isTransacted()){
                 TransactionHelper.resumeTransaction(ctx.getJBIComponentContext().getTransactionManager(),
-                        provME.getProperty(provME.JTA_TRANSACTION_PROPERTY_NAME));
+                        provME);
             }
             
             Object[] args = getInputArguments(provME, m, opm);
@@ -106,7 +106,7 @@ public class InOutExecutor extends BasePojoExecutor {
 
             // Ctx Txn
             if (provME.isTransacted()){
-                TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager());
+                TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager(), provME);
             }
             pt.setExecutedOperation();
         }
@@ -159,7 +159,7 @@ public class InOutExecutor extends BasePojoExecutor {
             // Ctx Txn. Set the Transaction context.
             if (provME.isTransacted()){
                 TransactionHelper.resumeTransaction(ctx.getJBIComponentContext().getTransactionManager(),
-                        provME.getProperty(provME.JTA_TRANSACTION_PROPERTY_NAME));
+                        provME);
             }
             
             Object retObj = onDone.invoke(pojo, null);
@@ -192,7 +192,7 @@ public class InOutExecutor extends BasePojoExecutor {
             
             // Ctx Txn
             if (provME.isTransacted()){
-                TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager());
+                TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager(), provME);
             }
         }
 

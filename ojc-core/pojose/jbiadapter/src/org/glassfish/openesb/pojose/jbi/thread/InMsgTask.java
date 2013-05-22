@@ -208,7 +208,7 @@ public class InMsgTask extends BaseTask {
                         // Ctx Txn
                         if (me.isTransacted()){
                             TransactionHelper.resumeTransaction(ctx.getJBIComponentContext().getTransactionManager(),
-                                    me.getProperty(me.JTA_TRANSACTION_PROPERTY_NAME));
+                                    me);
                         }
 
                         pojoObj = pc.newInstance();
@@ -227,7 +227,7 @@ public class InMsgTask extends BaseTask {
 
                         // Ctx Txn
                         if (me.isTransacted()){
-                            TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager());
+                            TransactionHelper.suspendTransaction(ctx.getJBIComponentContext().getTransactionManager(), me);
                         }
                     }
 

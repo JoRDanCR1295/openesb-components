@@ -172,7 +172,7 @@ public class ConsumerImpl implements Consumer{
         if (this.pojosME != null){
             if ((sendTxn) && (this.pojosME.isTransacted())){
                 suspendedTxn = TransactionHelper.suspendTransaction(
-                        transactionMngr);
+                        transactionMngr, out);
                 if (suspendedTxn != null){
                     out.setProperty(MessageExchange.JTA_TRANSACTION_PROPERTY_NAME,
                         this.pojosME.getProperty(MessageExchange.JTA_TRANSACTION_PROPERTY_NAME));
@@ -195,8 +195,8 @@ public class ConsumerImpl implements Consumer{
         return suspendedTxn;
     }
 
-    private void resumeTxn(Object txn){
-        TransactionHelper.resumeTransaction(transactionMngr, txn);
+    private void resumeTxn(Object txn, MessageExchange me){
+        TransactionHelper.resumeTransaction(transactionMngr, me);
     }
 
     /**
@@ -432,7 +432,7 @@ public class ConsumerImpl implements Consumer{
             }
         } finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, me);
             }
         }
 
@@ -508,7 +508,7 @@ public class ConsumerImpl implements Consumer{
             }
         } finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, me);
             }
         }
 
@@ -640,7 +640,7 @@ public class ConsumerImpl implements Consumer{
             }
         }finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, io);
             }
         }
     }
@@ -725,7 +725,7 @@ public class ConsumerImpl implements Consumer{
             }
         }finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, io);
             }
         }
     }
@@ -876,7 +876,7 @@ public class ConsumerImpl implements Consumer{
             }
         } finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, io);
             }
         }
 
@@ -1029,7 +1029,7 @@ public class ConsumerImpl implements Consumer{
             }
         } finally {
             if (suspTxn != null){
-                resumeTxn(suspTxn);
+                resumeTxn(suspTxn, io);
             }
         }
 
