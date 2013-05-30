@@ -82,7 +82,14 @@
         </delete>
     </target>
 
-    <target name="deploy" depends="xbean"/>
+    <target name="deploy" depends="proxy,xbean"/>
+
+    <target name="proxy" if="proxy.enabled">
+        <echo message="Setting proxy using host : ${proxy.host} and port : ${proxy.port}"/>
+
+        <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"
+            proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+    </target>
 
     <target name="sources" depends="dirs">
         <zip destfile="build/ar/xbeansrc.zip"
@@ -234,6 +241,7 @@
 
     <target name="default" depends="deploy"/>
     <target name="redeploy" depends="clean, deploy"/>
+
 
     <!-- oldxbean.jar target =========================================== -->
 
