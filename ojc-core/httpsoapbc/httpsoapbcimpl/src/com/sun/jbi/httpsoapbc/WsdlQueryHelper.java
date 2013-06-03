@@ -45,6 +45,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import com.ibm.wsdl.extensions.schema.SchemaConstants;
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.extensions.soap12.SOAP12Constants;
 import com.ibm.wsdl.factory.WSDLFactoryImpl;
 import com.ibm.wsdl.util.xml.DOMUtils;
 import com.ibm.wsdl.util.xml.QNameUtils;
@@ -178,6 +180,9 @@ public class WsdlQueryHelper {
         if (isWsdl) {
             try {
                 updateImportDom(doc.getDocumentElement());
+                
+                // ESBCOMP-34 : Bad location URL in soap address
+                updateSoapAddressDom(doc.getDocumentElement());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 System.out.println("Exception : " + ex);
@@ -493,6 +498,33 @@ public class WsdlQueryHelper {
             }
         }
     }
+    
+    private void updateSoapAddressDom(Element el) throws Exception {
+        Element tempEl = DOMUtils.getFirstChildElement(el);
+
+        for (; tempEl != null; tempEl = DOMUtils.getNextSiblingElement(tempEl)) {
+            QName tempElType = QNameUtils.newQName(tempEl);
+
+            if (Constants.Q_ELEM_SERVICE.equals(tempElType)) {
+                Element tempPortEl = DOMUtils.getFirstChildElement(tempEl);
+                
+                for (; tempPortEl != null; tempPortEl = DOMUtils.getNextSiblingElement(tempPortEl)) {
+                    QName tempPortElType = QNameUtils.newQName(tempPortEl);
+                    
+                    if (Constants.Q_ELEM_PORT.equals(tempPortElType)) {
+                        
+                        Element tempSoapEl = DOMUtils.getFirstChildElement(tempPortEl);
+                        QName tempSoapElType = QNameUtils.newQName(tempSoapEl);
+                        
+                        if (SOAPConstants.Q_ELEM_SOAP_ADDRESS.equals(tempSoapElType) ||
+                                SOAP12Constants.Q_ELEM_SOAP_ADDRESS.equals(tempSoapElType)) {
+                            updateSoapAddressDomReference(tempSoapEl);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private void updateSchemaDom(Element el) throws Exception {
         Element tempEl = DOMUtils.getFirstChildElement(el);
@@ -529,6 +561,19 @@ public class WsdlQueryHelper {
             String result = getResultUrl(locationURI);
 
             setAttribute(tempEl, SchemaConstants.ATTR_SCHEMA_LOCATION, result);
+
+        }
+    }
+    
+    private void updateSoapAddressDomReference(Element tempEl) throws Exception {
+        String locationURI = DOMUtils.getAttribute(tempEl, Constants.ATTR_LOCATION);
+        if (locationURI != null) {
+            if (mLog.isLoggable(Level.FINE)) {
+                mLog.log(Level.FINE, "nlocationURI = " + locationURI);
+            }
+            String result = getResultUrl(locationURI);
+
+            setAttribute(tempEl, Constants.ATTR_LOCATION, result);
 
         }
     }
