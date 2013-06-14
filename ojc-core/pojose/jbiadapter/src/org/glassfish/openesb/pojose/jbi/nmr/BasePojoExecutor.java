@@ -27,9 +27,9 @@
  *
  * END_HEADER - DO NOT EDIT
  */
-
 package org.glassfish.openesb.pojose.jbi.nmr;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -39,7 +39,11 @@ import javax.jbi.messaging.InOut;
 import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.NormalizedMessage;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import org.glassfish.openesb.pojose.api.ErrorMessage;
 import org.glassfish.openesb.pojose.api.FaultMessage;
@@ -60,69 +64,75 @@ import org.w3c.dom.Node;
  *
  * @author gpatil
  */
-public abstract class BasePojoExecutor implements POJOExecutor{
-    private static final String IN_MSG = "in" ; //NOI18N
-    private static final String OUT_MSG = "out" ; //NOI18N
-    
+public abstract class BasePojoExecutor implements POJOExecutor {
+
+    private static final String IN_MSG = "in"; //NOI18N
+    private static final String OUT_MSG = "out"; //NOI18N
     protected POJOClassMetadata meta;
     protected OperationMetadata opm;
     protected POJOComponentContext ctx;
     protected Object pojo;
-
     private static Logger logger = Logger.getLogger(BasePojoExecutor.class.getName());
-    
+
     public BasePojoExecutor(POJOComponentContext ctx, POJOClassMetadata classMeta,
-            Object pojo){
+            Object pojo) {
         this.ctx = ctx;
         this.meta = classMeta;
         this.opm = classMeta.getOperationMetadata();
         this.pojo = pojo;
     }
-    
+
     protected Object[] getInputArguments(MessageExchange me, Method m,
-            OperationMetadata opm) throws Exception{
+            OperationMetadata opm) throws Exception {
         Class[] pt = m.getParameterTypes();
-        if (pt.length == 1){
+        if (pt.length == 1) {
             Class fp = pt[0];
             Object[] ret = new Object[1];
             NormalizedMessage inMsg = me.getMessage(IN_MSG);
-            
-            if (fp.isAssignableFrom(MessageExchange.class)){
+
+            if (fp.isAssignableFrom(MessageExchange.class)) {
                 // Argument is MessageExchange
                 ret[0] = me;
-            } else if (fp.isAssignableFrom(NormalizedMessage.class)){
+            } else if (fp.isAssignableFrom(NormalizedMessage.class)) {
                 // Argument is NormalizedMessage
                 ret[0] = inMsg;
-            }else if (fp.isAssignableFrom(Source.class)){
+            } else if (fp.isAssignableFrom(Source.class)) {
                 // Argument is Source
                 ret[0] = Util.jbiMessage2Source(inMsg.getContent());
-            }else if (fp.isAssignableFrom(Node.class)){
+            } else if (fp.isAssignableFrom(Node.class)) {
                 // Argument is Node                
                 ret[0] = Util.jbiMessage2Node(inMsg.getContent());
-            }else if (fp.getName().equals(Document.class.getName())){
+            } else if (fp.getName().equals(Document.class.getName())) {
                 // Argument is Document
                 ret[0] = Util.jbiMessage2Document(inMsg.getContent());
-            }else if (fp.isAssignableFrom(String.class)){
+            } else if (fp.isAssignableFrom(String.class)) {
                 // Argument is String
                 ret[0] = Util.jbiMessage2String(inMsg.getContent());
-            } else if (fp.isAssignableFrom(byte[].class)){
+            } else if (fp.isAssignableFrom(byte[].class)) {
                 // Argument is byte[]
+            } else {
+                Annotation ann = fp.getAnnotation(XmlRootElement.class);
+                if (ann != null) {
+                    JAXBContext jaxbc = JAXBContext.newInstance(fp);
+                    ret[0] = jaxbc.createUnmarshaller().unmarshal(
+                            Util.jbiMessage2Node(inMsg.getContent()));
+                }
             }
             return ret;
-        } else if (pt.length > 1){
+        } else if (pt.length > 1) {
             // just pass all argument as null.
             Object[] ret = new Object[pt.length];
             return ret;
         }
-        
+
         return null;
     }
 
     protected Object[] getOnReplyInputArguments(MessageExchange meo, Method m)
-                                                    throws Exception{
+            throws Exception {
         Class[] pt = m.getParameterTypes();
         InOut me = (InOut) meo;
-        if (pt.length == 2){
+        if (pt.length == 2) {
             Object[] ret = new Object[2];
             Class fp = pt[1];
             // TODO validate first parameter must be of type ServiceEndpoint
@@ -130,29 +140,36 @@ public abstract class BasePojoExecutor implements POJOExecutor{
 
             NormalizedMessage outMsg = me.getOutMessage();
 
-            if (fp.isAssignableFrom(MessageExchange.class)){
+            if (fp.isAssignableFrom(MessageExchange.class)) {
                 // Argument is MessageExchange
                 ret[1] = me;
-            } else if (fp.isAssignableFrom(NormalizedMessage.class)){
+            } else if (fp.isAssignableFrom(NormalizedMessage.class)) {
                 // Argument is NormalizedMessage
                 ret[1] = outMsg;
-            }else if (fp.isAssignableFrom(Source.class)){
+            } else if (fp.isAssignableFrom(Source.class)) {
                 // Argument is Source
                 ret[1] = Util.jbiMessage2Source(outMsg.getContent());
-            }else if (fp.isAssignableFrom(Node.class)){
+            } else if (fp.isAssignableFrom(Node.class)) {
                 // Argument is Node
                 ret[1] = Util.jbiMessage2Node(outMsg.getContent());
-            }else if (fp.getName().equals(Document.class.getName())){
+            } else if (fp.getName().equals(Document.class.getName())) {
                 // Argument is Document
                 ret[1] = Util.jbiMessage2Document(outMsg.getContent());
-            }else if (fp.isAssignableFrom(String.class)){
+            } else if (fp.isAssignableFrom(String.class)) {
                 // Argument is String
                 ret[1] = Util.jbiMessage2String(outMsg.getContent());
-            } else if (fp.isAssignableFrom(byte[].class)){
+            } else if (fp.isAssignableFrom(byte[].class)) {
                 // Argument is byte[]
+            } else {
+                Annotation ann = fp.getAnnotation(XmlRootElement.class);
+                if (ann != null) {
+                    JAXBContext jaxbc = JAXBContext.newInstance(fp);
+                    ret[0] = jaxbc.createUnmarshaller().unmarshal(
+                            Util.jbiMessage2Node(outMsg.getContent()));
+                }
             }
             return ret;
-        } else if (pt.length > 2){
+        } else if (pt.length > 2) {
             // just pass all argument as null.
             Object[] ret = new Object[pt.length];
             return ret;
@@ -162,23 +179,23 @@ public abstract class BasePojoExecutor implements POJOExecutor{
     }
 
     protected Object[] getOnErrorInputArguments(MessageExchange me, Method m)
-                                                    throws Exception{
+            throws Exception {
         Class[] pt = m.getParameterTypes();
-        if (pt.length == 2){
+        if (pt.length == 2) {
             Object[] ret = new Object[2];
             Class fp = pt[1];
             // TODO validate first parameter must be of type ServiceEndpoint
             ret[0] = me.getEndpoint();
 
-            if (fp.isAssignableFrom(MessageExchange.class)){
+            if (fp.isAssignableFrom(MessageExchange.class)) {
                 // Argument is MessageExchange
                 ret[1] = me;
-            } else if (fp.isAssignableFrom(Exception.class)){
+            } else if (fp.isAssignableFrom(Exception.class)) {
                 // Argument is NormalizedMessage
                 ret[1] = me.getError();
             }
             return ret;
-        } else if (pt.length > 2){
+        } else if (pt.length > 2) {
             // just pass all argument as null.
             Object[] ret = new Object[pt.length];
             return ret;
@@ -188,17 +205,17 @@ public abstract class BasePojoExecutor implements POJOExecutor{
     }
 
     protected Object[] getOnFaultInputArguments(MessageExchange me, Method m)
-                                                    throws Exception{
+            throws Exception {
         Class[] pt = m.getParameterTypes();
-        if (pt.length == 2){
+        if (pt.length == 2) {
             Object[] ret = new Object[2];
             Class fp = pt[1];
             // TODO validate first parameter must be of type ServiceEndpoint
             ret[0] = me.getEndpoint();
             ret[1] = me;
-            
+
             return ret;
-        } else if (pt.length > 2){
+        } else if (pt.length > 2) {
             // just pass all argument as null.
             Object[] ret = new Object[pt.length];
             return ret;
@@ -208,42 +225,42 @@ public abstract class BasePojoExecutor implements POJOExecutor{
     }
 
     protected void updateOutMessage(MessageExchange me, Object ret,
-            OperationMetadata opm ){
+            OperationMetadata opm) {
         this.updateOutMessage(me, ret, opm, opm.getMethod().getReturnType());
     }
 
     protected void updateOutMessage(MessageExchange me, Object ret,
-            OperationMetadata opm, Method onDone ) throws Exception {
+            OperationMetadata opm, Method onDone) throws Exception {
         this.updateOutMessage(me, ret, opm, onDone.getReturnType());
     }
 
     protected void updateOutMessage(MessageExchange me, Object ret,
-            OperationMetadata opm, Class retType){
+            OperationMetadata opm, Class retType) {
 
         try {
-            if (retType == Void.TYPE){
+            if (retType == Void.TYPE) {
                 me.setStatus(ExchangeStatus.DONE);
-            } else if (MessageExchange.class.isAssignableFrom(retType)){
+            } else if (MessageExchange.class.isAssignableFrom(retType)) {
                 //nop
-            }else if (NormalizedMessage.class.isAssignableFrom(retType)){
+            } else if (NormalizedMessage.class.isAssignableFrom(retType)) {
                 NormalizedMessage out = (NormalizedMessage) ret;
                 me.setMessage(out, OUT_MSG);
-            }else if (Source.class.isAssignableFrom(retType)){
+            } else if (Source.class.isAssignableFrom(retType)) {
                 Source src = (Source) ret;
                 Source retSrc = null;
-                
+
                 if (!Constants.ANNOTATION_NULL_VAL.equals(opm.getOperation()
-                        .outMessageTypeQN())){
+                        .outMessageTypeQN())) {
                     QName qn = QName.valueOf(opm.getOperation()
                             .outMessageTypeQN());
                     retSrc = Util.source2jbiMessage(src, qn.getNamespaceURI(),
                             qn.getLocalPart());
                 } else {
-                    if ( (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageType())) || 
-                          (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageTypeNS()))){
-                        retSrc = Util.source2jbiMessage(src, 
+                    if ((!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageType()))
+                            || (!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageTypeNS()))) {
+                        retSrc = Util.source2jbiMessage(src,
                                 opm.getOperation().outMessageTypeNS(),
                                 opm.getOperation().outMessageType());
                     } else {
@@ -254,86 +271,121 @@ public abstract class BasePojoExecutor implements POJOExecutor{
                 NormalizedMessage out = me.createMessage();
                 out.setContent(retSrc);
                 me.setMessage(out, OUT_MSG);
-            }  else if (Document.class.isAssignableFrom(retType)){
+            } else if (Document.class.isAssignableFrom(retType)) {
                 Document node = (Document) ret;
                 Source retSrc = null;
 
                 if (!Constants.ANNOTATION_NULL_VAL.equals(opm.getOperation()
-                        .outMessageTypeQN())){
+                        .outMessageTypeQN())) {
                     QName qn = QName.valueOf(opm.getOperation()
                             .outMessageTypeQN());
                     retSrc = Util.doc2WrappedSource(node, qn.getNamespaceURI(),
                             qn.getLocalPart());
                 } else {
-                    if ( (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageType())) ||
-                          (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageTypeNS()))){
+                    if ((!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageType()))
+                            || (!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageTypeNS()))) {
                         retSrc = Util.doc2WrappedSource(node,
                                 opm.getOperation().outMessageTypeNS(),
                                 opm.getOperation().outMessageType());
-                    }else{
+                    } else {
                         retSrc = Util.doc2WrappedSource(node);
                     }
                 }
                 NormalizedMessage out = me.createMessage();
                 out.setContent(retSrc);
                 me.setMessage(out, OUT_MSG);
-            } else if (Node.class.isAssignableFrom(retType)){
+            } else if (Node.class.isAssignableFrom(retType)) {
                 Node node = (Node) ret;
                 Source retSrc = null;
 
                 if (!Constants.ANNOTATION_NULL_VAL.equals(opm.getOperation()
-                        .outMessageTypeQN())){
+                        .outMessageTypeQN())) {
                     QName qn = QName.valueOf(opm.getOperation()
                             .outMessageTypeQN());
                     retSrc = Util.node2WrappedSource(node, qn.getNamespaceURI(),
                             qn.getLocalPart());
-                } else {                
-                    if ( (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageType())) || 
-                          (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageTypeNS()))){
+                } else {
+                    if ((!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageType()))
+                            || (!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageTypeNS()))) {
                         retSrc = Util.node2WrappedSource(node,
                                 opm.getOperation().outMessageTypeNS(),
                                 opm.getOperation().outMessageType());
-                    }else{
+                    } else {
                         retSrc = Util.node2WrappedSource(node);
                     }
                 }
                 NormalizedMessage out = me.createMessage();
                 out.setContent(retSrc);
                 me.setMessage(out, OUT_MSG);
-            } else if (String.class.isAssignableFrom(retType)){
+            } else if (String.class.isAssignableFrom(retType)) {
                 String outStr = (String) ret;
                 Source retSrc = null;
                 if (!Constants.ANNOTATION_NULL_VAL.equals(opm.getOperation()
-                        .outMessageTypeQN())){
+                        .outMessageTypeQN())) {
                     QName qn = QName.valueOf(opm.getOperation()
                             .outMessageTypeQN());
                     retSrc = Util.string2WrappedSource(outStr, qn.getNamespaceURI(),
                             qn.getLocalPart());
-                } else {                
-                    if ( (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageType())) || 
-                          (!Constants.ANNOTATION_NULL_VAL.
-                            equals(opm.getOperation().outMessageTypeNS()))){
-                        retSrc = Util.string2WrappedSource(outStr, 
+                } else {
+                    if ((!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageType()))
+                            || (!Constants.ANNOTATION_NULL_VAL.
+                            equals(opm.getOperation().outMessageTypeNS()))) {
+                        retSrc = Util.string2WrappedSource(outStr,
                                 opm.getOperation().outMessageTypeNS(),
                                 opm.getOperation().outMessageType());
-                    }else{
+                    } else {
                         retSrc = Util.string2WrapperdSource(outStr);
                     }
                 }
                 NormalizedMessage out = me.createMessage();
-                out.setContent(retSrc);                
+                out.setContent(retSrc);
                 me.setMessage(out, OUT_MSG);
+            } else {
+                Annotation ann = retType.getAnnotation(XmlRootElement.class);
+                if (ann != null) {
+                    JAXBContext jaxbc = JAXBContext.newInstance(retType);
+                    DocumentBuilderFactory factory =
+                            DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder =
+                            factory.newDocumentBuilder();
+                    Document node = builder.newDocument();
+                    jaxbc.createMarshaller().marshal(ret, node);
+
+                    Source retSrc = null;
+
+                    if (!Constants.ANNOTATION_NULL_VAL.equals(opm.getOperation()
+                            .outMessageTypeQN())) {
+                        QName qn = QName.valueOf(opm.getOperation()
+                                .outMessageTypeQN());
+                        retSrc = Util.doc2WrappedSource(node, qn.getNamespaceURI(),
+                                qn.getLocalPart());
+                    } else {
+                        if ((!Constants.ANNOTATION_NULL_VAL.
+                                equals(opm.getOperation().outMessageType()))
+                                || (!Constants.ANNOTATION_NULL_VAL.
+                                equals(opm.getOperation().outMessageTypeNS()))) {
+                            retSrc = Util.doc2WrappedSource(node,
+                                    opm.getOperation().outMessageTypeNS(),
+                                    opm.getOperation().outMessageType());
+                        } else {
+                            retSrc = Util.doc2WrappedSource(node);
+                        }
+                    }
+                    NormalizedMessage out = me.createMessage();
+                    out.setContent(retSrc);
+                    me.setMessage(out, OUT_MSG);
+                }
             }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
             try {
                 me.setError(ex);
-            }catch (Exception ex1){
+            } catch (Exception ex1) {
                 logger.log(Level.SEVERE, null, ex1);
             }
         }
@@ -345,7 +397,6 @@ public abstract class BasePojoExecutor implements POJOExecutor{
      * @param provME
      * @param consME
      */
-
     public void executeOnReply(MessageExchange provME, MessageExchange consME) {
         Exception exp = null;
 
@@ -357,49 +408,49 @@ public abstract class BasePojoExecutor implements POJOExecutor{
             // Ctx CL
             Thread.currentThread().setContextClassLoader(pojo.getClass().getClassLoader());
             // Ctx Txn. Set the Transaction context.
-            if (provME.isTransacted()){
+            if (provME.isTransacted()) {
                 TransactionHelper.checkAndResumeForConsumedME(ctx.getJBIComponentContext().getTransactionManager(),
                         provME.getProperty(provME.JTA_TRANSACTION_PROPERTY_NAME), consME, (CallTracker) pt);
             }
 
             Object[] args = getOnReplyInputArguments(consME, onReply);
             onReply.invoke(pojo, args);
-        } catch (InvocationTargetException ite){
+        } catch (InvocationTargetException ite) {
             Throwable cause = ite.getCause();
-            if (cause instanceof ErrorMessage){
+            if (cause instanceof ErrorMessage) {
                 exp = (ErrorMessage) cause;
-            } else if (cause instanceof FaultMessage){
+            } else if (cause instanceof FaultMessage) {
                 exp = (MessageException) cause;
-            }else if (cause instanceof Exception){
+            } else if (cause instanceof Exception) {
                 exp = (Exception) cause;
             } else {
                 exp = new Exception(cause);
             }
             logger.log(Level.SEVERE, null, cause);
-        } catch (Throwable ex){
-            if (ex instanceof Exception){
+        } catch (Throwable ex) {
+            if (ex instanceof Exception) {
                 exp = (Exception) ex;
             } else {
                 exp = new Exception(ex);
             }
         } finally {
             // Ctx CL
-            if (thdCtxCl != null){
+            if (thdCtxCl != null) {
                 Thread.currentThread().setContextClassLoader(thdCtxCl);
             }
 
             // Ctx Txn
-            if (provME.isTransacted()){
+            if (provME.isTransacted()) {
                 TransactionHelper.suspendIfStartedForConsumedME(
                         ctx.getJBIComponentContext().getTransactionManager(),
                         consME, (CallTracker) pt);
             }
         }
-        
+
         try {
             consME.setStatus(ExchangeStatus.DONE);
             ctx.getDC().send(consME);
-            if (logger.isLoggable(Level.FINEST)){
+            if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("Sent DONE for consumed MEX:" + consME.getExchangeId()); //NOI18N
             }
 
@@ -410,24 +461,23 @@ public abstract class BasePojoExecutor implements POJOExecutor{
         }
 
         try {
-            if (exp == null){
+            if (exp == null) {
                 // Valid onDone is present.
-                if (pt.canExecuteOnDone()){
-                    if (pt.tryAcquireLockForOnDoneExec()){
-                        try{
+                if (pt.canExecuteOnDone()) {
+                    if (pt.tryAcquireLockForOnDoneExec()) {
+                        try {
                             //##### TODO Remove ME
                             //Exception ex = new Exception("Got lock to execute OnDone!!!");
                             //ex.printStackTrace();
                             //##### TODO Remove ME - End
 
                             this.executeOnDone(provME);
-                        }finally {
+                        } finally {
                             pt.releaseLockForOnDoneExec();
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 provME.setError(exp);
                 ctx.getDC().send(provME);
             }
@@ -435,7 +485,7 @@ public abstract class BasePojoExecutor implements POJOExecutor{
             exp = ex;
             logger.log(Level.SEVERE, null, ex);
         } finally {
-            if (exp != null){
+            if (exp != null) {
                 pt.setDoneWithProvisioning();
             }
         }
@@ -454,42 +504,42 @@ public abstract class BasePojoExecutor implements POJOExecutor{
         ClassLoader thdCtxCl = Thread.currentThread().getContextClassLoader();
 
         if ((this.meta.getOnErrorMetadata() != null)
-                && (this.meta.getOnErrorMetadata().getMethod() != null)){
+                && (this.meta.getOnErrorMetadata().getMethod() != null)) {
             try {
                 Method onError = this.meta.getOnErrorMetadata().getMethod();
                 // Ctx CL
                 Thread.currentThread().setContextClassLoader(pojo.getClass().getClassLoader());
-                
+
                 // Ctx Txn. Set the Transaction context.
-                if (provME.isTransacted()){
+                if (provME.isTransacted()) {
                     TransactionHelper.checkAndResumeForConsumedME(ctx.getJBIComponentContext().getTransactionManager(),
                             provME.getProperty(provME.JTA_TRANSACTION_PROPERTY_NAME), consME, (CallTracker) pt);
                 }
 
                 Object[] args = getOnErrorInputArguments(consME, onError);
                 onError.invoke(pojo, args);
-            } catch (InvocationTargetException ite){
+            } catch (InvocationTargetException ite) {
                 Throwable cause = ite.getCause();
-                if (cause instanceof ErrorMessage){
+                if (cause instanceof ErrorMessage) {
                     exp = (ErrorMessage) cause;
-                } else if (cause instanceof FaultMessage){
+                } else if (cause instanceof FaultMessage) {
                     exp = (MessageException) cause;
-                }else if (cause instanceof Exception){
+                } else if (cause instanceof Exception) {
                     exp = (Exception) cause;
                 } else {
                     exp = new Exception(cause);
                 }
                 logger.log(Level.SEVERE, null, cause);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 exp = ex;
             } finally {
                 // Ctx CL
-                if (thdCtxCl != null){
+                if (thdCtxCl != null) {
                     Thread.currentThread().setContextClassLoader(thdCtxCl);
                 }
 
                 // Ctx Txn
-                if (provME.isTransacted()){
+                if (provME.isTransacted()) {
                     TransactionHelper.suspendIfStartedForConsumedME(
                             ctx.getJBIComponentContext().getTransactionManager(),
                             consME, (CallTracker) pt);
@@ -504,13 +554,13 @@ public abstract class BasePojoExecutor implements POJOExecutor{
         }
 
         try {
-            if (exp == null){
+            if (exp == null) {
                 // Valid onDone is present.
-                if (pt.canExecuteOnDone()){
-                    if (pt.tryAcquireLockForOnDoneExec()){
-                        try{
+                if (pt.canExecuteOnDone()) {
+                    if (pt.tryAcquireLockForOnDoneExec()) {
+                        try {
                             this.executeOnDone(provME);
-                        }finally {
+                        } finally {
                             pt.releaseLockForOnDoneExec();
                         }
                     }
@@ -523,7 +573,7 @@ public abstract class BasePojoExecutor implements POJOExecutor{
             exp = ex;
             logger.log(Level.SEVERE, null, ex);
         } finally {
-            if (exp != null){
+            if (exp != null) {
                 pt.setDoneWithProvisioning();
             }
         }
@@ -536,42 +586,42 @@ public abstract class BasePojoExecutor implements POJOExecutor{
         ClassLoader thdCtxCl = Thread.currentThread().getContextClassLoader();
 
         if ((this.meta.getOnFaultMetadata() != null)
-                && (this.meta.getOnFaultMetadata().getMethod() != null)){
+                && (this.meta.getOnFaultMetadata().getMethod() != null)) {
             try {
                 Method onFault = this.meta.getOnFaultMetadata().getMethod();
                 // Ctx CL
                 Thread.currentThread().setContextClassLoader(pojo.getClass().getClassLoader());
 
                 // Ctx Txn. Set the Transaction context.
-                if (provME.isTransacted()){
+                if (provME.isTransacted()) {
                     TransactionHelper.checkAndResumeForConsumedME(ctx.getJBIComponentContext().getTransactionManager(),
                             provME.getProperty(provME.JTA_TRANSACTION_PROPERTY_NAME), consME, (CallTracker) pt);
                 }
 
                 Object[] args = getOnFaultInputArguments(consME, onFault);
                 onFault.invoke(pojo, args);
-            } catch (InvocationTargetException ite){
+            } catch (InvocationTargetException ite) {
                 Throwable cause = ite.getCause();
-                if (cause instanceof ErrorMessage){
+                if (cause instanceof ErrorMessage) {
                     exp = (ErrorMessage) cause;
-                } else if (cause instanceof FaultMessage){
+                } else if (cause instanceof FaultMessage) {
                     exp = (MessageException) cause;
-                }else if (cause instanceof Exception){
+                } else if (cause instanceof Exception) {
                     exp = (Exception) cause;
                 } else {
                     exp = new Exception(cause);
                 }
                 logger.log(Level.SEVERE, null, cause);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 exp = ex;
             } finally {
                 // Ctx CL
-                if (thdCtxCl != null){
+                if (thdCtxCl != null) {
                     Thread.currentThread().setContextClassLoader(thdCtxCl);
                 }
 
                 // Ctx Txn
-                if (provME.isTransacted()){
+                if (provME.isTransacted()) {
                     TransactionHelper.suspendIfStartedForConsumedME(
                             ctx.getJBIComponentContext().getTransactionManager(),
                             consME, (CallTracker) pt);
@@ -592,13 +642,13 @@ public abstract class BasePojoExecutor implements POJOExecutor{
         }
 
         try {
-            if (exp == null){
+            if (exp == null) {
                 // Valid onDone is present.
-                if (pt.canExecuteOnDone()){
-                    if (pt.tryAcquireLockForOnDoneExec()){
-                        try{
+                if (pt.canExecuteOnDone()) {
+                    if (pt.tryAcquireLockForOnDoneExec()) {
+                        try {
                             this.executeOnDone(provME);
-                        }finally {
+                        } finally {
                             pt.releaseLockForOnDoneExec();
                         }
                     }
@@ -611,7 +661,7 @@ public abstract class BasePojoExecutor implements POJOExecutor{
             exp = ex;
             logger.log(Level.SEVERE, null, ex);
         } finally {
-            if (exp != null){
+            if (exp != null) {
                 pt.setDoneWithProvisioning();
             }
         }
