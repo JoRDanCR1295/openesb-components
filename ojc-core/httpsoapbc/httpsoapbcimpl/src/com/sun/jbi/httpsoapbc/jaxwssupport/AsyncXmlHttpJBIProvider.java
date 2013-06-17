@@ -196,7 +196,7 @@ public class AsyncXmlHttpJBIProvider implements AsyncProvider<javax.activation.D
                         throw new MessagingException(error);
                     }
 
-                    Denormalizer denormalizer = (Denormalizer) cReplyDenormalizer.get();
+                    Denormalizer denormalizer = cReplyDenormalizer.get();
                     denormalizationMeasurement = Probe.info(getClass(),
                                                             targetEndpoint.getUniqueName(), 
                                                             HttpSoapBindingLifeCycle.PERF_CAT_DENORMALIZATION);
@@ -262,7 +262,7 @@ public class AsyncXmlHttpJBIProvider implements AsyncProvider<javax.activation.D
                 
                 // For inout, convert to our fault format. We may want to consider if we leave this to JAX-WS.
                 if (ExchangePattern.isInOut(exchange)) {
-                    Denormalizer denormalizer = (Denormalizer) cReplyDenormalizer.get();
+                    Denormalizer denormalizer = cReplyDenormalizer.get();
                     response = (DataSource) denormalizer.denormalizeException(errorDetail, response);
                     if (mLogger.isLoggable(Level.FINE)) {
                         mLogger.log(Level.FINE, "Responding to JAX-WS with a fault");            
@@ -299,8 +299,8 @@ public class AsyncXmlHttpJBIProvider implements AsyncProvider<javax.activation.D
     ProcessorSupport getProcessorSupport(String requestMethod) throws MessagingException {
         // Get the processor support instances associated with the thread if present, create if not.
         
-        Map methodToProcessor = (Map) processorSupport.get();
-        ProcessorSupport currentProcSupport = (ProcessorSupport) methodToProcessor.get(requestMethod);
+        Map<String, ProcessorSupport> methodToProcessor = processorSupport.get();
+        ProcessorSupport currentProcSupport = methodToProcessor.get(requestMethod);
         if (currentProcSupport == null) {
             
             currentProcSupport = new ProcessorSupport();
@@ -324,14 +324,16 @@ public class AsyncXmlHttpJBIProvider implements AsyncProvider<javax.activation.D
     /**
      * Holds instances that are not thread safe
      */    
-    private static ThreadLocal processorSupport = new ThreadLocal() {
-        protected Object initialValue() {
+    private static ThreadLocal<Map<String, ProcessorSupport>> processorSupport = 
+            new ThreadLocal<Map<String, ProcessorSupport>>() {
+        protected Map<String, ProcessorSupport> initialValue() {
             return new HashMap<String, ProcessorSupport>();
         }
     };
     
-    private static ThreadLocal cReplyDenormalizer = new ThreadLocal() {
-        protected Object initialValue() {
+    private static ThreadLocal<Denormalizer> cReplyDenormalizer = 
+            new ThreadLocal<Denormalizer>() {
+        protected Denormalizer initialValue() {
             return new JAXWSXmlHttpDenormalizer();
         }
     };

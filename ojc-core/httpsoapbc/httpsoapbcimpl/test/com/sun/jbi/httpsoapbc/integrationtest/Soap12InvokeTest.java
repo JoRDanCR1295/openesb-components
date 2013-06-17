@@ -32,7 +32,7 @@ import com.sun.jbi.component.test.framework.OpenESBIntegrationTestBase;
  */
 public class Soap12InvokeTest extends OpenESBIntegrationTestBase {
 
-    private static final String SA = "/openesb/open-jbi-components/ojc-core/httpsoapbc/httpsoapbcimpl/test/com/sun/jbi/httpsoapbc/integrationtest/soap12/SoapInvoke.zip";
+    private static final String SA = "/Users/david/java-ext/openesb/bitbucket/openesb-components/ojc-core/httpsoapbc/httpsoapbcimpl/test/com/sun/jbi/httpsoapbc/integrationtest/soap12/SoapInvoke.zip";
     private String saname;
 
     /**
@@ -50,9 +50,11 @@ public class Soap12InvokeTest extends OpenESBIntegrationTestBase {
      */
 
     public void tearDown() throws Exception {
+        /*
 	getAdministrationService().stopServiceAssembly(saname);
 	getAdministrationService().shutdownServiceAssembly(saname);
 	getAdministrationService().undeployServiceAssembly(saname);
+        */ 
     }
 
     /**

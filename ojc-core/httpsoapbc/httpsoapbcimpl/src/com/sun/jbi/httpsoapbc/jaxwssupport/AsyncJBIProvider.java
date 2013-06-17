@@ -597,7 +597,7 @@ public class AsyncJBIProvider implements AsyncProvider<SOAPMessage>, ReplyListen
      */
     ProcessorSupport getProcessorSupport() throws MessagingException {
         // Get the processor support instances associated with the thread if present, create if not.
-        ProcessorSupport currentProcSupport = (ProcessorSupport) processorSupport.get();
+        ProcessorSupport currentProcSupport = processorSupport.get();
         if (currentProcSupport == null) {
             currentProcSupport = new ProcessorSupport();
             currentProcSupport.normalizer = new JAXWSNormalizer();
@@ -611,7 +611,7 @@ public class AsyncJBIProvider implements AsyncProvider<SOAPMessage>, ReplyListen
     /**
      * Holds instances that are not thread safe
      */    
-    private static ThreadLocal processorSupport = new ThreadLocal();
+    private static ThreadLocal<ProcessorSupport> processorSupport = new ThreadLocal<ProcessorSupport>();
 
     /**
      * Holds instances that are not thread safe
