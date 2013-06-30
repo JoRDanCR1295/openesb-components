@@ -1060,6 +1060,7 @@ public class OutboundMessageProcessor {
         Transaction transaction = (Transaction) outboundExchange.getProperty(
                 MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
         boolean txResumed = false;
+        boolean shouldSuspendTx = false;
         if (transaction != null) {
             if (mLog.isLoggable(Level.FINE)) {
                 mLog.log(Level.FINE, "Got transaction context from message exchange " + outboundExchange.getExchangeId() + ". About to resume transaction before the Dispatch call...");
@@ -1218,6 +1219,7 @@ public class OutboundMessageProcessor {
                         }
                     }
                 }
+                shouldSuspendTx = true;
                 dispatch.invokeOneWay(soapMsg);
             } else {
                 if (mMonitorEnabled) {
@@ -1234,6 +1236,7 @@ public class OutboundMessageProcessor {
                 ctx.setProbe(callDispatchMeasurement);
                 AsyncResponseHandler<SOAPMessage> handler = AsyncResponseDispatcher.instance().getHandler(ctx);
                 dispatch.invokeAsync(soapMsg, handler);
+                shouldSuspendTx = true;
                 /*if (mMonitorEnabled) {
                 try {
                 LoggingMonitoringUtil.setCheckpoint(endpointMeta, trackingId, "Received-response-from-inout-remote-service", replySoapMsg.getSOAPPart().getEnvelope());
@@ -1259,12 +1262,12 @@ public class OutboundMessageProcessor {
             if (dispatch != null)
                 endpointMeta.releaseDispatch(dispatch);
 
-            if (txResumed) {
+            if (txResumed && shouldSuspendTx) {
                 if (mLog.isLoggable(Level.FINE)) {
                     mLog.log(Level.FINE, "Transction was resumed before the Dispatch call. Successfully received a SOAP response. " +
                             "About to suspend the transaction before sending the reply in the message exchange...");
                 }
-                //TransactionsUtil.suspendTransaction();
+                TransactionsUtil.suspendTransaction();
             }
         }
     }
