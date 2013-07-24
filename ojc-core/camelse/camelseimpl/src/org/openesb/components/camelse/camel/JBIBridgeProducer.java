@@ -31,19 +31,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.JBIException;
-import javax.jbi.messaging.MessageExchange;
-import javax.wsdl.Operation;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.openesb.components.camelse.CamelSEConsumerEndpoint;
 import org.openesb.components.camelse.common.RuntimeHelper;
-import org.openesb.components.camelse.common.deployment.ConsumerEndpoint;
 
 /**
  * 

@@ -34,7 +34,6 @@ package org.openesb.components.camelse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.management.MBeanNames;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 import org.openesb.components.camelse.CamelSEConfigMBean.CamelSEConfigMBeanImpl;
@@ -80,9 +79,12 @@ public class CamelSEInstaller extends ComponentInstaller {
         try {
             InstallationContext ctx = this.getInstallationContext();
             CamelSEConfigMBeanImpl impl = new CamelSEConfigMBeanImpl(ctx.getInstallRoot());
+            //ComponentConfig defaultProperties = ComponentConfig.parse(ctx.getInstallRoot());
+            //impl.setInitialConfigurations(defaultProperties);
+
             StandardMBean configBean = new StandardMBean(impl, CamelSEConfigMBean.class);
             return configBean;
-        } catch (NotCompliantMBeanException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CamelSEInstaller.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }        

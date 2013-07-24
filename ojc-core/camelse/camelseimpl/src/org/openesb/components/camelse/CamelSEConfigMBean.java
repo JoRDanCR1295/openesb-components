@@ -4,6 +4,7 @@
  */
 package org.openesb.components.camelse;
 
+import com.sun.jbi.common.qos.config.ComponentConfig;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,9 +39,14 @@ public interface CamelSEConfigMBean {
 
         /** relative path in both installPath and workPath*/
         private static final String CONFIG_FILE_PATH = "config.properties";
-        private static final String PROP_CAMEL_HOME = "camel.home";
-        private static final String PROP_EXCLUDE_CAMEL_LIBS = "exclude.camel.libs";
-        private static final String PROP_INCLUDE_CAMEL_LIBS = "include.camel.libs";
+        //private static final String PROP_CAMEL_HOME = "camel.home";
+        private static final String PROP_CAMEL_HOME = "CamelHome";
+        //private static final String PROP_EXCLUDE_CAMEL_LIBS = "exclude.camel.libs";
+        private static final String PROP_EXCLUDE_CAMEL_LIBS = "ExcludeCamelLibs";
+        //private static final String PROP_INCLUDE_CAMEL_LIBS = "include.camel.libs";
+        private static final String PROP_INCLUDE_CAMEL_LIBS = "IncludeCamelLibs";
+        
+        
         private File mConfigFile;
         private Properties mConfigProps;
 
@@ -70,6 +76,12 @@ public interface CamelSEConfigMBean {
             }
         }
 
+        public void setInitialConfigurations(ComponentConfig props) {
+            setCamelHome(props.getProperty(PROP_CAMEL_HOME).getValue());
+            setIncludeCamelLibs(props.getProperty(PROP_INCLUDE_CAMEL_LIBS).getValue());
+            setExcludeCamelLibs(props.getProperty(PROP_EXCLUDE_CAMEL_LIBS).getValue());
+        }
+        
         private File createConfigFile(String configRootPath) {
             File confFile = new File(configRootPath, CONFIG_FILE_PATH);
             if (!confFile.exists()) {

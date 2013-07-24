@@ -5,8 +5,6 @@
 
 package org.openesb.components.camelse;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.jbi.JBIException;
 import javax.jbi.component.ComponentContext;
 import javax.jbi.messaging.DeliveryChannel;
@@ -14,32 +12,17 @@ import javax.jbi.messaging.ExchangeStatus;
 import javax.jbi.messaging.Fault;
 import javax.jbi.messaging.InOnly;
 import javax.jbi.messaging.InOut;
-import javax.jbi.messaging.MessageExchange;
-import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.NormalizedMessage;
 import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import org.openesb.components.camelse.JBIWrapperUtil;
 import org.openesb.components.camelse.common.RuntimeHelper;
 import org.openesb.components.camelse.common.deployment.ConsumerEndpoint;
 import org.openesb.components.camelse.common.deployment.SUDescriptor;
 import org.openesb.components.camelse.common.deployment.ServiceUnit;
-import org.openesb.components.camelse.common.wsdl.WSDL11JBIWrapper;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
 
 /**
  *

@@ -32,11 +32,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 import javax.jbi.messaging.MessageExchange;
 import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
 import org.openesb.components.camelse.camel.JBIBridgeComponent;
 import org.openesb.components.camelse.camel.JBIBridgeEndpoint;
 import org.openesb.components.camelse.common.RuntimeHelper;
@@ -46,6 +44,7 @@ import org.openesb.components.camelse.common.deployment.ServiceUnit;
 import org.openesb.components.camelse.common.deployment.ProviderEndpoint;
 import org.openesb.components.camelse.common.deployment.SUDescriptor.Provides;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -53,7 +52,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.management.DeploymentException;
 import javax.wsdl.Definition;
-import org.apache.camel.spring.Main;
 
 /**
  * This class extends the ServiceUnit to implement the component specific service unit processing.
@@ -66,7 +64,8 @@ import org.apache.camel.spring.Main;
 public class CamelSEServiceUnit extends ServiceUnit {
 
     private CamelSERuntime mRuntime;
-    private Main mCamelMain;
+    private Object mCamelMainObj;
+    private Class mCamelMainClazz;
 
     /** Creates a new instance of CamelSEServiceUnit */
     public CamelSEServiceUnit(String suName, String suRootPath, CamelSERuntime runtime) {
@@ -188,14 +187,14 @@ public class CamelSEServiceUnit extends ServiceUnit {
         camelCP.addAll(addlCP);
         camelCP.addAll(appCP);
         
-        URL[] cpURLs = camelCP.toArray(new URL[0]);
+        URL[] cpURLs = camelCP.toArray(new URL[camelCP.size()]);
 
         URLClassLoader loader = new URLClassLoader(cpURLs, this.getClass().getClassLoader());
 
         RuntimeHelper.logDebug("### CamelSU Classpath ###");
         StringBuffer buff = new StringBuffer();
         for (URL cpURL : cpURLs) {
-            buff.append(cpURL).append(":");
+            buff.append(cpURL).append(",");
         }
         RuntimeHelper.logDebug(buff);
 
@@ -205,10 +204,16 @@ public class CamelSEServiceUnit extends ServiceUnit {
     private void startCamel(ClassLoader loader) {
         RuntimeHelper.getLogger().fine("Loading camel in su classloader " + loader);
         try {
-            Class clazz = loader.loadClass("org.apache.camel.spring.Main");
-            Object obj = clazz.newInstance();
-            this.mCamelMain = (Main) obj;
-            this.mCamelMain.start();
+
+            loader.loadClass("org.slf4j.LoggerFactory");
+
+            mCamelMainClazz = loader.loadClass("org.apache.camel.spring.Main");
+
+            mCamelMainObj = mCamelMainClazz.newInstance();
+            Method startMethod = mCamelMainClazz.getMethod("start", null);
+            startMethod.invoke(mCamelMainObj, null);
+            //this.mCamelMain = (Main) obj;
+            //this.mCamelMain.start();
         } catch (Exception ex) {
             RuntimeHelper.logError(ex);
         }
@@ -239,8 +244,10 @@ public class CamelSEServiceUnit extends ServiceUnit {
     @Override
     public void doStop() throws DeploymentException {
         try {
-            if (this.mCamelMain != null) {
-                this.mCamelMain.stop();
+            if (this.mCamelMainObj != null && mCamelMainClazz != null) {
+                Method stopMethod = mCamelMainClazz.getMethod("stop", null);
+                stopMethod.invoke(mCamelMainObj, null);
+                //this.mCamelMain.stop();
             }
         } catch (Exception ex) {
             RuntimeHelper.logDebug(ex);
@@ -269,8 +276,14 @@ public class CamelSEServiceUnit extends ServiceUnit {
 
     public List<CamelContext> getCamelContexts() {
         List<CamelContext> ctxList = new ArrayList<CamelContext>();
-        List<CamelContext> springCCtxList = this.mCamelMain.getCamelContexts();
-        ctxList.addAll(springCCtxList);
+        try {
+            Method getCamelContextsMethod = mCamelMainClazz.getMethod("getCamelContexts", null);
+            List<CamelContext> springCCtxList = (List<CamelContext>)getCamelContextsMethod.invoke(mCamelMainObj, null);
+            //List<CamelContext> springCCtxList = this.mCamelMain.getCamelContexts();
+            ctxList.addAll(springCCtxList);
+        } catch (Exception ex) {
+            RuntimeHelper.getLogger().log(Level.SEVERE, null, ex);
+        } 
         return ctxList;
     }
 
