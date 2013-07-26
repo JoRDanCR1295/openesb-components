@@ -90,7 +90,7 @@ public class JBIBridgeConsumer extends DefaultConsumer {
             } else {
                 JBIBridgeMessage msg = (JBIBridgeMessage) exchange.getOut();
                 NormalizedMessage outMsg = msg.getJBIMessage();
-                addContentToJBIWrapper(outWrapper, msg.getJBIMessage().getContent());
+                addContentToJBIWrapper(outWrapper, msg.getBody(Source.class));
                 outMsg.setContent(outWrapper.toDOMSource());
                 inOutExchange.setOutMessage(outMsg);
             }
