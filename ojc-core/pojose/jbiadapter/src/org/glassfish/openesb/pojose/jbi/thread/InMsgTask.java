@@ -234,13 +234,13 @@ public class InMsgTask extends BaseTask {
                     if (exp == null){
                         if (pojoMeta.getProvider() != null){
                             // Using current @Provider annotation.
-                            ContextImpl ctximpl = new ContextImpl(ctx.getJBIComponentContext(), ctx.getDC(), (CallTracker)this.pt);
+                            ContextImpl ctximpl = new ContextImpl(ctx.getJBIComponentContext(), ctx.getDC(), (CallTracker)this.pt, ctx.getConfigMbean().retrieveApplicationVariablesMap());
                             ctximpl.setMessageExchange(me);
 
                             POJOAnnotationProcessor.injectFields(pojoMeta, pojoObj, ctximpl, (CallTracker)this.pt);
                         } else {
                             // Using old @POJO annotation.
-                            ContextImpl ctximpl = new ContextImpl(ctx.getJBIComponentContext(), ctx.getDC(), (CallTracker)this.pt);
+                            ContextImpl ctximpl = new ContextImpl(ctx.getJBIComponentContext(), ctx.getDC(), (CallTracker)this.pt, ctx.getConfigMbean().retrieveApplicationVariablesMap());
                             ctximpl.setMessageExchange(me);
 
                             POJOContextImpl pjctx = new POJOContextImpl(ctx.getJBIComponentContext(), ctx.getDC());

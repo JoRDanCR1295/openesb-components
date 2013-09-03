@@ -30,6 +30,7 @@
 package org.glassfish.openesb.pojose.res.impl;
 
 import com.sun.jbi.common.qos.messaging.MessagingChannel;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.JBIException;
@@ -59,12 +60,15 @@ public class ContextImpl implements Context{
     private MessagingChannel dc = null;
     private ComponentContext cc = null;
     private CallTracker ct = null;
+    private Map applicationVariables;
+            
     private static final String LoggerName = "org.glassfish.openesb.pojose.jbi.nmr.BasePojoExecutor" ; //NOI18N
     
-    public ContextImpl(ComponentContext ncc, MessagingChannel ndc, CallTracker callt) {
+    public ContextImpl(ComponentContext ncc, MessagingChannel ndc, CallTracker callt, Map applicationVariables) {
         this.cc = ncc;
         this.dc = ndc;
         this.ct = callt;
+        this.applicationVariables = applicationVariables;
     }
 
     public void setMessageExchange(MessageExchange me) {
@@ -229,6 +233,16 @@ public class ContextImpl implements Context{
         return fm;
     }
 
-
+    public String getApplicationVariable(String applicationVariableName) {
+        String [] metadatas = (String []) this.applicationVariables.get(applicationVariableName);
+        
+        if (metadatas != null) {
+            // IDX 0 = value & IDX 1 = type
+            return metadatas[0];
+        }
+        
+        return null;
+    }
+    
     // *** End of Context Interface methods...
 }
