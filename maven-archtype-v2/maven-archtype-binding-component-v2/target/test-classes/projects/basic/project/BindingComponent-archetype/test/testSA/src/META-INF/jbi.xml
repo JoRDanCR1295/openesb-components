@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jbi version="1" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://java.sun.com/xml/ns/jbi"
+xmlns:greet="http://www.sun.com/jbi/examples/sample-service/greetings/"
+>
+    <service-assembly>
+        <identification>
+            <name>BindingComponent-archetype_TestSA</name>
+            <description>This is a test Service Assembly to test Binding</description>
+        </identification>
+        
+        <service-unit>
+            <identification>
+                <name>BindingComponent-archetype_TestSUBC</name>
+                <description>This service unit enables inbound endpoint in the JMXBinding for a service in service engine</description>
+            </identification>
+            <target>
+                <artifacts-zip>testSUBC.zip</artifacts-zip>
+                <component-name>BindingComponent-archetype</component-name>
+            </target>
+        </service-unit>   
+        <service-unit>
+            <identification>
+                <name>BindingComponent-archetype_TestSUSE</name>
+                <description>This service unit enables greetings service provider in the service engine</description>
+            </identification>
+            <target>
+                <artifacts-zip>testSUSE.zip</artifacts-zip>
+                <component-name>ServiceEngine</component-name>
+            </target>
+        </service-unit>        
+    <connections>
+        <connection>
+            <consumer endpoint-name="jmxport" service-name="greet:greetService"/>
+            <provider endpoint-name="ServiceEngine_JBIPort" service-name="greet:greetService"/>
+        </connection> 
+    </connections>
+
+    </service-assembly>        
+</jbi>

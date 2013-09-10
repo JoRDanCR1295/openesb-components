@@ -366,6 +366,7 @@ public class RestComponent implements Component, ComponentLifeCycle {
         final Map<String, String> initParams = new HashMap<String, String>();
 
         initParams.put("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jbi.restbc.jbiadapter.inbound.JerseyRootResourceApplication");
+        initParams.put("com.sun.jersey.spi.container.ContainerResponseFilters", "com.sun.jbi.restbc.jbiadapter.inbound.CharsetResponseFilter");
         
         for (Map.Entry<String, String> e : initParams.entrySet()) {
             adapter.addInitParameter(e.getKey(), e.getValue());
@@ -459,6 +460,7 @@ public class RestComponent implements Component, ComponentLifeCycle {
         final Map<String, String> initParams = new HashMap<String, String>();
 
         initParams.put("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jbi.restbc.jbiadapter.inbound.JerseyRootResourceApplication");
+        initParams.put("com.sun.jersey.spi.container.ContainerResponseFilters", "com.sun.jbi.restbc.jbiadapter.inbound.CharsetResponseFilter");
         
         for (Map.Entry<String, String> e : initParams.entrySet()) {
             adapter.addInitParameter(e.getKey(), e.getValue());

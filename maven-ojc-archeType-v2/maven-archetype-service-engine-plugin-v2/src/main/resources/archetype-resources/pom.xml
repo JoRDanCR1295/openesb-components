@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!--
+    This maven project is configured to invoke netbeans ant build script to build and test the netbeans jbi component
+    project created using the Netbeans IDE. It configures the maven antrun plugin to invoke the netbeans project
+    build scripts at various phases of the maven build lifecycle(compile, test-compile, test, package, integration-test).
+    -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}</artifactId>
+    <packaging>jar</packaging>
+    <version>${version}</version>
+    <name>JBI Component[ServiceEngine]</name>
+    <description>Maven project for JBI Component that contains the 
+        maven and netbeans build setup and component code to build and test the JBI Component.</description>
+    <url>http://open-esb.org</url>
+    <build>
+        <directory>build</directory>
+        <sourceDirectory>src/java</sourceDirectory>
+        <testSourceDirectory>test/java</testSourceDirectory>        
+        <outputDirectory>build/classes</outputDirectory>
+        <testOutputDirectory>build/test/classes</testOutputDirectory>
+        <defaultGoal>package</defaultGoal>        
+        <plugins>
+            <plugin>
+                <!-- configure antrun plugin to invoke netbeans project build scripts for
+                various phases of the project -->
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.2</version>
+                <executions>       
+					<!-- This execution cycle is added for organizing package structure as per new 
+						 service engine user is creating from archtype -->
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>!!!!!!!!!!!!!!!!!!!!!! Moving Files and organizing package !!!!!!!!!!!!!!!!!!!!!!!!</echo>
+                                <delete file="pom.xml" />                           
+								<echo>!!!!!!!!!!!!!!!!!!!!!! Moving Files and organizing package completed successfully!!!!!!!!!!!!!!!!!!!!!!!!</echo>
+                            </tasks>
+                        </configuration>
+                    </execution>  
+                </executions>
+                <dependencies>
+                    <!-- 
+                        These dependencies are required in the antrun plugin classpath so that the ant script
+                        defining the optional or junit ant tasks will have these jars available in the ant 
+                        main classpath.                    
+                    -->
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-nodeps</artifactId>
+                        <version>1.6.5</version>
+                    </dependency>                    
+                    <dependency>
+                        <groupId>ant</groupId>
+                        <artifactId>ant-junit</artifactId>
+                        <version>1.6.5</version>
+                        <scope>test</scope>
+                    </dependency>                                                
+                    <dependency>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                        <version>3.8.2</version>
+                        <scope>test</scope>
+                    </dependency>
+                </dependencies>    
+            </plugin>
+        </plugins>
+    </build>    
+    <dependencies>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>1.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <version>1.6.5</version>
+            <scope>test</scope>
+        </dependency>                        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-ant-tasks</artifactId>
+            <version>2.0.7</version>
+        </dependency>        
+        
+    </dependencies>  
+    
+    
+</project>

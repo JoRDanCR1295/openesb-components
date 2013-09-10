@@ -48,6 +48,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.management.DeploymentException;
@@ -132,7 +133,7 @@ public class CamelSEServiceUnit extends ServiceUnit {
         }
         String camelHome = configMBean.getCamelHome();
         String includes = configMBean.getIncludeCamelLibs();
-        String excludes = configMBean.getExcludeCamelLibs();
+        String additional = configMBean.getAdditionalLibs();
         
         if ( camelHome == null || camelHome.trim().length() == 0 ) {
             return cp;
@@ -144,8 +145,8 @@ public class CamelSEServiceUnit extends ServiceUnit {
             return cp;
         }        
         List<String> includePaths = getPaths(camelHome, includes);
-        List<String> excludePaths = getPaths(camelHome, excludes);
-        includePaths.removeAll(excludePaths);
+        String[] additionalPaths = additional.split(",");
+        includePaths.addAll(Arrays.asList(additionalPaths));
         for ( String path : includePaths ) {
             try {
                 URL pathURL = (new File(path)).toURL();

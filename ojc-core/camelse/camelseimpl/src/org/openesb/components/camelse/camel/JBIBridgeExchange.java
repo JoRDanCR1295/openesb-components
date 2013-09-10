@@ -27,6 +27,8 @@
  */
 package org.openesb.components.camelse.camel;
 
+
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ import javax.jbi.messaging.MessageExchange;
 import javax.jbi.messaging.MessagingException;
 import javax.jbi.messaging.NormalizedMessage;
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -50,6 +53,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.openesb.components.camelse.JBIWrapperUtil;
+import org.openesb.components.camelse.common.RuntimeHelper;
 
 /**
  *
@@ -90,6 +95,7 @@ public class JBIBridgeExchange implements Exchange {
     public JBIBridgeExchange(CamelContext camelContext, InOnly jbiEx) {
         this.context = camelContext;
         this.jbiExchange = jbiEx;
+        this.pattern = toCamelExchangePattern(jbiEx);
         setIn(new JBIBridgeMessage(jbiEx.getInMessage()));
         populateJBIExchangeProperties();
     }
@@ -97,6 +103,7 @@ public class JBIBridgeExchange implements Exchange {
     public JBIBridgeExchange(CamelContext camelContext, InOut jbiEx) {
         this.context = camelContext;
         this.jbiExchange = jbiEx;
+        this.pattern = toCamelExchangePattern(jbiEx);
         setIn(new JBIBridgeMessage(jbiEx.getInMessage()));
         populateJBIExchangeProperties();
     }
@@ -104,9 +111,19 @@ public class JBIBridgeExchange implements Exchange {
     public JBIBridgeExchange(JBIBridgeExchange parent, MessageExchange jbiEx) {
         this(parent);
         this.jbiExchange = jbiEx;
+        this.pattern = toCamelExchangePattern(jbiEx);
         populateJBIExchangeProperties();
     }
     
+    private ExchangePattern toCamelExchangePattern(MessageExchange jbiEx){
+        if(jbiEx instanceof InOnly){
+            return ExchangePattern.InOnly;
+        }else if(jbiEx instanceof InOut){
+            return ExchangePattern.InOut;
+        }else{
+            return null;
+        }
+    }
     
     @Override
     public String toString() {
@@ -258,8 +275,12 @@ public class JBIBridgeExchange implements Exchange {
             out = (in != null && in instanceof MessageSupport)
                 ? ((MessageSupport)in).newInstance() : createOutMessage();
             configureMessage(out);
+            return out;
+        }else{
+            NormalizedMessage nm = createJBIMessage(false);
+            ((JBIBridgeMessage)out).setJBIMessage(nm);
+            return out;
         }
-        return out;
     }
 
     public <T> T getOut(Class<T> type) {

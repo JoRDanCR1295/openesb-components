@@ -104,7 +104,10 @@ public class DoXslTransformFunction implements Function {
         catch (StandardException e) {
         	// if it is StandardException propagate it
         	throw e;
-        } 
+        }
+        catch (TransformerException e) {
+            throw new StandardException(StandardException.Fault.SubLanguageExecutionFault);
+        }
         catch (Exception e) {
 			// Convert to a runtime exception and propagate it. It will treated
 			// as a system exception.

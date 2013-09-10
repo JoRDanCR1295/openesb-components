@@ -227,4 +227,6 @@ public interface Context {
      * @return FaultMessage
      */
     public FaultMessage createFaultMessage(Source payload, QName faultMsgType);
+    
+    public String getApplicationVariable(String applicationVariableName);
 }

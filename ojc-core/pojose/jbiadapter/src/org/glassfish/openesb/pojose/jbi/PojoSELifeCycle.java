@@ -34,11 +34,13 @@ import com.sun.jbi.common.qos.config.ConfigPersistence;
 import com.sun.jbi.common.qos.config.RuntimeConfigurationMBean;
 import com.sun.jbi.common.util.MBeanHelper;
 import com.sun.jbi.common.util.Util;
+import com.sun.jbi.configuration.RuntimeConfigurationHelper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jbi.JBIException;
 import javax.jbi.component.ComponentContext;
 import javax.jbi.component.ComponentLifeCycle;
+import javax.jbi.management.MBeanNames;
 import javax.jbi.messaging.DeliveryChannel;
 import javax.management.ObjectName;
 
@@ -50,7 +52,8 @@ public class PojoSELifeCycle implements ComponentLifeCycle {
     private POJOComponentContext pojoCompCtx;
     private Logger compLifeCycleLogger;
     private ComponentConfig compCfg;
-    private MBeanHelper mbeanHelper;
+    //private MBeanHelper mbeanHelper;
+    private RuntimeConfigurationHelper mRuntimeConfigHelper;
     
     public PojoSELifeCycle(POJOComponentContext pc){
         assert pc != null;
@@ -67,9 +70,15 @@ public class PojoSELifeCycle implements ComponentLifeCycle {
         ConfigPersistence.loadConfig(compCfg, ctx.getWorkspaceRoot());
         PojoSEConfigurationMBean cfgMbean = new PojoSEConfiguration(ctx, compCfg);
         
-        mbeanHelper = new MBeanHelper(ctx);
-        mbeanHelper.registerMBean(RuntimeConfigurationMBean.CONFIGURATION_EXTENSION, cfgMbean);
-
+        try {
+            MBeanNames mbeanNames = ctx.getMBeanNames();
+            ObjectName runtimeConfigMBeanObjName = mbeanNames.createCustomComponentMBeanName("Configuration");
+            mRuntimeConfigHelper = new RuntimeConfigurationHelper(runtimeConfigMBeanObjName, ctx.getMBeanServer());
+            mRuntimeConfigHelper.registerMBean(cfgMbean);
+        } catch (Exception e) {
+            throw new JBIException(e);
+        }
+        
         pojoCompCtx.setConfigMbean(cfgMbean);        
         
         // send alert
