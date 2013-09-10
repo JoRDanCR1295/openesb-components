@@ -31,9 +31,9 @@ public interface CamelSEConfigMBean {
 
     public String getIncludeCamelLibs();
     
-    public void setExcludeCamelLibs(String excludeLibs);
+    public void setAdditionalLibs(String additionalLibs);
 
-    public String getExcludeCamelLibs();
+    public String getAdditionalLibs();
 
     public static class CamelSEConfigMBeanImpl implements CamelSEConfigMBean {
 
@@ -42,7 +42,7 @@ public interface CamelSEConfigMBean {
         //private static final String PROP_CAMEL_HOME = "camel.home";
         private static final String PROP_CAMEL_HOME = "CamelHome";
         //private static final String PROP_EXCLUDE_CAMEL_LIBS = "exclude.camel.libs";
-        private static final String PROP_EXCLUDE_CAMEL_LIBS = "ExcludeCamelLibs";
+        private static final String PROP_ADDITIONAL_LIBS = "AdditionalLibs";
         //private static final String PROP_INCLUDE_CAMEL_LIBS = "include.camel.libs";
         private static final String PROP_INCLUDE_CAMEL_LIBS = "IncludeCamelLibs";
         
@@ -79,7 +79,7 @@ public interface CamelSEConfigMBean {
         public void setInitialConfigurations(ComponentConfig props) {
             setCamelHome(props.getProperty(PROP_CAMEL_HOME).getValue());
             setIncludeCamelLibs(props.getProperty(PROP_INCLUDE_CAMEL_LIBS).getValue());
-            setExcludeCamelLibs(props.getProperty(PROP_EXCLUDE_CAMEL_LIBS).getValue());
+            setAdditionalLibs(props.getProperty(PROP_ADDITIONAL_LIBS).getValue());
         }
         
         private File createConfigFile(String configRootPath) {
@@ -193,13 +193,13 @@ public interface CamelSEConfigMBean {
             return this.mConfigProps.getProperty(PROP_INCLUDE_CAMEL_LIBS, "");
         }
         
-        public void setExcludeCamelLibs(String excludeLibs) {
-            this.mConfigProps.setProperty(PROP_EXCLUDE_CAMEL_LIBS, excludeLibs);
+        public void setAdditionalLibs(String excludeLibs) {
+            this.mConfigProps.setProperty(PROP_ADDITIONAL_LIBS, excludeLibs);
             this.saveProperties(mConfigFile, mConfigProps);
         }
 
-        public String getExcludeCamelLibs() {
-            return this.mConfigProps.getProperty(PROP_EXCLUDE_CAMEL_LIBS, "");
+        public String getAdditionalLibs() {
+            return this.mConfigProps.getProperty(PROP_ADDITIONAL_LIBS, "");
         }
 
     }
