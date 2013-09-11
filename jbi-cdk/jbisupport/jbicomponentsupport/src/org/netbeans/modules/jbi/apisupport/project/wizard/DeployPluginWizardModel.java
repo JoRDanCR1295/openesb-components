@@ -373,7 +373,7 @@ public abstract class DeployPluginWizardModel extends ProjectWizardModel {
     protected FileObject createJbiXml(FileObject prjDirFO, String jbiXmlTemplatePath, Map tokenMap ) throws IOException {
         
         FileObject confRoot = FileUtil.createFolder(prjDirFO, JbiCompProjectProperties.CONF_DIR_VALUE);
-        // create meta-inf dir
+        // create META-INF dir
         FileObject metaInfFolder = FileUtil.createFolder(confRoot, "META-INF");
         
         FileObject jbiXmlFO = createFromTemplateFileObject(metaInfFolder, jbiXmlTemplatePath, null, tokenMap);
