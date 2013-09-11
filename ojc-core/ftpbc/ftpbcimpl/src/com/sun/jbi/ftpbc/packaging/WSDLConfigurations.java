@@ -111,7 +111,7 @@ public class WSDLConfigurations {
         File dir = new File(mRootPath);
 
         File catalog = new File(dir.getAbsolutePath() +
-                File.separator + "meta-inf" + File.separator +
+                File.separator + "META-INF" + File.separator +
                 "catalog.xml");
 
         EntityResolver resolver = null;
@@ -163,7 +163,7 @@ public class WSDLConfigurations {
         File dir = new File(mRootPath);
 
         File catalog = new File(dir.getAbsolutePath() +
-                File.separator + "meta-inf" + File.separator +
+                File.separator + "META-INF" + File.separator +
                 "catalog.xml");
 
         EntityResolver resolver = null;

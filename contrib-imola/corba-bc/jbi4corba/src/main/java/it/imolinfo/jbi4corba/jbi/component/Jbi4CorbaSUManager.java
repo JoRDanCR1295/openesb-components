@@ -594,7 +594,7 @@ public class Jbi4CorbaSUManager extends DefaultServiceUnitManager {
                 new HashMap<String, String[]>(envVariableMap);
 
         File catalog = new File(suPath +
-                File.separator + "meta-inf" + File.separator +
+                File.separator + "META-INF" + File.separator +
                 "catalog.xml");
 
         EntityResolver resolver = null;
