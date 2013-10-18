@@ -154,7 +154,7 @@ public class JAXWSEndpointFactory {
         // in the JAX-WS layer.
         URL catalogURL = null;
         File catalog = new File(endpoint.getServiceUnitRootPath() +
-            File.separator + "meta-inf" + File.separator +
+            File.separator + "META-INF" + File.separator +
             "catalog.xml");
         if (catalog.exists()) {
               catalogURL = catalog.toURL();
