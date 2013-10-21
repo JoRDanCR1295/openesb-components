@@ -123,7 +123,7 @@ public class WSDLConfigurations {
             throws Exception {
         
         File catalog = new File(mRootPath.getAbsolutePath() +
-            File.separator + "meta-inf" + File.separator +
+            File.separator + "META-INF" + File.separator +
             "catalog.xml");
         
         EntityResolver resolver = null;
@@ -154,7 +154,7 @@ public class WSDLConfigurations {
                 new HashMap<String, String[]>(envVariableMap);
         
         File catalog = new File(mRootPath.getAbsolutePath() +
-            File.separator + "meta-inf" + File.separator +
+            File.separator + "META-INF" + File.separator +
             "catalog.xml");
 
         EntityResolver resolver = null;

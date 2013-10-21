@@ -553,7 +553,7 @@ public final class Jbi4cicsWSDLDeployer extends AbstractDeployer {
         }
 
         /**
-         * Accepts only directories not called <i>META-INF</i>, <i>meta-inf</i>
+         * Accepts only directories not called <i>META-INF</i>, <i>META-INF</i>
          * and so on considering case.
          *
          * @param   file  the file to test.
@@ -563,7 +563,7 @@ public final class Jbi4cicsWSDLDeployer extends AbstractDeployer {
          */
         public boolean accept(final File file) {
             return file.isDirectory()
-                   && !(file.getName().equalsIgnoreCase("meta-inf"));
+                   && !(file.getName().equalsIgnoreCase("META-INF"));
         }
     }
 }

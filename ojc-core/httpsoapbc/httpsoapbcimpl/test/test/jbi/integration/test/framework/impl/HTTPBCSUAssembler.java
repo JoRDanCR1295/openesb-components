@@ -53,7 +53,7 @@ public class HTTPBCSUAssembler implements SUAssembler {
 		File metaDir = new File(meta);
 		metaDir.mkdir();
 
-		//Copy all WSDL files to meta-inf folder
+		//Copy all WSDL files to META-INF folder
 		for (Iterator<String> iter = wsdls.iterator(); iter.hasNext();) {
 		    
 		        String file = iter.next();

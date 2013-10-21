@@ -220,7 +220,7 @@ public class LdapHelper {
         Map<String, String[]> envVariables =
                 new HashMap<String, String[]>(envVariableMap);
 
-        File catalog = new File(suDir.getAbsolutePath() + File.separator + "meta-inf" + File.separator + "catalog.xml");
+        File catalog = new File(suDir.getAbsolutePath() + File.separator + "META-INF" + File.separator + "catalog.xml");
 
         EntityResolver resolver = null;
 

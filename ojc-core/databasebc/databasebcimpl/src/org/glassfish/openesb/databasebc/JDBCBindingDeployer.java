@@ -1429,7 +1429,7 @@ public class JDBCBindingDeployer implements ServiceUnitManager {
 		 private List readAllXSDs(final File asaDir, final String id,
                 final String taskName, final String locToken) throws DeploymentException {
             final CatalogManager catalogManager = new CatalogManager();
-            catalogManager.setCatalogFiles(asaDir.getAbsolutePath() + File.separator + "meta-inf" +
+            catalogManager.setCatalogFiles(asaDir.getAbsolutePath() + File.separator + "META-INF" +
                     File.separator + "catalog.xml");
             catalogManager.setRelativeCatalogs(true);
 

@@ -132,7 +132,7 @@ public class EmailWSDLConfigurations {
 
     private void parse(File dir) throws WSDLException {
         CatalogManager catalogManager = new CatalogManager();
-        catalogManager.setCatalogFiles(dir.getAbsolutePath() + File.separator + "meta-inf" + File.separator + "catalog.xml");
+        catalogManager.setCatalogFiles(dir.getAbsolutePath() + File.separator + "META-INF" + File.separator + "catalog.xml");
         catalogManager.setRelativeCatalogs(true);
         EntityResolver resolver = new CatalogResolver(catalogManager);
 
