@@ -58,7 +58,9 @@ public class Policy implements ExtensibilityElement, Serializable {
     
     private MustSupportBasicAuthentication msba;
     private BasicAuthenticationDetail bad;
-        
+    
+    private OptimizedMimeSerialization oms;
+    
     public Policy() {
     }
 
@@ -101,13 +103,20 @@ public class Policy implements ExtensibilityElement, Serializable {
         return this.password;
     }
     
-    
     public MustSupportBasicAuthentication getMustSupportBasicAuthentication() {
         return msba;
     }
     
     public void setMustSupportBasicAuthentication (MustSupportBasicAuthentication val) {
         msba = val;
+    }
+    
+    public OptimizedMimeSerialization getOptimizedMimeSerialization() {
+        return oms;
+    }
+    
+    public void setOptimizedMimeSerialization (OptimizedMimeSerialization val) {
+        oms = val;
     }
     
     public BasicAuthenticationDetail getBasicAuthenticationDetail() {

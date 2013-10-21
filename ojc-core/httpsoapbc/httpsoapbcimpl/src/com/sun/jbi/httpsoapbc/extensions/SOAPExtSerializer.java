@@ -27,7 +27,6 @@
  * 
  * END_HEADER - DO NOT EDIT
  */
-
 package com.sun.jbi.httpsoapbc.extensions;
 
 import com.ibm.wsdl.util.xml.DOMUtils;
@@ -38,6 +37,7 @@ import com.sun.jbi.internationalization.Messages;
 import java.io.Serializable;
 import java.io.PrintWriter;
 import java.util.Map;
+import javax.wsdl.Binding;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -56,14 +56,14 @@ import org.w3c.dom.NamedNodeMap;
 /**
  *
  *
- * @version      
+ * @version
  *
  */
 public class SOAPExtSerializer
-    implements ExtensionSerializer, ExtensionDeserializer, Serializable {
+        implements ExtensionSerializer, ExtensionDeserializer, Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final Messages mMessages = Messages.getMessages(SOAPExtSerializer.class);
-    
     // Policy element constants
     // No I18N
     private static final String WSP_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/09/policy";
@@ -71,54 +71,67 @@ public class SOAPExtSerializer
     private static final String MY_SP_NAMESPACE = "http://sun.com/ws/httpbc/security/BasicauthSecurityPolicy";
     private static final String WSU_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
     private static final String USER_TOKEN_NAME_SPACE = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient";
+    private static final String WSOMA_SP_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization";
     
     private RuntimeConfigurationMBean mRuntimeConfig = null;
     private Map mApplicationVariablesMap = null;
     private boolean mResolveTokens = false;
-    
+
     public SOAPExtSerializer(RuntimeConfigurationMBean runtimeConfig, boolean resolveTokens) {
-    	mRuntimeConfig = runtimeConfig;
+        mRuntimeConfig = runtimeConfig;
         mApplicationVariablesMap = runtimeConfig.retrieveApplicationVariablesMap();
         mResolveTokens = resolveTokens;
     }
 
     public void registerSerializer(ExtensionRegistry registry) {
 
-        registry.registerSerializer(Port.class, 
-                                    PolicyReference.QNAME_ADDRESS,
-                                    this);
+        registry.registerSerializer(Port.class,
+                PolicyReference.QNAME_ADDRESS,
+                this);
         registry.registerDeserializer(Port.class,
-                                      PolicyReference.QNAME_ADDRESS,
-                                      this);
+                PolicyReference.QNAME_ADDRESS,
+                this);
         registry.mapExtensionTypes(Port.class,
-                                   PolicyReference.QNAME_ADDRESS,
-                                   PolicyReference.class);
-        
-        registry.registerSerializer(Definition.class, 
-                                    Policy.QNAME_ADDRESS,
-                                    this);
+                PolicyReference.QNAME_ADDRESS,
+                PolicyReference.class);
+
+        registry.registerSerializer(Binding.class,
+                Policy.QNAME_ADDRESS,
+                this);
+        registry.registerDeserializer(Binding.class,
+                Policy.QNAME_ADDRESS,
+                this);
+        registry.mapExtensionTypes(Binding.class,
+                Policy.QNAME_ADDRESS,
+                Policy.class);
+
+        registry.registerSerializer(Definition.class,
+                Policy.QNAME_ADDRESS,
+                this);
         registry.registerDeserializer(Definition.class,
-                                      Policy.QNAME_ADDRESS,
-                                      this);
+                Policy.QNAME_ADDRESS,
+                this);
         registry.mapExtensionTypes(Definition.class,
-                                   Policy.QNAME_ADDRESS,
-                                   Policy.class);
-        
+                Policy.QNAME_ADDRESS,
+                Policy.class);
+
     }
 
     public void marshall(Class parentType, QName elementType,
-                         ExtensibilityElement extension, PrintWriter pw,
-                         Definition def, ExtensionRegistry extReg)
-        throws WSDLException {
+            ExtensibilityElement extension, PrintWriter pw,
+            Definition def, ExtensionRegistry extReg)
+            throws WSDLException {
         // NOTE: no I18N
         String wspNs = (def.getPrefix(WSP_NAMESPACE) != null && !def.getPrefix(WSP_NAMESPACE).equals("")) ? def.getPrefix(WSP_NAMESPACE) : "wsp";
-        String myspNs = (def.getPrefix(MY_SP_NAMESPACE) != null && !def.getPrefix(MY_SP_NAMESPACE).equals(""))? def.getPrefix(MY_SP_NAMESPACE) : "mysp";
-        String wsuNs =  (def.getPrefix(WSU_NAMESPACE) != null && !def.getPrefix(WSU_NAMESPACE).equals(""))? def.getPrefix(WSU_NAMESPACE) : "wsu";
-        String spNs = (def.getPrefix(SP_NAMESPACE) != null && !def.getPrefix(SP_NAMESPACE).equals(""))? def.getPrefix(SP_NAMESPACE) : "sp";
+        String myspNs = (def.getPrefix(MY_SP_NAMESPACE) != null && !def.getPrefix(MY_SP_NAMESPACE).equals("")) ? def.getPrefix(MY_SP_NAMESPACE) : "mysp";
+        String wsuNs = (def.getPrefix(WSU_NAMESPACE) != null && !def.getPrefix(WSU_NAMESPACE).equals("")) ? def.getPrefix(WSU_NAMESPACE) : "wsu";
+        String spNs = (def.getPrefix(SP_NAMESPACE) != null && !def.getPrefix(SP_NAMESPACE).equals("")) ? def.getPrefix(SP_NAMESPACE) : "sp";
+        String wsomaNs = (def.getPrefix(WSOMA_SP_NAMESPACE) != null && !def.getPrefix(WSOMA_SP_NAMESPACE).equals("")) ? def.getPrefix(WSOMA_SP_NAMESPACE) : "wsoma";
+        
         if (extension instanceof Policy) {
             Policy policy = (Policy) extension;
-            
-            pw.print("<" + wspNs+":Policy");
+
+            pw.print("<" + wspNs + ":Policy");
             String policyId = policy.getID();
             if (policyId != null && !policyId.equals("")) {
                 DOMUtils.printAttribute(wsuNs + ":Id", policyId, pw);
@@ -127,8 +140,8 @@ public class SOAPExtSerializer
             if (policy.getMustSupportBasicAuthentication() != null) {
                 MustSupportBasicAuthentication msba = policy.getMustSupportBasicAuthentication();
                 pw.print("<" + myspNs + ":MustSupportBasicAuthentication");
-                String authEnabled = msba.getAuthEnabled() == Boolean.TRUE? "true" : "false";
-                DOMUtils.printAttribute("on",authEnabled, pw);
+                String authEnabled = msba.getAuthEnabled() == Boolean.TRUE ? "true" : "false";
+                DOMUtils.printAttribute("on", authEnabled, pw);
                 pw.print(">");
                 if (policy.getBasicAuthenticationDetail() != null) {
                     boolean useUserNameToken = false;
@@ -155,20 +168,23 @@ public class SOAPExtSerializer
                         pw.print("<" + myspNs + ":UsernameToken>");
                         DOMUtils.printAttribute(myspNs + ":IncludeToken", USER_TOKEN_NAME_SPACE, pw);
                         pw.println(">");
-                        pw.print("<" + wspNs +":Policy>");
-                        pw.print("<" + spNs +":WssUsernameToken10>");
+                        pw.print("<" + wspNs + ":Policy>");
+                        pw.print("<" + spNs + ":WssUsernameToken10>");
                         StringCompareValidation stringCompare = (StringCompareValidation) policy.getBasicAuthenticationDetail().getCredentialValidation();
                         if (stringCompare.getUsername() != null) {
                             pw.print(stringCompare.getUsername());
                         }
-                        pw.print("</" + spNs +":WssUsernameToken10>");
+                        pw.print("</" + spNs + ":WssUsernameToken10>");
                         if (stringCompare.getPassword() != null) {
-                            pw.print("<" + spNs +":WssPassword>******</" + spNs + ":WssPassword>");
+                            pw.print("<" + spNs + ":WssPassword>******</" + spNs + ":WssPassword>");
                         }
                         pw.print("</" + wspNs + ":Policy>");
                         pw.print("</" + myspNs + ":UsernameToken>");
                     }
-            }
+                }
+            } else if(policy.getOptimizedMimeSerialization() != null) {
+                OptimizedMimeSerialization oms = policy.getOptimizedMimeSerialization();
+                pw.print("<" + wsomaNs + ":OptimizedMimeSerialization/>");
             }
             pw.print("</" + wspNs + ":Policy>");
         } else if (extension instanceof PolicyReference) {
@@ -186,136 +202,147 @@ public class SOAPExtSerializer
     }
 
     public ExtensibilityElement unmarshall(Class parentType, QName elementType,
-                                           Element el, Definition def,
-                                           ExtensionRegistry extReg)
-        throws WSDLException {
+            Element el, Definition def,
+            ExtensionRegistry extReg)
+            throws WSDLException {
 
-        if(Policy.QNAME_ADDRESS.equals(elementType)) {
-            String wsuNs =  (def.getPrefix(WSU_NAMESPACE) != null && !def.getPrefix(WSU_NAMESPACE).equals(""))? def.getPrefix(WSU_NAMESPACE) : "wsu";
+        if (Policy.QNAME_ADDRESS.equals(elementType)) {
+            String wsuNs = (def.getPrefix(WSU_NAMESPACE) != null && !def.getPrefix(WSU_NAMESPACE).equals("")) ? def.getPrefix(WSU_NAMESPACE) : "wsu";
             String id = DOMUtils.getAttribute(el, wsuNs + ":Id");
             Policy pol = null;
-            if(id != null) {                                
+            if (id != null) {
                 NodeList list = el.getElementsByTagNameNS(Policy.NS_URI_BASIC_AUTHENTICATION_SECURITY_POLICY, "MustSupportBasicAuthentication");
-                if(list != null && list.getLength() > 0) {
+                if (list != null && list.getLength() > 0) {
                     Node msbaNode = list.item(0);
                     MustSupportBasicAuthentication msba = new MustSupportBasicAuthentication();
                     NamedNodeMap attrs = msbaNode.getAttributes();
                     Node onNode = attrs.getNamedItem(MustSupportBasicAuthentication.ATTR_ON);
                     if (onNode != null) {
                         String on = onNode.getNodeValue();
-                        msba.setAuthEnabled(Boolean.valueOf(on.equalsIgnoreCase("true") ||
-                                                            on.equalsIgnoreCase("yes")  ||
-                                                            on.equalsIgnoreCase("1")));
+                        msba.setAuthEnabled(Boolean.valueOf(on.equalsIgnoreCase("true")
+                                || on.equalsIgnoreCase("yes")
+                                || on.equalsIgnoreCase("1")));
                     }
-                    
+
                     BasicAuthenticationDetail bad = new BasicAuthenticationDetail();
                     try {
                         getAuthenticationDetail(msbaNode, bad);
                     } catch (Exception e) {
-                        throw new WSDLException("INVALID_WSDL", e.getMessage(), e);                        
+                        throw new WSDLException("INVALID_WSDL", e.getMessage(), e);
                     }
-                    
+
                     pol = new Policy();
                     pol.setID(id);
                     pol.setMustSupportBasicAuthentication(msba);
                     pol.setBasicAuthenticationDetail(bad);
-                    
-                    NodeList userNameList = el.getElementsByTagNameNS(Policy.NS_URI_SECURITY_POLICY, "WssUsernameToken10");                    
-                    if(userNameList != null) {
-                        Element userElem = (Element)userNameList.item(0);
-                        if(userElem != null && userElem.getChildNodes().getLength() > 0) {
+
+                    NodeList userNameList = el.getElementsByTagNameNS(Policy.NS_URI_SECURITY_POLICY, "WssUsernameToken10");
+                    if (userNameList != null) {
+                        Element userElem = (Element) userNameList.item(0);
+                        if (userElem != null && userElem.getChildNodes().getLength() > 0) {
                             String username = userElem.getChildNodes().item(0).getNodeValue();
                             try {
                                 if (isAToken(username)) {
-                        	    String token = username;
-                        	    String appVariableName = getApplicationVariableName(token);
-                        	        
-                        	    if (!mResolveTokens) {
-                        	        if (!mApplicationVariablesMap.containsKey(appVariableName)) {
-                        	            String[] metadata = new String[] {null, "STRING"};
-                        	            mApplicationVariablesMap.put(appVariableName, metadata);
-                        	        }
-                        	    } else {
-                        	    	String[] metadata = (String[]) mApplicationVariablesMap.get(appVariableName);
-                        	    	
-                        	    	if (metadata == null || metadata[0] == null) {
-                        	    	    throw new Exception(mMessages.getString("HTTPBC-E00252.Application_variable_not_defined", token));
-                        	    	}
-                                        
+                                    String token = username;
+                                    String appVariableName = getApplicationVariableName(token);
+
+                                    if (!mResolveTokens) {
+                                        if (!mApplicationVariablesMap.containsKey(appVariableName)) {
+                                            String[] metadata = new String[]{null, "STRING"};
+                                            mApplicationVariablesMap.put(appVariableName, metadata);
+                                        }
+                                    } else {
+                                        String[] metadata = (String[]) mApplicationVariablesMap.get(appVariableName);
+
+                                        if (metadata == null || metadata[0] == null) {
+                                            throw new Exception(mMessages.getString("HTTPBC-E00252.Application_variable_not_defined", token));
+                                        }
+
                                         pol.setUserName(metadata[0]);
-                                        
-                                        if (bad.getCredentialValidation() instanceof StringCompareValidation) {                                            
-                                            StringCompareValidation scv = (StringCompareValidation)bad.getCredentialValidation();
+
+                                        if (bad.getCredentialValidation() instanceof StringCompareValidation) {
+                                            StringCompareValidation scv = (StringCompareValidation) bad.getCredentialValidation();
                                             scv.setUsername(metadata[0]);
                                         }
-                        	    }
-                        	} else {
-                        	    pol.setUserName(username);
-                                    
-                                    if (bad.getCredentialValidation() instanceof StringCompareValidation) {                                            
-                                        StringCompareValidation scv = (StringCompareValidation)bad.getCredentialValidation();
+                                    }
+                                } else {
+                                    pol.setUserName(username);
+
+                                    if (bad.getCredentialValidation() instanceof StringCompareValidation) {
+                                        StringCompareValidation scv = (StringCompareValidation) bad.getCredentialValidation();
                                         scv.setUsername(username);
                                     }
-                        	}
+                                }
                             } catch (Exception e) {
                                 throw new WSDLException("INVALID_WSDL", e.getMessage(), e);
                             }
                         }
                     }
                     NodeList passwordList = el.getElementsByTagNameNS(Policy.NS_URI_SECURITY_POLICY, "WssPassword");
-                    if(passwordList != null) {
-                        Element passwordElem = (Element)passwordList.item(0);
-                        if(passwordElem != null && passwordElem.getChildNodes().getLength() > 0) {
+                    if (passwordList != null) {
+                        Element passwordElem = (Element) passwordList.item(0);
+                        if (passwordElem != null && passwordElem.getChildNodes().getLength() > 0) {
                             String password = passwordElem.getChildNodes().item(0).getNodeValue();
                             try {
                                 if (isAToken(password)) {
-                    	            String token = password;
-                    	            String appVariableName = getApplicationVariableName(token);
-                    	          
-                    	            if (!mResolveTokens) {
-                        	        if (!mApplicationVariablesMap.containsKey(appVariableName)) {
-                        	            String[] metadata = new String[] {null, "PASSWORD"};	
-                        	            mApplicationVariablesMap.put(appVariableName, metadata);
-                        	        }
-                        	    } else {
-                        	    	String[] metadata = (String[]) mApplicationVariablesMap.get(appVariableName);
-                        	        if (metadata == null || metadata[0] == null) {
-                        	            throw new Exception(mMessages.getString("HTTPBC-E00252.Application_variable_not_defined", token));
-                        	        } 
-                        	        
+                                    String token = password;
+                                    String appVariableName = getApplicationVariableName(token);
+
+                                    if (!mResolveTokens) {
+                                        if (!mApplicationVariablesMap.containsKey(appVariableName)) {
+                                            String[] metadata = new String[]{null, "PASSWORD"};
+                                            mApplicationVariablesMap.put(appVariableName, metadata);
+                                        }
+                                    } else {
+                                        String[] metadata = (String[]) mApplicationVariablesMap.get(appVariableName);
+                                        if (metadata == null || metadata[0] == null) {
+                                            throw new Exception(mMessages.getString("HTTPBC-E00252.Application_variable_not_defined", token));
+                                        }
+
                                         pol.setPassword(metadata[0]);
-                                        
-                                        if (bad.getCredentialValidation() instanceof StringCompareValidation) {                                            
-                                            StringCompareValidation scv = (StringCompareValidation)bad.getCredentialValidation();
+
+                                        if (bad.getCredentialValidation() instanceof StringCompareValidation) {
+                                            StringCompareValidation scv = (StringCompareValidation) bad.getCredentialValidation();
                                             scv.setPassword(metadata[0].toCharArray());
                                         }
-                        	    }
+                                    }
                                 } else {
-                        	    pol.setPassword(password);
-                                    
-                                    if (bad.getCredentialValidation() instanceof StringCompareValidation) {                                            
-                                        StringCompareValidation scv = (StringCompareValidation)bad.getCredentialValidation();
+                                    pol.setPassword(password);
+
+                                    if (bad.getCredentialValidation() instanceof StringCompareValidation) {
+                                        StringCompareValidation scv = (StringCompareValidation) bad.getCredentialValidation();
                                         scv.setPassword(password.toCharArray());
                                     }
-                        	}                                
+                                }
                             } catch (Exception e) {
                                 throw new WSDLException("INVALID_WSDL", e.getMessage(), e);
                             }
                         }
                     }
-                    if ((bad.getCredentialValidationType() == BasicAuthenticationDetail.CredentialValidationType.StringCompare) &&
-                        (userNameList == null || passwordList == null)) {
+                    if ((bad.getCredentialValidationType() == BasicAuthenticationDetail.CredentialValidationType.StringCompare)
+                            && (userNameList == null || passwordList == null)) {
                         throw new WSDLException("INVALID_WSDL", mMessages.getString("HTTPBC-E00256.WssTokenCompare_authentication_no_username_or_password"));
                     }
+
+                    return pol;
+                }
                 
+                list = el.getElementsByTagNameNS(WSOMA_SP_NAMESPACE, "OptimizedMimeSerialization");
+                if (list != null && list.getLength() > 0) {
+                    OptimizedMimeSerialization msba = new OptimizedMimeSerialization();
+                    
+                    pol = new Policy();
+                    pol.setID(id);
+                    pol.setOptimizedMimeSerialization(msba);
+                    
                     return pol;
                 }
             }
         }
 
-        if(PolicyReference.QNAME_ADDRESS.equals(elementType)) {
+        if (PolicyReference.QNAME_ADDRESS.equals(elementType)) {
             String URI = DOMUtils.getAttribute(el, "URI");
-            if(URI != null) {
+            if (URI != null) {
                 PolicyReference pref = new PolicyReference();
                 pref.setURI(URI);
                 return pref;
@@ -332,10 +359,9 @@ public class SOAPExtSerializer
         return extDeserializer.unmarshall(parentType, elementType, el, def, extReg);
     }
 
-   
     protected boolean isAToken(String name) throws Exception {
-    	boolean isToken = false;
-    	
+        boolean isToken = false;
+
         if (name.startsWith("${")) {
             if (name.endsWith("}")) {
                 isToken = true;
@@ -343,52 +369,52 @@ public class SOAPExtSerializer
                 throw new Exception(mMessages.getString("HTTPBC-E00253.Token_name_invalid", name));
             }
         }
-        
+
         return isToken;
     }
-    
+
     protected String getApplicationVariableName(String aToken) throws Exception {
         String tokenName = null;
-        
+
         if (aToken == null || "".equals(aToken)) {
             throw new Exception(mMessages.getString("HTTPBC-E00253.Token_name_invalid", aToken));  // fixme!
         }
-            
+
         tokenName = aToken.substring(2, aToken.length() - 1);
         if ("".equals(tokenName)) {
             throw new Exception(mMessages.getString("HTTPBC-E00253.Token_name_invalid", aToken)); // fixme!
-        } 
-        
+        }
+
         return tokenName;
-        
+
     }
 
-    private void getAuthenticationDetail (Node mustSupportAuthNode, BasicAuthenticationDetail detail) throws Exception {
+    private void getAuthenticationDetail(Node mustSupportAuthNode, BasicAuthenticationDetail detail) throws Exception {
         if (mustSupportAuthNode != null) {
             NodeList list = mustSupportAuthNode.getChildNodes();
             if (list == null) { // fall back to string compare 
                 detail.setCredentialValidationType(BasicAuthenticationDetail.CredentialValidationType.StringCompare);
-                detail.setCredentialValidation(new StringCompareValidation());                
+                detail.setCredentialValidation(new StringCompareValidation());
             } else {
-                for (int i=0; i < list.getLength(); i++) {
+                for (int i = 0; i < list.getLength(); i++) {
                     Node cNode = list.item(i);
                     if (cNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element elem = (Element)cNode;
+                        Element elem = (Element) cNode;
                         String elemLN = elem.getLocalName();
                         if (elemLN.equals(BasicAuthenticationDetail.ELEM_BasicAuthenticationDetail)) {
                             NodeList detailChildren = cNode.getChildNodes();
                             if (detailChildren == null) { // fall back to string compare
                                 detail.setCredentialValidationType(BasicAuthenticationDetail.CredentialValidationType.StringCompare);
-                                detail.setCredentialValidation(new StringCompareValidation());                
+                                detail.setCredentialValidation(new StringCompareValidation());
                             } else {
-                                for (int ii=0; ii < detailChildren.getLength(); ii++) {
+                                for (int ii = 0; ii < detailChildren.getLength(); ii++) {
                                     Node detailChild = detailChildren.item(ii);
                                     if (detailChild.getNodeType() == Node.ELEMENT_NODE) {
-                                        Element dcelem = (Element)detailChild;
+                                        Element dcelem = (Element) detailChild;
                                         String dcelemLN = dcelem.getLocalName();
                                         if (dcelemLN.equals(StringCompareValidation.ELEM_StringCompare)) {
                                             detail.setCredentialValidationType(BasicAuthenticationDetail.CredentialValidationType.StringCompare);
-                                            detail.setCredentialValidation(new StringCompareValidation()); 
+                                            detail.setCredentialValidation(new StringCompareValidation());
                                             break;
                                         } else if (dcelemLN.equals(AccessManagerValidation.ELEM_AccessManager)) {
                                             AccessManagerValidation am = new AccessManagerValidation();
@@ -396,9 +422,9 @@ public class SOAPExtSerializer
                                             detail.setCredentialValidation(am);
                                             NamedNodeMap attrs = detailChild.getAttributes();
                                             Node authNode = attrs.getNamedItem(AccessManagerValidation.ATTR_AUTHORIZATION);
-                                            if(authNode != null){
-                                            	String authValue = authNode.getNodeValue();
-                                            	am.setAuthorization(authValue);
+                                            if (authNode != null) {
+                                                String authValue = authNode.getNodeValue();
+                                                am.setAuthorization(authValue);
                                             }
                                             break;
                                         } else if (dcelemLN.equals(RealmValidation.ELEM_Realm)) {
@@ -412,7 +438,7 @@ public class SOAPExtSerializer
                                                     String appVariableName = getApplicationVariableName(token);
                                                     if (!mResolveTokens) {
                                                         if (!mApplicationVariablesMap.containsKey(appVariableName)) {
-                                                            String[] metadata = new String[] {null, "STRING"};
+                                                            String[] metadata = new String[]{null, "STRING"};
                                                             mApplicationVariablesMap.put(appVariableName, metadata);
                                                         }
                                                     } else {
@@ -420,16 +446,16 @@ public class SOAPExtSerializer
                                                         if (metadata == null || metadata[0] == null) {
                                                             throw new Exception(mMessages.getString("HTTPBC-E00252.Application_variable_not_defined", token));
                                                         }
-                                                        rv.setRealmName(metadata[0]);                       
+                                                        rv.setRealmName(metadata[0]);
                                                     }
                                                 } else {
                                                     rv.setRealmName(realmName);
-                                                }                            
+                                                }
                                             } else {
-                                                throw new Exception (mMessages.getString("HTTPBC-E00255.Realm_authentication_no_realm_name"));
+                                                throw new Exception(mMessages.getString("HTTPBC-E00255.Realm_authentication_no_realm_name"));
                                             }
                                             detail.setCredentialValidationType(BasicAuthenticationDetail.CredentialValidationType.Realm);
-                                            detail.setCredentialValidation(rv);                                                                                        
+                                            detail.setCredentialValidation(rv);
                                             break;
                                         }
                                     }
@@ -438,7 +464,7 @@ public class SOAPExtSerializer
                         }
                     }
                 }
-            }            
+            }
         }
     }
 }
