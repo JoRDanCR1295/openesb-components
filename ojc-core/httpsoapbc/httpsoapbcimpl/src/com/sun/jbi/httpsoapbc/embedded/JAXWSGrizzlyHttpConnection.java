@@ -27,6 +27,7 @@
  * 
  * END_HEADER - DO NOT EDIT
  */
+
 package com.sun.jbi.httpsoapbc.embedded;
 
 import com.sun.jbi.internationalization.Messages;
@@ -36,7 +37,6 @@ import com.sun.xml.ws.api.message.Packet;
 import com.sun.xml.ws.api.server.WSEndpoint;
 import com.sun.xml.ws.api.server.WebServiceContextDelegate;
 import com.sun.xml.ws.transport.http.WSHTTPConnection;
-import org.jvnet.ws.message.PropertySet.Property;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import java.util.Map;
-import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
@@ -63,15 +62,16 @@ import org.apache.coyote.tomcat5.CoyoteResponse;
 import org.apache.tomcat.util.http.MimeHeaders;
 
 /**
- * Based on JAX-WS WSHTTPConnection used with Java SE endpoints. It provides
- * connection implementation using Grizzly.
+ * Based on JAX-WS WSHTTPConnection used with Java SE endpoints. It provides connection
+ * implementation using Grizzly.
  */
 public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implements WebServiceContextDelegate {
 
     private static final Messages mMessages =
-            Messages.getMessages(JAXWSGrizzlyHttpConnection.class);
+        Messages.getMessages(JAXWSGrizzlyHttpConnection.class);
     private final static Logger mLogger =
-            Messages.getLogger(JAXWSGrizzlyHttpConnection.class);
+        Messages.getLogger(JAXWSGrizzlyHttpConnection.class);    
+    
     //private final HttpExchange httpExchange;
     private Request req;
     private Response res;
@@ -80,14 +80,14 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
     private int status;
     private int responseContentLength = 0;
     private Subject basicAuthSubject;
+
     private boolean outputWritten;
     private boolean isSecure;
-    private AsyncTask grizzlyAsyncTask;
-    private Map<String, List<String>> requestHeaders;
-    private Map<String, List<String>> responseHeaders;
 
-    public JAXWSGrizzlyHttpConnection(@NotNull Request request, @NotNull Response response, @NotNull CoyoteRequest coyoteRequest,
-            @NotNull CoyoteResponse coyoteResponse, AsyncTask grizzlyAsyncTask, boolean isSecure) {
+    private AsyncTask grizzlyAsyncTask;
+
+    public JAXWSGrizzlyHttpConnection(@NotNull Request request, @NotNull Response response, @NotNull CoyoteRequest coyoteRequest, 
+                                      @NotNull CoyoteResponse coyoteResponse, AsyncTask grizzlyAsyncTask, boolean isSecure) {
         this.req = request;
         this.res = response;
         this.coyoteRequest = coyoteRequest;
@@ -97,14 +97,11 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
     }
 
     @Override
-    @org.jvnet.ws.message.PropertySet.Property({MessageContext.HTTP_REQUEST_HEADERS, Packet.INBOUND_TRANSPORT_HEADERS})
-    public @NotNull
-    Map<String, List<String>> getRequestHeaders() {
-        if (requestHeaders == null) {
-            requestHeaders = initializeRequestHeaders();
-        }
-
-        return requestHeaders;
+    @Property({MessageContext.HTTP_REQUEST_HEADERS, Packet.INBOUND_TRANSPORT_HEADERS})
+    public @NotNull Map<String,List<String>> getRequestHeaders() {
+        MimeHeaders mimeHeaders = req.getMimeHeaders();
+        Map<String, List<String>> jaxWSHeaders = convertHeaders(mimeHeaders);
+        return jaxWSHeaders;
     }
 
     @Override
@@ -112,41 +109,70 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
         return req.getHeader(headerName);
     }
 
+    
+    /**
+     * there seems to issue with metro implementation while creating soap 1.2
+     * mime headers, for the content-type mime header it does not propagate
+     * the exact value for the content-type mime header, specially in this case
+     * though the http-request contents the value of the action in the content
+     * type , the same value is not propagated from the http transport layer to
+     * the soap message layer
+     * 
+     * this is a work around which is used to pass on the action value if
+     * present in the content-type , this code needs to removed once we have the
+     * metro fix
+     * 
+     * @param headerName
+     * @return
+     */
+    private String soapActionHeader(String value) {
+	
+	StringTokenizer tk = new StringTokenizer(value,";");
+	String soapAction=null;
+	while(tk.hasMoreTokens()){
+	    String t = tk.nextToken();
+	    if(t.startsWith("action=")){
+		soapAction= t.substring("action=".length());	
+	    }
+	}
+	return soapAction;
+    }
+    
+   
+
     @Override
-    public void setResponseHeaders(Map<String, List<String>> headers) {
-        this.responseHeaders = headers;
-        if (headers == null) {
-            return;
-
+    public void setResponseHeaders(Map<String,List<String>> headers) {
+        if (headers != null) {
+            for (Map.Entry<String,List<String>> entry : headers.entrySet()) {
+                String key = entry.getKey();
+                List<String> values = entry.getValue();
+                if (values.size() == 1) {
+                    res.setHeader(key, values.get(1));
+                } else {
+                    // If the header has multiple values, comma separte them
+                    StringBuffer concat = new StringBuffer();
+                    boolean firstTime = true;
+                    for (String aValue : values) {
+                        if (!firstTime) {
+                            concat.append(',');
+                        }
+                        concat.append(aValue);
+                        firstTime = false;
+                    }
+                    res.setHeader(key, concat.toString());
+                }
+            }                    
         }
-        if (status != 0) {
-            res.setStatus(status);
-        }
-
-        res.reset();   // clear all the headers
-
-        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            String name = entry.getKey();
-            if (name.equalsIgnoreCase("Content-Type") || name.equalsIgnoreCase("Content-Length")) {
-                continue;   // ignore headers that interfere with the operation
-            }
-            for (String value : entry.getValue()) {
-                res.addHeader(name, value);
-            }
-        }
-    }
-
-    //@Override
-    public void setResponseHeader(String headerName, List<String> values) {
-        responseHeaders.put(headerName, values);
     }
 
     @Override
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.HTTP_RESPONSE_HEADERS)
-    public Map<String, List<String>> getResponseHeaders() {
-        return responseHeaders;
+    @Property(MessageContext.HTTP_RESPONSE_HEADERS)
+    public Map<String,List<String>> getResponseHeaders() {
+        MimeHeaders mimeHeaders = res.getMimeHeaders();
+        Map<String, List<String>> jaxWSHeaders = convertHeaders(mimeHeaders);
+        return jaxWSHeaders;
     }
-
+    
     @Override
     public void setContentTypeResponseHeader(@NotNull String value) {
         res.setHeader("Content-Type", value);
@@ -158,29 +184,27 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
     }
 
     @Override
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.HTTP_RESPONSE_CODE)
+    @Property(MessageContext.HTTP_RESPONSE_CODE)
     public int getStatus() {
         return status;
     }
-
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.SERVLET_REQUEST)
+    
+    @Property(MessageContext.SERVLET_REQUEST)
     public HttpServletRequest getRequest() {
         return coyoteRequest;
     }
-
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.SERVLET_RESPONSE)
+	
+    @Property(MessageContext.SERVLET_RESPONSE)
     public HttpServletResponse getResponse() {
         return coyoteResponse;
-    }
+    }	
 
-    public @NotNull
-    InputStream getInput() throws IOException {
+    public @NotNull InputStream getInput() throws IOException{
         return coyoteRequest.getInputStream();
         //return httpExchange.getRequestBody();
     }
 
-    public @NotNull
-    OutputStream getOutput() throws IOException {
+    public @NotNull OutputStream getOutput() throws IOException {
         assert !outputWritten;
         outputWritten = true;
 
@@ -188,8 +212,7 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
         return coyoteResponse.getOutputStream();
     }
 
-    public @NotNull
-    WebServiceContextDelegate getWebServiceContextDelegate() {
+    public @NotNull WebServiceContextDelegate getWebServiceContextDelegate() {
         return this;
     }
 
@@ -201,38 +224,36 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
         return false;
     }
 
-    public @NotNull
-    String getEPRAddress(Packet request, WSEndpoint endpoint) {
+    public @NotNull String getEPRAddress(Packet request, WSEndpoint endpoint) {
         // TODO: verify the kind of address it wants here
         return coyoteRequest.getRequestURL().toString();
     }
-
-    public String getWSDLAddress(@NotNull Packet request, @NotNull WSEndpoint endpoint) {
-        String eprAddress = getEPRAddress(request, endpoint);
+   
+    public String getWSDLAddress(@NotNull Packet request, @NotNull WSEndpoint endpoint) { 
+        String eprAddress = getEPRAddress(request,endpoint); 
         String wsdlAddress = eprAddress + "?wsdl";
-        return wsdlAddress;
-    }
+        return wsdlAddress; 
+    } 
 
     //@Override  
-    public boolean isSecure() {
+    public boolean isSecure() {  
         return this.isSecure;
     }
-
+    
     @Override
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.HTTP_REQUEST_METHOD)
-    public @NotNull
-    String getRequestMethod() {
+    @Property(MessageContext.HTTP_REQUEST_METHOD)
+    public @NotNull String getRequestMethod() {
         return coyoteRequest.getMethod();
     }
 
     @Override
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.QUERY_STRING)
+    @Property(MessageContext.QUERY_STRING)
     public String getQueryString() {
         return coyoteRequest.getQueryString();
     }
 
     @Override
-    @org.jvnet.ws.message.PropertySet.Property(MessageContext.PATH_INFO)
+    @Property(MessageContext.PATH_INFO)
     public String getPathInfo() {
         return coyoteRequest.getRequestURI();
     }
@@ -245,11 +266,11 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
         finishGrizzlyResponse();
         super.close();
     }
-
+    
     protected PropertyMap getPropertyMap() {
         return model;
     }
-
+    
     void finishGrizzlyResponse() {
         if (grizzlyAsyncTask != null) {
             JBIGrizzlyAsyncFilter.finishResponse(grizzlyAsyncTask);
@@ -259,33 +280,57 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
         }
     }
 
-    private Map<String, List<String>> initializeRequestHeaders() {
-        final Map<String, List<String>> headers = new HashMap<String, List<String>>();
-        MimeHeaders mimeHeaders = req.getMimeHeaders();
-        Enumeration names = mimeHeaders.names();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            List<String> jaxWsValues = new ArrayList<String>();
-            Enumeration values = mimeHeaders.values(name);
-            while (values.hasMoreElements()) {
-                String aValue = (String) values.nextElement();
-                jaxWsValues.add(aValue);
-            }
-            headers.put(name, jaxWsValues);
-        }
+    /**
+     * Convert from MimeHeaders to the format JAX-WS uses
+     * with the header name as the map key pointing to a list of values 
+     * for that header
+     * 
+     * This conversion might be expesive, if this is frequently used it may 
+     * be worth changing Grizzly or JAX-WS to remove the need for the conversion
+     */
+    Map<String, List<String>> convertHeaders(MimeHeaders mimeHeaders) {
+	Map<String, List<String>> jaxWSHeaders = new HashMap();
+	Enumeration names = mimeHeaders.names();
+	while (names.hasMoreElements()) {
+	    String name = (String) names.nextElement();
+	    List jaxWSHeaderValues = new ArrayList();
+	    Enumeration values = mimeHeaders.values(name);
 
-        return headers;
+	    if (name.equalsIgnoreCase("Content-Type")) {
+		while (values.hasMoreElements()) {
+		    String aValue = (String) values.nextElement();
+		    jaxWSHeaderValues.add(aValue);
+		    if(aValue.indexOf("action=") > 0){			
+			List soapActions =  new ArrayList();
+			soapActions.add(soapActionHeader(aValue));
+			jaxWSHeaders.put("SOAPAction", soapActions);
+		    }
+		}
+	    } else {
+
+		while (values.hasMoreElements()) {
+		    String aValue = (String) values.nextElement();
+		    jaxWSHeaderValues.add(aValue);
+		}
+	    }
+	    jaxWSHeaders.put(name, jaxWSHeaderValues);
+	}
+
+	return jaxWSHeaders;
     }
+
+    
     private static final PropertyMap model;
 
     static {
-        model =  parse(JAXWSGrizzlyHttpConnection.class);
+        model = parse(JAXWSGrizzlyHttpConnection.class);
     }
 
     /**
      * @return the basicAuthSubject
      */
-    @org.jvnet.ws.message.PropertySet.Property("basicAuthSubject")
+    
+    @Property("basicAuthSubject")
     public Subject getBasicAuthSubject() {
         return basicAuthSubject;
     }
@@ -295,35 +340,5 @@ public final class JAXWSGrizzlyHttpConnection extends WSHTTPConnection implement
      */
     public void setBasicAuthSubject(Subject basicAuthSubject) {
         this.basicAuthSubject = basicAuthSubject;
-    }
-
-    //@Override
-    public Set<String> getRequestHeaderNames() {
-        return requestHeaders.keySet();
-    }
-
-    //@Override
-    public List<String> getRequestHeaderValues(String headerName) {
-        return requestHeaders.get(headerName);
-    }
-
-    //@Override
-    public String getRequestURI() {
-        return req.requestURI().getString();
-    }
-
-    //@Override
-    public String getRequestScheme() {
-        return req.scheme().getString();
-    }
-
-    //@Override
-    public String getServerName() {
-        return req.serverName().getString();
-    }
-
-    //@Override
-    public int getServerPort() {
-        return req.getServerPort();
     }
 }
