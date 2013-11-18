@@ -571,6 +571,22 @@ public abstract class AbstractEndpoint
         }
         return false;
     }
+    
+    public boolean isMTOMEnabled() {
+        PolicyReference reference = getPolicyReference();
+        if(reference != null) {
+            String policyReferenceURI = reference.getURI();
+            if(policyReferenceURI == null) {
+                return false;
+            } else {
+                Policy pol = getPolicy(reference);
+                if(pol != null) {
+                  return (pol.getOptimizedMimeSerialization() != null);
+                }
+            }
+        }
+        return false;
+    }
 
     public Policy getPolicy(PolicyReference pr) {
         Policy p = null;

@@ -112,20 +112,26 @@ public class JAXWSEndpointFactory {
         QName portName = new QName(endpoint.getServiceName().getNamespaceURI(), endpoint.getEndpointName());
         Container container = null; // This counter can contain info on security/monitoring pipe 
 
-        WSBinding binding = null;
+        String lexicalBindingType = null;
+        
         if (endpoint instanceof com.sun.jbi.httpsoapbc.HttpSoap12Endpoint) {
-            String lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING;;
-            BindingID bindingID = BindingID.parse(lexicalBindingType);
-            binding = bindingID.createBinding();
+            if (endpoint.isMTOMEnabled()) {
+                lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING;
+            } else {
+                lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING;
+            }
         }else if (endpoint instanceof HttpSoapEndpoint) {
-            String lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;;
-            BindingID bindingID = BindingID.parse(lexicalBindingType);
-            binding = bindingID.createBinding();
+            if (endpoint.isMTOMEnabled()) {
+                lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING;
+            } else {
+                lexicalBindingType = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
+            }
         } else if (endpoint instanceof HttpEndpoint) {
-            String lexicalBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;;
-            BindingID bindingID = BindingID.parse(lexicalBindingType);
-            binding = bindingID.createBinding();
+            lexicalBindingType = javax.xml.ws.http.HTTPBinding.HTTP_BINDING;
         }
+        
+        BindingID bindingID = BindingID.parse(lexicalBindingType);
+        WSBinding binding = bindingID.createBinding();
         
         if (mLogger.isLoggable(Level.FINE)) {
             mLogger.log(Level.FINE, "Creating WSEndpoint with primary WSDL URL: " + endpoint.getOriginalWSDL().toURL());

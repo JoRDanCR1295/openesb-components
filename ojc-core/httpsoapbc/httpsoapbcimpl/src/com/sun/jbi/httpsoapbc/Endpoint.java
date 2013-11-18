@@ -179,6 +179,8 @@ public interface Endpoint {
     
     boolean isBasicAuthenticationEnabled();
     
+    boolean isMTOMEnabled();
+    
     EndpointSecurityManager getEndpointSecurityManager();
     
     QName createOperationAddress(OperationMetaData opMetaData);
