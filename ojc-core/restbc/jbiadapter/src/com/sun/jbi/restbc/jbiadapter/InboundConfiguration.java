@@ -33,6 +33,7 @@ public class InboundConfiguration {
     private final static String FORWARD_AS_ATTACHMENT_PROP = "forward-as-attachment";
     private final static String TIMEOUT_PROP = "timeout";
     private final static String MSG_TYPE = "message-type";
+    private final static String STRIP_NAMESPACES = "strip-namespaces";
     
     private String httpListenerName;
     private String path;
@@ -45,6 +46,8 @@ public class InboundConfiguration {
     private boolean forwardAsAttachment = false;
     private long timeout = 60000;
     private String msgType;
+    // This property is only used in the case of a JSON output
+    private boolean stripNamespaces = false;
     
     private ServiceUnit serviceUnit;
     private RestOperation restOp;
@@ -92,6 +95,8 @@ public class InboundConfiguration {
         forwardAsAttachment = Boolean.parseBoolean(PropertiesUtil.safeGetProperty(p, FORWARD_AS_ATTACHMENT_PROP, "false"));
         timeout = Long.parseLong(PropertiesUtil.safeGetProperty(p, TIMEOUT_PROP, "60000"));
         msgType = PropertiesUtil.safeGetProperty(p, MSG_TYPE);
+        
+        stripNamespaces = Boolean.parseBoolean(PropertiesUtil.safeGetProperty(p, STRIP_NAMESPACES, "false"));
     }
     
     /**
@@ -191,6 +196,11 @@ public class InboundConfiguration {
     public EndpointIdentifier getEndpointIdentifier() {
         return endpointIdentifier;
     }
-    
-    
+
+    /**
+     * @return the stripNamespaces
+     */
+    public boolean isStripNamespaces() {
+        return stripNamespaces;
+    }
 }

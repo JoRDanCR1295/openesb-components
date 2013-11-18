@@ -336,7 +336,9 @@ public class InboundDelegator {
                                     break;
                                 } else if (PathUtil.isJSONMediaType(acceptableMediaType)) {
                                     if (!method.equalsIgnoreCase("head")) {
-                                        String xmlPayloadAsString = JbiMessageUtil.convertXmlToString(xmlPayload);
+                                        String xmlPayloadAsString = JbiMessageUtil.convertXmlToString(xmlPayload,
+                                                inboundConfig.isStripNamespaces());
+                                        
                                         com.sun.jbi.restbc.jbiadapter.org.json.JSONObject jsonObject = 
                                             com.sun.jbi.restbc.jbiadapter.org.json.XML.toJSONObject(xmlPayloadAsString);
                                         if (jsonObject != null) {

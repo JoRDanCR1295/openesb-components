@@ -405,14 +405,30 @@ public class JbiMessageUtil {
         return doc;
     }
     
-    
-    public static String convertXmlToString(Source source) throws Exception {
+    public static String convertXmlToString(Source source, boolean stripNamespaces) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(source, new StreamResult(baos));
         
-        return baos.toString();
+        String xmlPayload = baos.toString();
+        if (stripNamespaces) {
+            return stripNamespaces(xmlPayload);
+        }
+        
+        return xmlPayload;
+    }
+    
+    private static String stripNamespaces(String xmlPayload) {
+        return xmlPayload.replaceAll("(<\\?[^<]*\\?>)?", ""). /* remove preamble */
+                replaceAll("xmlns.*?(\"|\').*?(\"|\')", "") /* remove xmlns declaration */
+                .replaceAll("(<)(\\w+:)(.*?>)", "$1$3") /* remove opening tag prefix */
+                .replaceAll("(</)(\\w+:)(.*?>)", "$1$3"); /* remove closing tags prefix */
+
+    }
+    
+    public static String convertXmlToString(Source source) throws Exception {
+        return convertXmlToString(source, false);
     }
     
     private static boolean isBuiltInType(QName typeName) {
