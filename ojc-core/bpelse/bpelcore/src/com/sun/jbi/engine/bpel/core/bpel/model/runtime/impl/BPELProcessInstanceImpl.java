@@ -860,7 +860,15 @@ public class BPELProcessInstanceImpl extends StructuredActivityUnitImpl implemen
 	 */
 	public void registerEnclosedScope(FaultHandlingContext enclosedScope) {
 		enclosedScopes.add(enclosedScope);
-	} 
+	}
+
+    /**
+     * @see com.sun.jbi.engine.bpel.core.bpel.model.runtime.FaultHandlingContext#unregisterEnclosedScope(
+     * com.sun.jbi.engine.bpel.core.bpel.model.runtime.FaultHandlingContext)
+     */
+    public void unregisterEnclosedScope(FaultHandlingContext enclosedScope) {
+        enclosedScopes.remove(enclosedScope);
+    }
 	
     /**
      * @see com.sun.jbi.engine.bpel.core.bpel.model.runtime.FaultHandlingContext#notifyFault(
