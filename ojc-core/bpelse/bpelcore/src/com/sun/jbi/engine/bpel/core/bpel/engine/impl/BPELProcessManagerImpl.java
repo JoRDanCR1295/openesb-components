@@ -1165,6 +1165,7 @@ public class BPELProcessManagerImpl implements BPELProcessManager {
         mAllInstances.remove(bp);
         mAllInstanceIds.remove(bp.getId());
         BPELHelper.removeUID(bp.getId());
+        mReadyToRunQueue.cleanUp(bp.getId());
     }
 
     public void pickMgrCleanUp(ICallFrame callframe) {
