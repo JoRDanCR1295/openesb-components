@@ -291,6 +291,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
                         currentScopeState = ScopeState.Completed;
                         // clear all the FH related data as the scope has completed.
                         clearFHRelatedData();
+                        unregisterFromParent(this);
                         // push this completed scope instance to the parent sope stack of completed scopes.
                         mCompletionOrder = getParentContext().getFaultHandlingContext().pushCompletedScope(this);
                         updateScopeOnState(rObjs);
@@ -310,6 +311,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
             currentScopeState = ScopeState.Completed;    		
             // clear all the FH related data as the scope has completed.
             clearFHRelatedData();
+            unregisterFromParent(this);
             // push this completed scope instance to the parent scope stack of completed scopes.
             mCompletionOrder = getParentContext().getFaultHandlingContext().pushCompletedScope(this);
             updateScopeOnState(rObjs);
@@ -391,6 +393,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
                     currentScopeState = ScopeState.Completed;
                     // clear all the FH related data as the scope has completed.
                     clearFHRelatedData();
+                    unregisterFromParent(this);
                     // push this completed scope instance to the parent scope stack of completed scopes.
                     mCompletionOrder = getParentContext().getFaultHandlingContext().pushCompletedScope(this);
                     updateScopeOnState(rObjs);
@@ -712,7 +715,15 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
 	 */
 	public void registerEnclosedScope(FaultHandlingContext enclosedScope) {
 		enclosedScopes.add(enclosedScope);
-	} 
+	}
+
+    public void unregisterEnclosedScope(FaultHandlingContext enclosedScope) {
+        enclosedScopes.remove(enclosedScope);
+    }
+
+    private void unregisterFromParent(FaultHandlingContext scope) {
+        mContext.getFaultHandlingContext().unregisterEnclosedScope(scope);
+    }
     
     /**
      * @see com.sun.jbi.engine.bpel.core.bpel.model.runtime.FaultHandlingContext#notifyFault(
@@ -807,6 +818,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
     	
     	// clean the FH related data.
     	clearFHRelatedData();
+        unregisterFromParent(this);
     }
     
     private void clearFHRelatedData() {
@@ -1252,6 +1264,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
         removeVariableReferences();
         frame.getProcessInstance().getPersistenctMgr().updateState(this, 
                 mContext.getStateContext().getState(), true);
+        unregisterFromParent(this);
     }
 
 	/**
@@ -1460,6 +1473,7 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
      */
     private void updateScopeStateAsDone(boolean persistenceEnabled, RequiredObjects rObjs) {
 		currentScopeState = ScopeState.Done;
+        unregisterFromParent(this);
 		// update the Scope on the StateImpl
 		if (persistenceEnabled) {
 			updateScopeOnState(rObjs);
