@@ -109,6 +109,12 @@ public interface FaultHandlingContext {
 	 */
 	void registerEnclosedScope(FaultHandlingContext enclosedScope);
 
+    /**
+     * Removes itself from the parent context.
+     * @param enclosedScope
+     */
+    void unregisterEnclosedScope(FaultHandlingContext enclosedScope);
+
 	/**
 	 * When a callframe is created it will be registered with the FaultHandlingContext.
 	 * This is used by the FaultHandlingContext to remove any callframe that is waiting 

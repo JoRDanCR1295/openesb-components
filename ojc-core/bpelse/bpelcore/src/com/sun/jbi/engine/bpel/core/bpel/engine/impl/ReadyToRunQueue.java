@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.sun.jbi.engine.bpel.core.bpel.engine.BPELProcessManager;
 import com.sun.jbi.engine.bpel.core.bpel.engine.BusinessProcessInstanceThread;
@@ -411,5 +412,20 @@ public class ReadyToRunQueue {
     
     public Set<BusinessProcessInstanceThread> getWaitingBPIsSet() {
         return mWaitingBPIsSet;
+    }
+
+    public void cleanUp(final String bpId) {
+        ReentrantLock lock = new ReentrantLock();
+        lock.lock();
+        try {
+            for (Iterator<BusinessProcessInstanceThread> i = mWaitingBPIsSet.iterator(); i.hasNext();) {
+                final BusinessProcessInstanceThread bpit = i.next();
+                if (bpId.equals(bpit.getProcessInstanceId())) {
+                    i.remove();
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 }
