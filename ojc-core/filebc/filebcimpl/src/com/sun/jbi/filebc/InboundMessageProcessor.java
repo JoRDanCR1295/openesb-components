@@ -383,7 +383,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
      */
     private FileLock acquireLockOnTargetDir(/*FileAddress fileAddress, File inDir*/)
             throws IOException, FileNotFoundException {
-        FileLock fLock;
+        FileLock fLock = null;
         // we are the only thread on this process entered this area
         // further lock the physical target directory
         //File lockFile = new File(inDir, fileAddress.getLockName());
@@ -396,7 +396,16 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             FileOutputStream fos = new FileOutputStream(lockFile);
             mLock.setChannel(channel = fos.getChannel());
         }
-        fLock = channel.tryLock();
+        try {
+            fLock = channel.tryLock();
+        } catch (IOException e) {
+            if (mLogger.isLoggable(Level.WARNING)) {
+                mLogger.log(Level.WARNING, "Exception caught when trying to lock file for inbound target: " + lockFile.getName() + ", destination file :" + mLock.getLockFilePath() + ". Trying to recreate. Exception: " + e.getMessage());
+            }
+            FileOutputStream fos = new FileOutputStream(lockFile);
+            mLock.setChannel(channel = fos.getChannel());
+            if (fLock == null) fLock = channel.tryLock();
+        }
         return fLock;
     }
 
