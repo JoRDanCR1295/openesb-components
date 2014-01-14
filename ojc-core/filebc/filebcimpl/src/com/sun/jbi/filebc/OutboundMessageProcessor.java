@@ -1425,7 +1425,47 @@ public class OutboundMessageProcessor implements Runnable {
                 // sync threads across JVM (process) using physical file lock
                 // for accessing the target file
                 // blocking call
-                fileLock = cLock.getFileChannel().lock();
+                try {
+                    fileLock = cLock.getFileChannel().lock();
+                } catch (IOException e) {
+                    if (mLogger.isLoggable(Level.WARNING)) {
+                        mLogger.log(Level.WARNING, "Exception caught when trying to lock file for outbound target: " + fileLock + ", destination file :" + outFile.getPath() + ". Trying to recreate. Exception: " + e.getMessage());
+                    }
+                    // So lets try to recreate lock for one time. Perhaps the service uses for NFS and external file storage got fail
+                    LockRegistry.remove(endpointKey);
+
+                    String lockName = null;
+                    FileOutputStream fos = null;
+                    File lockFile = null;
+
+                    //write out info about this directory
+                    lockName = endpoint.getFileAddress().getLockName();
+                    lockName = lockName != null && lockName.trim().length() > 0 ? lockName : Lock.DEFAULT_INBOUND_LOCKFILE_NAME;
+                    lockFile = new File(endpoint.getWorkAreaDir(), lockName);
+                    lockFile.createNewFile();
+                    fos = new FileOutputStream(lockFile);
+
+                    if (mLogger.isLoggable(Level.FINE)) {
+                        mLogger.log(Level.FINE, "FBD_Init_SU_Register_Lock",
+                                new Object[]{lockFile.getCanonicalPath(), endpointKey});
+                    }
+
+                    Lock l = LockRegistry.register(endpointKey, new Lock((fos != null ? fos.getChannel() : null), new ReentrantLock(), lockFile.getCanonicalPath()));
+                    if (l == null) {
+                        throw new Exception(
+                                mMessages.getString("FILEBC-E00793.Failed_register_lock_4_outbound_endpoint",
+                                new Object[]{endpoint.getServiceName().toString(),
+                                    endpoint.getEndpointName(),
+                                    lockFile.getCanonicalPath()
+                                }));
+                    }
+                    try {
+                        cLock.setChannel(fos.getChannel());
+                        fileLock = cLock.getFileChannel().lock();
+                    } catch (Exception eee) {
+                        mLogger.log(Level.SEVERE, "Exception caught when trying to lock file for outbound target: " + fileLock + ", destination file :" + outFile.getPath() + ", Exception: ("+e.getClass().getName()+")" + e.getMessage());
+                    }
+                }
             }
 
             File path = outFile.getParentFile();
