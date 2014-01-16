@@ -139,8 +139,10 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 			//TODO: This time we assume that the message will be found. Is that a valid assumption?
 			Object[] result = procMgr.receiveRequestOrPutInPendingQueue(mWaitingForEvent, frame);
 			MessageContainer request = (MessageContainer) result[0];
-			if(request != null)
+			if(request != null) {
+				receive.setMessageExchange(request.getId());
 				mContext.addRequest(receive, request);
+			}
 			//Post event
 			postVarEvent (receive.getRVariable(), request, rObjs, bpit.getCallFrame());
 
@@ -242,6 +244,7 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 				return false;
 			}
 		}
+		receive.setMessageExchange(request.getId());
 			mContext.addRequest(receive, request);
 
 		frame.onLineChange(this);
