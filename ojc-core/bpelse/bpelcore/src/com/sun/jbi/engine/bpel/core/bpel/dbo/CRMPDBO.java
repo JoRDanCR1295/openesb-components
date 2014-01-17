@@ -49,7 +49,7 @@ public interface CRMPDBO extends DBObject {
      * bpelmessageexchange may need to be addressed in the future..
      */
     String BASE_INSERT_STMT_STR = "INSERT INTO " + //$NON-NLS-1$
-        PersistenceDBSchemaCreation.CRMP + " (stateid, crmpinvokeid, partnerlink, operation) VALUES(?, ?, ?, ? )"; //$NON-NLS-1$
+        PersistenceDBSchemaCreation.CRMP + " (stateid, crmpinvokeid, partnerlink, operation, bpelmessageexchange) VALUES(?, ?, ?, ?, ?)"; //$NON-NLS-1$
 
     /** update statement */
     String BASE_UPDATE_STMT_STR = "UPDATE " + //$NON-NLS-1$
@@ -61,11 +61,11 @@ public interface CRMPDBO extends DBObject {
     PersistenceDBSchemaCreation.CRMP + "WHERE crmpinvokeid = ?"; //$NON-NLS-1$
 
     /** query statement */
-    String BASE_QUERY_STMT_STR = "SELECT stateid, partnerlink, operation, replyvariableid FROM " + //$NON-NLS-1$
+    String BASE_QUERY_STMT_STR = "SELECT stateid, partnerlink, operation, replyvariableid, bpelmessageexchange FROM " + //$NON-NLS-1$
     PersistenceDBSchemaCreation.CRMP + "WHERE crmpinvokeid = ?"; //$NON-NLS-1$
 
     /** query statement */
-    String QUERY_STMT_FOR_CLUSTERED_INVOKE_STR = "SELECT stateid, partnerlink, operation, replyvariableid FROM " + //$NON-NLS-1$
+    String QUERY_STMT_FOR_CLUSTERED_INVOKE_STR = "SELECT stateid, partnerlink, operation, replyvariableid, bpelmessageexchange FROM " + //$NON-NLS-1$
     PersistenceDBSchemaCreation.CRMP + " WHERE crmpinvokeid = ? and replyvariableid <> -1"; //$NON-NLS-1$
 
     /* sybase, db2, sqlserver, pointbase statements to be added */
