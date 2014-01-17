@@ -140,7 +140,6 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 			Object[] result = procMgr.receiveRequestOrPutInPendingQueue(mWaitingForEvent, frame);
 			MessageContainer request = (MessageContainer) result[0];
 			if(request != null) {
-				receive.setMessageExchange(request.getId());
 				mContext.addRequest(receive, request);
 			}
 			//Post event
@@ -244,7 +243,6 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 				return false;
 			}
 		}
-		receive.setMessageExchange(request.getId());
 			mContext.addRequest(receive, request);
 
 		frame.onLineChange(this);
@@ -369,7 +367,7 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 			// persist the receive, and then calculate the correlation values.
 			frame.getProcessInstance().getPersistenctMgr().updateState(this, rObjs, 
 					TransactionInfo.getLocalTxInfo(), mContext.getStateContext().getState(),
-					frame.getBranchInvokeCounter());
+					frame.getBranchInvokeCounter(), request.getId());
 
 			// process correlations
 			if (receive.getStartType() != Engine.RECEIVE_TYPE_NO_COR_JOIN_ONLY) {
@@ -444,7 +442,7 @@ public class ReceiveUnitImpl extends ActivityUnitImpl {
 
 			// persist the receive activity (PC) as part of the TX
 			frame.getProcessInstance().getPersistenctMgr().updateState(this, rObjs, txInfo, 
-					mContext.getStateContext().getState(), frame.getBranchInvokeCounter());
+					mContext.getStateContext().getState(), frame.getBranchInvokeCounter(), request.getId());
 
 			/*
 			 * need to set the activity to ExecutionState.WaitingForTxComplete.
