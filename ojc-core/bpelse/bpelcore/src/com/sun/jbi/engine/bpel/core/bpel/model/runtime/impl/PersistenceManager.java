@@ -192,12 +192,33 @@ public class PersistenceManager {
         specificUpdateStateForStartElement(rObjs, (RStartElement) activity, txInfo, state);
     }
 
+    public void updateState(ReceiveUnitImpl unit, RequiredObjects rObjs, TransactionInfo txInfo, MutableState state, long branchInvokeCounter, String messageExchangeId) {
+      RActivity activity = unit.getStaticModelActivity();
+      state.updatePCWithBranchInvokeCounter(unit.getBranchId(), activity.getUniqueId(), branchInvokeCounter);
+      
+       String crmpInvId = (String) rObjs.removeValue(RequiredObjects.CRMP_INVOKE_ID);
+        if (crmpInvId != null) {
+            RStartElement startElement =  (RStartElement)activity;
+            
+            String partnerLink = startElement.getRPartner().getName();
+            String operation = ((OperationReference) startElement).getOperation();
+            
+            state.updateCRMPState(crmpInvId, partnerLink, operation, messageExchangeId);
+        }
+
+        StateManager mgr = mEng.getStateManager();
+        mgr.persistState((State) state, txInfo, mBPInstance);
+    }
+
     private void specificUpdateStateForStartElement(RequiredObjects rObjs, RStartElement startElement, 
             TransactionInfo txInfo, MutableState state) {
         String crmpInvId = (String) rObjs.removeValue(RequiredObjects.CRMP_INVOKE_ID);
         if (crmpInvId != null) {
             String partnerLink = startElement.getRPartner().getName();
             String operation = ((OperationReference) startElement).getOperation();
+            //TODO: (BB) It seems that next line contains error, because startElement is a class of bpelmodel project,
+            //which contains setMessageExchange method but doesn't provide it through any interfaces and never uses (Make "find usages" setMessageExchange of com.sun.bpel.model.impl.* classes). 
+            //so, the messageExchange will be null in any case. Please see where is a bug.
             String bpelMesgExchange = startElement.getMessageExchange();
             
             state.updateCRMPState(crmpInvId, partnerLink, operation, bpelMesgExchange);
