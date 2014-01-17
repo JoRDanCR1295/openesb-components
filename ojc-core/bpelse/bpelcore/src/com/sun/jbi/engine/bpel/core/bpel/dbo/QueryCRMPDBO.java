@@ -59,4 +59,5 @@ public interface QueryCRMPDBO extends DBObject{
 	
 	long getReplyVariableId();
 
+	String getCRMPInvokeId();
 }
