@@ -393,8 +393,22 @@ public class StateManagerImpl implements StateManager {
                     String partnerlink = qCRMPDBO.getPartnerLink();
                     String oper = qCRMPDBO.getOperation();
                     String crmpUpdateListValue = bpId + partnerlink + oper;
+                    String crmpInvokeId = qCRMPDBO.getCRMPInvokeId();
+                    long replyVarId = qCRMPDBO.getReplyVariableId();
+                    String msgExch = qCRMPDBO.getBpelMessageExchange();
+                    
                     BPELProcessInstanceImpl instImpl = (BPELProcessInstanceImpl) processInstance;
                     instImpl.addToCRMPUpdateList(crmpUpdateListValue);
+
+                    if (replyVarId == -1) {
+                        RBPELProcess proc = instImpl.getBPELProcessManager().getBPELProcess();
+                        RStartElement actStart = proc.getStartElement(partnerlink, oper, msgExch);
+                        RVariable rVar = actStart.getRVariable();
+                        RuntimeVariable runVar = instImpl.getRuntimeVariable(rVar);
+
+                        MessageContainer con = MessageContainerFactory.createMessage(msgExch, runVar.getWSMessage(), crmpInvokeId, null);
+                        instImpl.getBPELProcessManager().addCRMPReqForRecoveringInsts(crmpUpdateListValue, con);
+                    }
                 }
             }
         } catch (Throwable t) {
