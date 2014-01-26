@@ -193,6 +193,9 @@ public class PersistenceManager {
     }
 
     public void updateState(ReceiveUnitImpl unit, RequiredObjects rObjs, TransactionInfo txInfo, MutableState state, long branchInvokeCounter, String messageExchangeId) {
+        if (!mBPInstance.getBPELProcessManager().isPersistenceEnabled()) {
+            return;
+        }
       RActivity activity = unit.getStaticModelActivity();
       state.updatePCWithBranchInvokeCounter(unit.getBranchId(), activity.getUniqueId(), branchInvokeCounter);
       
