@@ -151,9 +151,17 @@ public class BPELSEDeployer implements ServiceUnitManager {
             String dbJndiName = mEngine.getConnectionConfiguration().getConnectionProperties().getProperty(Engine.DB_NON_XA_JNDI_NAME);
             InitialContext namingContext = mContext.getNamingContext();
             DataSource ds = (DataSource) namingContext.lookup(dbJndiName);
-            //dbcon = ds.getConnection();
-            dbcon = (Connection) ds.getClass().getMethod("getNonTxConnection",
+            
+            try {
+                // If we are in the context of GFv2, please use getNonTxConnection
+                // in place of getConnection (for leak reason)
+                dbcon = (Connection) ds.getClass().getMethod("getNonTxConnection",
                     new Class[] {}).invoke(ds, new Object[] {});
+            } catch (NoSuchMethodException nsme) {
+                dbcon = (Connection) ds.getClass().getMethod("getConnection",
+                    new Class[] {}).invoke(ds, new Object[] {});
+            }
+            
             origValOfAutoCommit = dbcon.getAutoCommit();
             dbcon.setAutoCommit(true);
             
