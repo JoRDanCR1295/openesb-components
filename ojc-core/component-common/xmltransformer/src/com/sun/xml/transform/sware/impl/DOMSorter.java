@@ -27,7 +27,6 @@
  * 
  * END_HEADER - DO NOT EDIT
  */
-
 package com.sun.xml.transform.sware.impl;
 
 import java.math.BigInteger;
@@ -68,13 +67,13 @@ import com.sun.xml.transform.sware.schema.SwareFlatComplexType.ParticlePath;
 import com.sun.xml.transform.sware.schema.SwareParticle.ParticleType;
 
 /**
- * Sorts a DOM tree at one level.  The algorithm looks up an aggregated particle
+ * Sorts a DOM tree at one level. The algorithm looks up an aggregated particle
  * from a flattened complex type model group and then uses the particle path
- * stored in the aggregated particle to determine if an ordered insertion to
- * the sorted list is possible.  A dynamic particle tree is maintained,
- * which reflects the static particle tree structure but adds another
- * dimention, which represents the axis for repeating nodes.
- * 
+ * stored in the aggregated particle to determine if an ordered insertion to the
+ * sorted list is possible. A dynamic particle tree is maintained, which
+ * reflects the static particle tree structure but adds another dimention, which
+ * represents the axis for repeating nodes.
+ *
  * @author Jun Xu
  * @since 6.0
  * @version $Revision: 1.9 $
@@ -89,16 +88,15 @@ class DOMSorter {
     private final List<Tile> mUnsortedList = new ArrayList<Tile>();
     private final PureLinkedList<Tile> mSortedList = new PureLinkedList<Tile>();
     private final RootXNode mRootX;
-    
     private boolean mInplace = true;
 
     /**
-     * Constructs from a transformer, a flattened complex type, a source
-     * elemnt and a target element.
-     * 
+     * Constructs from a transformer, a flattened complex type, a source elemnt
+     * and a target element.
+     *
      * @param transformer the reordering transformer that provides context
-     *                      information
-     * @param fct the flattened complex type for easy lookup 
+     * information
+     * @param fct the flattened complex type for easy lookup
      * @param srcElem the source element to be sorted on
      * @param tgtElem the target element that holds the sorted children
      * @throws SwareSchemaException invalid schema exception
@@ -124,11 +122,11 @@ class DOMSorter {
         mRootX = new RootXNode(fct);
         mRootX.mYNodes.add(new RootYNode(mRootX, fct));
     }
-    
+
     public void setInplace(boolean val) {
         mInplace = val;
     }
-    
+
     public boolean getInplace() {
         return mInplace;
     }
@@ -136,328 +134,331 @@ class DOMSorter {
     public boolean checkSortNeeded()
             throws TransformerException, DOMException {
         NodeList childNodes = mSourceElement.getChildNodes();
-        ParticlePath lastPath = null;
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            Node childNode = childNodes.item(i);
-            if (childNode.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-            try {
-                AggregatedParticle aggPart =
-                    mFlatComplexType.getAggregatedParticles(
-                            DOMUtil.getQName(childNode));
-                
-                Collection<ParticleAppearance> partApps; 
-                if (aggPart == null) {
-                    aggPart =
-                        mFlatComplexType.getAggregatedParticles(
-                                SwareFlatComplexType.ELEMENT_WILDCARD_QNAME);
-                    AggregatedWildcard aggWildcard =
-                        (AggregatedWildcard) aggPart;
-                    if (aggWildcard == null
-                            || !aggWildcard.coversNamespace(
-                                    childNode.getNamespaceURI())) {
-                        //there is no wildcard particle or its namespace does
-                        //not cover the namespace of the element
-                        if (mTransformer.getPolicies() != null
-                                && mTransformer.getPolicies().getPolicyByte(
-                                        FOPolicy.ID)
-                                        == FOPolicy.KEEP_ORIGINAL_ORDER) {
-                            return false;
-                        }
-                        throw new ElementNotFoundInComplexTypeException(
-                                "Particle not found in the complex type. "
-                                + "element=" + DOMUtil.getQName(childNode)
-                                + ", complexType="
-                                + mFlatComplexType);
-                    }
-                    if (!aggWildcard.isLocalDeterministic()) {
-                        //Not locally deterministic so there is no easy way
-                        //to validate the order. Do sorting.
-                        return true;
-                    }
-                    partApps =
-                        aggWildcard.getCandidateParticles(
-                                childNode.getNamespaceURI());
-                } else {
-                    if (!aggPart.getParticleType().equals(
-                            LeafParticleType.ELEMENTDECL)) {
-                        //It should not be possible to reach here. Otherwise
-                        //it is a programming error.
-                        throw new IllegalStateException(
-                                "Illegal particle type: "
-                                + aggPart.getParticleType());
-                    }
-                    if (!aggPart.isLocalDeterministic()) {
-                        //Not locally deterministic so there is no easy way
-                        //to validate the order. Do sorting.
-                        return true;
-                    }
-                    partApps = aggPart.getParticleAppearances();
-                }
-                
-                if (partApps.size() > 1) {
-                    return true;
-                }
-                
-                ParticleAppearance partApp = partApps.iterator().next();
-                if (!partApp.orderVerifiable()) {
-                    return true;
-                }
-                
-                if (partApp.getPath().compareTo(lastPath) < 0) {
-                    //Out of order
-                    return true;
-                }
-                
-                lastPath = partApp.getPath();
-                
-                SwareType xmlType = null;
-                QName xsiType = null;
-                if ((xsiType = DOMUtil.getXsiType((Element) childNode))
-                        != null) {
-                    //xsi:type takes the precedence
-                    xmlType =
-                        mTransformer.getSwareTypeSystem().findType(xsiType);
-                } else {
-                    SwareElement elemDecl = null;
-                    if (LeafParticleType.ELEMENTDECL.equals(
-                            partApp.getParticleType())) {
-                        elemDecl = (SwareElement) partApp.getParticle();
-                    } else {
-                        elemDecl =
-                            mTransformer.getSwareTypeSystem().findElement(
-                                    DOMUtil.getQName(childNode));
-                    }
-                    if (elemDecl != null) {
-                        xmlType = elemDecl.getType();
-                    }
-                }
-                if (xmlType == null || !xmlType.isComplexType()
-                        || ((SwareComplexType) xmlType).isSimpleContent()) {
+        synchronized (childNodes) {
+            ParticlePath lastPath = null;
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node childNode = childNodes.item(i);
+                if (childNode.getNodeType() != Node.ELEMENT_NODE) {
                     continue;
                 }
-                SwareFlatComplexType fct =
-                    mTransformer.getSwareTypeSystem().getFlatComplexType(
+                try {
+                    AggregatedParticle aggPart =
+                            mFlatComplexType.getAggregatedParticles(
+                            DOMUtil.getQName(childNode));
+
+                    Collection<ParticleAppearance> partApps;
+                    if (aggPart == null) {
+                        aggPart =
+                                mFlatComplexType.getAggregatedParticles(
+                                SwareFlatComplexType.ELEMENT_WILDCARD_QNAME);
+                        AggregatedWildcard aggWildcard =
+                                (AggregatedWildcard) aggPart;
+                        if (aggWildcard == null
+                                || !aggWildcard.coversNamespace(
+                                childNode.getNamespaceURI())) {
+                            //there is no wildcard particle or its namespace does
+                            //not cover the namespace of the element
+                            if (mTransformer.getPolicies() != null
+                                    && mTransformer.getPolicies().getPolicyByte(
+                                    FOPolicy.ID)
+                                    == FOPolicy.KEEP_ORIGINAL_ORDER) {
+                                return false;
+                            }
+                            throw new ElementNotFoundInComplexTypeException(
+                                    "Particle not found in the complex type. "
+                                    + "element=" + DOMUtil.getQName(childNode)
+                                    + ", complexType="
+                                    + mFlatComplexType);
+                        }
+                        if (!aggWildcard.isLocalDeterministic()) {
+                            //Not locally deterministic so there is no easy way
+                            //to validate the order. Do sorting.
+                            return true;
+                        }
+                        partApps =
+                                aggWildcard.getCandidateParticles(
+                                childNode.getNamespaceURI());
+                    } else {
+                        if (!aggPart.getParticleType().equals(
+                                LeafParticleType.ELEMENTDECL)) {
+                            //It should not be possible to reach here. Otherwise
+                            //it is a programming error.
+                            throw new IllegalStateException(
+                                    "Illegal particle type: "
+                                    + aggPart.getParticleType());
+                        }
+                        if (!aggPart.isLocalDeterministic()) {
+                            //Not locally deterministic so there is no easy way
+                            //to validate the order. Do sorting.
+                            return true;
+                        }
+                        partApps = aggPart.getParticleAppearances();
+                    }
+
+                    if (partApps.size() > 1) {
+                        return true;
+                    }
+
+                    ParticleAppearance partApp = partApps.iterator().next();
+                    if (!partApp.orderVerifiable()) {
+                        return true;
+                    }
+
+                    if (partApp.getPath().compareTo(lastPath) < 0) {
+                        //Out of order
+                        return true;
+                    }
+
+                    lastPath = partApp.getPath();
+
+                    SwareType xmlType = null;
+                    QName xsiType = null;
+                    if ((xsiType = DOMUtil.getXsiType((Element) childNode))
+                            != null) {
+                        //xsi:type takes the precedence
+                        xmlType =
+                                mTransformer.getSwareTypeSystem().findType(xsiType);
+                    } else {
+                        SwareElement elemDecl = null;
+                        if (LeafParticleType.ELEMENTDECL.equals(
+                                partApp.getParticleType())) {
+                            elemDecl = (SwareElement) partApp.getParticle();
+                        } else {
+                            elemDecl =
+                                    mTransformer.getSwareTypeSystem().findElement(
+                                    DOMUtil.getQName(childNode));
+                        }
+                        if (elemDecl != null) {
+                            xmlType = elemDecl.getType();
+                        }
+                    }
+                    if (xmlType == null || !xmlType.isComplexType()
+                            || ((SwareComplexType) xmlType).isSimpleContent()) {
+                        continue;
+                    }
+                    SwareFlatComplexType fct =
+                            mTransformer.getSwareTypeSystem().getFlatComplexType(
                             (SwareComplexType) xmlType);
-                DOMSorter sorter = new DOMSorter(mTransformer, fct,
-                        (Element) childNode, null);
-                if (sorter.checkSortNeeded()) {
-                    return true;
+                    DOMSorter sorter = new DOMSorter(mTransformer, fct,
+                            (Element) childNode, null);
+                    if (sorter.checkSortNeeded()) {
+                        return true;
+                    }
+                } catch (SwareSchemaException e) {
+                    throw new InvalidSchemaException("Invalid Schema.", e);
                 }
-            } catch (SwareSchemaException e) {
-                throw new InvalidSchemaException("Invalid Schema.", e);
             }
         }
         return false;
     }
-    
+
     /**
      * Does the sorting job.
-     * 
+     *
      * @throws TransformerException transformation exception
      * @throws DOMException DOM exception
      */
     public void sort() throws TransformerException, DOMException {
-        
+
         NodeList childNodes = mSourceElement.getChildNodes();
-        List<Node> otherNodes = null;
-        boolean noSort = false;
-        int i = 0;
-        while(childNodes.getLength() > i) {
-            Node childNode = childNodes.item(i);
-            if (childNode.getNodeType() != Node.ELEMENT_NODE) {
-                //preserve all non-element nodes
-                if (otherNodes == null) {
-                    otherNodes = new ArrayList<Node>(); 
+        synchronized (childNodes) {
+            List<Node> otherNodes = null;
+            boolean noSort = false;
+            int i = 0;
+            while (childNodes.getLength() > i) {
+                Node childNode = childNodes.item(i);
+                if (childNode.getNodeType() != Node.ELEMENT_NODE) {
+                    //preserve all non-element nodes
+                    if (otherNodes == null) {
+                        otherNodes = new ArrayList<Node>();
+                    }
+                    if (mInplace) {
+                        otherNodes.add(
+                                mSourceElement.removeChild(childNode));
+                    } else {
+                        otherNodes.add(childNode);
+                        i++;
+                    }
+                    continue;
                 }
+                Element impChildNode;
                 if (mInplace) {
-                    otherNodes.add(
-                            mSourceElement.removeChild(childNode));
+                    impChildNode = (Element) mSourceElement.removeChild(childNode);
                 } else {
-                    otherNodes.add(childNode);
+                    impChildNode =
+                            (Element) mTargetDocument.importNode(childNode, false);
+                }
+                try {
+                    if (noSort) {
+                        mUnsortedList.add(
+                                new Tile((Element) childNode,
+                                impChildNode, otherNodes));
+                    } else {
+                        Entry<Tile> tileRef =
+                                addToSortedList((Element) childNode, impChildNode,
+                                otherNodes);
+                        mUnsortedList.add(tileRef.getElement());
+                    }
+                } catch (OrderIndeterministicException e) {
+                    if (mTransformer.getPolicies() != null
+                            && mTransformer.getPolicies().getPolicyByte(FOPolicy.ID)
+                            == FOPolicy.THROW_EXCEPTION) {
+                        throw e;
+                    } else {
+                        //Default handling: keeps original order
+                        mTransformer.warning(e);
+                    }
+                    mUnsortedList.add(
+                            new Tile((Element) childNode,
+                            impChildNode, otherNodes));
+                    noSort = true;
+                } catch (MissingSchemaInfoException e) {
+                    if (mTransformer.getPolicies() != null
+                            && mTransformer.getPolicies().getPolicyByte(FOPolicy.ID)
+                            == FOPolicy.KEEP_ORIGINAL_ORDER) {
+                        mUnsortedList.add(
+                                new Tile((Element) childNode,
+                                impChildNode, otherNodes));
+                        noSort = true;
+                    } else {
+                        throw e;
+                    }
+                } catch (SwareSchemaException e) {
+                    throw new InvalidSchemaException("Invalid Schema.", e);
+                }
+                otherNodes = null;
+                if (!mInplace) {
                     i++;
                 }
-                continue;
-            }
-            Element impChildNode;
-            if (mInplace) {
-                impChildNode = (Element) mSourceElement.removeChild(childNode);
-            } else {
-                impChildNode =
-                    (Element) mTargetDocument.importNode(childNode, false);
             }
             try {
+                List<Tile> tileList;
                 if (noSort) {
-                    mUnsortedList.add(
-                            new Tile((Element) childNode,
-                                    impChildNode, otherNodes));
+                    tileList = mUnsortedList;
                 } else {
-                    Entry<Tile> tileRef =
-                        addToSortedList((Element) childNode, impChildNode,
-                                otherNodes);
-                    mUnsortedList.add(tileRef.getElement());
+                    tileList = mSortedList;
                 }
-            } catch (OrderIndeterministicException e) {
-                if (mTransformer.getPolicies() != null
-                        && mTransformer.getPolicies().getPolicyByte(FOPolicy.ID)
-                                == FOPolicy.THROW_EXCEPTION) {
-                    throw e;
-                } else {
-                    //Default handling: keeps original order
-                    mTransformer.warning(e);
-                }
-                mUnsortedList.add(
-                        new Tile((Element) childNode,
-                                impChildNode, otherNodes));
-                noSort = true;
-            } catch (MissingSchemaInfoException e) {
-                if (mTransformer.getPolicies() != null
-                        && mTransformer.getPolicies().getPolicyByte(FOPolicy.ID)
-                                == FOPolicy.KEEP_ORIGINAL_ORDER) {
-                    mUnsortedList.add(
-                            new Tile((Element) childNode,
-                                    impChildNode, otherNodes));
-                    noSort = true;
-                } else {
-                    throw e;
+                for (Tile tile : tileList) {
+                    if (tile.getOtherNodes() != null) {
+                        for (Node node : tile.getOtherNodes()) {
+                            if (mInplace) {
+                                mTargetElement.appendChild(node);
+                            } else {
+                                mTargetElement.appendChild(
+                                        mTargetDocument.importNode(node, true));
+                            }
+                        }
+                    }
+                    Element src = tile.getSource();
+                    Element tgtElem =
+                            (Element) mTargetElement.appendChild(tile.getTarget());
+                    if (!mInplace) {
+                        DOMUtil.copyAttributes(src, tgtElem);
+                    }
+                    SwareType xmlType = null;
+                    QName xsiType = null;
+                    if ((xsiType = DOMUtil.getXsiType(tgtElem)) != null) {
+                        //xsi:type takes the precedence
+                        xmlType =
+                                mTransformer.getSwareTypeSystem().findType(xsiType);
+                    } else {
+                        ParticleAppearance partApp;
+                        SwareElement elemDecl = null;
+                        if (tile instanceof SortedTile) {
+                            partApp = ((SortedTile) tile).getParticleAppearance();
+                            if (partApp.getParticleType().equals(
+                                    LeafParticleType.ELEMENTDECL)) {
+                                elemDecl = (SwareElement) partApp.getParticle();
+                            } else if (partApp.getParticleType().equals(
+                                    LeafParticleType.WILDCARD)) {
+                                //Checks if the element is known to the type system
+                                elemDecl =
+                                        mTransformer.getSwareTypeSystem().findElement(
+                                        DOMUtil.getQName(tgtElem));
+                            }
+                        } else {
+                            partApp = null;
+                            AggregatedParticle aggPart =
+                                    mFlatComplexType.getAggregatedParticles(
+                                    DOMUtil.getQName(tgtElem));
+                            if (aggPart != null) {
+                                partApp =
+                                        aggPart.getParticleAppearances().size() > 0
+                                        ? aggPart.getParticleAppearances().iterator().next() : null;
+                            }
+                            if (partApp != null) {
+                                elemDecl = (SwareElement) partApp.getParticle();
+                            } else {
+                                elemDecl =
+                                        mTransformer.getSwareTypeSystem().findElement(
+                                        DOMUtil.getQName(tgtElem));
+                            }
+                        }
+                        if (elemDecl != null) {
+                            xmlType = elemDecl.getType();
+                        }
+                    }
+                    if (xmlType == null || !xmlType.isComplexType()
+                            || ((SwareComplexType) xmlType).isSimpleContent()) {
+                        if (!mInplace) {
+                            DOMUtil.copyAllChildNodes(src, tgtElem);
+                        }
+                        continue;
+                    }
+                    SwareFlatComplexType fct =
+                            mTransformer.getSwareTypeSystem().getFlatComplexType(
+                            (SwareComplexType) xmlType);
+                    DOMSorter sorter = new DOMSorter(mTransformer, fct,
+                            tile.getSource(), tgtElem);
+                    sorter.setInplace(mInplace);
+                    sorter.sort();
                 }
             } catch (SwareSchemaException e) {
                 throw new InvalidSchemaException("Invalid Schema.", e);
             }
-            otherNodes = null;
-            if (!mInplace) {
-                i++;
-            }
-        }
-        try {
-            List<Tile> tileList;
-            if (noSort) {
-                tileList = mUnsortedList;
-            } else {
-                tileList = mSortedList;
-            }
-            for (Tile tile : tileList) {
-                if (tile.getOtherNodes() != null) {
-                    for (Node node : tile.getOtherNodes()) {
-                        if (mInplace) {
-                            mTargetElement.appendChild(node);
-                        } else {
-                            mTargetElement.appendChild(
-                                    mTargetDocument.importNode(node, true));
-                        }
-                    }
-                }
-                Element src = tile.getSource();
-                Element tgtElem =
-                    (Element) mTargetElement.appendChild(tile.getTarget());
-                if (!mInplace) {
-                    DOMUtil.copyAttributes(src, tgtElem);
-                }
-                SwareType xmlType = null;
-                QName xsiType = null;
-                if ((xsiType = DOMUtil.getXsiType(tgtElem)) != null) {
-                    //xsi:type takes the precedence
-                    xmlType =
-                        mTransformer.getSwareTypeSystem().findType(xsiType);
-                } else {
-                    ParticleAppearance partApp;
-                    SwareElement elemDecl = null;
-                    if (tile instanceof SortedTile) {
-                        partApp = ((SortedTile) tile).getParticleAppearance();
-                        if (partApp.getParticleType().equals(
-                                LeafParticleType.ELEMENTDECL)) {
-                            elemDecl = (SwareElement) partApp.getParticle();
-                        } else if (partApp.getParticleType().equals(
-                                    LeafParticleType.WILDCARD)) {
-                            //Checks if the element is known to the type system
-                            elemDecl =
-                                mTransformer.getSwareTypeSystem().findElement(
-                                        DOMUtil.getQName(tgtElem));
-                        }
+            if (otherNodes != null) {
+                for (Node node : otherNodes) {
+                    if (mInplace) {
+                        mTargetElement.appendChild(node);
                     } else {
-                        partApp = null;
-                        AggregatedParticle aggPart =
-                            mFlatComplexType.getAggregatedParticles(
-                                DOMUtil.getQName(tgtElem));
-                        if (aggPart != null) {
-                            partApp =
-                                aggPart.getParticleAppearances().size() > 0 ?
-                                    aggPart.getParticleAppearances().iterator().next() : null;
-                        }
-                        if (partApp != null) {
-                            elemDecl = (SwareElement) partApp.getParticle();
-                        } else {
-                            elemDecl =
-                                mTransformer.getSwareTypeSystem().findElement(
-                                        DOMUtil.getQName(tgtElem));
-                        }
+                        mTargetElement.appendChild(
+                                mTargetDocument.importNode(node, true));
                     }
-                    if (elemDecl != null) {
-                        xmlType = elemDecl.getType();
-                    }
-                }
-                if (xmlType == null || !xmlType.isComplexType()
-                        || ((SwareComplexType) xmlType).isSimpleContent()) {
-                    if (!mInplace) {
-                        DOMUtil.copyAllChildNodes(src, tgtElem);
-                    }
-                    continue;
-                }
-                SwareFlatComplexType fct =
-                    mTransformer.getSwareTypeSystem().getFlatComplexType(
-                            (SwareComplexType) xmlType);
-                DOMSorter sorter = new DOMSorter(mTransformer, fct,
-                        tile.getSource(), tgtElem);
-                sorter.setInplace(mInplace);
-                sorter.sort();
-            }
-        } catch (SwareSchemaException e) {
-            throw new InvalidSchemaException("Invalid Schema.", e);
-        }
-        if (otherNodes != null) {
-            for (Node node : otherNodes) {
-                if (mInplace) {
-                    mTargetElement.appendChild(node);
-                } else {
-                    mTargetElement.appendChild(
-                            mTargetDocument.importNode(node, true));
                 }
             }
         }
     }
-    
+
     /**
      * Analyzes order and adds an element to the sorted list.
-     * 
+     *
      * @param source the source element
      * @param target the target element
      * @param others other DOM nodes than element nodes before this element
-     * @return an instance of Entry<Tile> if adding to sorted list is
-     *          successful
+     * @return an instance of Entry<Tile> if adding to sorted list is successful
      * @throws OrderIndeterministicException thrown if the order is not
-     *           deterministic
+     * deterministic
      * @throws TooManyElementsException thrown if maxOccurs is reached
      * @throws SwareSchemaException thrown if the schema is detected to be
-     *           invalid
+     * invalid
      */
     private Entry<Tile> addToSortedList(Element source, Element target,
             List<Node> others)
             throws OrderIndeterministicException, MissingSchemaInfoException,
-                    TooManyElementsException, SwareSchemaException {
+            TooManyElementsException, SwareSchemaException {
         AggregatedParticle aggPart =
-            mFlatComplexType.getAggregatedParticles(
-                    DOMUtil.getQName(target));
-        
-        Collection<ParticleAppearance> partApps; 
+                mFlatComplexType.getAggregatedParticles(
+                DOMUtil.getQName(target));
+
+        Collection<ParticleAppearance> partApps;
         if (aggPart == null) {
             aggPart =
-                mFlatComplexType.getAggregatedParticles(
-                        SwareFlatComplexType.ELEMENT_WILDCARD_QNAME);
+                    mFlatComplexType.getAggregatedParticles(
+                    SwareFlatComplexType.ELEMENT_WILDCARD_QNAME);
             AggregatedWildcard aggWildcard = (AggregatedWildcard) aggPart;
             if (aggWildcard == null
                     || !aggWildcard.coversNamespace(
-                            target.getNamespaceURI())) {
+                    target.getNamespaceURI())) {
                 //there is no wildcard particle or its namespace does not
                 //cover the namespace of the element
                 throw new ElementNotFoundInComplexTypeException(
@@ -469,12 +470,12 @@ class DOMSorter {
             if (!aggWildcard.isLocalDeterministic()) {
                 throw new OrderIndeterministicException(
                         "Order of the elements accepted by the wildcard"
-                            + " is not deterministic in the "
-                            + getLocationInfo());
+                        + " is not deterministic in the "
+                        + getLocationInfo());
             }
             partApps =
-                aggWildcard.getCandidateParticles(
-                        target.getNamespaceURI());
+                    aggWildcard.getCandidateParticles(
+                    target.getNamespaceURI());
         } else {
             if (!aggPart.getParticleType().equals(
                     LeafParticleType.ELEMENTDECL)) {
@@ -485,7 +486,7 @@ class DOMSorter {
             }
             if (!aggPart.isLocalDeterministic()) {
                 AggregatedElemDecl aggElem =
-                    (AggregatedElemDecl) aggPart;
+                        (AggregatedElemDecl) aggPart;
                 throw new OrderIndeterministicException(
                         "Order of the elements is not deterministic."
                         + " element declaration: " + aggElem.getName()
@@ -514,52 +515,51 @@ class DOMSorter {
     private String getLocationInfo() {
         if (mFlatComplexType.getName() != null) {
             return "complex type definition: "
-                + mFlatComplexType.getName().toString(); 
+                    + mFlatComplexType.getName().toString();
         }
         if (mFlatComplexType.getContainerElement() != null
                 && mFlatComplexType.getContainerElement().getName() != null) {
             return "local complex type definition in element declaration: "
-                + mFlatComplexType.getContainerElement().getName().toString(); 
+                    + mFlatComplexType.getContainerElement().getName().toString();
         }
         return "unknown location";
     }
-    
+
     /**
      * Root level XNode.
-     * 
+     *
      * @see XNode
      */
     class RootXNode extends XNode {
-        
+
         /**
          * Constructs from a group.
-         * 
+         *
          * @param g the group
          * @throws SwareSchemaException invalid schema exception
          */
         RootXNode(SwareGroup g) throws SwareSchemaException {
             super(null, g, -1);
         }
-        
+
         /**
-         * Determines where to add the new element into the sorted list and
-         * then adds it, and also update the dynamic particle tree based
-         * on the new element added.
-         * 
+         * Determines where to add the new element into the sorted list and then
+         * adds it, and also update the dynamic particle tree based on the new
+         * element added.
+         *
          * @param partApp the particle appearance instance
          * @param s the source element
          * @param e the target element
          * @param others other DOM nodes than DOM elements before this element
-         *        
+         *
          * @return non-null instance of Entry<Tile> if the element is
-         *          successfully added to the sorted list, otherwise
-         *          <code>null</code>
+         * successfully added to the sorted list, otherwise <code>null</code>
          * @throws SwareSchemaException invalid schema exception
          */
         public Entry<Tile> addLeafParticle(ParticleAppearance partApp,
                 Element s, Element e, List<Node> others)
                 throws SwareSchemaException {
-            ParticlePath path = partApp.getPath(); 
+            ParticlePath path = partApp.getPath();
             int[] rip = crackOutRIPath(path);
             if (rip == null) {
                 return null;
@@ -583,11 +583,11 @@ class DOMSorter {
                 do {
                     if (gNode instanceof YNode) {
                         tileRef =
-                            gNode.localAdd(partApp, path.getParticleIndex(k),
-                                    s, e, others);
+                                gNode.localAdd(partApp, path.getParticleIndex(k),
+                                s, e, others);
                     } else if (gNode instanceof XNode) {
-                        tileRef = 
-                            gNode.localAdd(partApp, rip[k], s, e, others);
+                        tileRef =
+                                gNode.localAdd(partApp, rip[k], s, e, others);
                     } else {
                         throw new IllegalStateException(
                                 "Node type not recognized.");
@@ -632,11 +632,11 @@ class DOMSorter {
                     "Unable to add element based on the particle index path"
                     + " and repeating index path.");
         }
-        
+
         /**
-         * Cracks out the new repeating indices path assuming that a new
-         * element is going to be added.
-         * 
+         * Cracks out the new repeating indices path assuming that a new element
+         * is going to be added.
+         *
          * @param path the path of the particle appearance
          * @return the repeating indices path
          * @throws SwareSchemaException invalid schema exception
@@ -646,7 +646,7 @@ class DOMSorter {
             int[] riPath = new int[path.getNumOfLevels()];
             XNode xNode = mRootX;
             SwareGroup group = mFlatComplexType;
-            SwareParticle[] partsOnPath = new SwareParticle[riPath.length]; 
+            SwareParticle[] partsOnPath = new SwareParticle[riPath.length];
             int lastIndex = 0;
             for (int i = 0; i < riPath.length; i++) {
                 int pi = path.getParticleIndex(i);
@@ -673,7 +673,7 @@ class DOMSorter {
                                 riPath[i] = 0;
                             } else {
                                 riPath[i] =
-                                    (xNode.mPCounters[pi] - 1)
+                                        (xNode.mPCounters[pi] - 1)
                                         / bound.intValue();
                             }
                         }
@@ -685,19 +685,19 @@ class DOMSorter {
                         } else {
                             if (xNode.mPCounters[pi] != 0
                                     && (bound.intValue() == 1
-                                            || (xNode.mPCounters[pi] + 1)
-                                                % bound.intValue() == 1)) {
+                                    || (xNode.mPCounters[pi] + 1)
+                                    % bound.intValue() == 1)) {
                                 riPath[i] =
-                                    (xNode.mPCounters[pi] - 1)
+                                        (xNode.mPCounters[pi] - 1)
                                         / bound.intValue();
                                 int k = i;
                                 BigInteger rBound;
                                 //reverse adjust
-                                while(k > 0) {
+                                while (k > 0) {
                                     rBound = partsOnPath[k - 1].getMaxOccurs();
                                     if (rBound == null
                                             || riPath[k] + 1
-                                                < rBound.intValue()) {
+                                            < rBound.intValue()) {
                                         riPath[k]++;
                                         break;
                                     } else {
@@ -714,11 +714,11 @@ class DOMSorter {
                                     riPath[i] = 0;
                                 } else {
                                     riPath[i] =
-                                        xNode.mPCounters[pi]
+                                            xNode.mPCounters[pi]
                                             / bound.intValue();
                                 }
                                 lastIndex =
-                                    xNode.mPCounters[pi] % bound.intValue();
+                                        xNode.mPCounters[pi] % bound.intValue();
                             }
                         }
                     }
@@ -737,81 +737,84 @@ class DOMSorter {
             return riPath;
         }
     }
-    
+
     /**
-     * Generic node type for the dynamic particle tree. 
+     * Generic node type for the dynamic particle tree.
      */
     abstract class GNode {
+
         final GNode mOwner;
-        
+
         /**
          * Constructs from an owner.
+         *
          * @param owner
          */
         GNode(GNode owner) {
             mOwner = owner;
         }
-        
+
         /**
          * Gets the owner.
+         *
          * @return the owner
          */
         public GNode getOwner() {
             return mOwner;
         }
-        
+
         /**
-         * Locally adds an element, which only searches for the posibility
-         * in direct child or repeating nodes.
-         * 
+         * Locally adds an element, which only searches for the posibility in
+         * direct child or repeating nodes.
+         *
          * @param partApp the particle appearance instance
-         * @param i either the particle index or the repeating index 
+         * @param i either the particle index or the repeating index
          * @param s the source element
          * @param e the target element
-         * @param others other DOM nodes than DOM element nodes before
-         *         this element
-         * @return A reference to a tile in the sorted list or
-         *         <code>null</code> if unable to insert
+         * @param others other DOM nodes than DOM element nodes before this
+         * element
+         * @return A reference to a tile in the sorted list or <code>null</code>
+         * if unable to insert
          */
         abstract Entry<Tile> localAdd(ParticleAppearance partApp, int i,
                 Element s, Element e, List<Node> others);
-        
+
         /**
-         * 
+         *
          * @param i
          * @param tileRef
          * @throws SwareSchemaException
          */
         abstract void updateAdd(int i, Entry<Tile> tileRef)
-            throws SwareSchemaException;
-        
+                throws SwareSchemaException;
+
         abstract Entry<Tile> getFirstTile();
 
         abstract Entry<Tile> getLastTile();
     }
-    
+
     class RootYNode extends YNode {
+
         RootYNode(XNode owner, SwareGroup g) throws SwareSchemaException {
             super(owner, g, true);
         }
     }
-    
+
     class YNode extends GNode {
-        
+
         static final int NO_OP = 0;
         static final int ADD_BEFORE = 1;
         static final int ADD_AFTER = 2;
-        
         final SwareParticle mPart;
         final SwareParticle[] mChildParts;
         final XNode[] mXNodes;
         Entry<Tile> mTileRef;
         final boolean mIsRoot;
-        
+
         YNode(XNode owner, SwareParticle p) throws SwareSchemaException {
             this(owner, p, false);
         }
-        
+
         YNode(XNode owner, SwareParticle p, boolean isRoot)
                 throws SwareSchemaException {
             super(owner);
@@ -829,11 +832,11 @@ class DOMSorter {
                 mXNodes = new XNode[0];
             }
         }
-        
+
         SwareParticle getParticle() {
             return mPart;
         }
-        
+
         Entry<Tile> localAdd(ParticleAppearance partApp, int i,
                 Element s, Element e, List<Node> others) {
             if (mXNodes.length <= 1 && !mIsRoot) {
@@ -897,7 +900,7 @@ class DOMSorter {
             } else {
                 for (int i = 0; i < mXNodes.length; i++) {
                     if (mXNodes[i] != null) {
-                        return mXNodes[i].getFirstTile(); 
+                        return mXNodes[i].getFirstTile();
                     }
                 }
             }
@@ -915,7 +918,7 @@ class DOMSorter {
             } else {
                 for (int i = mXNodes.length - 1; i >= 0; i--) {
                     if (mXNodes[i] != null) {
-                        return mXNodes[i].getLastTile(); 
+                        return mXNodes[i].getLastTile();
                     }
                 }
             }
@@ -926,13 +929,14 @@ class DOMSorter {
             return null;
         }
     }
-    
+
     class XNode extends GNode {
+
         final int[] mPCounters;
         final List<YNode> mYNodes = new ArrayList<YNode>();
         final SwareParticle mPart;
         final int mPartIndex;
-        
+
         XNode(YNode owner, SwareParticle p, int partIndex)
                 throws SwareSchemaException {
             super(owner);
@@ -949,7 +953,7 @@ class DOMSorter {
                 mPCounters = new int[0];
             }
         }
-        
+
         Entry<Tile> localAdd(ParticleAppearance partApp, int i,
                 Element s, Element e, List<Node> others) {
             if (i == 0) {
@@ -984,7 +988,7 @@ class DOMSorter {
         Entry<Tile> getFirstTile() {
             if (mYNodes.size() == 0) {
                 throw new IllegalStateException(
-                "An XNode must have at least one YNode.");
+                        "An XNode must have at least one YNode.");
             }
             return mYNodes.get(0).getFirstTile();
         }
@@ -993,22 +997,22 @@ class DOMSorter {
         Entry<Tile> getLastTile() {
             if (mYNodes.size() == 0) {
                 throw new IllegalStateException(
-                "An XNode must have at least one YNode.");
+                        "An XNode must have at least one YNode.");
             }
             return mYNodes.get(mYNodes.size() - 1).getLastTile();
         }
     }
-    
+
     private static class Tile {
-        
+
         protected final Element mSource;
         protected final Element mTarget;
         protected final List<Node> mOthers;
-        
+
         /**
-         * Constructs from source element, target element and a list of
-         * other nodes that are before the source node.
-         * 
+         * Constructs from source element, target element and a list of other
+         * nodes that are before the source node.
+         *
          * @param source source element
          * @param target target element
          * @param others other nodes before the source element
@@ -1018,39 +1022,39 @@ class DOMSorter {
             mTarget = target;
             mOthers = others;
         }
-        
+
         public Element getSource() {
             return mSource;
         }
-        
+
         public Element getTarget() {
             return mTarget;
         }
-        
+
         public List<Node> getOtherNodes() {
             return mOthers;
         }
     }
-    
+
     private static class SortedTile extends Tile {
-        
+
         protected final ParticleAppearance mPartApp;
-        
+
         /**
-         * Constructs from source element, target element, a list of other
-         * nodes that are before the source node and a particle appearance.
-         * 
+         * Constructs from source element, target element, a list of other nodes
+         * that are before the source node and a particle appearance.
+         *
          * @param source source element
          * @param target target element
          * @param others other nodes before the source element
-         * @param partApp the particle appearance applied during sorting 
+         * @param partApp the particle appearance applied during sorting
          */
         private SortedTile(Element source, Element target,
                 List<Node> others, ParticleAppearance partApp) {
             super(source, target, others);
             mPartApp = partApp;
         }
-        
+
         public ParticleAppearance getParticleAppearance() {
             return mPartApp;
         }
