@@ -109,6 +109,7 @@ public class CRMPDBOImpl extends DBObjectImpl implements CRMPDBO {
 		stmt.setString(2, getCRMPInvokeId());
 		stmt.setString(3, getPartnerLink());
 		stmt.setString(4, getOperation());
+        stmt.setString(5, getBpelMessageExchange());
 	}
 
 	@Override
@@ -141,7 +142,7 @@ public class CRMPDBOImpl extends DBObjectImpl implements CRMPDBO {
     	mPartnerLink = rs.getString(2);
     	mOperation = rs.getString(3);
     	mReplyVarId = rs.getLong(4);
-    	
+    	mBpelMsgExchange = rs.getString(5);
     }
 
 
@@ -181,7 +182,7 @@ public class CRMPDBOImpl extends DBObjectImpl implements CRMPDBO {
         }
         return retVal;		
 	}
-
+    
     public String toString() {
         StringBuilder retStr = new StringBuilder();
         retStr.append(super.toString());
@@ -193,6 +194,8 @@ public class CRMPDBOImpl extends DBObjectImpl implements CRMPDBO {
         retStr.append("Operation name = " + getOperation());
         retStr.append("\n\t");
         retStr.append("Partner Link = " + getPartnerLink());
+        retStr.append("\n\t");
+        retStr.append("BpelMessageExcange = "+getBpelMessageExchange());
         retStr.append("\n\t");
         retStr.append("Reply Variable ID = " + getReplyVariableId());
         return retStr.toString();

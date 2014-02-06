@@ -43,7 +43,7 @@ import com.sun.wsdl4j.ext.bpel.MessagePropertyAlias;
  * As per the BPEL specifcation, the correlation value would be
  * {valueOfProp1}{valueOfProp2}....{valueOfLastProp}. To facilitate, support
  * of correlations that are totally unrelated to each other but end up
- * having the same ID, a prefix of “valueOfCorrelationSetUniqueID” is added.
+ * having the same ID, a prefix of "valueOfCorrelationSetUniqueID" is added.
  * ValueOfCorrelationSetUniqueID is preferred to the
  * valueOfCorrelationSetName because of the possibility of overloaded names
  * in the same BPEL within scopes. When the model is parsed, each
@@ -52,7 +52,7 @@ import com.sun.wsdl4j.ext.bpel.MessagePropertyAlias;
  * 
  * Extending the same reasoning further, to differentiate CorrelationIDs
  * across different BPELs within the same engine, the ID is suffixed with
- * the “uniqueIDof BPEL”. This plays an important role in the design for
+ * the "uniqueIDof BPEL". This plays an important role in the design for
  * recovery. Since the engine uses one persistenceStore, all the
  * correlationIDs across BPEL instances are stored in the same table.
  * 

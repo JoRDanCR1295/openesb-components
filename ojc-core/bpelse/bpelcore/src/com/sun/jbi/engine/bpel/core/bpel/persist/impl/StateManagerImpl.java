@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -54,6 +53,7 @@ import javax.xml.namespace.QName;
 import com.sun.bpel.model.Activity;
 import com.sun.bpel.model.Pick;
 import com.sun.bpel.model.meta.RActivityHolder;
+import com.sun.bpel.model.meta.RBPELProcess;
 import com.sun.bpel.model.meta.RMessagingElement;
 import com.sun.bpel.model.meta.RPartnerLink;
 import com.sun.bpel.model.meta.RStartElement;
@@ -81,12 +81,13 @@ import com.sun.jbi.engine.bpel.core.bpel.engine.BPELSERegistry;
 import com.sun.jbi.engine.bpel.core.bpel.engine.CorrelationManager;
 import com.sun.jbi.engine.bpel.core.bpel.engine.Engine;
 import com.sun.jbi.engine.bpel.core.bpel.engine.ICallFrame;
+import com.sun.jbi.engine.bpel.core.bpel.engine.MessageContainer;
+import com.sun.jbi.engine.bpel.core.bpel.engine.MessageContainerFactory;
 import com.sun.jbi.engine.bpel.core.bpel.engine.RecoveredCallFrame;
 import com.sun.jbi.engine.bpel.core.bpel.engine.impl.CorrelatingSAInComingEventKeyImpl;
 import com.sun.jbi.engine.bpel.core.bpel.engine.impl.CorrelationDefnValues;
 import com.sun.jbi.engine.bpel.core.bpel.engine.impl.CorrelationVal;
 import com.sun.jbi.engine.bpel.core.bpel.exception.BPELRuntimeException;
-import com.sun.jbi.engine.bpel.core.bpel.exception.StandardException;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.ActivityUnit;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.Fault;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.FaultHandlingContext;
@@ -393,8 +394,22 @@ public class StateManagerImpl implements StateManager {
                     String partnerlink = qCRMPDBO.getPartnerLink();
                     String oper = qCRMPDBO.getOperation();
                     String crmpUpdateListValue = bpId + partnerlink + oper;
+                    String crmpInvokeId = qCRMPDBO.getCRMPInvokeId();
+                    long replyVarId = qCRMPDBO.getReplyVariableId();
+                    String msgExch = qCRMPDBO.getBpelMessageExchange();
+                    
                     BPELProcessInstanceImpl instImpl = (BPELProcessInstanceImpl) processInstance;
                     instImpl.addToCRMPUpdateList(crmpUpdateListValue);
+
+                    if (replyVarId == -1) {
+                        RBPELProcess proc = instImpl.getBPELProcessManager().getBPELProcess();
+                        RStartElement actStart = proc.getStartElement(partnerlink, oper, msgExch);
+                        RVariable rVar = actStart.getRVariable();
+                        RuntimeVariable runVar = instImpl.getRuntimeVariable(rVar);
+
+                        MessageContainer con = MessageContainerFactory.createMessage(msgExch, runVar.getWSMessage(), crmpInvokeId, null);
+                        instImpl.getBPELProcessManager().addCRMPReqForRecoveringInsts(crmpUpdateListValue, con);
+                    }
                 }
             }
         } catch (Throwable t) {

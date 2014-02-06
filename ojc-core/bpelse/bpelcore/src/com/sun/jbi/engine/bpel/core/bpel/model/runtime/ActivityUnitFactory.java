@@ -239,7 +239,7 @@ public class ActivityUnitFactory {
          * part defined by an element and there exists a catch activity with a matching faultName
          * value that has a faultVariable whose type matches the type of the element used to define
          * the part then the fault is passed to the identified catch activity with the faultVariable
-         * initialized to the value in the single part’s element. 3. Otherwise if there is a catch
+         * initialized to the value in the single part's element. 3. Otherwise if there is a catch
          * activity with a matching faultName value that does not specify a faultVariable or
          * faultMessageType value then the fault is passed to the identified catch activity. Note
          * that in this case the fault value will not be available from within the fault handler but
@@ -250,7 +250,7 @@ public class ActivityUnitFactory {
          * element and there exists a catch activity without a faultName attribute that has a
          * faultVariable whose type matches the type of the element used to define the part then the
          * fault is passed to the identified catch activity with the faultVariable initialized to
-         * the value in the single part’s element. 6. Otherwise if there is a catchAll handler then
+         * the value in the single part's element. 6. Otherwise if there is a catchAll handler then
          * the fault is passed to the catchAll handler. 7. Otherwise, the fault will be handled by
          * the default fault handler. If the fault occurs in (or is rethrown to) the global process
          * scope, and there is no matching fault handler for the fault at the global level, the
@@ -333,7 +333,7 @@ public class ActivityUnitFactory {
      * and there exists a catch activity with a matching faultName value that has a faultVariable
      * whose type matches the type of the element used to define the part then the fault is passed
      * to the identified catch activity with the faultVariable initialized to the value in the
-     * single part’s element. 3. Otherwise if there is a catch activity with a matching faultName
+     * single part's element. 3. Otherwise if there is a catch activity with a matching faultName
      * value that does not specify a faultVariable or faultMessageType value then the fault is
      * passed to the identified catch activity. Note that in this case the fault value will not be
      * available from within the fault handler but will be available to the "rethrow" activity. 4.
@@ -343,7 +343,7 @@ public class ActivityUnitFactory {
      * contains a single part defined by an element and there exists a catch activity without a
      * faultName attribute that has a faultVariable whose type matches the type of the element used
      * to define the part then the fault is passed to the identified catch activity with the
-     * faultVariable initialized to the value in the single part’s element.
+     * faultVariable initialized to the value in the single part's element.
      * 
      * @param catches Collection of catch activities
      * @param faultName The faultName to match

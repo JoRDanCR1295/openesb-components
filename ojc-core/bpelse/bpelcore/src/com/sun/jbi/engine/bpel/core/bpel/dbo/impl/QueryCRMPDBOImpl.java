@@ -103,4 +103,7 @@ public class QueryCRMPDBOImpl extends DBObjectImpl implements QueryCRMPDBO {
 		return mReplyVarId;
 	}	
 
+    public String getCRMPInvokeId() {
+        return mCRMPInvId;
+    }
 }
