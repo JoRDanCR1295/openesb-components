@@ -273,7 +273,7 @@ public class CustomReliableStateTest extends AbstractTestCase {
                 assertEquals(crmpInvId, persistedCrmpinvokeid);
                 assertEquals(partnerLink, persistedPartnerlink);
                 assertEquals(operation, persistedOperation);
-                assertEquals(null, persistedBpelmessageexchange);
+                assertEquals(bpelMesgExchange, persistedBpelmessageexchange);
 
             } finally {
                 stmt.close();
@@ -340,7 +340,7 @@ public class CustomReliableStateTest extends AbstractTestCase {
                 assertEquals(crmpInvId, persistedCrmpinvokeid);
                 assertEquals(partnerLink, persistedPartnerlink);
                 assertEquals(operation, persistedOperation);
-                assertEquals(null, persistedBpelmessageexchange);
+                assertEquals(bpelMesgExchange, persistedBpelmessageexchange);
                 assertEquals(replyVarId, persistedReplyVarId);
                 
             } finally {
