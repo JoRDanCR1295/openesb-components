@@ -45,6 +45,7 @@ import com.sun.jbi.engine.bpel.core.bpel.event.ActivityEvent;
 import com.sun.jbi.engine.bpel.core.bpel.event.BPELEvent;
 import com.sun.jbi.engine.bpel.core.bpel.event.BPELEventListener;
 import com.sun.jbi.engine.bpel.core.bpel.event.BPELInstanceEvent;
+import com.sun.jbi.engine.bpel.core.bpel.event.VariableEvent;
 import com.sun.jbi.engine.bpel.core.bpel.util.EventProcessHelper;
 import com.sun.jbi.engine.bpel.core.bpel.util.I18n;
 
@@ -72,10 +73,23 @@ public class KPIListenerImpl implements BPELEventListener {
                 completeBPActivity(event);
                 break;
             case BP_TERMINATE:
+                 terminatedBPI(event);
+                 break;
             case BP_SUSPEND:
+                 suspendBPI(event);
+                 break;
             case BP_RESUME:
+                resumedBPI(event);
+                 break;
+            case BP_FAULT:
+                faultBPI(event);
+                break;
             case ACTIVITY_FAULTED:
+                faultBPActivity(event);
+                break;
             case VARIABLE_CHANGED:
+                variableChanged(event);
+                break;
             default:
                 if (LOGGER.isLoggable(Level.FINE)) {
                     LOGGER.log(Level.FINE, I18n.loc("KPI for {0} is not implemented", event.getEventType()));
@@ -103,6 +117,7 @@ public class KPIListenerImpl implements BPELEventListener {
         mstr =  replaceAll(mstr,"${5}",""+event.getTimeStamp().getTime());
         mstr =  replaceAll(mstr,"${6}",""+event.getActivityId());
         mstr =  replaceAll(mstr,"${7}",""+event.getActivityName());
+        mstr =  replaceAll(mstr,"${8}",""+event.getActivityXpath());
 
         return mstr;
 	}
@@ -116,6 +131,52 @@ public class KPIListenerImpl implements BPELEventListener {
 			        new QName("MonitorInstances_iep", "InputService"), "BPInstanceStartEventStream", mstr);
 	}
 
+
+private static final String startBPIEventFault =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorInstances_iep\" name=\"input\" type=\"msgns:BPInstanceFault_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:BPInstanceFault_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime></msgns:BPInstanceFault_MsgObj></jbi:part></jbi:message>";
+      	private void faultBPI(BPELEvent event) {
+			String mstr =  fillInInstanceEventValues(startBPIEventFault, (BPELInstanceEvent)event);
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI InstanceFault XML={0}",mstr));
+                        }
+			mEventHelper.sendKPIMEx(
+			        new QName("MonitorInstances_iep", "InputService"), "BPInstanceFault", mstr);
+	}
+
+
+   private static final String startBPIEventSuspend =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorInstances_iep\" name=\"input\" type=\"msgns:BPInstanceSuspended_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:BPInstanceSuspended_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime></msgns:BPInstanceSuspended_MsgObj></jbi:part></jbi:message>";
+      	private void suspendBPI(BPELEvent event) {
+			String mstr =  fillInInstanceEventValues(startBPIEventSuspend, (BPELInstanceEvent)event);
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI InstanceSuspended XML={0}",mstr));
+                        }
+			mEventHelper.sendKPIMEx(
+			        new QName("MonitorInstances_iep", "InputService"), "BPInstanceSuspended", mstr);
+	}
+
+   private static final String startBPIEventResumed =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorInstances_iep\" name=\"input\" type=\"msgns:BPInstanceResumed_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:BPInstanceResumed_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime></msgns:BPInstanceResumed_MsgObj></jbi:part></jbi:message>";
+      	private void resumedBPI(BPELEvent event) {
+			String mstr =  fillInInstanceEventValues(startBPIEventResumed, (BPELInstanceEvent)event);
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI InstanceResumed XML={0}",mstr));
+                        }
+			mEventHelper.sendKPIMEx(
+			        new QName("MonitorInstances_iep", "InputService"), "BPInstanceResumed", mstr);
+	}
+
+    private static final String startBPIEventTerminated =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorInstances_iep\" name=\"input\" type=\"msgns:BPInstanceTerminated_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:BPInstanceTerminated_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime></msgns:BPInstanceTerminated_MsgObj></jbi:part></jbi:message>";
+      	private void terminatedBPI(BPELEvent event) {
+			String mstr =  fillInInstanceEventValues(startBPIEventTerminated, (BPELInstanceEvent)event);
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI InstanceTerminated XML={0}",mstr));
+                        }
+			mEventHelper.sendKPIMEx(
+			        new QName("MonitorInstances_iep", "InputService"), "BPInstanceTerminated", mstr);
+	}
+
     private static final String completeBPIEventMsgStr = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorInstances_iep\" name=\"input\" type=\"msgns:BPInstanceComplete_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:BPInstanceComplete_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime></msgns:BPInstanceComplete_MsgObj></jbi:part></jbi:message>";
 	
@@ -124,7 +185,7 @@ public class KPIListenerImpl implements BPELEventListener {
 			mEventHelper.sendKPIMEx(new QName("MonitorInstances_iep", "InputService"),"BPInstanceComplete", mstr);
 	}
 
-    private static final String startBPActivityEventMsgStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:ActivityStart_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:ActivityStart_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime><msgns:activityID>${6}</msgns:activityID><msgns:activityName>${7}</msgns:activityName></msgns:ActivityStart_MsgObj></jbi:part></jbi:message>";
+    private static final String startBPActivityEventMsgStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:ActivityStart_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:ActivityStart_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime><msgns:activityID>${6}</msgns:activityID><msgns:activityName>${7}</msgns:activityName><msgns:activityXPath>${8}</msgns:activityXPath></msgns:ActivityStart_MsgObj></jbi:part></jbi:message>";
 
 	private void startBPActivity(BPELEvent event) {
             if (isInvoke (event)) {            
@@ -132,7 +193,35 @@ public class KPIListenerImpl implements BPELEventListener {
                 mEventHelper.sendKPIMEx(new QName("MonitorActivities_iep", "InputService"), "ActivityStart", msgStr);
             }
 	}
-    
+
+
+    private static final String startBPActivityFaultStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:ActivityFault_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:ActivityFault_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime><msgns:activityID>${6}</msgns:activityID><msgns:activityName>${7}</msgns:activityName><msgns:activityXPath>${8}</msgns:activityXPath></msgns:ActivityFault_MsgObj></jbi:part></jbi:message>";
+
+	private void faultBPActivity(BPELEvent event) {
+            if (isInvoke (event)) {
+                String msgStr = fillInActivityEventValues(startBPActivityFaultStr, (ActivityEvent)event);
+                if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI ActivityFault XML={0}",msgStr));
+                        }
+                mEventHelper.sendKPIMEx(new QName("MonitorActivities_iep", "InputService"), "ActivityFault", msgStr);
+            }
+	}
+
+
+     private void variableChanged(BPELEvent event)   {
+          VariableEvent ve=(VariableEvent)event;
+          String msgStr=ve.toXML();
+           msgStr="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:VariableChange_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part>" +
+                   "<msgns:VariableChange_MsgObj>" +
+                   ve.toXML()+
+                   "</msgns:VariableChange_MsgObj>" +
+                   "</jbi:part></jbi:message>";
+          if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.log(Level.FINE, I18n.loc("KPI Variable Change XML={0}",msgStr));
+           }
+           mEventHelper.sendKPIMEx(new QName("MonitorActivities_iep", "InputService"), "VariableChange", msgStr);
+     }
+
     private static boolean isInvoke (BPELEvent event) {        
         ActivityEvent actEvent = (ActivityEvent) event;
         String xpath = actEvent.getActivityXpath();
@@ -150,7 +239,7 @@ public class KPIListenerImpl implements BPELEventListener {
         return false;
     }
 
-    private static final String completeBPActivityEventMsgStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:ActivityFinished_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:ActivityFinished_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime><msgns:activityID>${6}</msgns:activityID><msgns:activityName>${7}</msgns:activityName></msgns:ActivityFinished_MsgObj></jbi:part></jbi:message>";
+    private static final String completeBPActivityEventMsgStr = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><jbi:message xmlns:msgns=\"MonitorActivities_iep\" name=\"input\" type=\"msgns:ActivityFinished_Msg\" version=\"1.0\" xmlns:jbi=\"http://java.sun.com/xml/ns/jbi/wsdl-11-wrapper\"><jbi:part><msgns:ActivityFinished_MsgObj><msgns:eventID>${1}</msgns:eventID><msgns:engineID>${2}</msgns:engineID><msgns:bpID>${3}</msgns:bpID><msgns:processID>${4}</msgns:processID><msgns:eventTime>${5}</msgns:eventTime><msgns:activityID>${6}</msgns:activityID><msgns:activityName>${7}</msgns:activityName><msgns:activityXPath>${8}</msgns:activityXPath></msgns:ActivityFinished_MsgObj></jbi:part></jbi:message>";
 
 	private void completeBPActivity(BPELEvent event) {
         if (isInvoke (event)) { 
