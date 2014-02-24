@@ -40,6 +40,8 @@ import com.sun.jbi.engine.bpel.core.bpel.event.Variable;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.VariableScope;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.WSMessage;
 import com.sun.jbi.engine.bpel.core.bpel.util.DOMHelper;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 
 
 public class VariableImpl implements Variable {
@@ -190,9 +192,56 @@ public class VariableImpl implements Variable {
 		return buffer.toString();
 	}
 
-	public VariableScope getVariableScope() {
-		// TODO Auto-generated method stub
-		return mVariableScope;
-	}
+
+    public String toXML() {
+        // TODO Auto-generated method stub
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("<msgns:variable>\n");
+        if (!isFault()) {
+            buffer.append("<msgns:name>" + mVarName + "</msgns:name>\n");
+        } else {
+            buffer.append("<msgns:name>" + mFaultName + "</msgns:name>\n");
+        }
+        buffer.append("<msgns:scopeid>" + mScopeId + "</msgns:scopeid>\n");
+        buffer.append("<msgns:datatype>" + mType + "</msgns:datatype>\n");
+        buffer.append("<msgns:value>" + forXML(mValue) + "</msgns:value>\n");
+        buffer.append("<msgns:varid>" + mVarId + "</msgns:varid>\n");
+        buffer.append("<msgns:varname>" + mVarName + "</msgns:varname>\n");
+        buffer.append("<msgns:varfault>" + mFaultName + "</msgns:varfault>\n");
+
+        buffer.append("</msgns:variable>\n");
+        return buffer.toString();
+    }
+
+    protected static String forXML(String aText) {
+        final StringBuilder result = new StringBuilder();
+        final StringCharacterIterator iterator = new StringCharacterIterator(aText);
+        char character = iterator.current();
+        while (character != CharacterIterator.DONE) {
+            if (character == '<') {
+                result.append("&lt;");
+            } else if (character == '>') {
+                result.append("&gt;");
+            } else if (character == '\"') {
+                result.append("&quot;");
+            } else if (character == '\'') {
+                result.append("&apos;");
+            } else if (character == '&') {
+                result.append("&amp;");
+            } else {
+                //the char is not a special one
+                //add it to the result as is
+                result.append(character);
+            }
+            character = iterator.next();
+        }
+        return result.toString();
+    }
+        
+    public VariableScope getVariableScope() {
+        // TODO Auto-generated method stub
+        return mVariableScope;
+    }
 
 }
