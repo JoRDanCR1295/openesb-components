@@ -332,7 +332,8 @@ public class MonitorManager {
     	// DEVNOTE: For variable events we do not take into account if KPI is enabled or not. This is because today
 		// KPI events ignore variable events anyway. If this changes (not sure why it would) this logic will need to 
 		// be changed to take KPI into account. See <code>generateEventsForVariable(long uid)</code> also.
-		if (mGenerateEvents && mEngine.isMonitorEnabled() && (mEngine.isVariableMonitorEnabled() || hasFault) ) {
+//		if (mGenerateEvents && mEngine.isMonitorEnabled() && (mEngine.isVariableMonitorEnabled() || hasFault) ) {
+                if (mGenerateEvents && mEngine.isKPIEnabled() ) {
 			processAndFilterVariables(varMap);
 			if (!varMap.isEmpty()) {
 				long actId = 0;
@@ -370,7 +371,7 @@ public class MonitorManager {
     public void postEventForFault(ActivityUnit unit, Fault fault) {
 		if (generateEventsForActivity(unit)) {
 			postActivityFaultedEvent(unit);
-			if (mEngine.isMonitorEnabled()) {
+			if (mEngine.isMonitorEnabled() || mEngine.isKPIEnabled()) {
 				String varStr = null;
 				if (fault.getData() != null) {
 					varStr = fault.getName() + " Details: " + fault.getData().toString();
@@ -483,8 +484,9 @@ public class MonitorManager {
 		// DEVNOTE: For variable events we do not take into account if KPI is enabled or not. This is because today
 		// KPI events ignore variable events anyway. If this changes (not sure why it would) this logic will need to 
 		// be changed to take KPI into account. See <code>postVariableEvent()</code> also.
-		return  (mGenerateEvents && mEngine.isMonitorEnabled() && mEngine.isVariableMonitorEnabled() &&
-				(mEventsFilter == null || mEventsFilter.generateEventsForVariable(uid)));
+//		return  (mGenerateEvents && mEngine.isMonitorEnabled() && mEngine.isVariableMonitorEnabled() &&
+//				(mEventsFilter == null || mEventsFilter.generateEventsForVariable(uid)));
+            return  (mGenerateEvents && mEngine.isKPIEnabled() && (mEventsFilter == null || mEventsFilter.generateEventsForVariable(uid)));
 	}
 	
 	/**
