@@ -61,6 +61,8 @@ public interface VariableEvent  extends BPELEvent {
 	void setReceiveCRMPID (String crmpId);	 
 	
 	QName getBPELName ();
+
+    String toXML ();	 
 	
 	String getInstanceId ();
 	

@@ -61,6 +61,8 @@ public interface Variable {
 	 QName getFaultName ();
 	 
 	 boolean isFault ();	 
+
+	String toXML ();	 
 	 
 	VariableScope getVariableScope ();
 	 

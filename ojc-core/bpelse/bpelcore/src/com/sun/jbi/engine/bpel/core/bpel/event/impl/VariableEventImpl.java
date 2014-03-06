@@ -142,6 +142,22 @@ public class VariableEventImpl extends BPELEventImpl implements VariableEvent {
 	}
 	
 
+        public String toXML() {
+		StringBuffer buffer = new StringBuffer ();
+		buffer.append("<msgns:VariableEvent>"+getEventType()+"</msgns:VariableEvent>");
+		buffer.append("<msgns:Xpath>"+mXpath+"</msgns:Xpath>");
+		buffer.append("<msgns:BPELName>"+mBPELName+"</msgns:BPELName>");
+		buffer.append("<msgns:ActivityId>"+mActivityId+"</msgns:ActivityId>");
+		for (Map.Entry<VariableType, List<Variable>> entry : mVariables.entrySet()) {
+			List<Variable> vars = entry.getValue();
+			for (Variable var : vars) {
+                                buffer.append(var.toXML());   // Uncomment
+			}
+		}
+		return buffer.toString();
+	}
+	
+
 	public String getInvokeCRMPID() {
 		// TODO Auto-generated method stub
 		return mInvokeCRMPID;
