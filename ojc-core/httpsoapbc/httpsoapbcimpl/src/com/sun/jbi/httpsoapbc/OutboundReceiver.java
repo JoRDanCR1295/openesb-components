@@ -234,6 +234,9 @@ public class OutboundReceiver implements Runnable {
         if (mLog.isLoggable(Level.FINE)) {
             mLog.log(Level.FINE, "Stopping the receiver thread");
         }
+        inboundReplyPooledExecutor.shutdown();
+        mOutboundPooledExecutor.shutdown();
+        
         mMonitor = null;
     }
 
