@@ -68,6 +68,12 @@ public class ThrottlingFilter extends AbstractExchangeFilter {
         mEndptThrottleMap = new HashMap<EndpointInfo, ThrottlingEndpointInfo>();
     }
 
+    @Override
+    public void close() {
+        super.close();
+        timer.cancel();
+    }
+
     /** @see com.sun.jbi.common.qos.messaging.filter.AbstractExchangeFilter#acceptsServiceQuality(com.sun.jbi.common.qos.ServiceQuality) */
     protected boolean acceptsServiceQuality(ServiceQuality srvcQual) {
         return (srvcQual instanceof ThrottlingConfig);
