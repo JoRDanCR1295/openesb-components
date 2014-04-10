@@ -57,6 +57,7 @@ import com.sun.bpel.model.meta.RPartnerLink;
 import com.sun.bpel.model.meta.RReply;
 import com.sun.bpel.model.meta.RStartElement;
 import com.sun.bpel.model.meta.RVariable;
+import com.sun.bpel.model.meta.impl.RScopeImpl;
 import com.sun.jbi.engine.bpel.core.bpel.engine.BPELProcessInstance;
 import com.sun.jbi.engine.bpel.core.bpel.engine.BPELProcessManager;
 import com.sun.jbi.engine.bpel.core.bpel.engine.BusinessProcessInstanceThread;
@@ -1352,6 +1353,27 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
 		}
 	}
 	
+	public boolean hasCompensationHandler() {
+        return mAct instanceof RScopeImpl && 
+            ((RScopeImpl)mAct).getCompensationHandler() != null;
+    }
+    
+    public boolean hasFaultHandler() {
+        return mAct instanceof RScopeImpl && 
+            ((RScopeImpl)mAct).getFaultHandlers() != null;
+    }
+    
+    public boolean hasTerminationHandler() {
+        return mAct instanceof RScopeImpl && 
+            ((RScopeImpl)mAct).getTerminationHandler() != null;
+    }
+    
+    public boolean hasEventHandler() {
+        return mAct instanceof RScopeImpl && 
+            ((RScopeImpl)mAct).getEventHandlers() != null;
+    }
+	
+	
 	private Context popCompletedScope() {
 		try {
 			return mCompletedScopes.pop();
@@ -1505,4 +1527,3 @@ public class ScopeUnitImpl extends StructuredActivityUnitImpl implements Context
         }
     }
 }
-
