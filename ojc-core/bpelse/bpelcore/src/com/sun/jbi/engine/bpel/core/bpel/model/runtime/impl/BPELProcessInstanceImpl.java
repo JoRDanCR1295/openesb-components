@@ -1221,15 +1221,21 @@ public class BPELProcessInstanceImpl extends StructuredActivityUnitImpl implemen
 	 * 	pushCompletedScope(com.sun.jbi.engine.bpel.core.bpel.model.runtime.Context)
 	 */
     public int pushCompletedScope(Context completedScope) {
-		synchronized (mCompletedScopes) {
-			if (currentProcessState == ProcessState.Running 
-					|| currentProcessState == ProcessState.WaitingForEventsToComplete) {
-				mCompletedScopes.push(completedScope);
-				return mCompletedScopes.size();
-			} else {
-				return 0;
-			}
-		}
+        synchronized (mCompletedScopes) {
+            if(completedScope instanceof ScopeUnitImpl){
+                
+                ScopeUnitImpl completedScopeUnit = (ScopeUnitImpl)completedScope;
+                
+                if((completedScopeUnit.hasCompensationHandler() || completedScopeUnit.hasFaultHandler() || completedScopeUnit.hasEventHandler() || completedScopeUnit.hasTerminationHandler()) && 
+                        (currentProcessState == ProcessState.Running || currentProcessState == ProcessState.WaitingForEventsToComplete))
+                {
+                    mCompletedScopes.push(completedScope);
+                    return mCompletedScopes.size();
+                }
+            }
+        }
+        return 0;
+        
     }
     
     /*
