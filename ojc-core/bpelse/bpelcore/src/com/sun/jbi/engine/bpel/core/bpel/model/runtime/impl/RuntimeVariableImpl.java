@@ -44,6 +44,7 @@ import com.sun.jbi.engine.bpel.core.bpel.model.runtime.RuntimeVariable;
 import com.sun.jbi.engine.bpel.core.bpel.model.runtime.WSMessage;
 import com.sun.jbi.engine.bpel.core.bpel.util.DOMHelper;
 import com.sun.jbi.engine.bpel.core.bpel.util.Utility;
+import java.math.BigDecimal;
 
 /**
  * DOCUMENT ME!
@@ -167,7 +168,15 @@ public class RuntimeVariableImpl implements RuntimeVariable {
                     mXsdData = Double.valueOf(((Node) data).getTextContent()
                             .trim());
                 } else {
-                    mXsdData = InfoSetUtil.number(data);
+                    if (mVarDef.getXSDType().getFacet(org.apache.xmlbeans.SchemaType.FACET_FRACTION_DIGITS) != null) {
+                        String fractionDigits = mVarDef.getXSDType().getFacet(org.apache.xmlbeans.SchemaType.FACET_FRACTION_DIGITS).getStringValue();
+                        if (fractionDigits != null && fractionDigits.length() > 0) {
+                            BigDecimal bd = new BigDecimal(data.toString());
+                            mXsdData = bd.setScale(Integer.parseInt(fractionDigits), BigDecimal.ROUND_HALF_UP);
+                        }
+                    } else {
+                        mXsdData = InfoSetUtil.number(data);
+                    }
                 }
             } else if (mVarDef.isString() || mVarDef.isDate() 
                     || mVarDef.isDateTime() || mVarDef.isTime()) {
