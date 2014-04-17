@@ -458,6 +458,15 @@ public class SOAPExtSerializer
                                             detail.setCredentialValidation(rv);
                                             break;
                                         }
+                                        
+                                        else if (dcelemLN.equals(PropertiesFileValidation.ELEM_PROPERTIES_Compare)) {
+                                            detail.setCredentialValidationType(BasicAuthenticationDetail.CredentialValidationType.PropertyFileAuthentication);
+                                            String path = dcelem.getAttribute(PropertiesFileValidation.PROPERTIES_FILE_PATH);
+                                            PropertiesFileValidation pfv = new PropertiesFileValidation();
+                                            pfv.setPropertiesFileLocation(path);
+                                            detail.setCredentialValidation(pfv);
+                                            break;
+                                        }
                                     }
                                 }
                             }

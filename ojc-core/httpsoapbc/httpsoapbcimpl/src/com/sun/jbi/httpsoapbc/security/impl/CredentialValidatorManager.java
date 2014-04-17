@@ -42,9 +42,11 @@ import com.sun.jbi.httpsoapbc.security.realm.impl.SunRealmCredentialValidator;
 import com.sun.jbi.httpsoapbc.extensions.Policy;
 import com.sun.jbi.httpsoapbc.extensions.BasicAuthenticationDetail.CredentialValidationType;
 import com.sun.jbi.httpsoapbc.extensions.AccessManagerValidation;
+import com.sun.jbi.httpsoapbc.extensions.PropertiesFileValidation;
 import com.sun.jbi.httpsoapbc.extensions.RealmValidation;
 import com.sun.jbi.httpsoapbc.extensions.StringCompareValidation;
 import com.sun.jbi.httpsoapbc.extensions.ValidationBaseType;
+import com.sun.jbi.httpsoapbc.security.sc.impl.PropertiesFileCredentialValidator;
 
 import com.sun.jbi.internationalization.Messages;
 
@@ -64,11 +66,13 @@ public class CredentialValidatorManager {
     private SunAccessManagerCredentialValidator amValidator;
     private Map<String /*realmName*/, RealmRefCount> realmValidators;
     private RuntimeConfigurationMBean rtc;
+    private Map<String /*endpointName*/, PropertiesFileCredentialValidator> propertiesFileValidators;
 
     public CredentialValidatorManager (RuntimeConfigurationMBean rtc) {
         this.rtc = rtc;
         scValidators = Collections.synchronizedMap(new HashMap());
         realmValidators = Collections.synchronizedMap(new HashMap());
+        propertiesFileValidators=Collections.synchronizedMap(new HashMap());
     }
     
     private class RealmRefCount {
@@ -106,6 +110,21 @@ public class CredentialValidatorManager {
 				cv = scValidators.get(uniqueEndpointName);
 			}
 			break;
+                    
+                      case PropertyFileAuthentication:
+			synchronized (propertiesFileValidators) {
+				if (!propertiesFileValidators.containsKey(uniqueEndpointName)) {
+					PropertiesFileValidation pfv = (PropertiesFileValidation) vbt;
+					PropertiesFileCredentialValidator pfcv = new PropertiesFileCredentialValidator(
+											uniqueEndpointName, 
+											pfv.getPropertiesFileLocation());
+					propertiesFileValidators.put(uniqueEndpointName, pfcv);
+				}
+				cv = propertiesFileValidators.get(uniqueEndpointName);
+			}
+			break;
+                    
+                    
 		case AM:
 			// lazy instantiation needed to prevent no class def error
 			// on bc startup if am sdk jars are not in the classpath
@@ -159,7 +178,15 @@ public class CredentialValidatorManager {
             synchronized (scValidators) {
                 scValidators.remove(scv.getEndpointName());
             }
-        } else if (cv instanceof SunRealmCredentialValidator) {
+        } 
+          else if (cv instanceof PropertiesFileCredentialValidator) {
+            PropertiesFileCredentialValidator pfcv = (PropertiesFileCredentialValidator)cv;
+            synchronized (propertiesFileValidators) {
+                propertiesFileValidators.remove(pfcv.getEndpointName());
+            }
+        }
+        
+        else if (cv instanceof SunRealmCredentialValidator) {
             SunRealmCredentialValidator rv = (SunRealmCredentialValidator)cv;
             synchronized (realmValidators) {
                 RealmRefCount rrc = realmValidators.get(rv.getRealmName());

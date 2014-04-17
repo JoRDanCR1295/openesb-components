@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#)BasicAuthenticationDetail.java 
+ * @(#)StringCompareValidator.java 
  *
  * Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
  * 
@@ -36,35 +36,31 @@ import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 
 /*
- * Class holding basic HTTP authentication details such as authentication method 
- * (i.e., use of GF realm or Access Manager).
+ * Class holding information pertaining to authenticating credentials against username and password
+ * Strings.
  */
-public class BasicAuthenticationDetail extends BasicAuthSecurityExtension
+public class PropertiesFileValidation extends ValidationBaseType
         implements ExtensibilityElement, Serializable {
-            
-    public enum CredentialValidationType {
-        AM, Realm, StringCompare,PropertyFileAuthentication
-    }
     
     // Local element name
-    public static final String ELEM_BasicAuthenticationDetail = "BasicAuthenticationDetail";
+    public static final String ELEM_PROPERTIES_Compare = "PropertesFileAuthentication";
+     public static final String PROPERTIES_FILE_PATH="path";
+     public static final String PATH_NOT_DEFINED="NO "+PROPERTIES_FILE_PATH +" DEFINED";
 
     // QName representing this Extensibility Element
-    private QName QNAME_BasicAuthenticationDetail =
-        new QName(NS_URI_HTTPBC_SEC_EXTENSION, ELEM_BasicAuthenticationDetail);
+    private QName QNAME_StringCompare =
+        new QName(NS_URI_HTTPBC_SEC_EXTENSION, ELEM_PROPERTIES_Compare);
     
     private Boolean mFieldRequired = false;
-    
-    private CredentialValidationType mValidationType = CredentialValidationType.StringCompare;
-    
-    private ValidationBaseType mValidation = new StringCompareValidation();
+
+    private String propertiesFileLocation="";
     
     public void setElementType(QName arg0) {
-        QNAME_BasicAuthenticationDetail = arg0;
+        QNAME_StringCompare = arg0;
     }
 
     public QName getElementType() {
-        return QNAME_BasicAuthenticationDetail;
+        return QNAME_StringCompare;
     }
 
     public void setRequired(Boolean arg0) {
@@ -74,21 +70,16 @@ public class BasicAuthenticationDetail extends BasicAuthSecurityExtension
     public Boolean getRequired() {
         return mFieldRequired;
     }
-    
-    public void setCredentialValidationType(CredentialValidationType val) {
-        mValidationType = val;
+
+
+    public String getPropertiesFileLocation() {
+        return propertiesFileLocation;
     }
 
-    public CredentialValidationType getCredentialValidationType() {
-        return mValidationType;
+    public void setPropertiesFileLocation(String propertiesFileLOcation) {
+        this.propertiesFileLocation = propertiesFileLOcation;
     }
     
-    public void setCredentialValidation (ValidationBaseType val) {
-        mValidation = val;
-    }
     
-    public ValidationBaseType getCredentialValidation() {
-        return mValidation;
-    }
     
 }
