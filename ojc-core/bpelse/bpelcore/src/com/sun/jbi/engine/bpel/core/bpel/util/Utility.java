@@ -130,6 +130,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Map.Entry;
 import javax.jbi.messaging.MessageExchange;
 import javax.xml.transform.Transformer;
@@ -1616,9 +1617,23 @@ public final class Utility {
 				 } else {
 					 schType = ((SchemaField) schemaType).getType();
 				 }
-				 if ((schType.getBuiltinTypeCode() == SchemaType.BTC_DECIMAL)
-						 || (schType.getBuiltinTypeCode() == SchemaType.BTC_DOUBLE)
-						 || (schType.getBuiltinTypeCode() == SchemaType.BTC_FLOAT)) {
+                                 
+                                 int builtinCode = schType.getBuiltinTypeCode();
+                                 int baseTypeCode = schType.getBaseType().getBuiltinTypeCode();
+                                 
+				 if((builtinCode == SchemaType.BTC_DECIMAL) || 
+                                         (builtinCode == SchemaType.BTC_DOUBLE) || 
+                                         (builtinCode == SchemaType.BTC_FLOAT) ||
+                                         (baseTypeCode == SchemaType.BTC_DECIMAL) || 
+                                         (baseTypeCode == SchemaType.BTC_DOUBLE) || 
+                                         (baseTypeCode == SchemaType.BTC_FLOAT)) {
+                                            if ( (builtinCode == SchemaType.BTC_DECIMAL || baseTypeCode == SchemaType.BTC_DECIMAL) && schType.getFacet(org.apache.xmlbeans.SchemaType.FACET_FRACTION_DIGITS) != null) {
+                                               String fractionDigits = schType.getFacet(org.apache.xmlbeans.SchemaType.FACET_FRACTION_DIGITS).getStringValue();
+                                               if (fractionDigits != null && fractionDigits.length() > 0) {
+                                                   BigDecimal bd = new BigDecimal(value.toString());
+                                                   value = bd.setScale(Integer.parseInt(fractionDigits), BigDecimal.ROUND_HALF_UP);
+                                               }
+                                           }
 					 isTargetNodeFloat = true;
 				 }
 			 }
