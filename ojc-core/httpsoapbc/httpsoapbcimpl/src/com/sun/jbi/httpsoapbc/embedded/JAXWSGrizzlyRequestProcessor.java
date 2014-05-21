@@ -63,6 +63,8 @@ import com.sun.jbi.httpsoapbc.servletsupport.HttpServletNormalizer;
 import com.sun.jbi.internationalization.Messages;
 import com.sun.xml.ws.api.server.WSEndpoint;
 import com.sun.xml.ws.transport.http.HttpAdapter;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 /**
@@ -109,6 +111,8 @@ public class JAXWSGrizzlyRequestProcessor implements Adapter {
      */
     Map exchangeIDToContext = new java.util.concurrent.ConcurrentHashMap();
 
+    private static Map<WSEndpoint, HttpAdapter> httpAdapterMap = new ConcurrentHashMap<WSEndpoint, HttpAdapter>();
+    
     HttpSoapBindingLifeCycle lifeCycle;    
     
     /** 
@@ -398,8 +402,12 @@ public class JAXWSGrizzlyRequestProcessor implements Adapter {
             
             
             WSEndpoint wsEndpoint = targetEndpoint.getWSEndpoint();
-            // TODO: don't re-create the httpadapter each time
-            HttpAdapter httpAdapter = HttpAdapter.createAlone(wsEndpoint);
+            
+            HttpAdapter httpAdapter = httpAdapterMap.get(wsEndpoint);
+            if (httpAdapter == null) {
+                httpAdapter = HttpAdapter.createAlone(wsEndpoint);
+                httpAdapterMap.put(wsEndpoint, httpAdapter);
+            }
             
             try {
                 httpAdapter.invokeAsync(con);
