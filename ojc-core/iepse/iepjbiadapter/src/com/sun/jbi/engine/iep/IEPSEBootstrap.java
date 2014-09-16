@@ -115,30 +115,41 @@ public class IEPSEBootstrap implements Bootstrap, IEPConfig {
                 	//and JDBC resources required by IEP are only supported when installing IEP
                 	//in DAS. It is not supported when installing in a GlassFish standalone instance
                 	
-                    MBeanServer mbeanserver = ManagementFactory.getPlatformMBeanServer();
-                    Class proxyFactoryClass = Class.forName("com.sun.appserv.management.client.ProxyFactory");
-                    Class[] par=new Class[1];
-                    par[0]=MBeanServer.class;
-                    Method mthd = proxyFactoryClass.getMethod("getInstance",par);
-                    
-                    boolean isDAS = true;
-                    
+                    /*
+                     * https://openesb.atlassian.net/browse/ESBCOMP-114
+                     * 
+                     * Check if GF classes are available. If not, do not try to create 
+                     * datasources.
+                     */
                     try {
-                        mthd.invoke(proxyFactoryClass, mbeanserver);
-                    } catch (Exception e) {
-                    	isDAS = false;
-                    }
+                        Class proxyFactoryClass = Class.forName("com.sun.appserv.management.client.ProxyFactory");
+                        Class[] par=new Class[1];
+                        par[0]=MBeanServer.class;
+                        Method mthd = proxyFactoryClass.getMethod("getInstance",par);
 
-                    if (isDAS) {
-                        //Create the Non-XA connection pool and JNDI JDBC resource.
-                        String dataSrcClassName = "org.apache.derby.jdbc.ClientDataSource";
-                        String resourceType = "javax.sql.DataSource";
-                        createPoolandResource("iepseDerbyPoolNonXA", "jdbc/iepseDerbyNonXA", dataSrcClassName, resourceType, false);
+                        boolean isDAS = true;
 
-                        //Create the XA connection pool and JNDI JDBC resource.
-                        dataSrcClassName = "org.apache.derby.jdbc.ClientXADataSource";
-                        resourceType = "javax.sql.XADataSource";
-                        createPoolandResource("iepseDerbyPoolXA", "jdbc/iepseDerbyXA", dataSrcClassName, resourceType, true);
+                        try {
+                            MBeanServer mbeanserver = ManagementFactory.getPlatformMBeanServer();
+                            mthd.invoke(proxyFactoryClass, mbeanserver);
+                        } catch (Exception e) {
+                            isDAS = false;
+                        }
+
+                        if (isDAS) {
+                            //Create the Non-XA connection pool and JNDI JDBC resource.
+                            String dataSrcClassName = "org.apache.derby.jdbc.ClientDataSource";
+                            String resourceType = "javax.sql.DataSource";
+                            createPoolandResource("iepseDerbyPoolNonXA", "jdbc/iepseDerbyNonXA", dataSrcClassName, resourceType, false);
+
+                            //Create the XA connection pool and JNDI JDBC resource.
+                            dataSrcClassName = "org.apache.derby.jdbc.ClientXADataSource";
+                            resourceType = "javax.sql.XADataSource";
+                            createPoolandResource("iepseDerbyPoolXA", "jdbc/iepseDerbyXA", dataSrcClassName, resourceType, true);
+                        }
+                    } catch (ClassNotFoundException cnfe) {
+                        // Unable to create datasources, the user have to do it
+                        // manually
                     }
                 }
 
