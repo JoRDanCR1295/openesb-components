@@ -235,7 +235,7 @@ public abstract class AbstractEndpoint
         return null;
     }
 
-    public ByteBuffer getServiceDescriptorAsByteBuffer() {
+    public synchronized ByteBuffer getServiceDescriptorAsByteBuffer() {
         try {
             WSDLFactory wsdlFactory = (WSDLFactory)WSDLFactory.newInstance();
             WSDLWriter writer = (WSDLWriter)wsdlFactory.newWSDLWriter();
