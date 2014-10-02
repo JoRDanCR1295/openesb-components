@@ -271,17 +271,18 @@ public class OutboundMessageProcessorTest extends org.jmock.cglib.MockObjectTest
         String remainingRetries = "1";
         Exception errorDetails = new Exception();
         String redeliveryFailure = "false";
-//        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_LAST_RETRY_TIME)).will(returnValue(lastRetryTime));
-//        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_TOTAL_RETRIES)).will(returnValue(totalRetries));
-//        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_REMAINING_RETRIES)).will(returnValue(remainingRetries));
-//        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_ERROR_DETAILS)).will(returnValue(errorDetails));
-//        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_FAILURE)).will(returnValue(redeliveryFailure));
-//        inout.expects(atLeastOnce()).method("getExchangeId");
+        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_LAST_RETRY_TIME)).will(returnValue(lastRetryTime));
+        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_TOTAL_RETRIES)).will(returnValue(totalRetries));
+        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_REMAINING_RETRIES)).will(returnValue(remainingRetries));
+        //inout.expects(once()).method("getProperty").with(eq(REDELIVERY_ERROR_DETAILS)).will(returnValue(errorDetails));
+        inout.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_FAILURE)).will(returnValue(redeliveryFailure));
+        inout.expects(atLeastOnce()).method("getExchangeId");
 
         listener.expects(atLeastOnce()).method("processReplyMessage");
 
         // 1. testing the case when exchange status is done
         inout.expects(atLeastOnce()).method("getStatus").will(returnValue(ExchangeStatus.DONE));
+		inout.expects(atLeastOnce()).method("getError");
         endpointStatus.expects(once()).method("incrementReceivedDones");
         instance.processRequestReplyInbound((InOut) inout.proxy(), endpoint, operation, (MessageExchangeReplyListener) listener.proxy());
         endpointStatus.verify();
@@ -415,12 +416,13 @@ public class OutboundMessageProcessorTest extends org.jmock.cglib.MockObjectTest
         String remainingRetries = "1";
         Exception errorDetails = new Exception();
         String redeliveryFailure = "false";
-//        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_LAST_RETRY_TIME)).will(returnValue(lastRetryTime));
-//        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_TOTAL_RETRIES)).will(returnValue(totalRetries));
-//        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_REMAINING_RETRIES)).will(returnValue(remainingRetries));
-//        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_ERROR_DETAILS)).will(returnValue(errorDetails));
-//        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_FAILURE)).will(returnValue(redeliveryFailure));
-//        inonly.expects(atLeastOnce()).method("getExchangeId");
+        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_LAST_RETRY_TIME)).will(returnValue(lastRetryTime));
+        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_TOTAL_RETRIES)).will(returnValue(totalRetries));
+        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_REMAINING_RETRIES)).will(returnValue(remainingRetries));
+        //inonly.expects(once()).method("getProperty").with(eq(REDELIVERY_ERROR_DETAILS)).will(returnValue(errorDetails));
+        inonly.expects(atLeastOnce()).method("getProperty").with(eq(REDELIVERY_FAILURE)).will(returnValue(redeliveryFailure));
+        inonly.expects(atLeastOnce()).method("getExchangeId");
+		inonly.expects(atLeastOnce()).method("getError");
         endpointStatus.expects(once()).method("incrementReceivedDones");
         instance.processOneWayInbound((InOnly) inonly.proxy(), endpoint, (MessageExchangeReplyListener) listener.proxy());
         inonly.verify();
