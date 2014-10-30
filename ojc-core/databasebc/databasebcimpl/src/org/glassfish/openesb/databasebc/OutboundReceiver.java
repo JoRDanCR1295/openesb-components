@@ -170,6 +170,7 @@ class OutboundReceiver implements Runnable {
      */
     public void stopReceiving() {
         OutboundReceiver.mLogger.log(Level.INFO, OutboundReceiver.mMessages.getString("DBBC_R00669.OR_Stop"));
+	mOutboundPooledExecutor.shutdownNow();
         mMonitor.set(Boolean.TRUE);
     }
 }

@@ -289,6 +289,7 @@ class InboundReceiver {
      */
     protected void stopReceiving() {
         mLogger.log(Level.INFO, mMessages.getString("DBBC_C00605.IR_Stop"));
+	mInboundPooledExecutor.shutdownNow();
     }
 
     /**
