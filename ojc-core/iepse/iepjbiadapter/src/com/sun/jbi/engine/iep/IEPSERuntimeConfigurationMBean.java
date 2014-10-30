@@ -56,12 +56,14 @@ public interface IEPSERuntimeConfigurationMBean {
     public void setDatabaseXaJndiName(String dbJndiName) throws InvalidAttributeValueException, MBeanException;
     public void setDatabaseSchemaName(String dbSchema) throws InvalidAttributeValueException, MBeanException;
     public void setGarbageCollectionEnabled(Boolean value) throws InvalidAttributeValueException, MBeanException;
-
+    public void setRuntimeStyle(String value) throws InvalidAttributeValueException, MBeanException;
+    
     public Integer getEngineExpiryInterval();
     public String getDatabaseNonXaJndiName();
     public String getDatabaseXaJndiName();
     public String getDatabaseSchemaName();
     public Boolean getGarbageCollectionEnabled();
+    public String getRuntimeStyle();
     
 //    public void setNoOfThreads(Integer value) throws InvalidAttributeValueException, MBeanException;
 //    public Integer getNoOfThreads() ;

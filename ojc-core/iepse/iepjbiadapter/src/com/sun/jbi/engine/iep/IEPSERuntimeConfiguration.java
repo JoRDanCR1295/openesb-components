@@ -75,6 +75,8 @@ public class IEPSERuntimeConfiguration implements IEPSERuntimeConfigurationMBean
     private String mDatabaseSchemaName = "iepseDB";
     private String mGarbageCollectionEnabled = "true";
 
+    private String mRuntimeStyle = "standAlone";
+    
     private String mConfigSchema;
     private String mConfigData;
 //    private String mNoOfThreads = "5";
@@ -153,6 +155,13 @@ public class IEPSERuntimeConfiguration implements IEPSERuntimeConfigurationMBean
         saveAndNotifyListners("IEPSERuntimeConfiguration.GarbageCollectionEnabled_Attribute_changed", 
                 PROP_GARBAGE_COLLECTION_ENABLED, oldValue, mGarbageCollectionEnabled);
     }
+    
+    public void setRuntimeStyle(String value) throws InvalidAttributeValueException, MBeanException {
+        String oldValue = getRuntimeStyle();
+        mRuntimeStyle = value;
+        saveAndNotifyListners("IEPSERuntimeConfiguration.RuntimeStyle_Attribute_changed",
+                PROP_RUNTIME_STYLE, oldValue, value);
+    }
 
     public Integer getEngineExpiryInterval() {
         return Integer.valueOf(mEngineExpiryInterval);
@@ -168,6 +177,10 @@ public class IEPSERuntimeConfiguration implements IEPSERuntimeConfigurationMBean
     
     public String getDatabaseSchemaName() {
         return mDatabaseSchemaName;
+    }
+    
+    public String getRuntimeStyle() {
+        return mRuntimeStyle;
     }
     
     public void setTransactedOutput(Boolean value)throws InvalidAttributeValueException, MBeanException {
