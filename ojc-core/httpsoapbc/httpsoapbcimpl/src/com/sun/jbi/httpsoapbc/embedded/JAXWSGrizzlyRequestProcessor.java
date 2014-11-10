@@ -65,6 +65,8 @@ import com.sun.xml.ws.api.server.WSEndpoint;
 import com.sun.xml.ws.transport.http.HttpAdapter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -403,11 +405,7 @@ public class JAXWSGrizzlyRequestProcessor implements Adapter {
             
             WSEndpoint wsEndpoint = targetEndpoint.getWSEndpoint();
             
-            HttpAdapter httpAdapter = httpAdapterMap.get(wsEndpoint);
-            if (httpAdapter == null) {
-                httpAdapter = HttpAdapter.createAlone(wsEndpoint);
-                httpAdapterMap.put(wsEndpoint, httpAdapter);
-            }
+            HttpAdapter httpAdapter = getAdapter(wsEndpoint);
             
             try {
                 httpAdapter.invokeAsync(con);
@@ -419,6 +417,24 @@ public class JAXWSGrizzlyRequestProcessor implements Adapter {
             }
 
         }
+    }
+    
+    private static Lock createLock = new ReentrantLock();
+    
+    private static HttpAdapter getAdapter(WSEndpoint wsEndpoint) {
+        HttpAdapter adapter = httpAdapterMap.get(wsEndpoint);
+        if (adapter == null) {
+            createLock.lock();
+            try {
+                if (adapter == null) {
+                    adapter = HttpAdapter.createAlone(wsEndpoint);
+                    httpAdapterMap.put(wsEndpoint, adapter);
+                }
+            } finally {
+                createLock.unlock();
+            }
+        }
+        return adapter;
     }
 
     /**
