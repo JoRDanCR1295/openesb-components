@@ -1127,7 +1127,7 @@ public class RuntimeConfiguration implements RuntimeConfigurationMBean, Notifica
                String[] metadata = (String[]) mAppVarMap.get(key);
                String value = metadata[0];
                String type = metadata[1];
-               if (type.equalsIgnoreCase("PASSWORD")) {
+               if (type.equalsIgnoreCase("PASSWORD") && value != null) {
                    value = mKeyStoreUtilClient.encrypt(value);
                }
                String prop = (value != null)? key + "=" + value + "{" + type + "}\n" : key + "={" + type + "}\n";
