@@ -408,7 +408,7 @@ public class JbiMessageUtil {
     public static String convertXmlToString(Source source, boolean stripNamespaces) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(source, new StreamResult(baos));
         
         String xmlPayload = baos.toString();
