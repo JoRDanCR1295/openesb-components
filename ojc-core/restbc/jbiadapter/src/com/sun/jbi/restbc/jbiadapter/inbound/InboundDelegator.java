@@ -308,16 +308,17 @@ public class InboundDelegator {
                 boolean isContentTypeSet = false;
                 
                 if (responsePayload != null) { // NOI18N
+                    String content = "";
+                    boolean isDataHandler = false;
+                    
                     if (responsePayload instanceof Source) {
                         Source xmlPayload = (Source) responsePayload;
 
                         List<MediaType> acceptableMediaTypes = headers.getAcceptableMediaTypes();
-                        if (acceptableMediaTypes.size() == 0) {
+                        if (acceptableMediaTypes.isEmpty()) {
                             // if accept header not present, return entity as XML
                             if (!method.equalsIgnoreCase("head")) {
-                                responseBuilder.entity(JbiMessageUtil.convertXmlToString(xmlPayload));
-                            } else {
-                                responseBuilder.entity("");
+                                content = JbiMessageUtil.convertXmlToString(xmlPayload);
                             }
                             responseBuilder.type(MediaType.APPLICATION_XML_TYPE);
                             isContentTypeSet = true;
@@ -325,9 +326,7 @@ public class InboundDelegator {
                             for (MediaType acceptableMediaType : acceptableMediaTypes) {
                                 if (PathUtil.isXMLMediaType(acceptableMediaType)) {
                                     if (!method.equalsIgnoreCase("head")) {
-                                        responseBuilder.entity(JbiMessageUtil.convertXmlToString(xmlPayload));
-                                    } else {
-                                        responseBuilder.entity("");
+                                        content = JbiMessageUtil.convertXmlToString(xmlPayload);
                                     }
                                     String retMediaType = acceptableMediaType.isWildcardType() ? "application" : acceptableMediaType.getType();
                                     String retMediaSubType = acceptableMediaType.isWildcardSubtype() ? "xml" : acceptableMediaType.getSubtype();
@@ -342,12 +341,10 @@ public class InboundDelegator {
                                         com.sun.jbi.restbc.jbiadapter.org.json.JSONObject jsonObject = 
                                             com.sun.jbi.restbc.jbiadapter.org.json.XML.toJSONObject(xmlPayloadAsString);
                                         if (jsonObject != null) {
-                                            responseBuilder.entity(jsonObject.toString());
+                                            content = jsonObject.toString();
                                         } else {
-                                            responseBuilder.entity(xmlPayloadAsString);
+                                            content = xmlPayloadAsString;
                                         }
-                                    } else {
-                                        responseBuilder.entity("");
                                     }
                                     String retMediaType = acceptableMediaType.isWildcardType() ? "application" : acceptableMediaType.getType();
                                     String retMediaSubType = acceptableMediaType.isWildcardSubtype() ? "json" : acceptableMediaType.getSubtype();
@@ -356,9 +353,7 @@ public class InboundDelegator {
                                     break;
                                 } else {
                                     if (!method.equalsIgnoreCase("head")) {
-                                        responseBuilder.entity(JbiMessageUtil.convertXmlToString(xmlPayload));
-                                    } else {
-                                        responseBuilder.entity("");
+                                        content = JbiMessageUtil.convertXmlToString(xmlPayload);
                                     }
                                     break;
                                 }
@@ -368,8 +363,7 @@ public class InboundDelegator {
                         if (!method.equalsIgnoreCase("head")) {
                             DataHandler streamPayload = (DataHandler) responsePayload;
                             responseBuilder.entity(streamPayload.getInputStream());
-                        } else {
-                            responseBuilder.entity("");
+                            isDataHandler = true;
                         }
                     }
 
@@ -385,6 +379,11 @@ public class InboundDelegator {
                                 isContentTypeSet = true;
                             }
                         }
+                    }
+                    
+                    if (! isDataHandler) {
+                        responseBuilder.entity(content);
+                        responseBuilder.header("X-Content-Length", Integer.toString(content.length()));
                     }
                 }
 

@@ -28,6 +28,8 @@ import com.sun.grizzly.http.servlet.ServletAdapter;
 import com.sun.jbi.common.qos.config.ComponentConfig;
 import com.sun.jbi.common.qos.config.ConfigPersistence;
 import com.sun.jbi.configuration.RuntimeConfigurationHelper;
+import com.sun.jbi.restbc.jbiadapter.inbound.CharsetResponseFilter;
+import com.sun.jbi.restbc.jbiadapter.inbound.ContentLengthResponseFilter;
 import com.sun.jbi.restbc.jbiadapter.inbound.InboundDelegator;
 import com.sun.jbi.restbc.jbiadapter.inbound.InboundHttpListener;
 import com.sun.jbi.restbc.jbiadapter.mbeans.RuntimeConfig;
@@ -366,7 +368,9 @@ public class RestComponent implements Component, ComponentLifeCycle {
         final Map<String, String> initParams = new HashMap<String, String>();
 
         initParams.put("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jbi.restbc.jbiadapter.inbound.JerseyRootResourceApplication");
-        initParams.put("com.sun.jersey.spi.container.ContainerResponseFilters", "com.sun.jbi.restbc.jbiadapter.inbound.CharsetResponseFilter");
+        initParams.put("com.sun.jersey.spi.container.ContainerResponseFilters", 
+                CharsetResponseFilter.class.getName() + ';' +
+                ContentLengthResponseFilter.class.getName());
         
         for (Map.Entry<String, String> e : initParams.entrySet()) {
             adapter.addInitParameter(e.getKey(), e.getValue());
