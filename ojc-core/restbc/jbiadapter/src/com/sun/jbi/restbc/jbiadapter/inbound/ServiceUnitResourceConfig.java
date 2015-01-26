@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.server.impl.container.config.AnnotatedClassScanner;
 
 /**
  * ServiceUnitResourceConfig.java
