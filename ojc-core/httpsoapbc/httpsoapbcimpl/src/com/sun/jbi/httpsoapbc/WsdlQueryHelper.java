@@ -51,6 +51,12 @@ import com.ibm.wsdl.factory.WSDLFactoryImpl;
 import com.ibm.wsdl.util.xml.DOMUtils;
 import com.ibm.wsdl.util.xml.QNameUtils;
 import com.sun.jbi.internationalization.Messages;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Sujit Biswas
@@ -183,6 +189,9 @@ public class WsdlQueryHelper {
                 
                 // ESBCOMP-34 : Bad location URL in soap address
                 updateSoapAddressDom(doc.getDocumentElement());
+                
+                // ESBCOMP-100 : key locations and passwords should be hidden in wsdl
+                updateSecurityPolicies(doc.getDocumentElement());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 System.out.println("Exception : " + ex);
@@ -485,6 +494,36 @@ public class WsdlQueryHelper {
             result = location;
         }
         return result;
+    }
+    
+    private void updateSecurityPolicies(Element el) throws Exception {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String policiesExpression = "/*[local-name()='definitions']/*[local-name()='Policy']/*[local-name()='ExactlyOne']/*[local-name()='All']/*";
+
+        NodeList policyChildNode = (NodeList) xPath.compile(policiesExpression).evaluate(el, XPathConstants.NODESET);
+        if (policyChildNode != null) {
+            for (int i = 0; i < policyChildNode.getLength(); i++) {
+                Node childrenNode = policyChildNode.item(i);
+
+                if (childrenNode.getNodeType() == Node.ELEMENT_NODE) {
+                    String nodeName = childrenNode.getLocalName();
+                    NamedNodeMap attrs = childrenNode.getAttributes();
+
+                    if ("KeyStore".equalsIgnoreCase(nodeName) || "TrustStore".equalsIgnoreCase(nodeName)) {
+                        protectAttribute(attrs, "keypass");
+                        protectAttribute(attrs, "location");
+                        protectAttribute(attrs, "storepass");
+                    }
+                }
+            }
+        }
+    }
+    
+    private void protectAttribute(NamedNodeMap attributes, String attributeName) {
+        Node attr = attributes.getNamedItem(attributeName);
+        if (attr != null) {
+            attr.setTextContent("******");
+        }
     }
 
     private void updateImportDom(Element el) throws Exception {
