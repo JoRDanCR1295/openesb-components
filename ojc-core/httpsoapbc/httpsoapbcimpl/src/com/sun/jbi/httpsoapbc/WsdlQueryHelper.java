@@ -179,16 +179,19 @@ public class WsdlQueryHelper {
          * check if the request is a direct request, return the byte-buffer if
          * true
          */
+        /*
         if (isDirectRequest()) {
             return byteBuffer;
-        }
+        }*/
 
         if (isWsdl) {
             try {
-                updateImportDom(doc.getDocumentElement());
-                
-                // ESBCOMP-34 : Bad location URL in soap address
-                updateSoapAddressDom(doc.getDocumentElement());
+                if (! isDirectRequest()) {
+                    updateImportDom(doc.getDocumentElement());
+
+                    // ESBCOMP-34 : Bad location URL in soap address
+                    updateSoapAddressDom(doc.getDocumentElement());
+                }
                 
                 // ESBCOMP-100 : key locations and passwords should be hidden in wsdl
                 updateSecurityPolicies(doc.getDocumentElement());
