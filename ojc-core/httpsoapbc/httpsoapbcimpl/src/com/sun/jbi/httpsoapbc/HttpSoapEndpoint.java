@@ -694,7 +694,8 @@ public class HttpSoapEndpoint extends AbstractEndpoint {
                                     SOAPMessage.class,
                                     javax.xml.ws.Service.Mode.MESSAGE,
                                     new javax.xml.ws.WebServiceFeature[] {
-                                        new javax.xml.ws.RespectBindingFeature(true)
+                                        new javax.xml.ws.RespectBindingFeature(true),
+                                        new javax.xml.ws.soap.AddressingFeature(true)
                                     });	
 	return dispatch;
     }
