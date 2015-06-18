@@ -216,8 +216,9 @@ public class JDBCDenormalizer {
           final String dbms = dbmeta.getDatabaseProductName().
                   toLowerCase();
           final String colNamePattern =
-                  (dbms.contains("sql server") || dbms.contains(
-                  "adaptive server")) ? null : "%";
+                  ((dbms.contains("sql server") || dbms.contains(
+                  "adaptive server")) && sqltext.contains("=")) ? null : "%";
+          
           rs = dbmeta.getProcedureColumns(pcatalog, pschema, procName,
                   colNamePattern);
         } catch (final SQLException ex) {
