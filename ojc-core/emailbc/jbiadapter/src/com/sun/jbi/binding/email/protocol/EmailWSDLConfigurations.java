@@ -107,15 +107,10 @@ public class EmailWSDLConfigurations {
     private static final Logger mLogger = Logger.getLogger(EmailWSDLConfigurations.class.getName());
 
     public EmailWSDLConfigurations(ManagerContext ctx, EndpointInfo info, String suRootPath) throws WSDLException, DeploymentException {
-        this(suRootPath, ctx);
         this.mEptInfo = info;
-
-    }
-
-    public EmailWSDLConfigurations(String svcUnitRootPath, ManagerContext ctx) throws WSDLException, DeploymentException {
-        mMgrCtx = ctx;
-        appConfig = getAppConfig(svcUnitRootPath);
-        File dir = new File(svcUnitRootPath);
+        this.mMgrCtx = ctx;
+        this.appConfig = getAppConfig(suRootPath);
+        File dir = new File(suRootPath);
         this.parse(dir);
     }
 
