@@ -68,6 +68,7 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
@@ -454,11 +455,15 @@ public class HttpEndpoint extends AbstractEndpoint {
 
     public <T> Dispatch<T> createDispatch(String url, Class<T> type){
         Dispatch<T> d = dispatchCache.get(type);
+
         if (d == null) {
             mService.addPort(mPortName, javax.xml.ws.http.HTTPBinding.HTTP_BINDING, url);
             d = mService.createDispatch(mPortName, type, Mode.MESSAGE);
             dispatchCache.put(type, d);
         }
+        
+        d.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+        d.getRequestContext().put(javax.xml.ws.http.HTTPBinding.HTTP_BINDING, url);
         return d;
     }
 }
