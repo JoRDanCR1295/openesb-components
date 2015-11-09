@@ -509,6 +509,7 @@ public class JDBCClusterManager {
                     int rowsUpdated = ps.executeUpdate();
                     recordInserted = true;
                  } catch (final Exception e) {
+                     mLogger.log(Level.WARNING, e.getLocalizedMessage());
                      mLogger.log(Level.INFO,  mMessages.getString("DBBC-R10903.JCM_RECORD_LOCKED", new Object[]{getInstanceName()}));
                      recordInserted = false;
                   }finally{

@@ -85,6 +85,11 @@ class DriverShim implements Driver {
     }
 
     //@Override
+    public Logger getParentLogger() {
+        return null;
+    }
+
+    //@Override
     public DriverPropertyInfo[] getPropertyInfo(final String u, final Properties p) throws SQLException {
         return this.driver.getPropertyInfo(u, p);
     }

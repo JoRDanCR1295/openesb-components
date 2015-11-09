@@ -88,7 +88,7 @@ import org.axiondb.util.ValuePool;
 
 /**
  * Query Planner used in select and sub-select Query. I use Rule-based analysis and
- * decision-making – rules expressing proven, efficient statement execution methods
+ * decision-making â€“ rules expressing proven, efficient statement execution methods
  * determine how operations and their attributes are built and combined.
  * <p>
  * One of the important components is the Query Optimizer. Its goal, for every SQL
@@ -106,15 +106,15 @@ import org.axiondb.util.ValuePool;
  * the operation. In Axion in most cases these trees are represented as RowIterators.
  * <p>
  * Some of the operators that may be present in the tree are:
- * <li>Restrict – reduces the number of output rows by eliminating those that fail to
+ * <li>Restrict â€“ reduces the number of output rows by eliminating those that fail to
  * satisfy some condition applied to the input. Restrict operators appear in the tree from
  * WHERE clauses and JOINs. example: FilteringRowIterator
- * <li>Join – combines two input tables into a single output table that contains some
+ * <li>Join â€“ combines two input tables into a single output table that contains some
  * combination of rows from the inputs. Joins appear in the tree from the use of FROM
  * clauses and from JOIN clauses. example: NestedLoopJoinRowIterator.
- * <li>Sort – changes the ordering of rows in an input table to produce an output table
+ * <li>Sort â€“ changes the ordering of rows in an input table to produce an output table
  * in the desired order. example: SortedRowIterator
- * <li>Table – represents a Table scan or an Index scan, reading data from a given table
+ * <li>Table â€“ represents a Table scan or an Index scan, reading data from a given table
  * by either its default index (table scan) or a specific index (index scan). Leaf nodes
  * of the tree are always references to database tables.
  * <p>
@@ -196,8 +196,8 @@ import org.axiondb.util.ValuePool;
  * right subtree.
  * <li>No other scan on that index has already been set.
  * <p>
- * When there is an index defined on the left subtree’s table instead of on the right, the
- * optimizer swaps the subtrees to make an ANL join possible. When neither subtree’s table
+ * When there is an index defined on the left subtreeâ€™s table instead of on the right, the
+ * optimizer swaps the subtrees to make an ANL join possible. When neither subtreeâ€™s table
  * has an index defined on the join column, the optimizer creats a dynamic index on one of
  * the subtree.
  * <p>

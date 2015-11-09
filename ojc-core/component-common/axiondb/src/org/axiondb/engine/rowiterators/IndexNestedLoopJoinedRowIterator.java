@@ -55,8 +55,8 @@ import org.axiondb.RowIterator;
  * right subtree.
  * <li>No other scan on that index has already been set.
  * <p>
- * When there is an index defined on the left subtree’s table instead of on the right, the
- * optimizer swaps the subtrees to make an ANL join possible. When neither subtree’s table
+ * When there is an index defined on the left subtreeâ€™s table instead of on the right, the
+ * optimizer swaps the subtrees to make an ANL join possible. When neither subtreeâ€™s table
  * has an index defined on the join column, the optimizer creats a dynamic index on one of
  * the subtree.
  * 
