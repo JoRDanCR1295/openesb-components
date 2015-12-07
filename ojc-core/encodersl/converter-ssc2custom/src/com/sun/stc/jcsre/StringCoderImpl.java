@@ -30,9 +30,12 @@
 
 package com.sun.stc.jcsre;
 
-import sun.io.ByteToCharConverter;
-import sun.io.CharToByteConverter;
-import sun.io.MalformedInputException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharacterCodingException;
+import java.nio.CharBuffer;
+import java.nio.ByteBuffer;
 
 import java.io.UnsupportedEncodingException;
 
@@ -41,15 +44,15 @@ import com.sun.stc.jcsre.PropertyException;
 /**
  * An implementation of the string coder interface, that serves as a
  * straight-forward map to the built-in encoding support of the JDK,
- * visible though java.lang.String.
+ * visible through java.lang.String.
  */
 public class StringCoderImpl implements IStringCoder
 {
     private static final boolean unitTest = false;
 
     private String encoding = null;
-    private ByteToCharConverter decoder = null;
-    private CharToByteConverter encoder = null;
+    private CharsetDecoder decoder = null;
+    private CharsetEncoder encoder = null;
 
     /**
      * Create from encoding name.
@@ -59,11 +62,12 @@ public class StringCoderImpl implements IStringCoder
      * @throws UnsupportedEncodingException encoding not supported
      */
     public StringCoderImpl (String _enc) throws UnsupportedEncodingException {
-	if(_enc == null)
-	    throw new UnsupportedEncodingException("null encoding name");
-	this.encoding = _enc;
-        this.decoder = ByteToCharConverter.getConverter(_enc);
-        this.encoder = CharToByteConverter.getConverter(_enc);
+        if(_enc == null)
+            throw new UnsupportedEncodingException("null encoding name");
+        this.encoding = _enc;
+        Charset ch = Charset.forName(_enc);
+        this.decoder = ch.newDecoder();
+        this.encoder = ch.newEncoder();
     }
 
     /**
@@ -77,10 +81,9 @@ public class StringCoderImpl implements IStringCoder
      */
     public byte[] encode (String _s) throws IllegalArgumentException {
         if(null == _s) return null;
-        encoder.reset();
         try {
-            return encoder.convertAll(_s.toCharArray());
-        } catch(MalformedInputException ex) {
+            return encoder.encode(CharBuffer.wrap(_s.toCharArray())).array();
+        } catch(CharacterCodingException ex) {
             ex.printStackTrace();
             throw new IllegalArgumentException("Unable to convert string.");
         }
@@ -110,10 +113,9 @@ public class StringCoderImpl implements IStringCoder
      */
     public String decode (byte[] _b) throws IllegalArgumentException {
         if(null == _b) return null;
-        decoder.reset();
         try {
-            return new String(decoder.convertAll(_b));
-        } catch(MalformedInputException ex) {
+            return decoder.decode(ByteBuffer.wrap(_b)).toString();
+        } catch(CharacterCodingException ex) {
             ex.printStackTrace();
             throw new IllegalArgumentException("Unable to convert byte[].");
         }
