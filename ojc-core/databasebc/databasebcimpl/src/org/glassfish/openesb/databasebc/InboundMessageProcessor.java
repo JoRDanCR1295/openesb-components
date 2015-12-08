@@ -170,6 +170,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     PreparedStatement ps = null;
 
 	ResultSet rs = null;
+	private int mRowCount = 0;
 
     Connection connection = null;
 
@@ -247,6 +248,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         }
 
         do {
+            mRowCount = 0;
             try {
                 execute();
             } catch (final Exception ex) {
@@ -257,10 +259,12 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 mLogger.log(Level.INFO,mMessages.getString("DBBC_R00660.IMP_FINISHED_EXECUTING_SQL"));
             }
 
-            try {
-                Thread.sleep(mPollMilliSeconds);
-            } catch (final Exception e) {
-                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00661.IMP_THREAD_SLEEP_ABRUPTED"), e);
+            if (mRowCount <= 0) {
+                try {
+                    Thread.sleep(mPollMilliSeconds);
+                } catch (final Exception e) {
+                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00661.IMP_THREAD_SLEEP_ABRUPTED"), e);
+                }
             }
         } while (mMonitor.get() != Boolean.TRUE);
     }
@@ -462,6 +466,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                         normalizer.setRecordsProcessedList(mProcessedList);
                         normalizer.setJDBCClusterManager(mJDBCClusterManager);
                         inMsg = normalizer.normalizeSelectInbound(rs, exchange, meta, epb, mPKName,mDbName);
+                        mRowCount = normalizer.mRowCount;
 
                         if(normalizationMeasurement != null){
                     		normalizationMeasurement.end();

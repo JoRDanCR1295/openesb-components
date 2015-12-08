@@ -95,6 +95,7 @@ public class JDBCNormalizer {
   private String insertQuery = null;
   public ArrayList mProcessedList = new ArrayList();
   public Map mInboundExchangeProcessRecordsMap = new HashMap();
+  public int mRowCount = 0;
   private JDBCClusterManager mJDBCClusterManager;
 
   /** Creates a new instance of SoapNormalizer
@@ -124,6 +125,7 @@ public class JDBCNormalizer {
                                      final MessageExchange exchange, final OperationMetaData meta)
           throws MessagingException {
     final NormalizedMessage normalMsg = exchange.createMessage();
+    mRowCount = 0;
 
     try {
       Document normalDoc = JDBCNormalizer.newDocument();
@@ -350,6 +352,7 @@ public class JDBCNormalizer {
                     final ResultSetMetaData rsmd = rs.getMetaData();
                     if (numberOfRecords == -1)
                       while (rs.next()) {
+                        mRowCount++;
                         if (mLogger.isLoggable(
                                 Level.FINE))
                           mLogger.log(Level.FINE,
@@ -385,6 +388,7 @@ public class JDBCNormalizer {
                       }
                     else
                       while (rs.next() && (numberOfRecords > 0)) {
+                        mRowCount++;
                         if (mLogger.isLoggable(
                                 Level.FINE))
                           mLogger.log(Level.FINE,
@@ -436,6 +440,7 @@ public class JDBCNormalizer {
 
                     if (numberOfRecords == -1)
                       while (rs.next()) {
+                        mRowCount++;
                         if (mLogger.isLoggable(
                                 Level.FINE))
                           mLogger.log(Level.FINE,
@@ -508,6 +513,7 @@ public class JDBCNormalizer {
                       }
                     else
                       while (rs.next() && (numberOfRecords > 0)) {
+                        mRowCount++;
                         if (mLogger.isLoggable(
                                 Level.FINE))
                           mLogger.log(Level.FINE,
@@ -642,6 +648,7 @@ public class JDBCNormalizer {
           final ResultSetMetaData rsmd = rs.getMetaData();
           if (numberOfRecords == -1)
             while (rs.next()) {
+              mRowCount++;
               if (mLogger.isLoggable(Level.FINE))
                 mLogger.log(Level.FINE,
                         "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -671,6 +678,7 @@ public class JDBCNormalizer {
             }
           else
             while (rs.next() && (numberOfRecords > 0)) {
+              mRowCount++;
               if (mLogger.isLoggable(Level.FINE))
                 mLogger.log(Level.FINE,
                         "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -809,6 +817,7 @@ public class JDBCNormalizer {
 
                   if (numberOfRecords == -1)
                     while (rs.next()) {
+                      mRowCount++;
                       if (mLogger.isLoggable(Level.FINE))
                         mLogger.log(Level.FINE,
                                 "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -840,6 +849,7 @@ public class JDBCNormalizer {
                     }
                   else
                     while (rs.next() && (numberOfRecords > 0)) {
+                      mRowCount++;
                       if (mLogger.isLoggable(Level.FINE))
                         mLogger.log(Level.FINE,
                                 "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -889,6 +899,7 @@ public class JDBCNormalizer {
 
                   if (numberOfRecords == -1)
                     while (rs.next()) {
+                      mRowCount++;
                       if (mLogger.isLoggable(Level.FINE))
                         mLogger.log(Level.FINE,
                                 "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -922,6 +933,7 @@ public class JDBCNormalizer {
                     }
                   else
                     while (rs.next() && (numberOfRecords > 0)) {
+                      mRowCount++;
                       if (mLogger.isLoggable(Level.FINE))
                         mLogger.log(Level.FINE,
                                 "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -999,6 +1011,7 @@ public class JDBCNormalizer {
 
           if (numberOfRecords == -1)
             while (rs.next()) {
+              mRowCount++;
               if (mLogger.isLoggable(Level.FINE))
                 mLogger.log(Level.FINE,
                         "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -1027,6 +1040,7 @@ public class JDBCNormalizer {
             }
           else
             while (rs.next() && (numberOfRecords > 0)) {
+              mRowCount++;
               if (mLogger.isLoggable(Level.FINE))
                 mLogger.log(Level.FINE,
                         "DBBC_R00706.JDBCN_ProcessNextRecord");
@@ -1169,6 +1183,7 @@ public class JDBCNormalizer {
                           final ResultSetMetaData rsmd =
                                   rs.getMetaData();
                           while (rs.next()) {
+                            mRowCount++;
                             if (mLogger.isLoggable(
                                     Level.FINE))
                               mLogger.log(
@@ -1290,6 +1305,7 @@ public class JDBCNormalizer {
                           final ResultSetMetaData rsmd =
                                   rs.getMetaData();
                           while (rs.next()) {
+                            mRowCount++;
                             if (mLogger.isLoggable(
                                     Level.FINE))
                               mLogger.log(
@@ -1430,6 +1446,7 @@ public class JDBCNormalizer {
                 if (rs != null) {
                   final ResultSetMetaData rsmd = rs.getMetaData();
                   while (rs.next()) {
+                    mRowCount++;
                     if (mLogger.isLoggable(Level.FINE))
                       mLogger.log(Level.FINE,
                               "DBBC_R00706.JDBCN_ProcessNextRecord");
