@@ -1123,7 +1123,7 @@ public class OutboundMessageProcessor implements Runnable {
                       "DBBC_E00627");
               throw new Exception(faultString, e);
             }
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(true);
 
 
             /* PP: Glassfish does not return a XADataSource and always returns
@@ -1435,7 +1435,7 @@ public class OutboundMessageProcessor implements Runnable {
                         faultCode, faultDetail);
                 throw new Exception(faultString, e);
               }
-              connection.setAutoCommit(false);
+              connection.setAutoCommit(true);
               cs = executeOutboundProc(inMsg, epb, meta,
                       connection);
               final JDBCNormalizer normalizer =
@@ -1714,7 +1714,7 @@ public class OutboundMessageProcessor implements Runnable {
         }
 
         if (transaction != null)
-          connection.setAutoCommit(false);
+          connection.setAutoCommit(true);
         // writeMessage(inMsg, destinationAddress, false);
         if (meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(

@@ -854,9 +854,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                             }
                         }
                         connection = getDatabaseConnection(jndiName);
-                        if (isTransacted && exchange instanceof InOnly) {
-                            connection.setAutoCommit(false);
-                        }
+//                        if (isTransacted && exchange instanceof InOnly) {
+                            connection.setAutoCommit(true);
+//                        }
                         //final List records = epb.getProcessList();
                         final List records = (List)mMapInboundExchangesProcessRecords.get(messageId);
                         for (final Iterator it = records.iterator(); it.hasNext();) {
