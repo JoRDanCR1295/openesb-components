@@ -81,6 +81,8 @@ public class JDBCClusterManager {
     
     private String BASE_INSTANCESTATE_UPDATE_STMT_STR;
     
+    private String BASE_OWNERTABLE_SELECTALL_STMT_STR;
+    
     private String BASE_OWNERTABLE_INSERT_STMT_STR;
     
     private String BASE_OWNERTABLE_UPDATE_STMT_STR;
@@ -464,20 +466,18 @@ public class JDBCClusterManager {
     }
     
     /*
-     * Check if the record is already processed by another instance. @return boolean recordInserted
-     * if not inserted, insert the record with current instance name and status to "In Progress"
+     * Insert new rows with the "In Progress" state
      */
-    public boolean isRecordInsertedByCurrentInstance() {
-        boolean recordInserted = false;    
-        String insertQuery = BASE_OWNERTABLE_INSERT_STMT_STR;
+    public int[] addInstances(List pkList) throws Exception {
         PreparedStatement ps = null;
         ParameterMetaData paramMetaData = null;
         int parameters = 0;
         Connection con = null;
+        int[] executedRows = null;
         try {
             con = getDataBaseConnection();
-            ps = con.prepareStatement(insertQuery);
-            paramMetaData = ps.getParameterMetaData(); 
+            ps = con.prepareStatement(BASE_OWNERTABLE_INSERT_STMT_STR);
+            paramMetaData = ps.getParameterMetaData();
             if (paramMetaData != null) {
                 parameters = paramMetaData.getParameterCount();
             }
@@ -486,45 +486,56 @@ public class JDBCClusterManager {
         } catch (Exception ex) {
             mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_GETTING_PS"), ex);
         }
-        if (parameters != 0) { 
-            if ((getPKValue() != null) && !getPKValue().trim().equals("")) {
-               // set default type.
-               int columnType = java.sql.Types.VARCHAR;
-                try {
-                	try{
-                    columnType = paramMetaData.getParameterType(1);
-                	}catch(Exception e){		
-                	}
-                    ps.setObject(1, JDBCUtil.convert(getPKValue(), columnType), columnType);
-                    try{
-                    columnType = paramMetaData.getParameterType(2);
-                    }catch(Exception e){                    	
-                    }
-                    ps.setObject(2, JDBCUtil.convert(getInstanceName(), columnType), columnType);
-                    try{
-                    columnType = paramMetaData.getParameterType(3);
-                    }catch(Exception e){                    	
-                    }
-                    ps.setObject(3, JDBCUtil.convert("In Progress", columnType), columnType);
-                    int rowsUpdated = ps.executeUpdate();
-                    recordInserted = true;
-                 } catch (final Exception e) {
-                     mLogger.log(Level.WARNING, e.getLocalizedMessage());
-                     mLogger.log(Level.INFO,  mMessages.getString("DBBC-R10903.JCM_RECORD_LOCKED", new Object[]{getInstanceName()}));
-                     recordInserted = false;
-                  }finally{
-                      if(ps != null){
-                          try{
-                              ps.close();
-                          } catch(SQLException e){
-                              mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11002.JCM_EXCEPTION_WHILE_CLOSING_PS"),
-                                      e);
-                          }
-                      }                      
-                  }
+        try {
+            if (parameters != 0) {
+                addBatch(pkList, paramMetaData, ps, "In Progress", true);
+            }
+            executedRows = ps.executeBatch();
+            for (int i = 0; i < executedRows.length; i++) {
+                if (executedRows[i] == PreparedStatement.EXECUTE_FAILED) {
+                    throw new SQLException(
+                            "One of the Queries in the batch didn't update any rows, Should have updated atleast one row");
+                }
+                mLogger.log(Level.INFO, "Inserted In Progress OWNER record "+pkList.get(i).toString());
+            }
+        } catch(Exception e) {
+            if(ps != null){
+                try{
+                    ps.clearBatch();
+                    ps.close();
+                } catch(SQLException se){
+                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11002.JCM_EXCEPTION_WHILE_CLOSING_PS"), se);
                 }
             }
-        return recordInserted;
+            throw e;
+        }
+        return executedRows;
+    }
+
+    public void deleteInstances(List pkList) throws Exception {
+        if (pkList.size() <= 0)
+            return;
+        PreparedStatement ps = null;
+        String sql = BASE_OWNERTABLE_DELETE_STMT_STR+" (";
+        for (int i = 0, l = pkList.size(); i < l; i++)
+            sql += (i < l-1 ? "?," : "?)");
+        ParameterMetaData paramMetaData = null;
+        int parameters = 0;
+        Connection con = null;
+        int[] executedRows = null;
+        try {
+            con = getDataBaseConnection();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, getInstanceName());
+            for (int i = 0, l = pkList.size(); i < l; i++)
+                ps.setString(i+2, (String)pkList.get(i));
+            if (mLogger.isLoggable(Level.FINE))
+                mLogger.log(Level.FINE, "Executing SQL: "+sql); //$NON-NLS-1$
+            ps.execute();
+        } catch (Exception e) {
+            mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_GETTING_PS"), e);
+            throw e;
+        }
     }
     
     /*
@@ -552,9 +563,9 @@ public class JDBCClusterManager {
         } catch (Exception ex) {
             mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_GETTING_PS"), ex);
         }
-        try{
+        try {
             if (parameters != 0) {
-                addBatch(pkList, paramMetaData, ps, status);
+                addBatch(pkList, paramMetaData, ps, status, false);
             }
             executedRows = ps.executeBatch();    
             for (int i = 0; i < executedRows.length; i++) {
@@ -564,18 +575,7 @@ public class JDBCClusterManager {
                 }
                 ;
             }
-        }catch(SQLException e){
-            if(ps != null){
-                try{
-                    ps.clearBatch();
-                    ps.close();
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11002.JCM_EXCEPTION_WHILE_CLOSING_PS"),
-                            e);
-                }
-            }
-            throw e;
-        }finally {
+        } catch(Exception e) {
             if(ps != null){
                 try{
                     ps.clearBatch();
@@ -585,12 +585,13 @@ public class JDBCClusterManager {
                             se);
                 }
             }
+            throw e;
         }
         
         return executedRows;
     }
     
-    private void addBatch(List pkList, ParameterMetaData parameterMeta, PreparedStatement ps, String status) throws SQLException, Exception  {
+    private void addBatch(List pkList, ParameterMetaData parameterMeta, PreparedStatement ps, String status, boolean forIns) throws Exception {
         if (!pkList.isEmpty()) {
             for (final Iterator it = pkList.iterator(); it.hasNext();) {
                 String pkValue = (String) it.next();
@@ -598,19 +599,18 @@ public class JDBCClusterManager {
                     // set default type.
                     int columnType = java.sql.Types.VARCHAR;
                     try {
-                    	try{
-                        columnType = parameterMeta.getParameterType(1);
-                    	}catch(Exception e){                    		
-                    	}
-                        ps.setObject(1, JDBCUtil.convert(status, columnType), columnType);
-                        try{
-                        columnType = parameterMeta.getParameterType(2);
-                        }catch(Exception e){                        	
+                        if (forIns)
+                        {
+                            try { columnType = parameterMeta.getParameterType(2); } catch(Exception e) {}
+                            ps.setObject(2, JDBCUtil.convert(getInstanceName(), columnType), columnType);
                         }
-                        ps.setObject(2, JDBCUtil.convert(pkValue, columnType), columnType);
+                        try { columnType = parameterMeta.getParameterType(forIns ? 3 : 1); } catch(Exception e) {}
+                        ps.setObject(forIns ? 3 : 1, JDBCUtil.convert(status, columnType), columnType);
+                        try { columnType = parameterMeta.getParameterType(forIns ? 1 : 2); } catch(Exception e) {}
+                        ps.setObject(forIns ? 1 : 2, JDBCUtil.convert(pkValue, columnType), columnType);
                         ps.addBatch();
-                    } catch (SQLException e) {
-                        mLogger.log(Level.WARNING, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_ADDING_BATCH_TO_PS"), e);
+                    } catch (Exception e) {
+                        mLogger.log(Level.WARNING, mMessages.getString("DBBC_W11005.JCM_EXCEPTION_WHILE_ADDING_BATCH_TO_PS"), e);
                         if(ps != null){
                             try{
                                 ps.clearBatch();
@@ -621,68 +621,22 @@ public class JDBCClusterManager {
                             }
                         }
                         throw e;
-                    }catch(Exception ex){
-                        throw ex;
                     }
                 }
             }
         }
     }
-    
-    public int[] updateStatusToDone(List pkList, String status, Connection conn) throws Exception {
-        String updateQuery = BASE_OWNERTABLE_UPDATE_STMT_STR;
-        PreparedStatement ps = null;
-        ParameterMetaData paramMetaData = null;
-        int parameters = 0;
-        Connection con = conn;
-        int[] executedRows = null;
-        try {
-            ps = con.prepareStatement(updateQuery);
-            paramMetaData = ps.getParameterMetaData();
-            if (paramMetaData != null) {
-                parameters = paramMetaData.getParameterCount();
-            }
-        } catch (SQLException ex) {
-            mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_GETTING_PS"), ex);
-        } catch (Exception ex) {
-            mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11004.JCM_EXCEPTION_WHILE_GETTING_PS"), ex);
-        }
-        try{
-            if (parameters != 0) {
-                addBatch(pkList, paramMetaData, ps, status);
-            }
-            executedRows = ps.executeBatch();    
-            for (int i = 0; i < executedRows.length; i++) {
-                if (executedRows[i] == PreparedStatement.EXECUTE_FAILED) {
-                    throw new SQLException(
-                            "One of the Queries in the batch didn't update any rows, Should have updated atleast one row");
-                }
-                ;
-            }
-        }catch(SQLException e){
-            if(ps != null){
-                try{
-                    ps.clearBatch();
-                    ps.close();
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11002.JCM_EXCEPTION_WHILE_CLOSING_PS"),
-                            e);
-                }
-            }
-            throw e;
-        }finally {
-            if(ps != null){
-                try{
-                    ps.clearBatch();
-                    ps.close();
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_W11002.JCM_EXCEPTION_WHILE_CLOSING_PS"),
-                            se);
-                }
-            }
-        }
-        
-        return executedRows;
+   
+    public List selectAllProcessed() throws Exception
+    {
+        Connection con = getDataBaseConnection();
+        List<String> pkList = new ArrayList<String>();
+        Statement st = con.createStatement();
+        st.execute(BASE_OWNERTABLE_SELECTALL_STMT_STR);
+        ResultSet rs = st.getResultSet();
+        while (rs.next())
+            pkList.add(rs.getString(1));
+        return pkList;
     }
     
     /*
@@ -698,13 +652,17 @@ public class JDBCClusterManager {
             BASE_INSTANCESTATE_UPDATE_STMT_STR = "UPDATE INSTANCESTATE" +  //$NON-NLS-1$
             " SET lastupdatetime = CURRENT_TIMESTAMP " + "WHERE INSTANCEID = ? and TABLENAME = ?"; //$NON-NLS-1$ 
         }
+        if(BASE_OWNERTABLE_SELECTALL_STMT_STR == null){
+            BASE_OWNERTABLE_SELECTALL_STMT_STR = "SELECT "+getPKName()+" FROM OWNER_"+getTableName()+
+            " FOR UPDATE";
+        }
         if(BASE_OWNERTABLE_INSERT_STMT_STR == null){
             BASE_OWNERTABLE_INSERT_STMT_STR = "INSERT INTO OWNER_" + getTableName() + //$NON-NLS-1$
             " VALUES(?, ?, ?)"; //$NON-NLS-1$
         }
         if(BASE_OWNERTABLE_DELETE_STMT_STR == null){
             BASE_OWNERTABLE_DELETE_STMT_STR = "DELETE FROM OWNER_" + getTableName() + //$NON-NLS-1$
-            "WHERE INSTANCEID = ? and status= ?"; //$NON-NLS-1$ 
+            " WHERE instance_name=? AND "+getPKName()+" IN "; //$NON-NLS-1$ 
         }
         if(BASE_OWNERTABLE_UPDATE_STMT_STR == null){
             BASE_OWNERTABLE_UPDATE_STMT_STR = "UPDATE OWNER_" + getTableName() + //$NON-NLS-1$

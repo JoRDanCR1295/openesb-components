@@ -32,6 +32,7 @@ package org.glassfish.openesb.databasebc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ParameterMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -200,12 +201,12 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     // TODO, need to change it later
     public static final String DEFAULT_CLUSTER_JNDI_NAME = "jdbc/__defaultDS";
 
-	/**
+    /**
      * JBI message exchange properties for message grouping and sequencing (new CRMP)
      */
     public static final String CRMP_GROUP_ID = "com.sun.jbi.messaging.groupid";
     public static final String CRMP_MESSAGE_ID = "com.sun.jbi.messaging.messageid";
-    
+
     ReplyListener replyListener;
 
     public InboundMessageProcessor(final MessagingChannel chnl, final EndpointBean endpoint,
@@ -220,12 +221,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         dbConnectionInfo = new DBConnectionInfo();
         final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
         mDocBuilder = docBuilderFact.newDocumentBuilder();
-        //mTxManager = (TransactionManager) context.getTransactionManager();
         if(endpoint.isClustered()){
             try{
                 mJDBCClusterManager = new JDBCClusterManager(context);
             }catch(Exception e){
-				//TODO
+                //TODO
             }
         }
 
@@ -310,10 +310,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             // Adding re-delivery/re-try support
             // we are sending instead of the client context to the ReplyListener 
             // the EndpointBean
-           MessageExchangeSupport.addReplyListener(mExchange.getExchangeId(), replyListener, epb);
-           MessageExchangeSupport.addRedeliveryListener(mExchange.getExchangeId(), this, epb);
-	   Redelivery.setUniqueId(mExchange, exchangeId);
-            
+            MessageExchangeSupport.addReplyListener(mExchange.getExchangeId(), replyListener, epb);
+            MessageExchangeSupport.addRedeliveryListener(mExchange.getExchangeId(), this, epb);
+            Redelivery.setUniqueId(mExchange, exchangeId);
             final String status = epb.getValue(EndpointBean.STATUS);
 
             if (! status.equalsIgnoreCase(EndpointBean.STATUS_RUNNING)) {
@@ -325,7 +324,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 } else if (mLogger.isLoggable(Level.INFO)) {
                     mLogger.info("DBBC_W00667.IMP_EP_NOT_RUNNING");
                 }
-                
             } else {
 
                 switch (ExchangePattern.valueOf(mExchange)) {
@@ -379,18 +377,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
             if (meta == null) {
                 throw new MessagingException(InboundMessageProcessor.mMessages.getString("DBBC_E00634.IMP_Invalid_Operation",
-                        new Object[] { exchange.getOperation() }));
+                    new Object[] { exchange.getOperation() }));
             }
 
             mPollMilliSeconds = meta.getJDBCSql().getPollMilliSeconds();
             mSelectSQL = meta.getJDBCSql().getSql();
-            /*mPKName = Qualified(meta.getJDBCSql().getPKName());
-            mMarkColumnName = Qualified(meta.getJDBCSql().getMarkColumnName());
-            mMarkColumnValue = meta.getJDBCSql().getMarkColumnValue();
-            mTableName = Qualified(meta.getJDBCSql().getTableName());
-            mPollingPostProcessing = meta.getJDBCSql().getPollingPostProcessing();
-            mMoveRowToTableName = Qualified(meta.getJDBCSql().getMoveRowToTableName());
-            */
             mPKName = meta.getJDBCSql().getPKName();
             mMarkColumnName = meta.getJDBCSql().getMarkColumnName();
             mMarkColumnValue = meta.getJDBCSql().getMarkColumnValue();
@@ -400,26 +391,21 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             mXAEnabled = meta.getJDBCSql().getTransaction();
             jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
 
-            // createNewDataSource(mXAEnabled,jndiName,epb);
-
             // Throttle Check
-            if(throttleConfigurationCheck()){
+            if(throttleConfigurationCheck()) {
+                if (mXAEnabled.equalsIgnoreCase("XATransaction")) {
+                    getTransactionManager().begin();
+                }
 
-            
-	            if (mXAEnabled.equalsIgnoreCase("XATransaction")) {
-	                // mtxFlag = startTrasaction();
-	                getTransactionManager().begin();
-	            }
-	
-	            dbDataAccessObject = getDataAccessObject(meta);
-	            mSelectSQL = dbDataAccessObject.generateSelectQuery(mSelectSQL, mTableName);
-	            epb.setTableName(mTableName);
-	            
-	            connection = getDatabaseConnection(jndiName);
-	            if (mDbName==null){
-					mDbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
-	            }
-			String clusterJNDIName = mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME);
+                dbDataAccessObject = getDataAccessObject(meta);
+                mSelectSQL = dbDataAccessObject.generateSelectQuery(mSelectSQL, mTableName);
+                epb.setTableName(mTableName);
+
+                connection = getDatabaseConnection(jndiName);
+                if (mDbName==null){
+                    mDbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
+                }
+                String clusterJNDIName = mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME);
                 if(epb.isClustered()){
                     try{
                         if(jndiName.equalsIgnoreCase(clusterJNDIName)){
@@ -428,9 +414,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                             String prdtName = DBMetaData.getDBType(mClusterConnection);
                             mJDBCClusterManager.setProductName(prdtName);
                         }else{
-                        mClusterConnection = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
-                        mClusterConnection.setAutoCommit(true);
-                        mJDBCClusterManager.setJNDIName(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
+                            mClusterConnection = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
+                            mJDBCClusterManager.setJNDIName(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
                             String prdtName = DBMetaData.getDBType(mClusterConnection);
                             mJDBCClusterManager.setProductName(prdtName);
                         }
@@ -438,100 +423,103 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                         if(mClusterConnection == null){
                             //TODO retry;
                             throw new Exception(mMessages.getString("DBBC_E11101.JCM_CONNECTON_EXCEPTION",
-                                    new Object[] {mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME)} ));
+                                new Object[] {mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME)} ));
                         }
                     }
                 }
-	            Transaction tx = getTransactionManager().getTransaction();
-	            if (isSelectStatement(mSelectSQL)) {
-	                rs = executeInboundSQLSelect(epb, meta, connection, mTableName, mSelectSQL);
-	                
-	                if (rs != null) {
-	                    final JDBCNormalizer normalizer = new JDBCNormalizer();
-                            Probe normalizationMeasurement = Probe.info(getClass(),	
-                                epb.getUniqueName(), JDBCBindingLifeCycle.PERF_CAT_NORMALIZATION);  	                    
+                Transaction tx = getTransactionManager().getTransaction();
+                if (isSelectStatement(mSelectSQL)) {
+                    if(epb.isClustered()){
+                        mJDBCClusterManager.setDataBaseConnection(mClusterConnection);
+                        mJDBCClusterManager.setTableName(mTableName);
+                        mJDBCClusterManager.setInstanceName(epb.getInstanceName());
+                        mJDBCClusterManager.setHeartbeatConfigInterval(mPollMilliSeconds);
+                        mJDBCClusterManager.setPKName(mPKName);
+                        mJDBCClusterManager.doClusterTasks();
+                        mClusterConnection.setAutoCommit(false);
+                    }
 
-                        //if(epb.isClustered() && mClusterConnection != null){
-                           // normalizer.setConnection(mClusterConnection);
-                        // }
-                        if(epb.isClustered()){
-                            mJDBCClusterManager.setDataBaseConnection(mClusterConnection); 
-                            mJDBCClusterManager.setTableName(mTableName);
-                            mJDBCClusterManager.setInstanceName(epb.getInstanceName());
-                            mJDBCClusterManager.setHeartbeatConfigInterval(mPollMilliSeconds);
-                            mJDBCClusterManager.setPKName(mPKName);
-                            mJDBCClusterManager.doClusterTasks();
-                        }
-                        normalizer.setInboundExchangeProcessRecordsMap(mMapInboundExchangesProcessRecords); 
+                    rs = executeInboundSQLSelect(epb, meta, connection, mTableName, mSelectSQL);
+
+                    if (rs != null) {
+                        final JDBCNormalizer normalizer = new JDBCNormalizer();
+                            Probe normalizationMeasurement = Probe.info(getClass(),
+                                epb.getUniqueName(), JDBCBindingLifeCycle.PERF_CAT_NORMALIZATION);
+
+                        normalizer.setInboundExchangeProcessRecordsMap(mMapInboundExchangesProcessRecords);
                         normalizer.setRecordsProcessedList(mProcessedList);
-                        normalizer.setJDBCClusterManager(mJDBCClusterManager);
                         inMsg = normalizer.normalizeSelectInbound(rs, exchange, meta, epb, mPKName,mDbName);
                         mRowCount = normalizer.mRowCount;
 
                         if(normalizationMeasurement != null){
-                    		normalizationMeasurement.end();
-                    	}
+                            normalizationMeasurement.end();
+                        }
 
-	
-	                    final List tempList = epb.getProcessList();
-	                    if (!(tempList.isEmpty())) {
-	                        // mTxHelper.handleInbound(exchange);
-	                        //set JNDI name on NormalizedMessage for dynamic addressing
-	                        inMsg.setProperty(JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME, jndiName);
-	                        exchange.setMessage(inMsg, "in");
-	                        
-	                        if (tx != null) {
-	                            mExchange.setProperty(MessageExchange.JTA_TRANSACTION_PROPERTY_NAME, tx);
-	                            getTransactionManager().suspend();
-	                        }
-	                        
-	                        mInboundExchanges.put(exchangeId, new ListenerMeta(
-	                                System.currentTimeMillis(), this));
+                        final List tempList = epb.getProcessList();
+                        if (!(tempList.isEmpty()))
+                        {
+                            if (epb.isClustered())
+                            {
+                                mJDBCClusterManager.addInstances(tempList);
+                                mClusterConnection.setAutoCommit(true);
+                            }
+                            //set JNDI name on NormalizedMessage for dynamic addressing
+                            inMsg.setProperty(JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME, jndiName);
+                            exchange.setMessage(inMsg, "in");
 
+                            if (tx != null) {
+                                mExchange.setProperty(MessageExchange.JTA_TRANSACTION_PROPERTY_NAME, tx);
+                                getTransactionManager().suspend();
+                            }
 
-	                        mChannel.send(exchange);
-	                        epb.getEndpointStatus().incrementSentRequests();
-	                        // mTableExistsFlag = new Object();
+                            mInboundExchanges.put(exchangeId, new ListenerMeta(
+                                System.currentTimeMillis(), this));
+
+                            mChannel.send(exchange);
+                            epb.getEndpointStatus().incrementSentRequests();
                             if(epb.isClustered()){
                                 //Records already sent to NMR so update the status to "SENT" for owner table
                                 try{
                                     int i[] = mJDBCClusterManager.updateStatus(tempList, "SENT");
                                     mLogger.log(Level.INFO,
-                                            "DBBC_R10906.IMP_UPDATED_STATUS_TO_SENT",
-                                            new Object[] { tempList });
+                                        "DBBC_R10906.IMP_UPDATED_STATUS_TO_SENT",
+                                        new Object[] { tempList });
                                 }catch(Exception e){
                                     // TODO need to handled the exception
                                     mLogger.log(Level.SEVERE,
-                                            "DBBC_E11108.IMP_ERROR_UPDATING_STATUS_TO_SENT",
-                                            new Object[] { tempList, e.getLocalizedMessage() });
+                                        "DBBC_E11108.IMP_ERROR_UPDATING_STATUS_TO_SENT",
+                                        new Object[] { tempList, e.getLocalizedMessage() });
                                 }
                             }
-	                    } else {
-	                            if (tx != null) {
-	                                    try {
-	                                            tx.commit();
-	                                    } catch (Exception ex) {
-	                                            mLogger.log(Level.SEVERE,
-	                                                            "DBBC_E00656.IMP_XA_TX_COMMIT_FAILED",
-	                                                            new Object[] { "commit", ex });
-	                                            throw ex;
-	                                    }
-	                            } else {
-	                                     if (mXAEnabled.equalsIgnoreCase("XATransaction")) {
-	             									mLogger.log(Level.WARNING,
-	                                                    "DBBC_W00654.IMP_XA_TX_NOT_FOUND_IN_MSG_XCHANGE",
-	                                                    new Object[] { exchange.getExchangeId() });
-										 }
-	                            }
-			    }
-	                    // mTableExistsFlag = new Object();
-	                } 
-	            }
+                        } else {
+                            if (epb.isClustered())
+                                mClusterConnection.setAutoCommit(true);
+                            if (tx != null) {
+                                try {
+                                    tx.commit();
+                                } catch (Exception ex) {
+                                    mLogger.log(Level.SEVERE,
+                                        "DBBC_E00656.IMP_XA_TX_COMMIT_FAILED",
+                                        new Object[] { "commit", ex });
+                                    throw ex;
+                                }
+                            } else {
+                                if (mXAEnabled.equalsIgnoreCase("XATransaction")) {
+                                    mLogger.log(Level.WARNING,
+                                       "DBBC_W00654.IMP_XA_TX_NOT_FOUND_IN_MSG_XCHANGE",
+                                       new Object[] { exchange.getExchangeId() });
+                                }
+                            }
+                        }
+                    }
+                    else if (epb.isClustered())
+                        mClusterConnection.setAutoCommit(true);
+                }
             }
         } catch (final Exception ex) {
             mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00663.IMP_ERROR_WHILE_PROCESSING_MEP"), ex);
             Transaction tx = getTransactionManager().getTransaction();
-            if(tx != null ) {
+            if (tx != null) {
                 tx.rollback();
             }
         } finally {
@@ -539,115 +527,112 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 if (rs != null) {
                     rs.close();
                 }
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11109.IMP_EXCEPTION_WHILE_CLOSING_THE_RS"), se);                    
-                }
-                try{
+            } catch(SQLException se){
+                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11109.IMP_EXCEPTION_WHILE_CLOSING_THE_RS"), se);
+            }
+            try{
                 if (ps != null) {
                     ps.close();
                 }
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11110.IMP_EXCEPTION_WHILE_CLOSING_THE_PS"), se);   
-                }
-                try{
+            }catch(SQLException se){
+                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11110.IMP_EXCEPTION_WHILE_CLOSING_THE_PS"), se);
+            }
+            try{
                 if (connection != null) {
                     connection.close();
-                    }
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);   
                 }
-                try{
-                    if(epb.isClustered() && mClusterConnection != null){
-                        mClusterConnection.close();
-						mClusterConnection = null;
-                    }
-                }catch(SQLException se){
-                    mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);  
+            }catch(SQLException se){
+                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);
+            }
+            try{
+                if (mClusterConnection != null && mClusterConnection != connection){
+                    mClusterConnection.close();
+                    mClusterConnection = null;
+                }
+            }catch(SQLException se){
+                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);
             }
         }
     }
-    
-    /** Checks if the Throttling configuration is defined on the endpoint, 
+
+    /** Checks if the Throttling configuration is defined on the endpoint,
      * if yes then checks if the messages in the system are within the throttle limit
      * @param 
      * @return boolean
      */
     public boolean throttleConfigurationCheck() {
-    	
-    	synchronized(mInboundExchanges) {
-    		int pendingMsgs = mInboundExchanges.size();
-	    	mThrottleNumber = epb.getMaxConcurrencyLimit();
-	        if (mThrottleNumber > 0 ) {
-	        	if(pendingMsgs > mThrottleNumber){
+        
+        synchronized(mInboundExchanges) {
+            int pendingMsgs = mInboundExchanges.size();
+            mThrottleNumber = epb.getMaxConcurrencyLimit();
+            if (mThrottleNumber > 0 ) {
+                if(pendingMsgs > mThrottleNumber){
                     if (mLogger.isLoggable(Level.FINEST)) {
-	        		    mLogger.log(Level.FINEST, mMessages.getString("DBBC_R00664.IMP_THROTTLE_LIMIT_REACHED", 
-	        								new Object[] { Integer.toString(pendingMsgs), Integer.toString(mThrottleNumber) }));
+                        mLogger.log(Level.FINEST, mMessages.getString("DBBC_R00664.IMP_THROTTLE_LIMIT_REACHED", 
+                                            new Object[] { Integer.toString(pendingMsgs), Integer.toString(mThrottleNumber) }));
                     } else if (mLogger.isLoggable(Level.INFO)) {
                         mLogger.info(mMessages.getString("DBBC_R00668.IMP_THROTTLE_LIMIT_REACHED",
                             new Object[] { Integer.toString(mThrottleNumber) }));
                     }
-	        		return false;
-	        	} else {
+                    return false;
+                } else {
                     if (mLogger.isLoggable(Level.FINEST)) {
-	        		    mLogger.log(Level.FINEST, mMessages.getString("DBBC_R00665.IMP_THROTTLE_LIMIT_NOT_REACHED", 
-	    									new Object[] { Integer.toString(pendingMsgs), Integer.toString(mThrottleNumber) }));
+                        mLogger.log(Level.FINEST, mMessages.getString("DBBC_R00665.IMP_THROTTLE_LIMIT_NOT_REACHED", 
+                                            new Object[] { Integer.toString(pendingMsgs), Integer.toString(mThrottleNumber) }));
                     } else if (mLogger.isLoggable(Level.INFO)) {
                         mLogger.log(Level.INFO, mMessages.getString("DBBC_R00669.IMP_THROTTLE_LIMIT_NOT_REACHED"), 
                             new Object[] { Integer.toString(mThrottleNumber) });
                     }
-	        		return true;
-	        	}
-	        }
-    		mLogger.log(Level.INFO, mMessages.getString("DBBC_R00666.IMP_THROTTLE_NOT_DEFINED"));							        
-	        return true;
-    	}
+                    return true;
+                }
+            }
+            mLogger.log(Level.INFO, mMessages.getString("DBBC_R00666.IMP_THROTTLE_NOT_DEFINED"));                                    
+            return true;
+        }
     }
 
-    public ResultSet executeInboundSQLSelect(final EndpointBean eBean,
+    public ResultSet executeInboundSQLSelect(final EndpointBean epb,
                                       final OperationMetaData opMetaData,
                                       Connection connection,
                                       final String mTableName,
                                       String lSelectSQL) throws MessagingException {
         try {
-
-            String jndiName = eBean.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
+            String jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
             mLogger.log(Level.INFO, InboundMessageProcessor.mMessages.getString("DBBC_R00629.OMP_UsedJNDI") + jndiName);
-
-            if ((mMarkColumnName == null) || (mMarkColumnName.equals(""))) {
-                // do nothing
-            } else {
-            	if(mFlagColumnType != null){
-                    String whereClause = " where ";
-                    if((lSelectSQL.toUpperCase().contains(whereClause.toUpperCase()))) {
-						if (mFlagColumnType.equalsIgnoreCase("LONGVARCHAR") || mFlagColumnType.equalsIgnoreCase("CHAR")
-								|| mFlagColumnType.equalsIgnoreCase("VARCHAR")) {
-							lSelectSQL = lSelectSQL.concat(" and (" + mMarkColumnName + " != " + "'"
-									+ mMarkColumnValue + "'" + " or " + mMarkColumnName + " is NULL )");
-						} else {
-							lSelectSQL = lSelectSQL.concat(" and (" + mMarkColumnName + " != "
-									+ mMarkColumnValue + " or " + mMarkColumnName + " is NULL )");
-						}
-					}else {
-						if (mFlagColumnType.equalsIgnoreCase("LONGVARCHAR") || mFlagColumnType.equalsIgnoreCase("CHAR")
-								|| mFlagColumnType.equalsIgnoreCase("VARCHAR")) {
-							lSelectSQL = lSelectSQL.concat(" where (" + mMarkColumnName + " != " + "'"
-									+ mMarkColumnValue + "'" + " or " + mMarkColumnName + " is NULL )");
-						} else {
-							lSelectSQL = lSelectSQL.concat(" where (" + mMarkColumnName + " != "
-									+ mMarkColumnValue + " or " + mMarkColumnName + " is NULL )");
-						}
-					}
-            	} else{
-            		 final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
+            String where = "";
+            List<String> bind = new ArrayList<String>();
+            if (mMarkColumnName != null && !mMarkColumnName.equals("")) {
+                if (mFlagColumnType != null) {
+                    where = "("+mMarkColumnName+" != ? OR "+mMarkColumnName+" IS NULL)";
+                    bind.add(mMarkColumnValue);
+                } else {
+                     final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
                      throw new MessagingException(msg, new NamingException());
+                }
             }
-	}
+            if (epb.isClustered()) {
+                List<String> pkList = mJDBCClusterManager.selectAllProcessed();
+                if (pkList.size() > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0, l = pkList.size(); i < l; i++)
+                        sb.append(i < l-1 ? "?," : "?");
+                    where = (where.equals("") ? "" : where+" AND ")+mPKName+" NOT IN ("+sb.toString()+")";
+                    bind.addAll(pkList);
+                }
+            }
+            lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
             mLogger.log(Level.INFO, "Executing sql 1. " + lSelectSQL);
             ps = connection.prepareStatement(lSelectSQL);
+            ParameterMetaData paramMetaData = ps.getParameterMetaData();
+            for (int i = 0, l = bind.size(); i < l; i++)
+            {
+                int columnType = java.sql.Types.VARCHAR;
+                try { columnType = paramMetaData.getParameterType(i+1); } catch(Exception e) {}
+                ps.setObject(i+1, JDBCUtil.convert(bind.get(i), columnType), columnType);
+            }
             rs = ps.executeQuery();
-	}
+        }
         catch (final SQLException ex) {
-            
             if (mLogger.isLoggable(Level.FINEST)) {
                 mLogger.log(Level.FINEST, mMessages.getString("DBBC_E00639.IMP_Failed_Executing_SQL") + lSelectSQL, ex);
             } else if (mLogger.isLoggable(Level.FINE)) {
@@ -662,7 +647,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00639.IMP_Failed_Executing_SQL") + lSelectSQL
                     + ex.getLocalizedMessage();
             throw new MessagingException(msg, ex);
-        }        
+        }
         return rs;
     }
 
@@ -684,14 +669,10 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             prdtName = DBMetaData.getDBType(connection);
 
             rs = connection.getMetaData().getColumns(catalog, mSchemaName, mTableName, "%");
-            
+
             int noofColCounter = -1;
-          //  if(rs==null){
-           // 	 final String msg = InboundMessageProcessor.mMessages.getString("IMP_Table_NotExist");
-            //     throw new MessagingException(msg, new NamingException());
-           // }
             while (rs.next()) {
-            	noofColCounter++;
+                noofColCounter++;
                 final String colName = rs.getString("COLUMN_NAME");
                 if (colName.equalsIgnoreCase(meta.getJDBCSql().getPKName())) {
                     final String defaultValue = rs.getString("COLUMN_DEF");
@@ -707,11 +688,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 }
             }
             if(noofColCounter < 0 ){
-            	final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00636.IMP_Table_NotExist");
+                final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00636.IMP_Table_NotExist");
                 throw new MessagingException(msg, new NamingException());
             }
             if (mPKType == null) {
-            	final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00637.IMP_PrimaryKey_Error");
+                final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00637.IMP_PrimaryKey_Error");
                 throw new MessagingException(msg, new NamingException());
             }
             if (prdtName.equalsIgnoreCase(InboundMessageProcessor.DERBY_PROD_NAME)) {
@@ -855,7 +836,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                                     mLogger.info(mMessages.getString("IMP_POST_PROCESS_FAILED"));
                                 }
                                 mLogger.log(Level.SEVERE, "IMP_POST_PROCESS_FAILED",
-                                        new Object[] { ex.getLocalizedMessage() });
+                                    new Object[] { ex.getLocalizedMessage() });
                             }
                         }
                         connection = getDatabaseConnection(jndiName);
@@ -1009,30 +990,29 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                                 mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00653.IMP_XA_TX_ROLLBACK_FAILED"), exception);
                             }
                         }
-                        
                     }
                     // for cluster environment
                     if(epb.isClustered()){
+                        Connection con = null;
                         try{
-                            Connection con = null;
                             List records = (List)mMapInboundExchangesProcessRecords.get(messageId);
                             if(jndiName.equalsIgnoreCase(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME))){
                                 con = connection;
                             }else{
-                                 con = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));  
+                                con = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
                             }
-                            mJDBCClusterManager.updateStatusToDone(records, "DONE", con);
+                            mJDBCClusterManager.setDataBaseConnection(con);
+                            mJDBCClusterManager.deleteInstances(records);
                             mLogger.log(Level.INFO,
-                                    "DBBC_R10906.IMP_UPDATED_STATUS_TO_DONE",
-                                    new Object[] { records });
+                                "DBBC_R10907.IMP_UPDATED_STATUS_TO_DONE",
+                                new Object[] { records });
                         }catch(Exception e){
-                            mLogger.log(Level.SEVERE, "Unable to set the status to DOne", e.getLocalizedMessage());
+                            mLogger.log(Level.SEVERE, "Unable to delete processed records", e.getLocalizedMessage());
                         }finally {
                             try{
-                                if(con != null){
+                                if(con != null && con != connection){
                                     con.close();
-									con = null;
-								}
+                                }
                             }catch(SQLException se){
                                 mLogger.log(Level.SEVERE, "Unable to close the connection", se.getLocalizedMessage());
                             }
@@ -1044,8 +1024,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                         String pkNameRet = (String) it.next();
                         mProcessedList.remove(pkNameRet);
                     }
-                    mLogger.log(Level.SEVERE, "IMP_MXCH_BAD_STATUS", new Object[] { exchange.getStatus().toString(),
-                            messageId });
+                    mLogger.log(Level.SEVERE, "IMP_MXCH_BAD_STATUS", new Object[] { exchange.getStatus().toString(), messageId });
                     if (isTransacted && exchange instanceof InOnly) {
                         try {
                             // As we are the initiator for tx we have to rollback
@@ -1079,9 +1058,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             }
             try{
                 if(connection != null) {
-                   connection.close();
+                    connection.close();
                 }
-                
             }catch(SQLException se){
                 mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);   
             }
@@ -1098,7 +1076,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             if (mLogger.isLoggable(Level.FINER)) {
                 mLogger.log(Level.FINER, " resuing txn  ", new Object[] { tx.toString() });
             }
-            
         }
     }
 
@@ -1186,10 +1163,10 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     }
     
     private TransactionManager getTransactionManager() {
-    	return (TransactionManager)mContext.getTransactionManager();
+        return (TransactionManager)mContext.getTransactionManager();
     }
 
-	public void setMessageExchangeId(String messageExchangeId, Object retryMetaData) {
+    public void setMessageExchangeId(String messageExchangeId, Object retryMetaData) {
         exchangeIDToMeta.put(messageExchangeId, retryMetaData);
     }
     
@@ -1201,7 +1178,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         
         // remove the listener associated with the exchange ID
         MessageExchangeSupport.removeRedeliveryListener(exchange.getExchangeId());
-		mInboundExchanges.remove(exchange.getExchangeId());
+        mInboundExchanges.remove(exchange.getExchangeId());
         try{
         switch (ExchangePattern.valueOf(exchange)) {
             case IN_OUT:
@@ -1230,14 +1207,14 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 } else if (mLogger.isLoggable(Level.INFO)) {
                     mLogger.log(Level.INFO, "Resending the InOnly exchange");
                 }
-                
+
                 inMsg = ((InOnly)exchange).getInMessage();
                 InOnly inonly = mMsgExchangeFactory.createInOnlyExchange();
                 // make sure that the message id has is the same 
-                 inonly.setProperty(CRMP_GROUP_ID, groupId);
-                 inonly.setProperty(CRMP_MESSAGE_ID, messageId);
-                 //processInOnly(inonly, inMsg, operationMetaData);
-                 
+                inonly.setProperty(CRMP_GROUP_ID, groupId);
+                inonly.setProperty(CRMP_MESSAGE_ID, messageId);
+                //processInOnly(inonly, inMsg, operationMetaData);
+
                 if (mServiceEndpoint == null) {
                     mServiceEndpoint = locateServiceEndpoint();
                     epb.setValueObj(EndpointBean.ENDPOINT_REFERENCE, mServiceEndpoint);
@@ -1256,9 +1233,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                     String pkNameRet = (String) it.next();
                     mProcessedList.remove(pkNameRet);
                 }
-				
-				// Removing the records from the Map
-				mMapInboundExchangesProcessRecords.remove(exchange.getExchangeId());
+
+                // Removing the records from the Map
+                mMapInboundExchangesProcessRecords.remove(exchange.getExchangeId());
                 processInOnly(inonly,operationMetaData);
                 break;
             default:
@@ -1274,9 +1251,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             throw new MessagingException(e);
         }
     }
-    /*
-     * Runtime Config object to cluster JNDI name
-     * 
+
+    /* Runtime Config object to cluster JNDI name
      */
     public void setRuntimeConfig(RuntimeConfiguration runtimeConfg){
         mRuntimeConfig = runtimeConfg;

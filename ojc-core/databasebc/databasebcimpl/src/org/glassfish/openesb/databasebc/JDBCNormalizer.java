@@ -96,7 +96,6 @@ public class JDBCNormalizer {
   public ArrayList mProcessedList = new ArrayList();
   public Map mInboundExchangeProcessRecordsMap = new HashMap();
   public int mRowCount = 0;
-  private JDBCClusterManager mJDBCClusterManager;
 
   /** Creates a new instance of SoapNormalizer
    * @throws javax.jbi.messaging.MessagingException
@@ -372,29 +371,16 @@ public class JDBCNormalizer {
                             pkName) || ("\"" + colName + "\"").
                             equalsIgnoreCase(
                             pkName))
-                      if (epb.isClustered()) {
-                        boolean inserted =
-                                false;
-                        mJDBCClusterManager.setPKValue(
+                    {
+                      boolean processed =
+                              isRecordProcessed(
+                              colValue);
+                      if (!processed)
+                        pKeyList.add(
                                 colValue);
-                        inserted =
-                                mJDBCClusterManager.
-                                isRecordInsertedByCurrentInstance();
-                        if (!inserted)
-                          record = null;
-                        else
-                          pKeyList.add(
-                                  colValue);
-                      } else {
-                        boolean processed =
-                                isRecordProcessed(
-                                colValue);
-                        if (!processed)
-                          pKeyList.add(
-                                  colValue);
-                        else
-                          record = null;
-                      }
+                      else
+                        record = null;
+                    }
                     if (record != null) {
                       final Element e = NS != null
                             ? normalDoc.createElementNS(
@@ -1272,10 +1258,6 @@ public class JDBCNormalizer {
 
   public void setRecordsProcessedList(ArrayList list) {
     this.mProcessedList = list;
-  }
-
-  public void setJDBCClusterManager(JDBCClusterManager jdbcClusterManager) {
-    this.mJDBCClusterManager = jdbcClusterManager;
   }
 
   private boolean isRecordProcessed(String colValue) {
