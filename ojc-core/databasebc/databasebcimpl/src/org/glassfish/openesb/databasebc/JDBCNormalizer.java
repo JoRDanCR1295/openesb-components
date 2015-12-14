@@ -340,42 +340,91 @@ public class JDBCNormalizer {
                 final Element returnPartElement = normalDoc.createElement(
                         returnPartName);
                 final QName type = part.getTypeName();
-                if (type != null) {
-                  // get resultset metadata rsmd and add it to the element
-                  final ResultSetMetaData rsmd = rs.getMetaData();
-                  while (rs.next()) {
-                    mRowCount++;
-                    if (mLogger.isLoggable(
-                            Level.FINE))
-                      mLogger.log(Level.FINE,
-                              "DBBC_R00706.JDBCN_ProcessNextRecord");
-                    final Element record =
-                            normalDoc.createElement(
-                            mRecordPrefix + "_Record"); //113494
-                    for (int j = 1; j <= rsmd.getColumnCount(); j++) {
-                      final String colName = rsmd.getColumnName(j);
-                      String colValue = JDBCUtil.convertToString(j,
-                              rs, rsmd, dbName);
+                Element elementRoot = returnPartElement;
+                String NS = null;
+                if (type == null) {
+                  final QName element = part.getElementName();
+                  NS = element.getNamespaceURI();
+                  elementRoot = normalDoc.createElementNS(NS, element.getLocalPart());
+                }
 
-                      final Element e = normalDoc.createElement(
+                // get resultset metadata rsmd and add it to the element
+                final ResultSetMetaData rsmd = rs.getMetaData();
+                final List<String> pKeyList =
+                        new ArrayList<String>();
+
+                while (rs.next()) {
+                  mRowCount++;
+                  if (mLogger.isLoggable(
+                          Level.FINE))
+                    mLogger.log(Level.FINE,
+                            "DBBC_R00706.JDBCN_ProcessNextRecord");
+                  Element record = NS != null
+                        ? normalDoc.createElementNS(NS,
+                          mRecordPrefix + "_Record") //113494
+                        : normalDoc.createElement(mRecordPrefix + "_Record");
+                  for (int j = 1; j <= rsmd.getColumnCount(); j++) {
+                    final String colName = rsmd.getColumnName(j);
+                    String colValue = JDBCUtil.convertToString(j,
+                            rs, rsmd, dbName);
+
+                    if (colName.equalsIgnoreCase(
+                            pkName) || ("\"" + colName + "\"").
+                            equalsIgnoreCase(
+                            pkName))
+                      if (epb.isClustered()) {
+                        boolean inserted =
+                                false;
+                        mJDBCClusterManager.setPKValue(
+                                colValue);
+                        inserted =
+                                mJDBCClusterManager.
+                                isRecordInsertedByCurrentInstance();
+                        if (!inserted)
+                          record = null;
+                        else
+                          pKeyList.add(
+                                  colValue);
+                      } else {
+                        boolean processed =
+                                isRecordProcessed(
+                                colValue);
+                        if (!processed)
+                          pKeyList.add(
+                                  colValue);
+                        else
+                          record = null;
+                      }
+                    if (record != null) {
+                      final Element e = NS != null
+                            ? normalDoc.createElementNS(
+                              NS, XMLCharUtil.makeValidNCName(
+                              colName))
+                            : normalDoc.createElement(
                               XMLCharUtil.makeValidNCName(
                               colName));
                       if (rs.wasNull()) {
                         colValue = "";
-                        e.setAttribute("isNull",
+                        e.setAttribute(
+                                "isNull",
                                 "true");
                       } else
-                        e.setAttribute("isNull",
+                        e.setAttribute(
+                                "isNull",
                                 "false");
                       e.appendChild(normalDoc.createTextNode(
                               colValue));
                       record.appendChild(e);
                       if (mLogger.isLoggable(
                               Level.FINEST))
-                        mLogger.log(Level.FINEST,
+                        mLogger.log(
+                                Level.FINEST,
                                 "Col Name == " + colName + " and Col Val == " + colValue);
-                    }
-                    returnPartElement.appendChild(
+                    } else
+                      break;
+                  }
+                  if (record != null) {
+                    elementRoot.appendChild(
                             record);
                     if (numberOfRecords > 0) {
                       numberOfRecords--;
@@ -383,105 +432,14 @@ public class JDBCNormalizer {
                         break;
                     }
                   }
-                  wrapperBuilder.addPart(part.getName(),
-                          returnPartElement);
-                } else {
-                  final QName element = part.getElementName();
-                  String NS = element.getNamespaceURI();
-
-                  final Element elementRoot = normalDoc.createElementNS(NS,
-                          element.getLocalPart());
-
-                  // returnPartElement.appendChild(elementRoot);
-                  // get resultset metadata rsmd and add it to the element
-                  final ResultSetMetaData rsmd = rs.getMetaData();
-                  final List<String> pKeyList =
-                          new ArrayList<String>();
-
-                  while (rs.next()) {
-                    mRowCount++;
-                    if (mLogger.isLoggable(
-                            Level.FINE))
-                      mLogger.log(Level.FINE,
-                              "DBBC_R00706.JDBCN_ProcessNextRecord");
-                    Element record =
-                            normalDoc.createElementNS(NS,
-                            mRecordPrefix + "_Record"); //113494
-                    for (int j = 1; j <= rsmd.getColumnCount(); j++) {
-                      final String colName = rsmd.getColumnName(j);
-                      String colValue = JDBCUtil.convertToString(j,
-                              rs, rsmd, dbName);
-
-                      if (colName.equalsIgnoreCase(
-                              pkName) || ("\"" + colName + "\"").
-                              equalsIgnoreCase(
-                              pkName))
-                        if (epb.isClustered()) {
-                          boolean inserted =
-                                  false;
-                          mJDBCClusterManager.setPKValue(
-                                  colValue);
-                          inserted =
-                                  mJDBCClusterManager.
-                                  isRecordInsertedByCurrentInstance();
-                          if (!inserted)
-                            record = null;
-                          else
-                            pKeyList.add(
-                                    colValue);
-                        } else {
-                          boolean processed =
-                                  isRecordProcessed(
-                                  colValue);
-                          if (!processed)
-                            pKeyList.add(
-                                    colValue);
-                          else
-                            record = null;
-                        }
-                      if (record != null) {
-                        final Element e =
-                                normalDoc.createElementNS(
-                                NS, XMLCharUtil.makeValidNCName(
-                                colName));
-                        if (rs.wasNull()) {
-                          colValue = "";
-                          e.setAttribute(
-                                  "isNull",
-                                  "true");
-                        } else
-                          e.setAttribute(
-                                  "isNull",
-                                  "false");
-                        e.appendChild(normalDoc.createTextNode(
-                                colValue));
-                        record.appendChild(e);
-                        if (mLogger.isLoggable(
-                                Level.FINEST))
-                          mLogger.log(
-                                  Level.FINEST,
-                                  "Col Name == " + colName + " and Col Val == " + colValue);
-                      } else
-                        break;
-                    }
-                    if (record != null) {
-                      elementRoot.appendChild(
-                              record);
-                      if (numberOfRecords > 0) {
-                        numberOfRecords--;
-                        if (numberOfRecords == 0)
-                          break;
-                      }
-                    }
-                  } // while
-                  epb.setProcessList(pKeyList);
-                  if (pKeyList.size() != 0)
-                    mInboundExchangeProcessRecordsMap.put(exchange.
-                            getExchangeId(),
-                            pKeyList);
-                  wrapperBuilder.addPart(part.getName(),
-                          elementRoot);
-                }
+                } // while
+                epb.setProcessList(pKeyList);
+                if (pKeyList.size() != 0)
+                  mInboundExchangeProcessRecordsMap.put(exchange.
+                          getExchangeId(),
+                          pKeyList);
+                wrapperBuilder.addPart(part.getName(),
+                        elementRoot);
                 normalDoc = wrapperBuilder.getResult();
               } else {
                 final String msgEx = JDBCNormalizer.mMessages.getString(
