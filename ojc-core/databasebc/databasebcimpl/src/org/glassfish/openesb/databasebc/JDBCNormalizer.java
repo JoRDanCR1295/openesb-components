@@ -284,13 +284,10 @@ public class JDBCNormalizer {
 
     try {
       Document normalDoc = JDBCNormalizer.newDocument();
-      String returnPartName = null;
-      String NS = "";
       int numberOfRecords = meta.getJDBCOperationInput().
               getNumberOfRecords();
 
 
-      QName elementQName = null;
       final JDBCOperationInput jdbcOpInput = meta.getJDBCOperationInput();
 
       if (jdbcOpInput == null) {
@@ -300,7 +297,6 @@ public class JDBCNormalizer {
         throw new MessagingException(msgEx);
       }
 
-      if (HelperFactory.WRAPPER_ENABLED) {
         String operationInputName = null;
         Message msg = null;
         final Input input = meta.getOperation().getInput();
@@ -315,7 +311,7 @@ public class JDBCNormalizer {
 
           while (it.hasNext()) {
             final Part part = (Part) it.next();
-            elementQName = part.getElementName();
+            QName elementQName = part.getElementName();
 
             if (elementQName == null) {
               final String msgEx = JDBCNormalizer.mMessages.getString(
@@ -324,7 +320,7 @@ public class JDBCNormalizer {
               throw new MessagingException(msgEx);
             }
 
-            returnPartName = elementQName.getLocalPart();
+            String returnPartName = elementQName.getLocalPart();
 
             if (returnPartName == null) {
               final String msgEx = JDBCNormalizer.mMessages.getString(
@@ -391,7 +387,7 @@ public class JDBCNormalizer {
                           returnPartElement);
                 } else {
                   final QName element = part.getElementName();
-                  NS = element.getNamespaceURI();
+                  String NS = element.getNamespaceURI();
 
                   final Element elementRoot = normalDoc.createElementNS(NS,
                           element.getLocalPart());
@@ -510,56 +506,6 @@ public class JDBCNormalizer {
                   " is missing <output> ";
           throw new MessagingException(msgEx);
         }
-      } else {
-        final String operationName =
-                meta.getBindingOperation().getName();
-        final Element normalRoot =
-                normalDoc.createElement(operationName);
-        normalDoc.appendChild(normalRoot);
-
-        if (returnPartName != null) {
-          final Element returnElement = normalDoc.createElement(
-                  returnPartName);
-
-          // get resultset metadata rsmd and add it to the element
-          final ResultSetMetaData rsmd = rs.getMetaData();
-          while (rs.next()) {
-            mRowCount++;
-            if (mLogger.isLoggable(Level.FINE))
-              mLogger.log(Level.FINE,
-                      "DBBC_R00706.JDBCN_ProcessNextRecord");
-            final Element record = normalDoc.createElement(
-                    mRecordPrefix + "_Record"); //113494
-            for (int j = 1; j <= rsmd.getColumnCount(); j++) {
-              final String colName = rsmd.getColumnName(j);
-              String colValue =
-                      JDBCUtil.convertToString(j, rs, rsmd,
-                      dbName);
-
-              final Element e = normalDoc.createElement(
-                      XMLCharUtil.makeValidNCName(colName));
-
-              if (rs.wasNull()) {
-                colValue = "";
-                e.setAttribute("isNull", "true");
-              } else
-                e.setAttribute("isNull", "false");
-              e.appendChild(normalDoc.createTextNode(colValue));
-              record.appendChild(e);
-              if (mLogger.isLoggable(Level.FINEST))
-                mLogger.log(Level.FINEST,
-                        "Col Name == " + colName + " and Col Val == " + colValue);
-            }
-            returnElement.appendChild(record);
-            if (numberOfRecords > 0) {
-              numberOfRecords--;
-              if (numberOfRecords == 0)
-                break;
-            }
-          }
-          normalRoot.appendChild(returnElement);
-        }
-      }
 
       JDBCNormalizer.mLogger.log(Level.INFO, "normalized message",
               normalDoc);
@@ -605,7 +551,6 @@ public class JDBCNormalizer {
     try {
       Document normalDoc = JDBCNormalizer.newDocument();
       String returnPartName = null;
-      String NS = "";
       int numberOfRecords = meta.getJDBCOperationInput().
               getNumberOfRecords();
       final JDBCOperationOutput jdbcOpOutput =
@@ -708,7 +653,7 @@ public class JDBCNormalizer {
                           returnPartElement);
                 } else {
                   final QName element = part.getElementName();
-                  NS = element.getNamespaceURI();
+                  String NS = element.getNamespaceURI();
 
                   final Element elementRoot = normalDoc.createElementNS(NS,
                           element.getLocalPart());
@@ -1373,47 +1318,6 @@ public class JDBCNormalizer {
 
   public void setJDBCClusterManager(JDBCClusterManager jdbcClusterManager) {
     this.mJDBCClusterManager = jdbcClusterManager;
-  }
-
-  private boolean isRecordInserted(EndpointBean endpoint, Connection con, String pkName,
-                                   String colValue) {
-    boolean recordInserted = true;
-    String insertQuery =
-            "insert into OWNER_" + endpoint.getTableName() + "(" + pkName + ",INSTANCE_NAME) values(?,?)";
-    PreparedStatement ps = null;
-    ParameterMetaData paramMetaData = null;
-    int parameters = 0;
-    try {
-      ps = con.prepareStatement(insertQuery);
-      paramMetaData = ps.getParameterMetaData();
-      if (paramMetaData != null)
-        parameters = paramMetaData.getParameterCount();
-    } catch (final SQLException ex) {
-      mLogger.log(Level.WARNING, ex.getLocalizedMessage());
-      return false;
-    }
-    if (parameters != 0)
-      if ((colValue != null) && !colValue.trim().equals("")) {
-        // set default type.
-        int columnType = java.sql.Types.VARCHAR;
-        try {
-          columnType = paramMetaData.getParameterType(1);
-          ps.setObject(1, JDBCUtil.convert(colValue, columnType),
-                  columnType);
-          columnType = paramMetaData.getParameterType(2);
-          ps.setObject(2, JDBCUtil.convert(endpoint.getInstanceName(),
-                  columnType), columnType);
-          int rowsUpdated = ps.executeUpdate();
-          recordInserted = true;
-        } catch (final Exception e) {
-          mLogger.log(Level.WARNING, e.getLocalizedMessage());
-          mLogger.log(Level.INFO, mMessages.getString(
-                  "DBBC-R01127.JDBCN_RECORD_LOCKED",
-                  new Object[]{endpoint.getInstanceName()}));
-          recordInserted = false;
-        }
-      }
-    return recordInserted;
   }
 
   private boolean isRecordProcessed(String colValue) {
