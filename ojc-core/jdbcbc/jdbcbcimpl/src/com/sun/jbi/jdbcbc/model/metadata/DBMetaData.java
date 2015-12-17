@@ -65,6 +65,11 @@ class DriverShim implements Driver {
     }
 
     //@Override
+    public Logger getParentLogger() {
+        return null;
+    }
+
+    //@Override
     public boolean acceptsURL(final String u) throws SQLException {
         return this.driver.acceptsURL(u);
     }
