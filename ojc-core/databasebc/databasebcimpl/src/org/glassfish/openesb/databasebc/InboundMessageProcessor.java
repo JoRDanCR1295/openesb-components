@@ -150,8 +150,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
     private int mRowCount = 0;
 
-    Connection mClusterConnection = null;
-
     private String mTableName = null;
     private String mDbName = null;
 
@@ -162,7 +160,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     private int mPollMilliSeconds = 10000;
 
     private int mThrottleNumber = -1;
-    private JDBCClusterManager mJDBCClusterManager = null;
 
     // Settings for custom reliability header extensions
     public static final String CUSTOM_RELIABILITY_MESSAGE_ID_PROPERTY = "com.stc.jbi.messaging.messageid"; // NOI18N
@@ -189,14 +186,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         mOperation = opname;
         mMonitor = new AtomicBoolean(false);
         final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-        if(endpoint.isClustered()){
-            try{
-                mJDBCClusterManager = new JDBCClusterManager(context);
-            }catch(Exception e){
-                //TODO
-            }
-        }
-
     }
 
     /**
@@ -376,39 +365,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 if (mDbName==null){
                     mDbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
                 }
-                String clusterJNDIName = mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME);
-                if(epb.isClustered()){
-                    try{
-                        if(jndiName.equalsIgnoreCase(clusterJNDIName)){
-                            mClusterConnection = connection;
-                            mJDBCClusterManager.setJNDIName(clusterJNDIName);
-                            String prdtName = DBMetaData.getDBType(mClusterConnection);
-                            mJDBCClusterManager.setProductName(prdtName);
-                        }else{
-                            mClusterConnection = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
-                            mJDBCClusterManager.setJNDIName(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
-                            String prdtName = DBMetaData.getDBType(mClusterConnection);
-                            mJDBCClusterManager.setProductName(prdtName);
-                        }
-                    }catch(Exception e){
-                        if(mClusterConnection == null){
-                            //TODO retry;
-                            throw new Exception(mMessages.getString("DBBC_E11101.JCM_CONNECTON_EXCEPTION",
-                                new Object[] {mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME)} ));
-                        }
-                    }
-                }
                 if (isSelectStatement(mSelectSQL)) {
-                    if(epb.isClustered()){
-                        mJDBCClusterManager.setDataBaseConnection(mClusterConnection);
-                        mJDBCClusterManager.setTableName(mTableName);
-                        mJDBCClusterManager.setInstanceName(epb.getInstanceName());
-                        mJDBCClusterManager.setHeartbeatConfigInterval(mPollMilliSeconds);
-                        mJDBCClusterManager.setPKName(mPKName);
-                        mJDBCClusterManager.doClusterTasks();
-                        mClusterConnection.setAutoCommit(false);
-                    }
-
                     rs = executeInboundSQLSelect(epb, meta, connection, mTableName, mSelectSQL);
 
                     if (rs != null) {
@@ -428,11 +385,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                         final List tempList = epb.getProcessList();
                         if (!(tempList.isEmpty()))
                         {
-                            if (epb.isClustered())
-                            {
-                                mJDBCClusterManager.addInstances(tempList);
-                                mClusterConnection.setAutoCommit(true);
-                            }
                             //set JNDI name on NormalizedMessage for dynamic addressing
                             inMsg.setProperty(JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME, jndiName);
                             exchange.setMessage(inMsg, "in");
@@ -442,27 +394,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
                             mChannel.send(exchange);
                             epb.getEndpointStatus().incrementSentRequests();
-                            if(epb.isClustered()){
-                                //Records already sent to NMR so update the status to "SENT" for owner table
-                                try{
-                                    int i[] = mJDBCClusterManager.updateStatus(tempList, "SENT");
-                                    mLogger.log(Level.INFO,
-                                        "DBBC_R10906.IMP_UPDATED_STATUS_TO_SENT",
-                                        new Object[] { tempList });
-                                }catch(Exception e){
-                                    // TODO need to handled the exception
-                                    mLogger.log(Level.SEVERE,
-                                        "DBBC_E11108.IMP_ERROR_UPDATING_STATUS_TO_SENT",
-                                        new Object[] { tempList, e.getLocalizedMessage() });
-                                }
-                            }
-                        } else {
-                            if (epb.isClustered())
-                                mClusterConnection.setAutoCommit(true);
                         }
                     }
-                    else if (epb.isClustered())
-                        mClusterConnection.setAutoCommit(true);
                 }
             }
         } catch (final Exception ex) {
@@ -485,14 +418,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             try{
                 if (connection != null) {
                     connection.close();
-                }
-            }catch(SQLException se){
-                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);
-            }
-            try{
-                if (mClusterConnection != null && mClusterConnection != connection){
-                    mClusterConnection.close();
-                    mClusterConnection = null;
                 }
             }catch(SQLException se){
                 mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);
@@ -554,16 +479,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 } else {
                      final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
                      throw new MessagingException(msg, new NamingException());
-                }
-            }
-            if (epb.isClustered()) {
-                List<String> pkList = mJDBCClusterManager.selectAllProcessed();
-                if (pkList.size() > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0, l = pkList.size(); i < l; i++)
-                        sb.append(i < l-1 ? "?," : "?");
-                    where = (where.equals("") ? "" : where+" AND ")+mPKName+" NOT IN ("+sb.toString()+")";
-                    bind.addAll(pkList);
                 }
             }
             lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
@@ -800,33 +715,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                     mLogger.log(Level.INFO, InboundMessageProcessor.mMessages.getString("DBBC_R00629.OMP_UsedJNDI") + jndiName);
                     connection = getDatabaseConnection(jndiName);
                     doPostProcessing(connection, (List)mMapInboundExchangesProcessRecords.get(messageId));
-                    // for cluster environment
-                    if(epb.isClustered()){
-                        Connection con = null;
-                        try{
-                            List records = (List)mMapInboundExchangesProcessRecords.get(messageId);
-                            if(jndiName.equalsIgnoreCase(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME))){
-                                con = connection;
-                            }else{
-                                con = getDatabaseConnection(mRuntimeConfig.getProperties().getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME));
-                            }
-                            mJDBCClusterManager.setDataBaseConnection(con);
-                            mJDBCClusterManager.deleteInstances(records);
-                            mLogger.log(Level.INFO,
-                                "DBBC_R10907.IMP_UPDATED_STATUS_TO_DONE",
-                                new Object[] { records });
-                        }catch(Exception e){
-                            mLogger.log(Level.SEVERE, "Unable to delete processed records", e.getLocalizedMessage());
-                        }finally {
-                            try{
-                                if(con != null && con != connection){
-                                    con.close();
-                                }
-                            }catch(SQLException se){
-                                mLogger.log(Level.SEVERE, "Unable to close the connection", se.getLocalizedMessage());
-                            }
-                        }
-                    }
                 } else {
                     mLogger.log(Level.SEVERE, "IMP_MXCH_BAD_STATUS", new Object[] { exchange.getStatus().toString(), messageId });
                     // Any status other than 'DONE' is considered an error

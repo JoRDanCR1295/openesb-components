@@ -86,7 +86,6 @@ class InboundReceiver {
     // This is removed since never used
     //private final Map mEndpoints;
     private final Map<String,InboundMessageProcessor> mActivatedInboundMsgProcs;
-    private final Map<String,JDBCHeartbeatManager> mActivatedJDBCHeartbeatManager;
 
     /**
      *
@@ -135,7 +134,6 @@ class InboundReceiver {
                 new LinkedBlockingQueue(), Executors.defaultThreadFactory());
         mInboundPooledExecutor.prestartAllCoreThreads();
         mActivatedInboundMsgProcs = Collections.synchronizedMap(new HashMap<String,InboundMessageProcessor>());
-		mActivatedJDBCHeartbeatManager = Collections.synchronizedMap(new HashMap<String,JDBCHeartbeatManager>());
 
         //mEndpoints = endpoints;
     }
@@ -190,15 +188,6 @@ class InboundReceiver {
 
                 if (!mActivatedInboundMsgProcs.containsKey(key)) {
                     try {
-                        if(endpoint.isClustered()){
-                            final JDBCHeartbeatManager proc = new JDBCHeartbeatManager(
-                                    endpoint, mContext, opname);
-                            proc.setRuntimeConfig(mRuntimeConfig);
-                            final Thread task = new Thread(proc);
-                            task.start();
-                            // store the thread in map
-                            mActivatedJDBCHeartbeatManager.put(key, proc);
-                        }
                         final InboundMessageProcessor proc = new InboundMessageProcessor(mChannel,
                                 endpoint, mContext, opname);
 						proc.setRuntimeConfig(mRuntimeConfig);
@@ -251,12 +240,6 @@ class InboundReceiver {
                     //	proc.deleteTableTigger(endpoint);
                     // Remove the thread from the map
                     mActivatedInboundMsgProcs.remove(key);
-                } // if
-                if (mActivatedJDBCHeartbeatManager.containsKey(key) && endpoint.isClustered()) {
-                    final JDBCHeartbeatManager proc = mActivatedJDBCHeartbeatManager.get(key);
-                    // Stop the Heart beat message processor thread
-                    proc.stopReceiving();
-                    mActivatedJDBCHeartbeatManager.remove(key);
                 } // if
             } // for
 
