@@ -47,6 +47,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialClob;
+import java.sql.PreparedStatement;
+import java.sql.ParameterMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
@@ -385,5 +387,16 @@ public class JDBCUtil {
             /*String opName = JDBCOperations.getOpType(sqlText);
             JDBCOperations jdbcOps = JDBCOperations.getJDBCOperations(opName);
             return jdbcOps.toString();*/
+    }
+
+    public static void bindParams(PreparedStatement ps, String... params) throws Exception
+    {
+        ParameterMetaData meta = ps.getParameterMetaData();
+        for (int i = 0; i < params.length; i++)
+        {
+            int columnType = java.sql.Types.VARCHAR;
+            try { columnType = meta.getParameterType(i+1); } catch(Exception e) {}
+            ps.setObject(i+1, JDBCUtil.convert(params[i], columnType), columnType);
+        }
     }
 }
