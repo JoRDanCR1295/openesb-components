@@ -102,17 +102,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
     private static final String JDBC_PROD_NAME = "JDBC";
 
-    private XidImpl xid = null;
-
-    private TransactionHelper mTxHelper = null;
-    private static final String SENT_TO_NMR = "SENT";
-
-    // private boolean mtxFlag;
-
-    XAResource xaResource = null;
-
-    //private TransactionManager mTxManager = null;
-
     private static final Messages mMessages = Messages.getMessages(InboundMessageProcessor.class);
 
     private static final Logger mLogger = Messages.getLogger(InboundMessageProcessor.class);
@@ -124,14 +113,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     private Map mMapInboundExchangesProcessRecords = new HashMap();
     private ArrayList mProcessedList = new ArrayList();
 
-    
-    Map mEndpoint;
-
     EndpointBean epb;
 
-    DocumentBuilder mDocBuilder;
-
-    //private DeliveryChannel mChannel;
     private MessagingChannel mChannel;
 
     private MessageExchange mExchange;
@@ -161,28 +144,16 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
     private String mSchemaName = null;
 
-    DBConnectionInfo dbConnectionInfo;
-
     private String mXAEnabled = null;
 
-    // private DBMetaData mdbMetaData = null;
     private DatabaseModel dbDataAccessObject = null;
 
-    PreparedStatement ps = null;
+    private int mRowCount = 0;
 
-	ResultSet rs = null;
-	private int mRowCount = 0;
-
-    Connection connection = null;
-
-    Connection con = null;
-
-    XAConnection xaConnection = null;
-    
     Connection mClusterConnection = null;
 
     private String mTableName = null;
-    private String mDbName=null;
+    private String mDbName = null;
 
     private String mPollingPostProcessing = null;
 
@@ -217,10 +188,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         replyListener = new ReplyListenerImpl(endpoint);
         mOperation = opname;
         mMonitor = new AtomicBoolean(false);
-        mTxHelper = new TransactionHelper();
-        dbConnectionInfo = new DBConnectionInfo();
         final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-        mDocBuilder = docBuilderFact.newDocumentBuilder();
         if(endpoint.isClustered()){
             try{
                 mJDBCClusterManager = new JDBCClusterManager(context);
@@ -365,6 +333,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     public void processInOnly(final MessageExchange exchange, final EndpointBean epb) throws Exception {
         String exchangeId = null;
         String jndiName = null;
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
         try {
             epb.getEndpointStatus().incrementReceivedRequests();
@@ -596,6 +567,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                                       Connection connection,
                                       final String mTableName,
                                       String lSelectSQL) throws MessagingException {
+        ResultSet rs = null;
         try {
             String jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
             mLogger.log(Level.INFO, InboundMessageProcessor.mMessages.getString("DBBC_R00629.OMP_UsedJNDI") + jndiName);
@@ -622,7 +594,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             }
             lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
             mLogger.log(Level.INFO, "Executing sql 1. " + lSelectSQL);
-            ps = connection.prepareStatement(lSelectSQL);
+            PreparedStatement ps = connection.prepareStatement(lSelectSQL);
             ParameterMetaData paramMetaData = ps.getParameterMetaData();
             for (int i = 0, l = bind.size(); i < l; i++)
             {
