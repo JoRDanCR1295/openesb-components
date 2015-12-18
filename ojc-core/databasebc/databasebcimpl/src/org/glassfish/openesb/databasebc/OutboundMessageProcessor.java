@@ -611,7 +611,10 @@ public class OutboundMessageProcessor implements Runnable {
                       "DBBC_E00627");
               throw new Exception(faultString, e);
             }
-            if (isSelectStatement(sql)) {
+            if (meta.getJDBCOperationInput().getOperationType().
+                equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_SELECT.toString()) ||
+                meta.getJDBCOperationInput().getOperationType().
+                equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_FIND.toString())) {
               try {
                 rs = executeOutboundSQLSelect(inMsg, epb, meta,
                         connection);
@@ -691,8 +694,9 @@ public class OutboundMessageProcessor implements Runnable {
                  */
                 String generatedKey = meta.getJDBCSql().
                         getGeneratedKey();
-                if (isInsertStatement(sql) && generatedKey != null && !"".equals(
-                        generatedKey)) {
+                if (meta.getJDBCOperationInput().getOperationType().
+                  equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_INSERT.toString()) &&
+                  generatedKey != null && !"".equals(generatedKey)) {
                   generatedKeyValue =
                           executeOutboundSQLWithGeneratedKeys(
                           inMsg, epb, meta, connection);
@@ -1133,7 +1137,10 @@ public class OutboundMessageProcessor implements Runnable {
             transaction.enlistResource(xaresource);
             connection = xaconnection.getConnection();*/
 
-            if (isSelectStatement(sql)) {
+            if (meta.getJDBCOperationInput().getOperationType().
+                equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_SELECT.toString()) ||
+                meta.getJDBCOperationInput().getOperationType().
+                equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_FIND.toString())) {
               try {
                 rs = executeOutboundSQLSelect(inMsg, epb, meta,
                         connection);
@@ -1301,8 +1308,9 @@ public class OutboundMessageProcessor implements Runnable {
                    */
                   String generatedKey = meta.getJDBCSql().
                           getGeneratedKey();
-                  if (isInsertStatement(sql) && generatedKey != null && !"".
-                          equals(generatedKey)) {
+                  if (meta.getJDBCOperationInput().getOperationType().
+                    equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_INSERT.toString()) &&
+                    generatedKey != null && !"".equals(generatedKey)) {
                     generatedKeyValue =
                             executeOutboundSQLWithGeneratedKeys(
                             inMsg, epb, meta, connection);
@@ -2098,47 +2106,6 @@ public class OutboundMessageProcessor implements Runnable {
                 "Either the JNDI NAME is  NULL or Could not establish connection using JNDI NAME :");
     }
     return null;
-  }
-
-  /**
-   * @param prepStmtSQLText
-   * @return
-   */
-  private boolean isSelectStatement(final String prepStmtSQLText) {
-    prepStmtSQLText.trim();
-
-    final StringTokenizer tok = new StringTokenizer(prepStmtSQLText);
-
-    if (tok.hasMoreTokens()) {
-      final String firstTok = (String) tok.nextToken();
-
-      if (firstTok.equalsIgnoreCase("select"))
-        return true;
-    }
-
-    return false;
-  }
-
-  /*
-   * Modified by Logicoy for [ task #20 ] DB BC - Insert statement should return primary key auto-increment value inserted
-   */
-  /**
-   * @param prepStmtSQLText
-   * @return
-   */
-  private boolean isInsertStatement(final String prepStmtSQLText) {
-    prepStmtSQLText.trim();
-
-    final StringTokenizer tok = new StringTokenizer(prepStmtSQLText);
-
-    if (tok.hasMoreTokens()) {
-      final String firstTok = (String) tok.nextToken();
-
-      if (firstTok.equalsIgnoreCase("insert"))
-        return true;
-    }
-
-    return false;
   }
 
   private TransactionManager getTransactionManager() {
