@@ -8,6 +8,7 @@ import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.uri.UriTemplate;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 import com.sun.jersey.client.urlconnection.HTTPSProperties;
 import com.sun.jersey.client.urlconnection.URLConnectionClientHandler;
 import java.io.BufferedReader;
@@ -78,7 +79,7 @@ public final class JerseyClientWrapper {
         UriTemplate uriTemplate = new UriTemplate(url);
         String resultURL = uriTemplate.createURI(pathParams);
 
-        UriBuilder uriBuilder = UriBuilder.fromUri(resultURL);
+        UriBuilder uriBuilder = UriBuilderImpl.fromUri(resultURL);
 
         // build params
         String paramStyle = PropertiesUtil.safeGetProperty(requestMsg, NMProps.NM_PARAM_STYLE_PROP);
