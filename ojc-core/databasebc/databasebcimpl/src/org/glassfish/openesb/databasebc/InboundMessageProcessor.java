@@ -367,12 +367,28 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                     mDbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
                 }
                 if (isSelectStatement(mSelectSQL)) {
-                    connection.setAutoCommit(false);
                     if (epb.isClustered()) {
-                        Statement st = connection.createStatement();
-                        // Exclusively lock table (serialize concurrent SELECTs)
-                        st.execute("SELECT MIN("+mPKName+") FROM "+mTableName+" FOR UPDATE");
-                        st.close();
+                        connection.setAutoCommit(false);
+                        // In cluster environment, adding a simple "FOR UPDATE" to the poll query is enough
+                        // to make different OpenESB instances always process different rows.
+                        //
+                        // Although, in VERY RARE cases - i.e. if your DBMS supports transactions and
+                        // locking, but DOES NOT support FOR UPDATE and you can't use any hacks to
+                        // emulate it as the part of poll query - you can use a separate SQL statement
+                        // to obtain lock before selecting rows from the polled table.
+                        // However, note that in this case your BPEL process MUST NOT update the
+                        // "MarkColumn" of the polled table, because there will be no guarantee that
+                        // Database Binding updates the MarkColumn BEFORE BPEL thread also updates it.
+                        //
+                        // TODO: Add a separate "Lock statement" property
+                        String lockStatement = meta.getJDBCSql().getGeneratedKey();
+                        if (lockStatement != null && !lockStatement.equals("")) {
+                            Statement st = connection.createStatement();
+                            st.execute(lockStatement);
+                            st.close();
+                        }
+                    } else {
+                        connection.setAutoCommit(true);
                     }
 
                     List tempList = null;
@@ -431,7 +447,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             }
             try{
                 if (connection != null) {
-                    connection.commit();
+                    if (epb.isClustered()) {
+                        connection.commit();
+                    }
                     connection.close();
                 }
             }catch(SQLException se){
