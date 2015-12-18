@@ -562,8 +562,13 @@ public class OutboundMessageProcessor implements Runnable {
         NormalizedMessage outMsg = mExchange.createMessage();
         //boolean success = true;
         String statusMessage = "";
+        String jndiName = "";
 
         try {
+          Object[] jndiConn = getDatabaseConnection(inMsg, inout.getExchangeId(), epb);
+          jndiName = (String)jndiConn[0];
+          connection = (Connection)jndiConn[1];
+
           rs = null;
           int rowsUpdated = -1;
           /*
@@ -576,48 +581,12 @@ public class OutboundMessageProcessor implements Runnable {
           JDBCOperationInput input = meta.getJDBCSql();
           if (input != null) {
             final String sql = input.getSql();
-            Object jndiNameObj =
-                    inMsg.getProperty(
-                    JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME);
-            try {
-              if (jndiNameObj != null) {
-                mLogger.log(Level.INFO,
-                        OutboundMessageProcessor.mMessages.getString(
-                        "DBBC_R00629.OMP_UsedJNDI") + jndiNameObj.toString());
-                connection = getDatabaseConnection(inMsg);
-              } else {
-                String jndiName = epb.getValue(
-                        EndpointBean.JDBC_DATABASE_JNDI_NAME);
-                mLogger.log(Level.INFO,
-                        OutboundMessageProcessor.mMessages.getString(
-                        "DBBC_R00629.OMP_UsedJNDI") + jndiName);
-                connection = getDatabaseConnection(epb);
-              }
-            } catch (Exception e) {
-              faultCode = SERVER;
-              faultDetail = "Unable to get connection : " + e.toString();
-              String faultString = mMessages.getString(
-                      "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
-                        inout.getExchangeId(), epb.getValue(
-                        EndpointBean.ENDPOINT_NAME),
-                        mExchange.getOperation().toString()});
-              AlertsUtil.getAlerter().warning(faultString,
-                      JDBCBindingLifeCycle.SHORT_DISPLAY_NAME,
-                      null,
-                      AlertsUtil.getServerType(),
-                      AlertsUtil.COMPONENT_TYPE_BINDING,
-                      NotificationEvent.OPERATIONAL_STATE_RUNNING,
-                      NotificationEvent.EVENT_TYPE_ALERT,
-                      "DBBC_E00627");
-              throw new Exception(faultString, e);
-            }
             if (meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_SELECT.toString()) ||
                 meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_FIND.toString())) {
               try {
-                rs = executeOutboundSQLSelect(inMsg, epb, meta,
-                        connection);
+                rs = executeOutboundSQLSelect(inMsg, epb, meta, jndiName, connection);
               } catch (final SQLException ex) {
                 faultCode = SERVER;
                 faultDetail = mMessages.getString(
@@ -697,15 +666,12 @@ public class OutboundMessageProcessor implements Runnable {
                 if (meta.getJDBCOperationInput().getOperationType().
                   equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_INSERT.toString()) &&
                   generatedKey != null && !"".equals(generatedKey)) {
-                  generatedKeyValue =
-                          executeOutboundSQLWithGeneratedKeys(
-                          inMsg, epb, meta, connection);
+                  generatedKeyValue = executeOutboundSQLWithGeneratedKeys(inMsg, epb, meta, jndiName, connection);
                   outputValue = generatedKeyValue;
                   statusMessage =
                           "Success : Generated Key =  " + generatedKeyValue;
                 } else {
-                  rowsUpdated = executeOutboundSQL(inMsg, epb,
-                          meta, connection);
+                  rowsUpdated = executeOutboundSQL(inMsg, epb, meta, jndiName, connection);
                   statusMessage =
                           "Success : " + rowsUpdated + " are updated .";
                   outputValue = String.valueOf(rowsUpdated);
@@ -787,45 +753,7 @@ public class OutboundMessageProcessor implements Runnable {
             SPOperationInput spInput =
                     meta.getJDBCSPOperationInput();
             if (spInput != null) {
-              Object jndiNameObj =
-                      inMsg.getProperty(
-                      JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME);
-              try {
-                if (jndiNameObj != null) {
-                  mLogger.log(Level.INFO,
-                          OutboundMessageProcessor.mMessages.getString(
-                          "DBBC_R00629.OMP_UsedJNDI") + jndiNameObj.toString());
-                  connection = getDatabaseConnection(inMsg);
-                } else {
-                  String jndiName =
-                          epb.getValue(
-                          EndpointBean.JDBC_DATABASE_JNDI_NAME);
-                  mLogger.log(Level.INFO,
-                          OutboundMessageProcessor.mMessages.getString(
-                          "DBBC_R00629.OMP_UsedJNDI") + jndiName);
-                  connection = getDatabaseConnection(epb);
-                }
-              } catch (Exception e) {
-                faultCode = SERVER;
-                faultDetail = "Unable to get connection : " + e.toString();
-                String faultString =
-                        mMessages.getString(
-                        "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
-                          inout.getExchangeId(), epb.getValue(
-                          EndpointBean.ENDPOINT_NAME),
-                          mExchange.getOperation().toString()});
-                AlertsUtil.getAlerter().warning(faultString,
-                        JDBCBindingLifeCycle.SHORT_DISPLAY_NAME,
-                        null,
-                        AlertsUtil.getServerType(),
-                        AlertsUtil.COMPONENT_TYPE_BINDING,
-                        NotificationEvent.OPERATIONAL_STATE_RUNNING,
-                        NotificationEvent.EVENT_TYPE_ALERT,
-                        "DBBC_E00627");
-                throw new Exception(faultString, e);
-              }
-              cs = executeOutboundProc(inMsg, epb, meta,
-                      connection);
+              cs = executeOutboundProc(inMsg, epb, meta, jndiName, connection);
               final JDBCNormalizer normalizer =
                       new JDBCNormalizer();
               final JDBCDenormalizer denormalizer =
@@ -1083,6 +1011,10 @@ public class OutboundMessageProcessor implements Runnable {
         String jndiName = null;
 
         try {
+          Object[] jndiConn = getDatabaseConnection(inMsg, inout.getExchangeId(), epb);
+          jndiName = (String)jndiConn[0];
+          connection = (Connection)jndiConn[1];
+
           rs = null;
           int rowsUpdated = -1;
 
@@ -1093,8 +1025,6 @@ public class OutboundMessageProcessor implements Runnable {
           JDBCOperationInput input = meta.getJDBCSql();
           if (input != null) {
             final String sql = input.getSql();
-            jndiName = epb.getValue(
-                    EndpointBean.JDBC_DATABASE_JNDI_NAME);
 
             if (inout.isTransacted())
               // Removing manual enlistment. Moving to automatic resource enlistment
@@ -1106,29 +1036,7 @@ public class OutboundMessageProcessor implements Runnable {
             if (transaction != null)
               resumeThreadTx(transaction);
 
-            try {
-              connection = getDatabaseConnection(epb);
-            } catch (Exception e) {
-              faultCode = SERVER;
-              faultDetail = "Unable to get connection : " + e.toString();
-              String faultString = mMessages.getString(
-                      "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
-                        inout.getExchangeId(), epb.getValue(
-                        EndpointBean.ENDPOINT_NAME),
-                        mExchange.getOperation().toString()});
-              AlertsUtil.getAlerter().warning(mMessages.getString(
-                      "DBBC_E00627.OMP_Failed_LookUp_JNDI"),
-                      JDBCBindingLifeCycle.SHORT_DISPLAY_NAME,
-                      null,
-                      AlertsUtil.getServerType(),
-                      AlertsUtil.COMPONENT_TYPE_BINDING,
-                      NotificationEvent.OPERATIONAL_STATE_RUNNING,
-                      NotificationEvent.EVENT_TYPE_ALERT,
-                      "DBBC_E00627");
-              throw new Exception(faultString, e);
-            }
             connection.setAutoCommit(true);
-
 
             /* PP: Glassfish does not return a XADataSource and always returns
              * a DataSource30 object which does not implement getXAResource() method
@@ -1142,8 +1050,7 @@ public class OutboundMessageProcessor implements Runnable {
                 meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_FIND.toString())) {
               try {
-                rs = executeOutboundSQLSelect(inMsg, epb, meta,
-                        connection);
+                rs = executeOutboundSQLSelect(inMsg, epb, meta, jndiName, connection);
               } catch (final SQLException ex) {
                 faultCode = SERVER;
                 faultDetail = mMessages.getString(
@@ -1227,8 +1134,7 @@ public class OutboundMessageProcessor implements Runnable {
                       equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_EXECUTE.
                       toString())) {
                 try {
-                  cs = executeOutboundProc(inMsg, epb, meta,
-                          connection);
+                  cs = executeOutboundProc(inMsg, epb, meta, jndiName, connection);
                 } catch (final SQLException ex) {
                   faultCode = SERVER;
                   faultDetail = mMessages.getString(
@@ -1311,15 +1217,12 @@ public class OutboundMessageProcessor implements Runnable {
                   if (meta.getJDBCOperationInput().getOperationType().
                     equalsIgnoreCase(JDBCOperations.OPERATION_TYPE_INSERT.toString()) &&
                     generatedKey != null && !"".equals(generatedKey)) {
-                    generatedKeyValue =
-                            executeOutboundSQLWithGeneratedKeys(
-                            inMsg, epb, meta, connection);
+                    generatedKeyValue = executeOutboundSQLWithGeneratedKeys(inMsg, epb, meta, jndiName, connection);
                     outputValue = generatedKeyValue;
                     statusMessage =
                             "Success : Generated Key =  " + generatedKeyValue;
                   } else {
-                    rowsUpdated = executeOutboundSQL(inMsg,
-                            epb, meta, connection);
+                    rowsUpdated = executeOutboundSQL(inMsg, epb, meta, jndiName, connection);
                     statusMessage =
                             "Success : " + rowsUpdated + " are updated .";
                     outputValue =
@@ -1403,9 +1306,6 @@ public class OutboundMessageProcessor implements Runnable {
             SPOperationInput spInput =
                     meta.getJDBCSPOperationInput();
             if (spInput != null) {
-              Object jndiNameObj =
-                      inMsg.getProperty(
-                      JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME);
               if (inout.isTransacted())
                 // Removing manual enlistment. Moving to automatic resource enlistment
                 // mtxHelper.handleOutbound(mExchange);
@@ -1415,37 +1315,8 @@ public class OutboundMessageProcessor implements Runnable {
                         MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
               if (transaction != null)
                 resumeThreadTx(transaction);
-              try {
-                if (jndiNameObj != null) {
-                  mLogger.log(Level.INFO,
-                          OutboundMessageProcessor.mMessages.getString(
-                          "DBBC_R00629.OMP_UsedJNDI") + jndiNameObj.toString());
-                  connection = getDatabaseConnection(inMsg);
-                } else {
-                  jndiName =
-                          epb.getValue(
-                          EndpointBean.JDBC_DATABASE_JNDI_NAME);
-                  mLogger.log(Level.INFO,
-                          OutboundMessageProcessor.mMessages.getString(
-                          "DBBC_R00629.OMP_UsedJNDI") + jndiName);
-                  connection = getDatabaseConnection(epb);
-                }
-              } catch (Exception e) {
-                faultCode = SERVER;
-                faultDetail = "Unable to get connection : " + e.toString();
-                String faultString =
-                        mMessages.getString(
-                        "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
-                          inout.getExchangeId(), epb.getValue(
-                          EndpointBean.ENDPOINT_NAME),
-                          mExchange.getOperation().toString()});
-                processException(e, transaction, inout, epb,
-                        faultCode, faultDetail);
-                throw new Exception(faultString, e);
-              }
               connection.setAutoCommit(true);
-              cs = executeOutboundProc(inMsg, epb, meta,
-                      connection);
+              cs = executeOutboundProc(inMsg, epb, meta, jndiName, connection);
               final JDBCNormalizer normalizer =
                       new JDBCNormalizer();
               final JDBCDenormalizer denormalizer =
@@ -1693,33 +1564,9 @@ public class OutboundMessageProcessor implements Runnable {
       try {
         if (transaction != null)
           getTransactionManager().resume(transaction);
-        Object jndiNameObj =
-                inMsg.getProperty(
-                JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME);
-        try {
-          if (jndiNameObj != null) {
-            mLogger.log(Level.INFO,
-                    OutboundMessageProcessor.mMessages.getString(
-                    "DBBC_R00629.OMP_UsedJNDI") + jndiNameObj.toString());
-            connection = getDatabaseConnection(inMsg);
-          } else {
-            String jndiName = epb.getValue(
-                    EndpointBean.JDBC_DATABASE_JNDI_NAME);
-            mLogger.log(Level.INFO,
-                    OutboundMessageProcessor.mMessages.getString(
-                    "DBBC_R00629.OMP_UsedJNDI") + jndiName);
-            connection = getDatabaseConnection(epb);
-          }
-        } catch (Exception e) {
-          faultCode = SERVER;
-          faultDetail = "Unable to get connection : " + e.toString();
-          String faultString = mMessages.getString(
-                  "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
-                    inonly.getExchangeId(), epb.getValue(
-                    EndpointBean.ENDPOINT_NAME),
-                    mExchange.getOperation().toString()});
-          throw new Exception(faultString, e);
-        }
+        Object[] jndiConn = getDatabaseConnection(inMsg, inonly.getExchangeId(), epb);
+        String jndiName = (String)jndiConn[0];
+        connection = (Connection)jndiConn[1];
 
         if (transaction != null)
           connection.setAutoCommit(true);
@@ -1727,13 +1574,11 @@ public class OutboundMessageProcessor implements Runnable {
         if (meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(
                 JDBCOperations.OPERATION_TYPE_EXECUTE.toString()))
-          // executeOutboundProc(inMsg, epb, meta);
           // Auto enlistment: pass the transaction retrieved from the Message exchange.
-          cs = executeOutboundProc(inMsg, epb, meta, connection);
+          cs = executeOutboundProc(inMsg, epb, meta, jndiName, connection);
         else
-          // executeOutboundSQL(inMsg, epb, meta);
           // Auto enlistment: pass the transaction retrieved from the Message exchange.
-          executeOutboundSQL(inMsg, epb, meta, connection);
+          executeOutboundSQL(inMsg, epb, meta, jndiName, connection);
         inonly.setStatus(ExchangeStatus.DONE);
       } catch (final SQLException ex) {
         processException(ex, transaction, inonly, epb, faultCode,
@@ -1797,6 +1642,7 @@ public class OutboundMessageProcessor implements Runnable {
   protected ResultSet executeOutboundSQLSelect(final NormalizedMessage nMsg,
                                                final EndpointBean eBean,
                                                final OperationMetaData opMetaData,
+                                               final String jndiName,
                                                Connection connection) throws SQLException, MessagingException {
     String sql = null;
     try {
@@ -1812,7 +1658,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg),
+      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
               opMetaData, ps);
 
       if (denormalizationMeasurement != null)
@@ -1849,6 +1695,7 @@ public class OutboundMessageProcessor implements Runnable {
   protected int executeOutboundSQL(final NormalizedMessage nMsg,
                                    final EndpointBean eBean,
                                    final OperationMetaData opMetaData,
+                                   final String jndiName,
                                    Connection connection) throws SQLException, MessagingException {
     String sql = null;
     int rowsUpdated = -1;
@@ -1865,7 +1712,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg),
+      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
               opMetaData, ps);
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
@@ -1904,6 +1751,7 @@ public class OutboundMessageProcessor implements Runnable {
   protected String executeOutboundSQLWithGeneratedKeys(final NormalizedMessage nMsg,
                                                        final EndpointBean eBean,
                                                        final OperationMetaData opMetaData,
+                                                       final String jndiName,
                                                        Connection connection) throws SQLException, MessagingException {
     mLogger.log(Level.INFO, "Entering executeOutboundSQLWithGeneratedKeys");
     String sql = null;
@@ -1924,7 +1772,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg),
+      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
               opMetaData, ps);
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
@@ -1965,6 +1813,7 @@ public class OutboundMessageProcessor implements Runnable {
   protected CallableStatement executeOutboundProc(final NormalizedMessage nMsg,
                                                   final EndpointBean eBean,
                                                   final OperationMetaData opMetaData,
+                                                  final String jndiName,
                                                   Connection connnection) throws SQLException, MessagingException {
     String sql = null;
     int rowsUpdated = -1;
@@ -1985,7 +1834,7 @@ public class OutboundMessageProcessor implements Runnable {
       Probe denormalizationMeasurement = Probe.info(getClass(),
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
-      denormalizer.denormalizeOutboundProc(nMsg, opMetaData, dbmeta, cs);
+      denormalizer.denormalizeOutboundProc(nMsg, opMetaData, dbmeta, jndiName, cs);
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
 
@@ -2083,6 +1932,43 @@ public class OutboundMessageProcessor implements Runnable {
       conn = ds.getConnection();
     }
     return conn;
+  }
+
+  private Object[] getDatabaseConnection(NormalizedMessage inMsg, String exchangeId, EndpointBean epb) throws Exception
+  {
+    String jndiName = null;
+    Connection connection = null;
+    String faultDetail = null;
+    try {
+      jndiName = (String)inMsg.getProperty(JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME);
+      if (jndiName != null) {
+        mLogger.log(Level.INFO,
+                OutboundMessageProcessor.mMessages.getString(
+                "DBBC_R00629.OMP_UsedJNDI") + jndiName);
+        connection = getDatabaseConnection(inMsg);
+      } else {
+        jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
+        mLogger.log(Level.INFO,
+                OutboundMessageProcessor.mMessages.getString(
+                "DBBC_R00629.OMP_UsedJNDI") + jndiName);
+        connection = getDatabaseConnection(epb);
+      }
+    } catch (Exception e) {
+      String faultString = mMessages.getString(
+              "DBBC_E00627.OMP_Failed_LookUp_JNDI", new Object[]{
+              jndiName, exchangeId, epb.getValue(EndpointBean.ENDPOINT_NAME),
+              mExchange.getOperation().toString()});
+      AlertsUtil.getAlerter().warning(faultString,
+              JDBCBindingLifeCycle.SHORT_DISPLAY_NAME,
+              null,
+              AlertsUtil.getServerType(),
+              AlertsUtil.COMPONENT_TYPE_BINDING,
+              NotificationEvent.OPERATIONAL_STATE_RUNNING,
+              NotificationEvent.EVENT_TYPE_ALERT,
+              "DBBC_E00627");
+      throw e;
+    }
+    return new Object[] { jndiName, connection };
   }
 
   private XAConnection getXADatabaseConnection(final EndpointBean epbean) throws Exception {

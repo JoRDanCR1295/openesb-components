@@ -108,7 +108,7 @@ public class JDBCDenormalizer {
    * @throws MessagingException
    */
   protected void denormalizeOutbound(final NormalizedMessage normalizedMessage,
-                                     String dbName, final OperationMetaData opMetaData, final PreparedStatement ps)
+                                     String dbName, final String jndiName, final OperationMetaData opMetaData, final PreparedStatement ps)
           throws MessagingException {
     if (opMetaData != null) {
       final JDBCOperationInput mJdbcOperationInput = opMetaData.
@@ -120,7 +120,7 @@ public class JDBCDenormalizer {
         Element element =
                 transformMessage(normalizedMessage, opMetaData);
         if (element != null)
-          populatePreparedStatement(element, dbName, opMetaData, ps);
+          populatePreparedStatement(element, dbName, jndiName, opMetaData, ps);
       } catch (final SQLException ex) {
         final String msg =
                 JDBCDenormalizer.mMessages.getString(
@@ -147,7 +147,7 @@ public class JDBCDenormalizer {
    * @throws MessagingException
    */
   protected void denormalizeOutboundProc(final NormalizedMessage normalizedMessage,
-                                         final OperationMetaData opMetaData, final DatabaseMetaData dbmeta, final CallableStatement cs)
+                                         final OperationMetaData opMetaData, final DatabaseMetaData dbmeta, final String jndiName, final CallableStatement cs)
           throws MessagingException {
     if (opMetaData != null) {
       final SPOperationInput mJdbcOperationInput = opMetaData.
@@ -158,7 +158,7 @@ public class JDBCDenormalizer {
         Element element =
                 transformMessage(normalizedMessage, opMetaData);
         if (element != null)
-          populateProcedure(element, opMetaData, dbmeta, cs);
+          populateProcedure(element, opMetaData, dbmeta, jndiName, cs);
       } catch (final SQLException ex) {
         final String msg =
                 JDBCDenormalizer.mMessages.getString(
@@ -186,7 +186,7 @@ public class JDBCDenormalizer {
    */
   @SuppressWarnings("empty-statement")
   private void populateProcedure(final Element tableElem,
-                                 final OperationMetaData opMetaData, final DatabaseMetaData dbmeta, CallableStatement cs)
+                                 final OperationMetaData opMetaData, final DatabaseMetaData dbmeta, final String jndiName, CallableStatement cs)
           throws SQLException, MessagingException, Exception {
     final SPOperationInput jdbcSql = opMetaData.getJDBCSPOperationInput();
     driverName_ = dbmeta.getDriverName();
@@ -206,7 +206,9 @@ public class JDBCDenormalizer {
       mLogger.log(Level.INFO, JDBCDenormalizer.mMessages.getString(
               "DBBC_R00716.JDBCDN_StartPopulateProc"));
     if (jdbcSql != null) {
-      final String dbURL = dbmeta.getURL();
+      String dbURL = dbmeta.getURL();
+      if (dbURL == null)
+        dbURL = "jndi:"+jndiName;
       ParamMetadataCache paramsCache = ParamMetadataCache.instance();
       ArrayList<CachedQueryParameter> params = paramsCache.getMetadata(
               dbURL, opMetaData);
@@ -409,7 +411,7 @@ public class JDBCDenormalizer {
    * @throws MessagingException
    * @throws Exception
    */
-  private void populatePreparedStatement(final Element tableElem, String dbName,
+  private void populatePreparedStatement(final Element tableElem, String dbName, String jndiName,
                                          final OperationMetaData opMetaData, final PreparedStatement ps)
           throws SQLException, MessagingException, Exception {
     /*
@@ -452,9 +454,11 @@ public class JDBCDenormalizer {
       }
 
 //113494  end
+      String dbURL = dbMeta.getURL();
+      if (dbURL == null)
+        dbURL = "jndi:"+jndiName;
       ArrayList<CachedQueryParameter> paramsList =
-              ParamMetadataCache.instance().getMetadata(dbMeta.getURL(),
-              opMetaData);
+              ParamMetadataCache.instance().getMetadata(dbURL, opMetaData);
       if (paramsList == null) {
         ParameterMetaData paramMetaData = null;
         try {
@@ -504,7 +508,7 @@ public class JDBCDenormalizer {
           } else
             paramsList = cacheEmptyQueryParams();
 
-          ParamMetadataCache.instance().storeMetadata(dbMeta.getURL(),
+          ParamMetadataCache.instance().storeMetadata(dbURL,
                   opMetaData, paramsList);
         }
       }
