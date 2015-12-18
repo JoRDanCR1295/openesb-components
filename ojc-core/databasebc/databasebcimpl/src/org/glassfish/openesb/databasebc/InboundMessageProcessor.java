@@ -149,8 +149,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
     private DatabaseModel dbDataAccessObject = null;
 
-    private int mRowCount = 0;
-
     private String mTableName = null;
     private String mDbName = null;
 
@@ -205,10 +203,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             mLogger.log(Level.INFO, "DBBC_R00629.IMP_EP_status");
         }
 
+        int rowCount;
         do {
-            mRowCount = 0;
+            rowCount = 0;
             try {
-                execute();
+                rowCount = execute();
             } catch (final Exception ex) {
                 mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00659.IMP_ERROR_WHILE_EXECUTING_SQL"), ex);
             }
@@ -217,7 +216,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 mLogger.log(Level.INFO,mMessages.getString("DBBC_R00660.IMP_FINISHED_EXECUTING_SQL"));
             }
 
-            if (mRowCount <= 0) {
+            if (rowCount <= 0) {
                 try {
                     Thread.sleep(mPollMilliSeconds);
                 } catch (final Exception e) {
@@ -231,8 +230,9 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
      * @throws MessagingException
      * @throws Exception
      */
-    public void execute() throws MessagingException, Exception {
+    public int execute() throws MessagingException, Exception {
         String exchangeId = null;
+        int rowCount = 0;
 
         try {
             if (mMsgExchangeFactory == null) {
@@ -291,11 +291,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                     break;
                 case IN_ONLY:
                     mLogger.log(Level.INFO, "DBBC_R00632.IMP_Received_INONLY", mExchange.getExchangeId());
-                    processInOnly(mExchange, epb);
+                    rowCount = processInOnly(mExchange, epb);
                     break;
                 default:
                     mLogger.log(Level.INFO, "DBBC_E00633.IMP_Invalid_pattern", mExchange.getExchangeId());
-                    return;
+                    return 0;
                 }
             }
         } catch (final MessagingException ex) {
@@ -307,6 +307,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E00662.IMP_ERROR_WHILE_EXECUTING_MEP"), exchangeId);
             throw e;
         }
+        return rowCount;
     }
 
     /**
@@ -320,12 +321,13 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
      * @param exchange
      * @param epb
      */
-    public void processInOnly(final MessageExchange exchange, final EndpointBean epb) throws Exception {
+    public int processInOnly(final MessageExchange exchange, final EndpointBean epb) throws Exception {
         String exchangeId = null;
         String jndiName = null;
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        int rowCount = 0;
 
         try {
             epb.getEndpointStatus().incrementReceivedRequests();
@@ -402,7 +404,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                         normalizer.setInboundExchangeProcessRecordsMap(mMapInboundExchangesProcessRecords);
                         normalizer.setRecordsProcessedList(mProcessedList);
                         inMsg = normalizer.normalizeSelectInbound(rs, exchange, meta, epb, mPKName,mDbName);
-                        mRowCount = normalizer.mRowCount;
+                        rowCount = normalizer.mRowCount;
 
                         if(normalizationMeasurement != null){
                             normalizationMeasurement.end();
@@ -456,6 +458,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);
             }
         }
+        return rowCount;
     }
 
     /** Checks if the Throttling configuration is defined on the endpoint,
