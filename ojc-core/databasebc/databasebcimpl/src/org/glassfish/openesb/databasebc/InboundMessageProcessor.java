@@ -487,25 +487,21 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             mLogger.log(Level.INFO, InboundMessageProcessor.mMessages.getString("DBBC_R00629.OMP_UsedJNDI") + jndiName);
             String where = "";
             List<String> bind = new ArrayList<String>();
-            if (mMarkColumnName != null && !mMarkColumnName.equals("")) {
-                if (mFlagColumnType != null) {
-                    where = "("+mMarkColumnName+" != ? OR "+mMarkColumnName+" IS NULL)";
-                    bind.add(mMarkColumnValue);
-                } else {
-                     final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
-                     throw new MessagingException(msg, new NamingException());
+            if (lSelectSQL.indexOf("$WHERE") >= 0) {
+                if (mMarkColumnName != null && !mMarkColumnName.equals("")) {
+                    if (mFlagColumnType != null) {
+                        where = "("+mMarkColumnName+" != ? OR "+mMarkColumnName+" IS NULL)";
+                        bind.add(mMarkColumnValue);
+                    } else {
+                         final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
+                         throw new MessagingException(msg, new NamingException());
+                    }
                 }
+                lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
             }
-            lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
             mLogger.log(Level.INFO, "Executing sql 1. " + lSelectSQL);
             PreparedStatement ps = connection.prepareStatement(lSelectSQL);
-            ParameterMetaData paramMetaData = ps.getParameterMetaData();
-            for (int i = 0, l = bind.size(); i < l; i++)
-            {
-                int columnType = java.sql.Types.VARCHAR;
-                try { columnType = paramMetaData.getParameterType(i+1); } catch(Exception e) {}
-                ps.setObject(i+1, JDBCUtil.convert(bind.get(i), columnType), columnType);
-            }
+            JDBCUtil.bindParamList(ps, bind);
             rs = ps.executeQuery();
         }
         catch (final SQLException ex) {

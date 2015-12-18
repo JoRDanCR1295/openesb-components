@@ -389,6 +389,17 @@ public class JDBCUtil {
             return jdbcOps.toString();*/
     }
 
+    public static void bindParamList(PreparedStatement ps, List<String> params) throws Exception
+    {
+        ParameterMetaData meta = ps.getParameterMetaData();
+        for (int i = 0; i < params.size(); i++)
+        {
+            int columnType = java.sql.Types.VARCHAR;
+            try { columnType = meta.getParameterType(i+1); } catch(Exception e) {}
+            ps.setObject(i+1, JDBCUtil.convert(params.get(i), columnType), columnType);
+        }
+    }
+
     public static void bindParams(PreparedStatement ps, String... params) throws Exception
     {
         ParameterMetaData meta = ps.getParameterMetaData();
