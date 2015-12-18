@@ -330,24 +330,14 @@ public class JDBCUtil {
 	throws java.sql.SQLException, java.io.IOException{
 		switch (rsmd.getColumnType(index))
 		{
-			case java.sql.Types.LONGVARCHAR:
-				if (driverName.toLowerCase().contains("db2")){
-					return rs.getString(index);
-				} else if(driverName.toLowerCase().contains("oracle")){
-                                    return rs.getString(index);
-                                }
-                                    //else fall through
 			case java.sql.Types.CLOB:
 				return LobHandler.getClob(index, rs, driverName);
-
 			case java.sql.Types.LONGVARBINARY:
 			case java.sql.Types.BLOB:
 				return LobHandler.getBlob(index, rs, driverName);
 			default:
 				return rs.getString(index);
 		}
-		
-		
 	}
     static {
         // NOTE: CLOB not supported
