@@ -769,16 +769,7 @@ public class OutboundMessageProcessor implements Runnable {
                   outParamTypes.put(1, "RESULTSET");
                   outParamIndex.add(
                           Integer.valueOf(Double.valueOf(1).intValue()));
-                } /*else
-              for (int i = 1; i <= outParamIndex.size(); i++)
-              if ((outParamNames.get(i) != null) && (outParamNames.get(i).
-              equalsIgnoreCase(
-              "RETURN_VALUE"))) {
-              outParamNames.put(i, denormalizer.getProcName(meta.
-              getJDBCSPOperationInput().
-              getExecutionString()));
-              outParamTypes.put(i, "RETURN_VALUE");
-              }*/
+                }
               normalizer.setOutParamIndex(outParamIndex);
               normalizer.setOutParamNames(outParamNames);
               normalizer.setOutParamTypes(outParamTypes);
@@ -1332,16 +1323,7 @@ public class OutboundMessageProcessor implements Runnable {
                   outParamTypes.put(1, "RESULTSET");
                   outParamIndex.add(
                           Integer.valueOf(Double.valueOf(1).intValue()));
-                } else
-                  for (int i = 1; i <= outParamIndex.size(); i++)
-                    if ((outParamNames.get(i) != null) && (outParamNames.get(i).
-                            equalsIgnoreCase(
-                            "RETURN_VALUE"))) {
-                      outParamNames.put(i, denormalizer.getProcName(meta.
-                              getJDBCSPOperationInput().
-                              getExecutionString()));
-                      outParamTypes.put(i, "RESULTSET");
-                    }
+                }
               normalizer.setOutParamIndex(outParamIndex);
               normalizer.setOutParamNames(outParamNames);
               normalizer.setOutParamTypes(outParamTypes);
