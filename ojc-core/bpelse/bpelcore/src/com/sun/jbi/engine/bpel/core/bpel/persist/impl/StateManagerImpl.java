@@ -656,7 +656,7 @@ public class StateManagerImpl implements StateManager {
         		tm.suspend();
         	} catch (Exception startExcep) {
         		throw new RuntimeException(I18n.loc("BPCOR-6078: Exception thrown while processing " + 
-        				"transaction type XAStartNew"), startExcep);
+        				"transaction type XAStartNew: {0}"), startExcep);
         	}
 
         } else if (StateManager.TransactionType.XAEnd.equals(transactionInfo.getTransactionType())) {
