@@ -79,8 +79,6 @@ import org.glassfish.openesb.databasebc.model.runtime.Db2DataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.DerbyDataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.OracleDataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.SqlServerDataAccess;
-import org.glassfish.openesb.databasebc.transaction.TransactionHelper;
-import org.glassfish.openesb.databasebc.transaction.XidImpl;
 import com.sun.jbi.nms.exchange.ExchangePattern;
 
 import com.sun.jbi.common.qos.messaging.MessagingChannel;

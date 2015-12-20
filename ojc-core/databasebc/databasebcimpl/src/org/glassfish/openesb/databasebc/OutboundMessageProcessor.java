@@ -54,7 +54,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import com.sun.jbi.internationalization.Messages;
-import org.glassfish.openesb.databasebc.transaction.*;
 
 import javax.transaction.xa.XAResource;
 import org.glassfish.openesb.databasebc.model.runtime.DBConnectionInfo;
@@ -95,9 +94,6 @@ public class OutboundMessageProcessor implements Runnable {
   PreparedStatement ps = null;
   ResultSet rs = null;
   CallableStatement cs = null;
-  //private TransactionManager mTxManager = null;
-  private XidImpl xid = null;
-  TransactionHelper mtxHelper = null;
   private boolean mtxFlag;
   XAResource xaResource = null;
   // Settings for custom reliability header extensions
@@ -129,12 +125,9 @@ public class OutboundMessageProcessor implements Runnable {
     mExchange = exchange;
     mContext = context;
     mInboundExchanges = inboundMessageExchanges;
-    //mTxManager = (TransactionManager) context.getTransactionManager();
-
     final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.
             newInstance();
     mDocBuilder = docBuilderFact.newDocumentBuilder();
-    // mtxHelper = new TransactionHelper();
     dbConnectionInfo = new DBConnectionInfo();
   }
 
@@ -1019,8 +1012,6 @@ public class OutboundMessageProcessor implements Runnable {
 
             if (inout.isTransacted())
               // Removing manual enlistment. Moving to automatic resource enlistment
-              // mtxHelper.handleOutbound(mExchange);
-              // enlistResource(epb);
               transaction =
                       (Transaction) inout.getProperty(
                       MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
@@ -1299,8 +1290,6 @@ public class OutboundMessageProcessor implements Runnable {
             if (spInput != null) {
               if (inout.isTransacted())
                 // Removing manual enlistment. Moving to automatic resource enlistment
-                // mtxHelper.handleOutbound(mExchange);
-                // enlistResource(epb);
                 transaction =
                         (Transaction) inout.getProperty(
                         MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
@@ -1538,8 +1527,6 @@ public class OutboundMessageProcessor implements Runnable {
 
       if (inonly.isTransacted())
         // Removing manual enlistment. Moving to automatic resource enlistment
-        // mtxHelper.handleOutbound(mExchange);
-        // enlistResource(epb);
         transaction = (Transaction) inonly.getProperty(
                 MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
 
@@ -1589,10 +1576,6 @@ public class OutboundMessageProcessor implements Runnable {
                     "DBBC_E00628.OMP_Cleanup_Failure"));
         }
       }
-
-      /*
-       * if (inonly.isTransacted()) { mtxHelper.handleInbound(mExchange); }
-       */
 
       if (transaction != null)
         getTransactionManager().suspend();
