@@ -56,7 +56,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.sun.jbi.internationalization.Messages;
 
 import javax.transaction.xa.XAResource;
-import org.glassfish.openesb.databasebc.model.runtime.DBConnectionInfo;
 import javax.sql.*;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -87,7 +86,6 @@ public class OutboundMessageProcessor implements Runnable {
   private MessageExchange mExchange;
   private JDBCComponentContext mContext;
   private Map mInboundExchanges;
-  DBConnectionInfo dbConnectionInfo;
   XAConnection xaConnection = null;
   private String mXAEnabled = null;
   Connection connection = null;
@@ -128,7 +126,6 @@ public class OutboundMessageProcessor implements Runnable {
     final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.
             newInstance();
     mDocBuilder = docBuilderFact.newDocumentBuilder();
-    dbConnectionInfo = new DBConnectionInfo();
   }
 
   /**
@@ -1623,8 +1620,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
-              opMetaData, ps);
+      denormalizer.denormalizeOutbound(nMsg, jndiName, opMetaData, ps);
 
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
@@ -1677,8 +1673,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
-              opMetaData, ps);
+      denormalizer.denormalizeOutbound(nMsg, jndiName, opMetaData, ps);
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
 
@@ -1737,8 +1732,7 @@ public class OutboundMessageProcessor implements Runnable {
               eBean.getUniqueName(),
               JDBCBindingLifeCycle.PERF_CAT_DENORMALIZATION);
 
-      denormalizer.denormalizeOutbound(nMsg, getDBName(eBean, nMsg), jndiName,
-              opMetaData, ps);
+      denormalizer.denormalizeOutbound(nMsg, jndiName, opMetaData, ps);
       if (denormalizationMeasurement != null)
         denormalizationMeasurement.end();
 
@@ -2044,26 +2038,6 @@ public class OutboundMessageProcessor implements Runnable {
           status.incrementSentDones();
         else
           status.incrementSentErrors();
-    }
-  }
-
-  private String getDBName(EndpointBean eBean, NormalizedMessage nMsg)
-          throws javax.naming.NamingException, java.sql.SQLException {
-    if (eBean.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME) == null || eBean.
-            getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME).equals(""))
-      return dbConnectionInfo.getDataBaseName(eBean.getValue(
-              EndpointBean.JDBC_DATABASE_URL), null, null);
-    else {
-      String jndiName = eBean.getValue(
-              EndpointBean.JDBC_DATABASE_JNDI_NAME);
-      if (nMsg.getProperty(
-              JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME) != null)
-        jndiName = nMsg.getProperty(
-                JDBCComponentContext.NM_PROP_DATABASEBC_CONNECTION_JNDI_NAME).
-                toString();
-      return dbConnectionInfo.getDataBaseName(null, null,
-              (DataSource) getDataSourceFromContext(jndiName));
-
     }
   }
 

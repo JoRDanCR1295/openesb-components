@@ -36,10 +36,5 @@ package org.glassfish.openesb.databasebc.model.runtime;
  *
  */
 public interface DatabaseModel {
-    public String createQualifiedQuery(String souTable, String tarTable,
-        String flagName, String MarkColumnValue, String pkName, String Operation,String FlagColumnType)
-        throws Exception;
-
-    public String generateSelectQuery(String query, String tableName)
-        throws Exception;
+    public String generateSelectQuery(String tableName, int rowCount);
 }

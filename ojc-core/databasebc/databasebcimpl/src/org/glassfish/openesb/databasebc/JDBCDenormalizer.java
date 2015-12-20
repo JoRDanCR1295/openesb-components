@@ -108,7 +108,7 @@ public class JDBCDenormalizer {
    * @throws MessagingException
    */
   protected void denormalizeOutbound(final NormalizedMessage normalizedMessage,
-                                     String dbName, final String jndiName, final OperationMetaData opMetaData, final PreparedStatement ps)
+                                     final String jndiName, final OperationMetaData opMetaData, final PreparedStatement ps)
           throws MessagingException {
     if (opMetaData != null) {
       final JDBCOperationInput mJdbcOperationInput = opMetaData.
@@ -120,7 +120,7 @@ public class JDBCDenormalizer {
         Element element =
                 transformMessage(normalizedMessage, opMetaData);
         if (element != null)
-          populatePreparedStatement(element, dbName, jndiName, opMetaData, ps);
+          populatePreparedStatement(element, jndiName, opMetaData, ps);
       } catch (final SQLException ex) {
         final String msg =
                 JDBCDenormalizer.mMessages.getString(
@@ -411,7 +411,7 @@ public class JDBCDenormalizer {
    * @throws MessagingException
    * @throws Exception
    */
-  private void populatePreparedStatement(final Element tableElem, String dbName, String jndiName,
+  private void populatePreparedStatement(final Element tableElem, String jndiName,
                                          final OperationMetaData opMetaData, final PreparedStatement ps)
           throws SQLException, MessagingException, Exception {
     /*

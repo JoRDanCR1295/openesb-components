@@ -121,6 +121,9 @@ public final class DBMetaData {
     /** Database OTD type for Oracle */
     public static final String ORACLE = "ORACLE"; // NOI18N
 
+    /** Database OTD type for MySQL */
+    public static final String MYSQL = "MYSQL"; // NOI18N
+
     /** Database OTD type for SQL Server */
     public static final String SQLSERVER = "SQLSERVER"; // NOI18N
 
@@ -232,26 +235,11 @@ public final class DBMetaData {
     // String used in java.sql.DatabaseMetaData to indicate system tables.
     private static final String VIEW = "VIEW"; // NOI18N
 
-    //private Connection dbconn; // db connection
-
-    //private DatabaseMetaData dbmeta; // db metadata
-
-    //private String errMsg; // error message
-
-    //private boolean checkPrepStmtMetaData = true; // indicates driver does not
-
-    // fully support finding prepared
-    // statement metadata
-    //private boolean errPrepStmtParameters = false; // error getting prep. stmt. parameters
-
-    //private boolean errPrepStmtResultSetColumns = false; // error getting prep. stmt. resultset
-
     // columns
 
     private static final Logger mLogger = Logger.getLogger(DBMetaData.class.getName());
     private static final Messages mMessages = Messages.getMessages(DBMetaData.class);
 
-    
     /**
      * Gets the primary keys for a table.
      * 
@@ -335,82 +323,13 @@ public final class DBMetaData {
     }
 
     /**
-     * Establishes a connection to the database.
-     * 
-     * @param conn JDBC connection
-     * @throws Exception DOCUMENT ME!
-     */
-    /*public void connectDB(final Connection conn) throws Exception {
-        this.errMsg = "";
-        if (conn == null) {
-            throw new IllegalArgumentException("Connection can't be null.");
-        }
-
-        this.dbconn = conn;
-        this.getDBMetaData();
-    }*/
-
-    /**
-     * Disconnects from the database.
-     * 
-     * @throws Exception DOCUMENT ME!
-     */
-    /*public void disconnectDB() throws Exception {
-        this.errMsg = "";
-        // close connection to database
-        try {
-            if (this.dbconn != null && !this.dbconn.isClosed()) {
-                this.dbconn.close();
-                this.dbconn = null;
-            }
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            this.errMsg = e.getLocalizedMessage();
-            throw e;
-        }
-    }*/
-
-    /*private void getDBMetaData() throws Exception {
-        this.errMsg = "";
-        // get the metadata
-        try {
-            this.dbmeta = this.dbconn.getMetaData();
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            this.errMsg = e.getLocalizedMessage();
-            throw e;
-        }
-    }*/
-
-    /**
-     * Returns the database product name
-     * 
-     * @return String database product name
-     * @throws Exception DOCUMENT ME!
-     */
-    /*public String getDBName() throws Exception {
-        String dbname = "";
-
-        this.errMsg = "";
-        // get the database product name
-        try {
-            dbname = this.dbmeta.getDatabaseProductName();
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            this.errMsg = e.getLocalizedMessage();
-            throw e;
-        }
-        return dbname;
-    }*/
-
-    /**
      * Returns the database OTD type.
      * 
      * @param conn 
      * @return String Database OTD type
      * @throws Exception DOCUMENT ME!
      */
-    public static String getDBType(final Connection conn) throws Exception {
+    public static String getDBType(final Connection conn) throws SQLException {
         String dbtype = "";
 
         // get the database type based on the product name converted to lowercase
@@ -430,6 +349,9 @@ public final class DBMetaData {
         } else if (dbname.indexOf("orac") > -1) {
             // Oracle
             dbtype = DBMetaData.ORACLE;
+        } else if (dbname.indexOf("mysql") > -1 || dbname.indexOf("mariadb") > -1) {
+            // MySQL
+            dbtype = DBMetaData.MYSQL;
         } else if (dbname.indexOf("derby") > -1) {
             // derby
             dbtype = DBMetaData.DERBY;

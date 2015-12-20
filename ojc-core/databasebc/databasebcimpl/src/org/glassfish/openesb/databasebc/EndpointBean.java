@@ -35,8 +35,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.glassfish.openesb.databasebc.model.runtime.DBConnectionInfo;
-
 
 /**
 * author
@@ -79,7 +77,6 @@ public class EndpointBean implements Serializable {
     private String mTableName = null;
     private EndpointStatus mEndpointStatus;
     private List mrecordList = new ArrayList();
-	private DBConnectionInfo mDBConnectionInfo;
 
 	// throttling related info
 	private int maxConcurrencyLimit = -1;
@@ -192,14 +189,6 @@ public class EndpointBean implements Serializable {
 
     public String getTableName() {
         return mTableName;
-    }
-    
-    public void setDBInfo(DBConnectionInfo dbInfo){
-		this.mDBConnectionInfo = dbInfo;
-    }
-
-    public DBConnectionInfo getDBInfo(){
-		return this.mDBConnectionInfo;
     }
 
 	public void setMaxConcurrencyLimit(int maxConcurrencyLimit){

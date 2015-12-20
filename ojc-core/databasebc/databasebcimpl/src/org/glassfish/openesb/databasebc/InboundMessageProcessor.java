@@ -72,13 +72,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.sun.jbi.internationalization.Messages;
 import org.glassfish.openesb.databasebc.model.metadata.DBMetaData;
-import org.glassfish.openesb.databasebc.model.runtime.DBConnectionInfo;
 import org.glassfish.openesb.databasebc.model.runtime.DatabaseModel;
 import org.glassfish.openesb.databasebc.model.runtime.DatabaseModelImpl;
 import org.glassfish.openesb.databasebc.model.runtime.Db2DataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.DerbyDataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.OracleDataAccess;
 import org.glassfish.openesb.databasebc.model.runtime.SqlServerDataAccess;
+import org.glassfish.openesb.databasebc.model.runtime.MysqlDataAccess;
 import com.sun.jbi.nms.exchange.ExchangePattern;
 
 import com.sun.jbi.common.qos.messaging.MessagingChannel;
@@ -91,16 +91,6 @@ import net.java.hulp.measure.Probe;
  * author : Venkat P Process requests received from the External Database
  */
 public class InboundMessageProcessor implements Runnable, MessageExchangeReplyListener, RedeliveryListener {
-    private static final String DERBY_PROD_NAME = "DERBY";
-
-    private static final String ORACLE_PROD_NAME = "ORACLE";
-
-    private static final String SQLSERVER_PROD_NAME = "SQLSERVER";
-
-    private static final String DB2_PROD_NAME = "DB2";
-
-    private static final String JDBC_PROD_NAME = "JDBC";
-
     private static final Messages mMessages = Messages.getMessages(InboundMessageProcessor.class);
 
     private static final Logger mLogger = Messages.getLogger(InboundMessageProcessor.class);
@@ -137,16 +127,11 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
     private String mMarkColumnValue = null;
 
-    private String mPKType = null;
-
-    private String mFlagColumnType = null;
-
     private String mSchemaName = null;
 
     private String mXAEnabled = null;
 
     private String mTableName = null;
-    private String mDbName = null;
 
     private String mPollingPostProcessing = null;
 
@@ -356,14 +341,15 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                     getTransactionManager().begin();
                 }
 
-                DatabaseModel dbDataAccessObject = getDataAccessObject(meta);
-                mSelectSQL = dbDataAccessObject.generateSelectQuery(mSelectSQL, mTableName);
                 epb.setTableName(mTableName);
 
                 connection = getDatabaseConnection(jndiName);
-                if (mDbName == null){
-                    mDbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
+                if (mSelectSQL == null || mSelectSQL.trim().equals("")) {
+                    DatabaseModel dbDataAccessObject = getDataAccessObject(connection);
+                    int numberOfRecords = meta.getJDBCOperationInput().getNumberOfRecords();
+                    mSelectSQL = dbDataAccessObject.generateSelectQuery(mTableName, numberOfRecords);
                 }
+                String dbName = connection.getMetaData().getDatabaseProductName().toLowerCase();
                 if (epb.isClustered()) {
                     connection.setAutoCommit(false);
                     // In cluster environment, adding a simple "FOR UPDATE" to the poll query is enough
@@ -398,7 +384,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
 
                     normalizer.setInboundExchangeProcessRecordsMap(mMapInboundExchangesProcessRecords);
                     normalizer.setRecordsProcessedList(mProcessedList);
-                    inMsg = normalizer.normalizeSelectInbound(rs, exchange, meta, epb, mPKName,mDbName);
+                    inMsg = normalizer.normalizeSelectInbound(rs, exchange, meta, epb, mPKName, dbName);
                     rowCount = normalizer.mRowCount;
 
                     if(normalizationMeasurement != null){
@@ -502,13 +488,8 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             List<String> bind = new ArrayList<String>();
             if (lSelectSQL.indexOf("$WHERE") >= 0) {
                 if (mMarkColumnName != null && !mMarkColumnName.equals("")) {
-                    if (mFlagColumnType != null) {
-                        where = "("+mMarkColumnName+" != ? OR "+mMarkColumnName+" IS NULL)";
-                        bind.add(mMarkColumnValue);
-                    } else {
-                         final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00638.IMP_Error_IVALID_ColumnName") + mMarkColumnName;
-                         throw new MessagingException(msg, new NamingException());
-                    }
+                    where = "("+mMarkColumnName+" != ? OR "+mMarkColumnName+" IS NULL)";
+                    bind.add(mMarkColumnValue);
                 }
                 lSelectSQL = lSelectSQL.replace("$WHERE", where.equals("") ? "1=1" : where);
             }
@@ -543,90 +524,20 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         return rs;
     }
 
-    /**
-     * @return
-     * @throws MessagingException
-     */
-    public DatabaseModel getDataAccessObject(OperationMetaData meta) throws MessagingException {
-        DatabaseModel objDataAccess = null;
-        String jndiName = null;
-        String prdtName = null;
-        String catalog = null;
-        jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
-        Connection connection = null;
-        ResultSet rs = null;
-
-        try {
-            connection = getDatabaseConnection(jndiName);
-            prdtName = DBMetaData.getDBType(connection);
-
-            rs = connection.getMetaData().getColumns(catalog, mSchemaName, mTableName, "%");
-
-            int noofColCounter = -1;
-            while (rs.next()) {
-                noofColCounter++;
-                final String colName = rs.getString("COLUMN_NAME");
-                if (colName.equalsIgnoreCase(meta.getJDBCSql().getPKName())) {
-                    final String defaultValue = rs.getString("COLUMN_DEF");
-                    final int sqlTypeCode = rs.getInt("DATA_TYPE");
-                    final String sqlType = DBMetaData.getSQLTypeDescription(sqlTypeCode);
-                    mPKType = sqlType;
-                }
-                if (colName.equalsIgnoreCase(meta.getJDBCSql().getMarkColumnName())) {
-                    final String defaultValue = rs.getString("COLUMN_DEF");
-                    final int sqlTypeCode = rs.getInt("DATA_TYPE");
-                    final String sqlType = DBMetaData.getSQLTypeDescription(sqlTypeCode);
-                    mFlagColumnType = sqlType;
-                }
-            }
-            if(noofColCounter < 0 ){
-                final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00636.IMP_Table_NotExist");
-                throw new MessagingException(msg, new NamingException());
-            }
-            if (mPKType == null) {
-                final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00637.IMP_PrimaryKey_Error");
-                throw new MessagingException(msg, new NamingException());
-            }
-            if (prdtName.equalsIgnoreCase(InboundMessageProcessor.DERBY_PROD_NAME)) {
-                return objDataAccess = DerbyDataAccess.getInstance();
-            } else if (prdtName.equalsIgnoreCase(InboundMessageProcessor.ORACLE_PROD_NAME)) {
-                return objDataAccess = OracleDataAccess.getInstance();
-            } else if (prdtName.equalsIgnoreCase(InboundMessageProcessor.DB2_PROD_NAME)) {
-                return objDataAccess = Db2DataAccess.getInstance();
-            } else if (prdtName.equalsIgnoreCase(InboundMessageProcessor.SQLSERVER_PROD_NAME)) {
-                return objDataAccess = SqlServerDataAccess.getInstance();
-            } else if (prdtName.equalsIgnoreCase(InboundMessageProcessor.JDBC_PROD_NAME)) {
-                return objDataAccess = DatabaseModelImpl.getInstance();
-            } else {
-                return objDataAccess = new DatabaseModelImpl();
-            }
-        } catch (final NamingException ex) {
-            final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00635.IMP_Error_Lookup") + jndiName;
-            mLogger.log(Level.SEVERE, msg, ex);
-            throw new MessagingException(msg, ex);
-        } catch (final SQLException ex) {
-            final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00639.IMP_Failed_Executing_SQL") +
-                    "Reason: " + ex.getLocalizedMessage() + " SQLState: " + ex.getSQLState() + " ErrorCode: " + ex.getErrorCode();
-            mLogger.log(Level.SEVERE, msg, ex);
-            throw new MessagingException(msg, ex);
-        } catch (final Exception ex) {
-            final String msg = InboundMessageProcessor.mMessages.getString("DBBC_E00639.IMP_Failed_Executing_SQL");
-            throw new MessagingException(msg, ex);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            }catch(SQLException se){
-                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11109.IMP_EXCEPTION_WHILE_CLOSING_THE_RS"), se);                    
-            }
-            try{
-                if (connection != null) {
-                    connection.close();
-                }
-            }catch(SQLException se){
-                mLogger.log(Level.SEVERE, mMessages.getString("DBBC_E11111.IMP_EXCEPTION_WHILE_CLOSING_THE_CONNECTION"), se);   
-            }
+    public DatabaseModel getDataAccessObject(Connection connection) throws SQLException {
+        String prdtName = DBMetaData.getDBType(connection);
+        if (prdtName == DBMetaData.DERBY) {
+            return DerbyDataAccess.getInstance();
+        } else if (prdtName == DBMetaData.ORACLE) {
+            return OracleDataAccess.getInstance();
+        } else if (prdtName == DBMetaData.DB2) {
+            return Db2DataAccess.getInstance();
+        } else if (prdtName == DBMetaData.SQLSERVER) {
+            return SqlServerDataAccess.getInstance();
+        } else if (prdtName == DBMetaData.MYSQL) {
+            return MysqlDataAccess.getInstance();
+        } else {
+            return DatabaseModelImpl.getInstance();
         }
     }
 

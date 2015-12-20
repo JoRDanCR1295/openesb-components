@@ -21,38 +21,39 @@
  */
 
 /*
- * @(#)OracleDataAccess.java 
+ * @(#)MysqlDataAccess.java 
  *
- * Copyright 2004-2007 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright 2015 Vitaliy Filippov
  * 
  * END_HEADER - DO NOT EDIT
  */
 
 package org.glassfish.openesb.databasebc.model.runtime;
 
-import java.util.logging.Logger;
 import com.sun.jbi.internationalization.Messages;
 import java.util.logging.Level;
 
+import java.util.logging.Logger;
+
 /**
- * @author  Venkat P
+ * @author  Vitaliy Filippov
  *
  */
-public class OracleDataAccess implements DatabaseModel {
-    private static final Messages mMessages = Messages.getMessages(OracleDataAccess.class);
-    private static final Logger mLogger = Messages.getLogger(OracleDataAccess.class);
+public class MysqlDataAccess implements DatabaseModel {
+    private static final Messages mMessages = Messages.getMessages(MysqlDataAccess.class);
+    private static final Logger mLogger = Messages.getLogger(MysqlDataAccess.class);
+    private static final MysqlDataAccess instance = new MysqlDataAccess();
 
-    private OracleDataAccess(){
+    private MysqlDataAccess(){
     }
 
-    private static final OracleDataAccess instance = new OracleDataAccess();
-    public static final OracleDataAccess getInstance(){
+    public static final MysqlDataAccess getInstance(){
         return instance;
     }
 
     //@Override
     public String generateSelectQuery(final String tableName, final int rowCount) {
         return "SELECT * FROM " + tableName + " WHERE $WHERE" +
-            (rowCount > 0 ? " AND rownum<="+rowCount : "") + " FOR UPDATE";
+            (rowCount > 0 ? " LIMIT "+rowCount : "") + " FOR UPDATE";
     }
 }
