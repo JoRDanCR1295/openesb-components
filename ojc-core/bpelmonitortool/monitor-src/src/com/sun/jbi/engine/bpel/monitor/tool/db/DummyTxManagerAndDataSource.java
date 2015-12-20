@@ -55,6 +55,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.concurrent.Executor;
 
 import javax.sql.DataSource;
 import javax.transaction.HeuristicMixedException;
@@ -300,6 +302,11 @@ public class DummyTxManagerAndDataSource implements DataSource, TransactionManag
         return null;
     }
 
+    //@Override
+    public Logger getParentLogger() {
+        return null;
+    }
+
     /**
      * @see javax.sql.DataSource#setLoginTimeout(int)
      */
@@ -440,6 +447,14 @@ class DummyConnection implements Connection {
     }
 
     /* (non-Javadoc)
+     * @see java.sql.Connection#abort()
+     */
+    public void abort(Executor executor) throws SQLException {
+        
+        //Ignore
+    }
+    
+    /* (non-Javadoc)
      * @see java.sql.Connection#close()
      */
     public void close() throws SQLException {
@@ -514,6 +529,19 @@ class DummyConnection implements Connection {
     public DatabaseMetaData getMetaData() throws SQLException {
         
         return connection.getMetaData();
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#getNetworkTimeout()
+     */
+    public int getNetworkTimeout() throws SQLException {
+        
+        return connection.getNetworkTimeout();
+    }
+    
+    public String getSchema() throws SQLException {
+        
+        return connection.getSchema();
     }
 
     /* (non-Javadoc)
@@ -706,6 +734,19 @@ class DummyConnection implements Connection {
     public Savepoint setSavepoint(String name) throws SQLException {
         
         return connection.setSavepoint(name);
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Connection#setNetworkTimeout()
+     */
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        
+        connection.setNetworkTimeout(executor, milliseconds);
+    }
+
+    public void setSchema(String schema) throws SQLException {
+        
+        connection.setSchema(schema);
     }
 
     /* (non-Javadoc)
