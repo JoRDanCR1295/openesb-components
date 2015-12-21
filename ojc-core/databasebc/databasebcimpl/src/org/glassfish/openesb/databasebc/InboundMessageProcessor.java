@@ -60,11 +60,6 @@ import javax.jbi.servicedesc.ServiceEndpoint;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import javax.sql.XAConnection;
-import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAResource;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -128,8 +123,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
     private String mMarkColumnValue = null;
 
     private String mSchemaName = null;
-
-    private String mXAEnabled = null;
 
     private String mTableName = null;
 
@@ -332,14 +325,10 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
             mTableName = meta.getJDBCSql().getTableName();
             mPollingPostProcessing = meta.getJDBCSql().getPollingPostProcessing();
             mMoveRowToTableName = meta.getJDBCSql().getMoveRowToTableName();
-            mXAEnabled = meta.getJDBCSql().getTransaction();
             jndiName = epb.getValue(EndpointBean.JDBC_DATABASE_JNDI_NAME);
 
             // Throttle Check
             if(throttleConfigurationCheck()) {
-                if (mXAEnabled.equalsIgnoreCase("XATransaction")) {
-                    getTransactionManager().begin();
-                }
 
                 epb.setTableName(mTableName);
 
@@ -699,10 +688,6 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
         mMonitor.set(Boolean.TRUE);
     }
     
-    private TransactionManager getTransactionManager() {
-        return (TransactionManager)mContext.getTransactionManager();
-    }
-
     public void setMessageExchangeId(String messageExchangeId, Object retryMetaData) {
         exchangeIDToMeta.put(messageExchangeId, retryMetaData);
     }
