@@ -592,15 +592,15 @@ public class StateManagerImpl implements StateManager {
     	* where its set in the Registry
     	*/
         String stateId = state.getId();
-    	TransactionManager tm = (TransactionManager) BPELSERegistry.getInstance().lookup(
-                TransactionManager.class.getName());
+//    	TransactionManager tm = (TransactionManager) BPELSERegistry.getInstance().lookup(
+//                TransactionManager.class.getName());
         
         if (StateManager.TransactionType.XAParticipate.equals(transactionInfo.getTransactionType())) {
         	AbstractDBConnection xadbConnection = null;
         	try {
-        		tm.resume(transactionInfo.getTransaction());
-        		transactionInfo.getTransaction().registerSynchronization(
-        				transactionInfo.getSynchronization());
+//        		tm.resume(transactionInfo.getTransaction());
+//        		transactionInfo.getTransaction().registerSynchronization(
+//        				transactionInfo.getSynchronization());
 
         		xadbConnection = mDBFactory.createXAConnection();
         		performDBOperationForDBOs(insertUpdateDeleteDBOs, xadbConnection);
@@ -614,13 +614,13 @@ public class StateManagerImpl implements StateManager {
                 					stateId, insertActIds, updateActIds, deleteActIds));                	
                 }
         		
-       			tm.suspend();
+//       			tm.suspend();
         	} catch (Exception pExcep) { 
                 printSQLBatchExceptions(pExcep);
         		// Just in case the connection is stale, validate it. This will cause the connection to be removed
         		// from the DataSource (sun impl of DataSource only)
         		mDBFactory.validateXAConnection(xadbConnection);
-        		transactionInfo.getTransaction().setRollbackOnly();
+//        		transactionInfo.getTransaction().setRollbackOnly();
                 if (LOGGER.isLoggable(Level.FINEST)) {
                 	String insertActIds = insertUpdateDeleteDBOs.getActIdForInserts();
                 	String updateActIds = insertUpdateDeleteDBOs.getActIdForUpdates();
@@ -631,7 +631,7 @@ public class StateManagerImpl implements StateManager {
                     				stateId, insertActIds, updateActIds, deleteActIds));
                 	
                 }
-        		tm.suspend();
+//        		tm.suspend();
         		throw new RuntimeException(
         				I18n.loc("BPCOR-6076: Exception thrown while processing transaction type XAParticipate"), 
         				pExcep);
@@ -650,24 +650,24 @@ public class StateManagerImpl implements StateManager {
         	}
 
         } else if (StateManager.TransactionType.XAStartNew.equals(transactionInfo.getTransactionType())) {
-        	try {
+/*        	try {
         		tm.begin();
         		transactionInfo.setTransaction(tm.getTransaction());
         		tm.suspend();
         	} catch (Exception startExcep) {
         		throw new RuntimeException(I18n.loc("BPCOR-6078: Exception thrown while processing " + 
         				"transaction type XAStartNew: {0}"), startExcep);
-        	}
+        	}*/
 
         } else if (StateManager.TransactionType.XAEnd.equals(transactionInfo.getTransactionType())) {
         	AbstractDBConnection xadbConnection = null;
             boolean sucess = false;
             try {
-            	tm.resume(transactionInfo.getTransaction());
+//            	tm.resume(transactionInfo.getTransaction());
 
             	xadbConnection = mDBFactory.createXAConnection();
             	performDBOperationForDBOs(insertUpdateDeleteDBOs, xadbConnection);
-            	transactionInfo.getTransaction().commit();
+//            	transactionInfo.getTransaction().commit();
                 sucess = true;
                 if (LOGGER.isLoggable(Level.FINEST)) {
                 	String insertActIds = insertUpdateDeleteDBOs.getActIdForInserts();
@@ -685,7 +685,7 @@ public class StateManagerImpl implements StateManager {
         		boolean connOK = mDBFactory.validateXAConnection(xadbConnection);
             	// Suspend the transaction and then throw the appropriate exception which would call the condition
             	// XACanel that will perform the rollback of the transaction.
-                tm.suspend();
+//                tm.suspend();
                 if (LOGGER.isLoggable(Level.FINEST)) {
                 	String insertActIds = insertUpdateDeleteDBOs.getActIdForInserts();
                 	String updateActIds = insertUpdateDeleteDBOs.getActIdForUpdates();
@@ -728,8 +728,8 @@ public class StateManagerImpl implements StateManager {
 
         } else if (StateManager.TransactionType.XACancel.equals(transactionInfo.getTransactionType())) {
         	try {
-        		tm.resume(transactionInfo.getTransaction());
-        		transactionInfo.getTransaction().rollback();
+//        		tm.resume(transactionInfo.getTransaction());
+//        		transactionInfo.getTransaction().rollback();
                 if (LOGGER.isLoggable(Level.FINEST)) {
                     LOGGER.log(Level.FINEST, 
                     		I18n.loc("BPCOR-3045: TX type XACancel rolledback with stateid = {0}", stateId));

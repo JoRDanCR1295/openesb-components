@@ -101,7 +101,9 @@ public class TxPropagationObject {
 	 * @return
 	 */
     public boolean extractTransactionFromRequest(MessageContainer request, BPELProcessManager processMgr) {
-        mRequest = request;
+        mAtomicTxType = TransactionType.nosupport;
+        return false;
+/*        mRequest = request;
         mTransaction = request.getTransaction();
         String atomicTxType = processMgr.getAtomicTxType();
         if (mTransaction == null && atomicTxType != null && atomicTxType.equals(TX_TYPE_REQUIRED)) {
@@ -131,7 +133,7 @@ public class TxPropagationObject {
         } catch (Exception e) {
             throw new RuntimeException(I18n.loc("BPCOR-6105: Encountered an error while trying to register "
                     + "synchronization object with the transaction to be propagated."), e);
-        }
+        }*/
     }
 	
 	public Transaction getTransaction() {
