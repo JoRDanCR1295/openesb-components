@@ -1015,8 +1015,6 @@ public class OutboundMessageProcessor implements Runnable {
             if (transaction != null)
               resumeThreadTx(transaction);
 
-            connection.setAutoCommit(true);
-
             /* PP: Glassfish does not return a XADataSource and always returns
              * a DataSource30 object which does not implement getXAResource() method
             xaconnection = getXADatabaseConnection(epb);
@@ -1292,7 +1290,6 @@ public class OutboundMessageProcessor implements Runnable {
                         MessageExchange.JTA_TRANSACTION_PROPERTY_NAME);
               if (transaction != null)
                 resumeThreadTx(transaction);
-              connection.setAutoCommit(true);
               cs = executeOutboundProc(inMsg, epb, meta, jndiName, connection);
               final JDBCNormalizer normalizer =
                       new JDBCNormalizer();
@@ -1534,8 +1531,6 @@ public class OutboundMessageProcessor implements Runnable {
         String jndiName = (String)jndiConn[0];
         connection = (Connection)jndiConn[1];
 
-        if (transaction != null)
-          connection.setAutoCommit(true);
         // writeMessage(inMsg, destinationAddress, false);
         if (meta.getJDBCOperationInput().getOperationType().
                 equalsIgnoreCase(
@@ -1927,6 +1922,7 @@ public class OutboundMessageProcessor implements Runnable {
               "DBBC_E00627");
       throw e;
     }
+    connection.setAutoCommit(true);
     return new Object[] { jndiName, connection };
   }
 

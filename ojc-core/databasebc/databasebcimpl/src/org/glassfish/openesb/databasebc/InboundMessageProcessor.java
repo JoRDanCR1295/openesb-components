@@ -431,6 +431,7 @@ public class InboundMessageProcessor implements Runnable, MessageExchangeReplyLi
                 if (connection != null) {
                     if (epb.isClustered()) {
                         connection.commit();
+                        connection.setAutoCommit(true);
                     }
                     connection.close();
                 }
