@@ -79,35 +79,32 @@ public class PurgeData {
         AbstractDBConnection dbConn = null;
         Statement stmt = null;
         try {
+            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6152: Purging persistence data"));
             dbConn = connFac.createNonXAConnection();
             Connection conn = dbConn.getUnderlyingConnection();
+            conn.setAutoCommit(false);
             stmt = conn.createStatement();
-            String status = StateDBO.COMPLETE_STATUS;
-            resultSet = stmt.executeQuery("select " + STATE_TABLE
-                    + ".stateId from " + STATE_TABLE + " where "
-                    + STATE_TABLE + ".status='" + status + "'");
-            
-            int i = 0;
-            int totalCount = 0;
-            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6152: Purging persistence data"));
-            while (resultSet.next()) {
-                String instanceId = resultSet.getString(1);
-                purgeForAnInstance(instanceId, conn, false);
-                i++;
-                if ((PURGE_LOG_COUNT - 1) == i) {
-                    LOGGER.log(Level.INFO, I18n.loc("BPCOR-6153: 50 instances data purged"));    
-                    totalCount = totalCount + i;
-                    i = 1;
-                }
+            // Lock all instances using the most DB-agnostic method
+            stmt.execute("UPDATE "+STATE_TABLE+" SET stateId=stateId");
+            String stateIn = "SELECT stateId FROM "+STATE_TABLE+" WHERE status='"+StateDBO.COMPLETE_STATUS+"'";
+            for (int i = 0; i < PERSIST_TABLES_TO_CLEAR.length; i++) {
+                stmt.execute(
+                    "DELETE FROM "+PERSIST_TABLES_TO_CLEAR[i]+
+                    " WHERE stateId IN (SELECT ehid FROM "+EVENT_HDLR_TABLE+
+                    " WHERE stateId IN ("+stateIn+"))"
+                );
+                stmt.execute("DELETE FROM "+PERSIST_TABLES_TO_CLEAR[i]+" WHERE stateId IN ("+stateIn+")");
             }
-            totalCount = totalCount + i;
-            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6154: Done purging: Total {0} instances purged", totalCount));                
-            
+            stmt.execute("DELETE FROM "+EVENT_HDLR_TABLE+" WHERE stateId IN ("+stateIn+")");
+            int totalCount = stmt.executeUpdate("DELETE FROM "+STATE_TABLE+" WHERE status='"+StateDBO.COMPLETE_STATUS+"'");
+            conn.commit();
+            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6154: Done purging: Total {0} instances purged", totalCount));
         } catch (Exception e) {
-        	// This could be due to the fact that the database connection is bad. Check for it and if so 
-        	// mark it as bad. But do not attempt retries here.
-        	connFac.validateNonXAConnection(dbConn);
-        	throw e;
+            // This could be due to the fact that the database connection is bad. Check for it and if so
+            // mark it as bad. But do not attempt retries here.
+            connFac.validateNonXAConnection(dbConn);
+            LOGGER.log(Level.WARNING, I18n.loc("BPCOR-6196: Exception while purging instances: {0}", e));
+            throw e;
         } finally {
             if (resultSet != null) {
                 try {
@@ -134,76 +131,6 @@ public class PurgeData {
             }
         }
     }
-    
-    private void purgeForAnInstance(String instanceId, Connection conn, boolean isEH) throws Exception {
-        
-        ResultSet resultSet = null;
-        Statement stmt = null;
-        try {
-            stmt = conn.createStatement();
-            String queryPart1 = "DELETE FROM ";
-            String queryPart2 = " WHERE stateid = '";
-            String queryPart3 = "'";
-            for (int i = 0; i < PERSIST_TABLES_TO_CLEAR.length; i++) {
-                String tableName = PERSIST_TABLES_TO_CLEAR[i];
-                StringBuilder queryBldr = new StringBuilder();
-                queryBldr.append(queryPart1);
-                queryBldr.append(tableName);
-                queryBldr.append(queryPart2);
-                queryBldr.append(instanceId);
-                queryBldr.append(queryPart3);
-                
-                stmt.execute(queryBldr.toString());
-            }
-            resultSet = stmt.executeQuery("select " + EVENT_HDLR_TABLE
-                    + ".ehid from " + EVENT_HDLR_TABLE + " where "
-                    + EVENT_HDLR_TABLE + ".stateid='" + instanceId + "'");
-            
-            while (resultSet.next()) {
-                String ehId = resultSet.getString(1);
-                purgeForAnInstance(ehId, conn, true);
-            }
-            // delete the event handler
-            StringBuilder queryBldr = new StringBuilder();
-            queryBldr.append(queryPart1);
-            queryBldr.append(EVENT_HDLR_TABLE);
-            queryBldr.append(queryPart2);
-            queryBldr.append(instanceId);
-            queryBldr.append(queryPart3);
-
-            stmt.execute(queryBldr.toString()); 
-            
-            if (!isEH) {
-                // finally delete the entry from the state table.
-                queryBldr = new StringBuilder();
-                queryBldr.append(queryPart1);
-                queryBldr.append(STATE_TABLE);
-                queryBldr.append(queryPart2);
-                queryBldr.append(instanceId);
-                queryBldr.append(queryPart3);
-                
-                stmt.execute(queryBldr.toString());                
-            }
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException resCloseExcp) {
-                    LOGGER.log(Level.WARNING, I18n.loc("BPCOR-6061: Exception occured while closing a JDBC Resultset"), 
-                    		resCloseExcp);
-                }
-            }            
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException stmtCloseExcp) {
-                    LOGGER.log(Level.WARNING, I18n.loc("BPCOR-6065: Exception while closing a JDBC statement"), 
-                    		stmtCloseExcp);
-                }
-            }
-        }
-    }
-    
     
     public void purgeMonitoringData(DBConnectionFactory connFac) throws Exception {
         
