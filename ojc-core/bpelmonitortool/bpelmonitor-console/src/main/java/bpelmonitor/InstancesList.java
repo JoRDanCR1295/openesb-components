@@ -5,6 +5,7 @@
 package bpelmonitor;
 
 import java.util.ArrayList;
+import bpelmonitor.model.ProcessInstance;
 
 /**
  *

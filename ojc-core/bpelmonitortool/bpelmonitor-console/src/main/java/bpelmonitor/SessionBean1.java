@@ -9,7 +9,7 @@ package bpelmonitor;
 import bpelmonitor.model.DashboardEntry;
 import bpelmonitor.model.InstanceFilter;
 import com.sun.rave.web.ui.appbase.AbstractSessionBean;
-import com.sun.sql.rowset.CachedRowSetXImpl;
+import com.sun.rowset.CachedRowSetImpl;
 import java.util.ArrayList;
 import javax.faces.FacesException;
 import javax.swing.tree.DefaultTreeModel;
@@ -47,22 +47,22 @@ public class SessionBean1 extends AbstractSessionBean {
         monitorbpelvariableRowSet.setCommand("SELECT ALL USR2.MONITORBPELVARIABLE.INSTANCEID, USR2.MONITORBPELVARIABLE.SCOPEID, USR2.MONITORBPELVARIABLE.VARID, USR2.MONITORBPELVARIABLE.VARNAME, USR2.MONITORBPELVARIABLE.ISFAULT, USR2.MONITORBPELVARIABLE.VARVALUE  FROM USR2.MONITORBPELVARIABLE WHERE USR2.MONITORBPELVARIABLE.INSTANCEID = ?");
         monitorbpelvariableRowSet.setTableName("MONITORBPELVARIABLE");
     }
-    private CachedRowSetXImpl monitorbpelinstanceRowSet = new CachedRowSetXImpl();
+    private CachedRowSetImpl monitorbpelinstanceRowSet = new CachedRowSetImpl();
 
-    public CachedRowSetXImpl getMonitorbpelinstanceRowSet() {
+    public CachedRowSetImpl getMonitorbpelinstanceRowSet() {
         return monitorbpelinstanceRowSet;
     }
 
-    public void setMonitorbpelinstanceRowSet(CachedRowSetXImpl crsxi) {
+    public void setMonitorbpelinstanceRowSet(CachedRowSetImpl crsxi) {
         this.monitorbpelinstanceRowSet = crsxi;
     }
-    private CachedRowSetXImpl monitorbpelvariableRowSet = new CachedRowSetXImpl();
+    private CachedRowSetImpl monitorbpelvariableRowSet = new CachedRowSetImpl();
 
-    public CachedRowSetXImpl getMonitorbpelvariableRowSet() {
+    public CachedRowSetImpl getMonitorbpelvariableRowSet() {
         return monitorbpelvariableRowSet;
     }
 
-    public void setMonitorbpelvariableRowSet(CachedRowSetXImpl crsxi) {
+    public void setMonitorbpelvariableRowSet(CachedRowSetImpl crsxi) {
         this.monitorbpelvariableRowSet = crsxi;
     }
     // </editor-fold>

@@ -6,9 +6,10 @@ package bpelmonitor;
 
 import bpelmonitor.jbiruntime.BPELSERuntime;
 import bpelmonitor.jbiruntime.JBIRuntime;
-import bpelmonitor.jbiruntime.ServiceAssembly;
-import bpelmonitor.jbiruntime.ServiceUnit;
 import com.icesoft.faces.component.tree.IceUserObject;
+import bpelmonitor.model.ServiceAssembly;
+import bpelmonitor.model.ServiceUnit;
+import bpelmonitor.model.DashboardEntry;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

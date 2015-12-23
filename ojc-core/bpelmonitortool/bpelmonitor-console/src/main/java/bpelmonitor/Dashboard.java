@@ -5,6 +5,7 @@
 package bpelmonitor;
 
 import bpelmonitor.jbiruntime.BPELSERuntime;
+import bpelmonitor.model.DashboardEntry;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
