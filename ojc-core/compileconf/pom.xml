@@ -78,6 +78,22 @@
                             </tasks>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>download-ojdbc5</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <get src="http://www.java2s.com/Code/JarDownload/ojdbc5/ojdbc5-11.2.0.2.0.jar.zip"
+                                     dest="${SRCROOT}/ojc-core/vendor-libs/ojdbc5-11.2.0.2.0.jar.zip"
+                                     verbose="false"
+                                     usetimestamp="true"/>
+                                <unzip src="${SRCROOT}/ojc-core/vendor-libs/ojdbc5-11.2.0.2.0.jar.zip" dest="${SRCROOT}/ojc-core/vendor-libs/ojdbc5" />
+                            </tasks>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -833,6 +849,96 @@
                             <file>${gfbase}/jbi/lib/jbi-admin-common.jar</file>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>install-hulp-meas-itf</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>net.sf.hulp.meas</groupId>
+                            <artifactId>net.sf.hulp.meas.itf</artifactId>
+                            <version>2.1-SNAPSHOT</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/hulp/net.sf.hulp.meas.itf-2.1-20141106.220629-1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-hulp-meas-impl</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>net.sf.hulp.meas</groupId>
+                            <artifactId>net.sf.hulp.meas.impl</artifactId>
+                            <version>2.1-SNAPSHOT</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/hulp/net.sf.hulp.meas.impl-2.1-20141106.220629-1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-hulp-i18ntask</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>net.java.hulp.i18ntask</groupId>
+                            <artifactId>net.java.hulp.i18ntask</artifactId>
+                            <version>2.2</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/hulp/net.java.hulp.i18ntask-2.2.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jmsjca-core</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>com.stc.jmsjca</groupId>
+                            <artifactId>com.stc.jmsjca.core</artifactId>
+                            <version>6.2.0-SNAPSHOT</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/jmsjca/com.stc.jmsjca.core-6.2.0-20141106.223154-1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-jmsjca-raunifiedjms</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>com.stc.jmsjca</groupId>
+                            <artifactId>com.stc.jmsjca.raunifiedjms</artifactId>
+                            <version>6.2.0-SNAPSHOT</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/jmsjca/com.stc.jmsjca.raunifiedjms-6.2.0-20141106.223220-1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-ojdbc5</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                            <packaging>jar</packaging>
+                            <groupId>com.oracle.jdbc.java15</groupId>
+                            <artifactId>ojdbc5</artifactId>
+                            <version>11.2.0.2.0</version>
+                            <file>${SRCROOT}/ojc-core/vendor-libs/ojdbc5/ojdbc5-11.2.0.2.0.jar</file>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -845,14 +951,11 @@
         </plugins>
     </build>
 
+    <!-- Not required for build, everything copied to ojc-core/vendor-libs/
     <repositories>
-        <!--  we currently only pick up wsdl4j version 1.6.2 from here.  RT 8/20/07.  -->
         <repository>
-            <!--<id>cropwiki m2repo</id>-->
             <id>build openesb</id>
-            <!--<name>cropwiki maven2 repository</name>-->
             <name>build openesb</name>
-            <!--<url>http://cropwiki.irri.org/m2repo</url>-->
             <url>http://build.open-esb.net:8081/nexus/content/repositories/openesb-release</url>
             <releases>
                 <enabled>true</enabled>
@@ -877,16 +980,12 @@
             </snapshots>
         </repository>
     </repositories>
+    -->
 
     <!--
      ! these are tooling dependencies that we want to download but not include in our compile path
      -->
     <dependencies>
-        <dependency>
-            <groupId>net.java.hulp.i18ntask</groupId>
-            <artifactId>net.java.hulp.i18ntask</artifactId>
-            <version>${I18NTASK_VERSION}</version>
-        </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
