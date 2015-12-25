@@ -36,6 +36,9 @@ import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import java.util.logging.Logger;
+import java.sql.SQLFeatureNotSupportedException;
+
 /**
  * Traditionally, the mechanism is that you put the JDBC driver somewhere in the classpath
  * and then use class.forName() to find and load the driver. One problem with this is that
@@ -86,4 +89,7 @@ public class JDBCProxyDriver implements Driver {
         return this.driver.jdbcCompliant();
     }
 
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return this.driver.getParentLogger();
+    }
 }
