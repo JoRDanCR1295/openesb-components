@@ -164,6 +164,14 @@ public class AxionStatement extends BaseAxionStatement implements Statement {
         return 0;
     }
 
+    public boolean isCloseOnCompletion() throws SQLException {
+        return false;
+    }
+
+    public void closeOnCompletion() throws SQLException {
+        throw new SQLException("Not supported");
+    }
+
     public ResultSet getResultSet() throws SQLException {
         ResultSet rs = getCurrentResultSet();
         if (rs != null) {

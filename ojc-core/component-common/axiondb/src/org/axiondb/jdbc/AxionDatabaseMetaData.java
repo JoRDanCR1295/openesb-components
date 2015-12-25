@@ -188,6 +188,10 @@ public class AxionDatabaseMetaData implements DatabaseMetaData {
     public boolean storesLowerCaseIdentifiers() throws SQLException {
         return false;
     }
+
+    public boolean generatedKeyAlwaysReturned() throws SQLException {
+        return false;
+    }
     
     /**
      * Returns <code>false</code>, since Axion currently ignores case in identifiers.
@@ -611,6 +615,12 @@ public class AxionDatabaseMetaData implements DatabaseMetaData {
         }
         ResultSet rset = stmt.executeQuery("select TABLE_CAT, TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, COLUMN_SIZE, BUFFER_LENGTH, DECIMAL_DIGITS, NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEF, SQL_DATA_TYPE, SQL_DATETIME_SUB, CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE, SCOPE_CATALOG, SCOPE_SCHEMA, SCOPE_TABLE, SOURCE_DATA_TYPE from AXION_COLUMNS "
                 + where + " order by TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
+        return rset;
+    }
+    
+    public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        Statement stmt = _connection.createStatement();
+        ResultSet rset = stmt.executeQuery("select TABLE_CAT, TABLE_SCHEM, TABLE_NAME, COLUMN_NAME, DATA_TYPE, TYPE_NAME, COLUMN_SIZE, BUFFER_LENGTH, DECIMAL_DIGITS, NUM_PREC_RADIX, NULLABLE, REMARKS, COLUMN_DEF, SQL_DATA_TYPE, SQL_DATETIME_SUB, CHAR_OCTET_LENGTH, ORDINAL_POSITION, IS_NULLABLE, SCOPE_CATALOG, SCOPE_SCHEMA, SCOPE_TABLE, SOURCE_DATA_TYPE from AXION_COLUMNS where 0=1 order by TABLE_SCHEM, TABLE_NAME, ORDINAL_POSITION");
         return rset;
     }
     

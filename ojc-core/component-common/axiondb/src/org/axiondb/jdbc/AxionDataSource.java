@@ -43,6 +43,8 @@ package org.axiondb.jdbc;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+import java.sql.SQLFeatureNotSupportedException;
 
 import javax.sql.DataSource;
 
@@ -89,6 +91,10 @@ public class AxionDataSource extends ConnectionFactory implements DataSource {
 
     public void setLogWriter(PrintWriter log) {
         _logWriter = log;
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     public <T> T unwrap(Class<T> iface) throws SQLException {

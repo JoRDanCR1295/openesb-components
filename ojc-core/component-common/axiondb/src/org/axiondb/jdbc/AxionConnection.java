@@ -60,6 +60,7 @@ import java.sql.Struct;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import org.axiondb.AxionException;
 import org.axiondb.Database;
@@ -111,6 +112,10 @@ public class AxionConnection implements Connection {
         }
     }
 
+    public void abort(Executor executor) throws SQLException {
+        throw new SQLException("Not supported");
+    }
+
     public void commit() throws SQLException {
         commit(true);
     }
@@ -131,6 +136,20 @@ public class AxionConnection implements Connection {
 
     public boolean getAutoCommit() throws SQLException {
         return _autoCommit;
+    }
+
+    public int getNetworkTimeout() throws SQLException {
+        return 0;
+    }
+
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+    }
+
+    public String getSchema() throws SQLException {
+        return null;
+    }
+
+    public void setSchema(String schema) throws SQLException {
     }
 
     public String getCatalog() throws SQLException {

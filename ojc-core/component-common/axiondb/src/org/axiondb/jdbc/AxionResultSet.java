@@ -562,6 +562,14 @@ public class AxionResultSet implements ResultSet {
         throw new SQLException("Not supported");
     }
     
+    public <T> T getObject(int i, Class<T> type) throws SQLException {
+        return (T)getObject(i);
+    }
+    
+    public <T> T getObject(String colName, Class<T> type) throws SQLException {
+        return (T)getObject(colName);
+    }
+    
     public Object getObject(String colName) throws SQLException {
         return getObject(getResultSetIndexForColumnName(colName));
     }

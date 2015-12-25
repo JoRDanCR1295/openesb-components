@@ -274,6 +274,10 @@ public abstract class BaseAxionResultSetDecorator implements ResultSet {
         return _rs.getObject(i, map);
     }
 
+    public <T> T getObject(int i, Class<T> type) throws SQLException {
+        return (T)getObject(i);
+    }
+    
     public Object getObject(String columnName) throws SQLException {
         return _rs.getObject(columnName);
     }
@@ -282,6 +286,10 @@ public abstract class BaseAxionResultSetDecorator implements ResultSet {
         return _rs.getObject(colName, map);
     }
 
+    public <T> T getObject(String colName, Class<T> type) throws SQLException {
+        return (T)getObject(colName);
+    }
+    
     public Ref getRef(int i) throws SQLException {
         return _rs.getRef(i);
     }

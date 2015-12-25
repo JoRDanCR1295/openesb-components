@@ -50,6 +50,9 @@ import java.util.Properties;
 import org.axiondb.AxionException;
 import org.axiondb.util.ExceptionConverter;
 
+import java.util.logging.Logger;
+import java.sql.SQLFeatureNotSupportedException;
+
 /**
  * A {@link Driver} implementation.
  *
@@ -93,6 +96,10 @@ public class AxionDriver extends ConnectionFactory implements Driver {
 
    public boolean jdbcCompliant() {
       return false;
+   }
+
+   public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+      throw new SQLFeatureNotSupportedException();
    }
 }
 
