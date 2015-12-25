@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<jbi version="1.0"
+     xmlns="http://java.sun.com/xml/ns/jbi"
+     xmlns:cfg="http://www.sun.com/jbi/Configuration/V1.0"    
+     xmlns:identification="http://www.sun.com/jbi/descriptor/identification/v1.0" 
+     xmlns:logging="http://www.sun.com/jbi/descriptor/logging"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/jbi ./jbi.xsd">
+
+    <!-- identification information about this binding -->
+    <component type="binding-component" component-class-loader-delegation="self-first" bootstrap-class-loader-delegation="self-first">
+        <identification>
+            <name>${component.name}</name>
+            <description>REST Binding Component</description>
+            <identification:VersionInfo component-version="${project.version}" build-number="${BUILD_NUMBER}"/>
+        </identification>
+        <component-class-name description="REST Binding Component">net.openesb.jbi.restbc.jbiadapter.RestComponent</component-class-name>
+        <component-class-path>
+            <!-- OpenESB Dependencies -->
+            <path-element>lib/restbc-jbiadapter.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/wsdl4j.jar</path-element>
+            <path-element>lib/wsdl4jext.jar</path-element>
+            <path-element>lib/customized-xmlbeans.jar</path-element>
+            <path-element>lib/resolver.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+            <path-element>lib/itf.jar</path-element>
+            
+            <!-- Jersey Dependencies -->
+            <path-element>lib/jersey-client.jar</path-element>
+            <path-element>lib/jersey-container-grizzly2-http.jar</path-element>
+            <path-element>lib/jersey-container-grizzly2-servlet.jar</path-element>
+            <path-element>lib/jersey-common.jar</path-element>
+            <path-element>lib/jersey-container-servlet-core.jar</path-element>
+            <path-element>lib/jersey-container-servlet.jar</path-element>
+            <path-element>lib/jersey-server.jar</path-element>
+            <path-element>lib/jersey-guava.jar</path-element>
+            
+            <!-- Grizzly Dependencies -->
+            <path-element>lib/grizzly-framework.jar</path-element>
+            <path-element>lib/grizzly-http-server.jar</path-element>
+            <path-element>lib/grizzly-http-servlet.jar</path-element>
+            <path-element>lib/grizzly-http.jar</path-element>
+            
+            <!-- Jackson Dependencies -->
+            <path-element>lib/jackson-core.jar</path-element>
+            <path-element>lib/jackson-annotations.jar</path-element>
+            <path-element>lib/jackson-dataformat-xml.jar</path-element>
+            <path-element>lib/jackson-databind.jar</path-element>
+            
+            <!-- HK2 Dependencies -->
+            <path-element>lib/hk2-api.jar</path-element>
+            <path-element>lib/hk2-locator.jar</path-element>
+            <path-element>lib/hk2-utils.jar</path-element>
+            
+            <!-- JAXRS Dependencies -->
+            <path-element>lib/javax.ws.rs-api.jar</path-element>
+        </component-class-path>
+        <bootstrap-class-name>net.openesb.jbi.restbc.jbiadapter.RestBootstrap</bootstrap-class-name>
+        <bootstrap-class-path>
+            <path-element>lib/restbc-jbiadapter.jar</path-element>
+            <path-element>lib/common-util.jar</path-element>
+            <path-element>lib/componentsl.jar</path-element>
+            <path-element>lib/qos.jar</path-element>
+        </bootstrap-class-path>
+        <cfg:Configuration name="restbc-configuration">
+            <cfg:PropertyGroup name="NmrThreadPool" displayName="NMRThreadPool" displayDescription="Configure NMR ThreadPool" showDisplay="all">
+                <cfg:Property name="NmrThreadPoolSize"
+                              displayName="NMR Core Thread Pool Size"
+                              displayDescription="Number of core threads in ThreadPoolExecutor for processing NMR messages."
+                              type="xsd:int"
+                              defaultValue="16"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="100"/>
+                </cfg:Property>
+                <cfg:Property name="NmrMaxThreadPoolSize"
+                              displayName="NMR Max Thread Pool Size"
+                              displayDescription="Maximum number of threads in ThreadPoolExecutor for processing NMR messages."
+                              type="xsd:int"
+                              defaultValue="64"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="500"/>
+                </cfg:Property>
+            </cfg:PropertyGroup>
+            <cfg:PropertyGroup name="DefaultHTTPListener" displayName="HTTPListener" displayDescription="Configure Default HTTP Listener" showDisplay="all">
+                <cfg:Property name="DefaultHttpListenerPort"
+                              displayName="Default HTTP Listener Port"
+                              displayDescription="Default HTTP Listener Port"
+                              type="xsd:int"
+                              defaultValue="9696"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1024"/>
+                    <cfg:Constraint facet="maxInclusive" value="65535"/>
+                </cfg:Property>
+                <cfg:Property name="DefaultHttpListenerThreads"
+                              displayName="Default HTTP Listener Threads"
+                              displayDescription="Default HTTP Listener Threads"
+                              type="xsd:int"
+                              defaultValue="32"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="500"/>
+                </cfg:Property>
+            </cfg:PropertyGroup>
+            <cfg:PropertyGroup name="DefaultHTTPSListener" displayName="HTTPSListener" displayDescription="Configure Default HTTPS Listener" showDisplay="all">
+                <cfg:Property name="DefaultHttpsListenerPort"
+                              displayName="Default HTTPS Listener Port"
+                              displayDescription="Default HTTPS Listener Port"
+                              type="xsd:int"
+                              defaultValue="9697"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1024"/>
+                    <cfg:Constraint facet="maxInclusive" value="65535"/>
+                </cfg:Property>
+                <cfg:Property name="DefaultHttpsListenerThreads"
+                              displayName="Default HTTPS Listener Threads"
+                              displayDescription="Default HTTPS Listener Threads"
+                              type="xsd:int"
+                              defaultValue="32"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                    <cfg:Constraint facet="minInclusive" value="1"/>
+                    <cfg:Constraint facet="maxInclusive" value="500"/>
+                </cfg:Property>
+            </cfg:PropertyGroup>
+            <cfg:PropertyGroup name="JKS" displayName="JKS" displayDescription="Configure Java Key Stores" showDisplay="all">
+                <cfg:Property name="TruststorePassword"
+                              displayName="Truststore Password"
+                              displayDescription="Truststore Password"
+                              type="xsd:string"
+                              defaultValue="changeit"
+                              encrypted="true"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                </cfg:Property>
+                <cfg:Property name="KeystorePassword"
+                              displayName="Keystore Password"
+                              displayDescription="Keystore Password"
+                              type="xsd:string"
+                              defaultValue="changeit"
+                              encrypted="true"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                </cfg:Property>
+            </cfg:PropertyGroup>
+            <cfg:PropertyGroup name="OtherConfigurations" displayName="OtherConfigurations" displayDescription="Other Configurations" showDisplay="all">
+                <cfg:Property name="EnableHostnameVerifier"
+                              displayName="enable/disable javax.net.ssl.HostnameVerifier"
+                              displayDescription="enable/disable javax.net.ssl.HostnameVerifier, if set to false, verify() method always return true"
+                              type="xsd:boolean"
+                              defaultValue="false"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                </cfg:Property>
+                <cfg:Property name="EnableClientAuth"
+                              displayName="enable/disable SSL Client Auth"
+                              displayDescription="enable/disable SSL Client Auth"
+                              type="xsd:boolean"
+                              defaultValue="false"
+                              showDisplay="all"
+                              isComponentRestartRequired="true">
+                </cfg:Property>
+            </cfg:PropertyGroup>
+            
+            <cfg:ApplicationConfiguration>
+                <cfg:Property name="configurationName"
+                              type="xsd:string" 
+                              displayName="Name" 
+                              displayDescription="Name of the Application Configuration object" 
+                              required="true"
+                              isApplicationRestartRequired="true"/>
+                <cfg:Property name="url" 
+                              type="xsd:string"
+                              displayName="URL" 
+                              displayDescription="HTTP URL"  
+                              required="true"
+                              isApplicationRestartRequired="true"/>
+            </cfg:ApplicationConfiguration>
+            
+            <cfg:ApplicationVariable isApplicationRestartRequired="true">
+                <cfg:name/>
+                <cfg:type/>
+                <cfg:value/>
+            </cfg:ApplicationVariable>
+        </cfg:Configuration>
+        <logging:Logging root="com.sun.jbi.restbc">
+            <logging:logger displayName="RestBC Bootstrap" addPrefix="false">com.sun.jbi.restbc.jbiadapter.RestBootstrap</logging:logger>
+            <logging:logger displayName="RestBC Component" addPrefix="false">com.sun.jbi.restbc.jbiadapter.RestComponent</logging:logger>
+            <logging:logger displayName="RestBC ServiceUnit Manager" addPrefix="false">com.sun.jbi.restbc.jbiadapter.RestSUManager</logging:logger>
+            <logging:logger displayName="RestBC ServiceUnit" addPrefix="false">com.sun.jbi.restbc.jbiadapter.ServiceUnit</logging:logger>
+            <logging:logger displayName="RestBC Receiver" addPrefix="false">com.sun.jbi.restbc.jbiadapter.Receiver</logging:logger>
+            <logging:logger displayName="RestBC MessageProcessor" addPrefix="false">com.sun.jbi.restbc.jbiadapter.MessageProcessor</logging:logger>
+            <logging:logger displayName="RestBC ClientWrapper" addPrefix="false">com.sun.jbi.restbc.jbiadapter.JerseyClientWrapper</logging:logger>
+            <logging:logger displayName="RestBC RootResource" addPrefix="false">com.sun.jbi.restbc.jbiadapter.inbound.JerseyRootResource</logging:logger>
+            <logging:logger displayName="RestBC InboundDelegator" addPrefix="false">com.sun.jbi.restbc.jbiadapter.inbound.InboundDelegator</logging:logger>
+        </logging:Logging>
+    </component>
+</jbi>
+
+

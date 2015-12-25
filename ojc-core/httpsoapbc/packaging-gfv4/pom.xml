@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.open-esb.components.httpbc</groupId>
+        <artifactId>parent</artifactId>
+        <version>${httpsoapbc.artifact.version}</version>
+    </parent>
+
+    <artifactId>httpbc-gfv4-installer</artifactId>
+    <name>OpenESB - Components - HTTPBC - Packaging for Glassfish v4</name>
+    <version>${httpsoapbc.artifact.version}</version>
+    <description>HTTPBC packaging description</description>
+
+    <build>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                    <include>*.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-fetch-deps</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <stripVersion>true</stripVersion>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>${project.artifactId}-generate-i18n-descriptors</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- generate i18n jbi descriptors -->
+                                <taskdef name="i18n-xml" classname="${I18N_XML_TASK_CLASS}" />
+                                <i18n-xml file="${project.build.outputDirectory}/META-INF/jbi.xml"
+                                          properties="src/main/resources/sun-http-binding-config.properties"
+                                          outputDir="${project.build.outputDirectory}/META-INF">
+                                    <fileset dir="src/main/resources"
+                                             includes="sun-http-binding-config*.properties"/>
+                                    <namespace prefix="jbi" uri="http://java.sun.com/xml/ns/jbi"/>
+                                    <namespace prefix="cfg" uri="http://www.sun.com/jbi/Configuration/V1.0"/>
+                                    <expr query="//cfg:Property"
+                                          i18nAttr="displayName" keyAttr="name"/>
+                                    <expr query="//cfg:Property"
+                                          i18nAttr="displayDescription" keyAttr="name"/>
+                                    <expr query="/jbi:jbi/jbi:component/jbi:identification/jbi:description"/>
+                                </i18n-xml>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.open-esb.external.hulp</groupId>
+                        <artifactId>i18ntask</artifactId>
+                        <version>3.0.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>net.open-esb.components.httpbc</groupId>
+            <artifactId>httpsoapbcimpl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>resolver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>componentsl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.hulp.meas</groupId>
+            <artifactId>net.sf.hulp.meas.itf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>qos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>open-jbi-components</groupId>
+            <artifactId>common-util</artifactId>
+        </dependency>
+    </dependencies>
+</project>

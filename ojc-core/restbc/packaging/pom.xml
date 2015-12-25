@@ -8,13 +8,13 @@
  # in compliance with the License.
  #
  # You can obtain a copy of the license at
- # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # https://net.open-esb.components.dev.java.net/public/CDDLv1.0.html.
  # See the License for the specific language governing
  # permissions and limitations under the License.
  #
  # When distributing Covered Code, include this CDDL
  # HEADER in each file and include the License file at
- # https://open-jbi-components.dev.java.net/public/CDDLv1.0.html.
+ # https://net.open-esb.components.dev.java.net/public/CDDLv1.0.html.
  # If applicable add the following below this CDDL HEADER,
  # with the fields enclosed by brackets "[]" replaced with
  # your own identifying information: Portions Copyright
@@ -35,16 +35,15 @@
         <relativePath>../../build-common/package-common</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>open-jbi-components</groupId>
     <artifactId>restbc-installer</artifactId>
-    <name>sun-rest-binding</name>
     <version>${restbc.artifact.version}</version>
+    <name>OpenESB - Components - RESTBC - Packaging</name>
     <description>Creates an installable jar for the Rest Binding Component</description>
     <build>
         <resources>
             <resource>
                 <targetPath>META-INF</targetPath>
-                <directory>src</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
                     <include>*.xml</include>
@@ -52,7 +51,7 @@
             </resource>
             <resource>
                 <targetPath>./</targetPath>
-                <directory>src</directory>
+                <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <includes>
                     <include>config.properties</include>
@@ -60,54 +59,9 @@
                 </includes>
             </resource>
         </resources>
+       
         <plugins>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>${project.artifactId}-generate-i18n-descriptors</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <!-- generate i18n jbi descriptors -->
-                                <taskdef name="i18n-xml" classname="${I18N_XML_TASK_CLASS}" classpath="${I18NTASK_JAR}" />
-                                <i18n-xml
-                                    file="${project.build.sourceDirectory}/jbi.xml"
-                                    properties="${project.build.sourceDirectory}/restbc-config.properties"
-                                    outputDir="${project.build.outputDirectory}/META-INF">
-                                    <fileset dir="${project.build.sourceDirectory}"
-                                             includes="restbc-config*.properties"/>
-                                    <namespace prefix="jbi" uri="http://java.sun.com/xml/ns/jbi"/>
-                                    <namespace prefix="cfg" uri="http://www.sun.com/jbi/Configuration/V1.0"/>
-                                    <expr query="//cfg:Property"
-                                          i18nAttr="displayName" keyAttr="name"/>
-                                    <expr query="//cfg:Property"
-                                          i18nAttr="displayDescription" keyAttr="name"/>
-                                    <expr query="/jbi:jbi/jbi:component/jbi:identification/jbi:description"/>
-                                </i18n-xml>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>${project.artifactId}-rename-jars</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <!-- rename jbiadapter jar -->
-                                <move
-                                    file="${project.build.outputDirectory}/lib/restjbiadapter.jar"
-                                    tofile="${project.build.outputDirectory}/lib/restbc-jbiadapter.jar" />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -172,14 +126,17 @@
                             lib/customized-xmlbeans.jar,
                             lib/resolver.jar,
                             lib/qos.jar,
-			                lib/jersey-bundle.jar,
-			                lib/grizzly-servlet-webserver.jar,
-			                lib/asm.jar,
-                            lib/jackson-core-asl.jar,
-                            lib/jackson-mapper-asl.jar,
-			                lib/jsr311-api.jar,
+                            lib/jersey-bundle.jar,
+                            lib/grizzly-servlet-webserver.jar,
+                            lib/asm.jar,
+                            lib/jackson-core.jar,
+                            lib/jackson-dataformat-xml.jar,
+                            lib/jackson-annotations.jar,
+                            lib/jackson-databind.jar,
+                            lib/jackson-module-jaxb-annotations.jar,
+                            lib/jsr311-api.jar,
                             lib/net.sf.hulp.meas.itf.jar,
-                            lib/net.sf.hulp.meas.impl.jar			    
+                            lib/net.sf.hulp.meas.impl.jar
                         </Bundle-ClassPath>
                         <Import-Package>
                             javax.activation.*,
@@ -203,8 +160,8 @@
                             org.glassfish.openesb.api.service
                         </Import-Package>
                         <Bundle-Activator>com.sun.jbi.restbc.jbiadapter.inbound.ComponentBundleActivator</Bundle-Activator>
-                        <!--
-                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <!--  
+                         <DynamicImport-Package>*</DynamicImport-Package>
                         -->
                     </instructions>
                 </configuration>
@@ -214,70 +171,57 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>open-jbi-components</groupId>
-            <artifactId>restjbiadapter</artifactId>
-            <optional>true</optional>
+            <groupId>net.open-esb.components.restbc</groupId>
+            <artifactId>restbc-jbiadapter</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>wsdl4j</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>wsdl4jext</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>customized-xmlbeans</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>resolver</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>componentsl</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>qos</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>open-jbi-components</groupId>
             <artifactId>common-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
             <optional>true</optional>
+            <version>3.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-bundle</artifactId>
-            <optional>true</optional>
-            <version>1.0.3.1</version>
-        </dependency>	
-        <dependency>
-          <groupId>com.sun.grizzly</groupId>
-          <artifactId>grizzly-servlet-webserver</artifactId>
-          <optional>true</optional>
-          <version>1.9.61</version>
-        </dependency>
-        <dependency>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>jsr311-api</artifactId>
-          <optional>true</optional>
-          <version>1.0</version>
-        </dependency>
-        <dependency>
-          <groupId>asm</groupId>
-          <artifactId>asm</artifactId>
-          <optional>true</optional>
-          <version>3.1</version>
-        </dependency>
-        <dependency>
+        -->
+        <!-- dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <optional>true</optional>
@@ -288,18 +232,35 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <optional>true</optional>
             <version>1.9.5</version>
+        </dependency-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.hulp.meas</groupId>
             <artifactId>net.sf.hulp.meas.itf</artifactId>
-            <optional>true</optional>
-            <version>2.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.hulp.meas</groupId>
-            <artifactId>net.sf.hulp.meas.impl</artifactId>
-            <optional>true</optional>
-            <version>2.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+    <properties>
+        <component.name>sun-rest-binding</component.name>
+        <jersey.version>2.14</jersey.version>
+        <jackson.version>2.4.2</jackson.version>
+    </properties>
 </project>
