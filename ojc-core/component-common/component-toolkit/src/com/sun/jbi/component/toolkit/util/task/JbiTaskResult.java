@@ -31,8 +31,8 @@
 package com.sun.jbi.component.toolkit.util.task;
 
 /**
- * Used to report the results of the implementation’s execution of the task, 
- * and, optionally, the result of the component’s part of executing the task. 
+ * Used to report the results of the implementation's execution of the task, 
+ * and, optionally, the result of the component's part of executing the task. 
  * This latter feature will appear only if applicable (the task involves 
  * interaction with a component, and the task proceeds to the point where that 
  * interaction was started.)

@@ -33,17 +33,17 @@ package com.sun.jbi.component.toolkit.util.task;
 import javax.jbi.component.ServiceUnitManager;
 
 /**
- * Used to report either the results of the JBI implementation’s execution 
+ * Used to report either the results of the JBI implementation's execution 
  * of the task (a &quot;framework&quot; task result) OR the results of 
  * interaction(s) with a component (a &quot;component&quot; task result).
  * <p>
  * A framework task result includes an optional element, 
- * <code>is-cause-framework</code>, which the implementation MUST set to “YES” 
+ * <code>is-cause-framework</code>, which the implementation MUST set to "YES" 
  * in cases where the JBI implementation is the cause of the task failing to execute.
  * <p>
- * A component task result includes the component’s unique name and details 
+ * A component task result includes the component's unique name and details 
  * about the component task results. For example, this is used by the 
- * component’s {@link ServiceUnitManager} implementation to return the results 
+ * component's {@link ServiceUnitManager} implementation to return the results 
  * of {@link ServiceUnitManager#deploy(String, String)} and 
  * {@link ServiceUnitManager#undeploy(String, String)}.
  *  

@@ -31,7 +31,7 @@
 package com.sun.jbi.component.toolkit.util.task;
 
 /**
- * The document element, which, along with the document’s namespace, identifies 
+ * The document element, which, along with the document's namespace, identifies 
  * this as a JBI management task result/status report.
  * 
  * @author Kevan Simpson

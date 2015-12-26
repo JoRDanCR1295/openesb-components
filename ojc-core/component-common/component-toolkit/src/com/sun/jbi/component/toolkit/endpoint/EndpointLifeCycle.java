@@ -67,7 +67,7 @@ public interface EndpointLifeCycle {
     /**
      * Service engines &quot;pause&quot; executing business logic when it reaches 
      * an invoke, whereas binding components (BCs) stop inbound external connections 
-     * (or don’t service them).
+     * (or don't service them).
      * 
      * @param srvcUnit The service unit for which to stop consuming.
      * @throws DeploymentException if an error occurs stopping consuming.
