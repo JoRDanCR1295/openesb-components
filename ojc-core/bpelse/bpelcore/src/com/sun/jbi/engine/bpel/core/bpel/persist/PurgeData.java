@@ -140,62 +140,25 @@ public class PurgeData {
         //This statement is used for getting a list of all process instances. Since we will be 
         //iterating over the result set, we do not want to close the statement. So for executing 
         //other queries that do not return a result set we use stmt2
-        Statement stmt1 = null;
-        Statement stmt2 = null;        
+        Statement stmt = null;
         try {
-
             dbConn = connFac.createNonXAConnection();
             conn = dbConn.getUnderlyingConnection();
-            conn.setAutoCommit(false);
-            stmt1 = conn.createStatement();
-            stmt2 = conn.createStatement();            
-            String monitoringTable = MonitorDBSchemaCreation.MONITOR_BPEL_INSTANCE;
-            String selectInstancesQuery = "select " + monitoringTable
-            	+ ".instanceid from " + monitoringTable + " where "
-            	+ monitoringTable + ".status='" + BPELEventPersister.COMPLETED + "'" + " or "
-            	+ monitoringTable + ".status='" + BPELEventPersister.TERMINATED + "'" + " or "
-            	+ monitoringTable + ".status='" + BPELEventPersister.FAULTED + "'";
-            resultSet = stmt1.executeQuery(selectInstancesQuery);
-            
-            int j = 0;
-            int totalCount = 0;
             LOGGER.log(Level.INFO, I18n.loc("BPCOR-6155: Purging monitoring data"));
-            while (resultSet.next()) {
-                String instanceId = resultSet.getString(1);
-                String queryPart1 = "DELETE FROM ";
-                String queryPart2 = " WHERE instanceid = '";
-                String queryPart3 = "'";
-                for (int i = 0; i < MONITOR_TABLES_TO_CLEAR.length; i++) {
-                    String tableName = MONITOR_TABLES_TO_CLEAR[i];
-                    StringBuilder queryBldr = new StringBuilder();
-                    queryBldr.append(queryPart1);
-                    queryBldr.append(tableName);
-                    queryBldr.append(queryPart2);
-                    queryBldr.append(instanceId);
-                    queryBldr.append(queryPart3);
-
-                    stmt2.execute(queryBldr.toString());
-                }
-                
-                // finally delete the entry from the MonitorDBSchemaCreation.MONITORBPELINSTANCE_TABLE
-                StringBuilder queryBldr = new StringBuilder();
-                queryBldr.append(queryPart1);
-                queryBldr.append(MonitorDBSchemaCreation.MONITOR_BPEL_INSTANCE);
-                queryBldr.append(queryPart2);
-                queryBldr.append(instanceId);
-                queryBldr.append(queryPart3);
-                
-                stmt2.execute(queryBldr.toString());
-                j++;
-                if ((PURGE_LOG_COUNT - 1) == j) {
-                    LOGGER.log(Level.INFO, I18n.loc("BPCOR-6153: 50 instances data purged"));    
-                    totalCount = totalCount + j;
-                    j = 1;
-                }
+            conn.setAutoCommit(false);
+            stmt = conn.createStatement();
+            // Lock all instances using the most DB-agnostic method
+            stmt.execute("UPDATE "+MonitorDBSchemaCreation.MONITOR_BPEL_INSTANCE+" SET instanceid=instanceid");
+            String idIn = "FROM "+MonitorDBSchemaCreation.MONITOR_BPEL_INSTANCE+
+                " WHERE status='" + BPELEventPersister.COMPLETED + "'" +
+                " OR status='" + BPELEventPersister.TERMINATED + "'" +
+                " OR status='" + BPELEventPersister.FAULTED + "'";
+            for (int i = 0; i < MONITOR_TABLES_TO_CLEAR.length; i++) {
+                stmt.execute("DELETE FROM "+MONITOR_TABLES_TO_CLEAR[i]+" WHERE instanceid IN (SELECT instanceid "+idIn+")");
             }
-            totalCount = totalCount + j;
+            int totalCount = stmt.executeUpdate("DELETE "+idIn);
             conn.commit();
-            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6154: Done purging: Total {0} instances purged", totalCount));                
+            LOGGER.log(Level.INFO, I18n.loc("BPCOR-6154: Done purging: Total {0} instances purged", totalCount));
         } catch (Exception e) {
         	// This could be due to the fact that the database connection is bad. Check for it and if so 
         	// mark it as bad. But do not attempt retries here.
@@ -217,22 +180,14 @@ public class PurgeData {
                     		resCloseExcp);
                 }
             }
-            if (stmt1 != null) {
+            if (stmt != null) {
                 try {
-                    stmt1.close();
+                    stmt.close();
                 } catch (SQLException stmtCloseExcp) {
                     LOGGER.log(Level.WARNING, I18n.loc("BPCOR-6065: Exception while closing a JDBC statement"), 
                     		stmtCloseExcp);
                 }
             }
-            if (stmt2 != null) {
-                try {
-                    stmt2.close();
-                } catch (SQLException stmtCloseExcp) {
-                    LOGGER.log(Level.WARNING, I18n.loc("BPCOR-6065: Exception while closing a JDBC statement"), 
-                    		stmtCloseExcp);
-                }
-            }            
             if (dbConn != null) {
                 try {
                     dbConn.close(); // this wrapper takes care of setting the initial value of setAutoCommit
