@@ -48,9 +48,6 @@ public class InstallerExt implements InstallerExtMBean {
     // Default values in the absence of configuration settings
     private static final String DEFAULT_THREADS = "10";
 
-	public static final String CONFIG_CLUSTER_DATABASE_JNDINAME = "ClusterDatabaseJNDIName";
-
-	private static final String DEFAULT_CLUSTER_DATABASE_JNDINAME = "jdbc/__defaultDS";
     private String mThreads;
     private Logger mLogger;
     private String mClusterJNDIName;
@@ -82,32 +79,14 @@ public class InstallerExt implements InstallerExtMBean {
         mThreads = val;
     }
 
-    /* 
-     * @return
-     */
-    public String getClusterDatabaseJNDIName() {
-        return mClusterJNDIName;
-    }
-
-    /* 
-     * @param val
-     */
-    public void setClusterDatabaseJNDIName(String val) {
-        if (val == null) {
-            val = DEFAULT_CLUSTER_DATABASE_JNDINAME;
-        }
-        mClusterJNDIName = val;
-    }
     public void setInitialConfigurations(ComponentConfig props) {
         this.mConfigProps = props;
         
         mThreads = props.getProperty(CONFIG_THREADS).getValue();
-        mClusterJNDIName = props.getProperty(CONFIG_CLUSTER_DATABASE_JNDINAME).getValue();
     }
 
     public ComponentConfig getInstallationConfigurationProperties() {
         mConfigProps.getProperty(CONFIG_THREADS).setValue(mThreads);
-        mConfigProps.getProperty(CONFIG_CLUSTER_DATABASE_JNDINAME).setValue(mClusterJNDIName);
         
         return mConfigProps;
     }

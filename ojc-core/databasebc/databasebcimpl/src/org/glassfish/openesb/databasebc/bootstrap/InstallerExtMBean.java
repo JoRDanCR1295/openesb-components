@@ -43,7 +43,4 @@ public interface InstallerExtMBean {
     public void setInitialConfigurations(ComponentConfig props);
 
     public ComponentConfig getInstallationConfigurationProperties();
-    public String getClusterDatabaseJNDIName();
-
-    public void setClusterDatabaseJNDIName(String val);
 }

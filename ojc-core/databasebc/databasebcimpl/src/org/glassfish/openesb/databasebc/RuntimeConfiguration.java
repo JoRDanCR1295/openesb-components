@@ -126,9 +126,6 @@ public class RuntimeConfiguration implements RuntimeConfigurationMBean,
     // Default values in the absence of configuration settings
     private static final String DEFAULT_THREADS = "10";
 
-	public static final String CONFIG_CLUSTER_DATABASE_JNDINAME = "ClusterDatabaseJNDIName";
-
-	private static final String DEFAULT_CLUSTER_DATABASE_JNDINAME = "jdbc/__defaultDS";
     // Configuration validation settings    
     long MIN_THREADS = 1;
     long MAX_THREADS = 10000;
@@ -186,10 +183,6 @@ public class RuntimeConfiguration implements RuntimeConfigurationMBean,
         return Integer.valueOf(val);
     }
 
-	public String getClusterDatabaseJNDIName() {
-		final String val = mConfig.getProperty(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME, RuntimeConfiguration.DEFAULT_CLUSTER_DATABASE_JNDINAME);
-        return val;
-    }
     /**
      *
      * @throws javax.management.InvalidAttributeValueException 
@@ -227,38 +220,6 @@ public class RuntimeConfiguration implements RuntimeConfigurationMBean,
         final String msg = "Attribute changed";
         final String attrType = Integer.class.getName();
         final Integer oldVal = getThreads();
-        final Notification notif = new AttributeChangeNotification(this, seqNo,
-                System.currentTimeMillis(), msg, attrName, attrType, oldVal,
-                newVal);
-        broadcasterSupport.sendNotification(notif);
-    }
-	
-	
-	/**
-     *
-     * *@throws javax.management.MBeanException 
-     */
-   // @Override
-    public void setClusterDatabaseJNDIName(String val) throws MBeanException {
-        final String attrName = RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME;
-		if(val == null){
-		
-		 val = DEFAULT_CLUSTER_DATABASE_JNDINAME;
-		}
-
-        // Validate the attribute value
-        String newVal = val;
-     
-
-        // Apply and save the changes
-        mConfig.put(RuntimeConfiguration.CONFIG_CLUSTER_DATABASE_JNDINAME, val.toString());
-        persistConfiguration();
-
-        // Notify listeners of this change
-        final long seqNo = 0;
-        final String msg = "Attribute changed";
-        final String attrType = String.class.getName();
-        final String oldVal = getClusterDatabaseJNDIName();
         final Notification notif = new AttributeChangeNotification(this, seqNo,
                 System.currentTimeMillis(), msg, attrName, attrType, oldVal,
                 newVal);

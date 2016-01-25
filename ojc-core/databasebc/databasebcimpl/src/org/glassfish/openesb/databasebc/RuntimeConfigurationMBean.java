@@ -60,11 +60,7 @@ public interface RuntimeConfigurationMBean {
      * @return a Map containing application variable information
      */
    public Map<String, String[]> retrieveApplicationVariablesMap();
-	public String getClusterDatabaseJNDIName();
 
-    public void setClusterDatabaseJNDIName(String val) throws MBeanException;
-   
-   
    /**
      * Retrieves the application configuration map. The map key is the configuration name, the value
      * is a String representing a HTTP URL. This method is used to communicate application
